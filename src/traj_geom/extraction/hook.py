@@ -56,7 +56,7 @@ def extract_trajectory(
     h = mod.register_forward_hook(lambda m, i, o: lat.append(o.detach().float().cpu()))
     try:
         torch.manual_seed(seed)  # h_0 is random -> seed for reproducibility
-        ids = tok(prompt, return_tensors="pt").input_ids.to("cuda")
+        ids = tok(prompt, return_tensors="pt").input_ids.to(model.device)
         with torch.no_grad():
             model(input_ids=ids, num_steps=num_steps)  # int, NOT tensor; forward, NOT generate
     finally:

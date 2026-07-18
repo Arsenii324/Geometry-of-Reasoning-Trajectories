@@ -31,7 +31,7 @@ def model_answer_text(
     Returns:
         The decoded generated text (prompt stripped).
     """
-    ids = tok(prompt, return_tensors="pt").input_ids.to("cuda")
+    ids = tok(prompt, return_tensors="pt").input_ids.to(model.device)
     out = model.generate_with_adaptive_compute(
         ids, num_steps=num_steps, max_new_tokens=max_new_tokens, tokenizer=tok
     )

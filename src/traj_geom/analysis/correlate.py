@@ -19,9 +19,13 @@ import pandas as pd
 from scipy.stats import rankdata, spearmanr
 
 # Critical |rho| for Spearman at p<0.05 (two-tailed) by number of levels N.
-# N=4 has no significance floor below 1.0, so treat 1.0 as the threshold.
+# N=4 is intentionally absent: exact permutation enumeration over all 24
+# possible rank orderings shows the smallest achievable two-tailed p-value,
+# even at a perfect correlation, is 2/24≈0.083 — never below 0.05, for any
+# sample. No threshold is reachable at N=4, so it falls through to the same
+# "n/a" path already used for N>10, rather than implying 1.000 is a bar that
+# could ever be met.
 _SPEARMAN_CRIT_P05: dict[int, float] = {
-    4: 1.000,
     5: 1.000,
     6: 0.886,
     7: 0.786,
