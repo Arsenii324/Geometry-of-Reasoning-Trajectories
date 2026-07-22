@@ -35,7 +35,8 @@ def extract_trajectory(
     num_steps: int = DEFAULT_NUM_STEPS,
     seed: int = 0,
     token_index: int = -1,
-) -> np.ndarray:
+    return_logits: bool = False,
+):
     """Run ``prompt`` through ``num_steps`` recurrent unrolls and record the path.
 
     Args:
@@ -45,65 +46,30 @@ def extract_trajectory(
         num_steps: Number of recurrent unrolls r (plain int, not a tensor).
         seed: Seed for the random recurrent initialisation h_0.
         token_index: Prompt token position to trace; -1 = last (answer) token.
+        return_logits: If True, also extract and return the logits at each step.
 
     Returns:
-        The latent path as an array of shape [num_steps, HIDDEN_DIM].
+        If return_logits is False, returns np.ndarray of shape [num_steps, HIDDEN_DIM].
+        If return_logits is True, returns a dict with "latents" and "logits".
     """
     mod = model.transformer.core_block[-1]
     mod._forward_hooks.clear()  # drop hooks left by any crashed run (else doubled captures)
 
     lat: list[torch.Tensor] = []
-    h = mod.register_forward_hook(lambda m, i, o: lat.append(o.detach().float().cpu()))
-    try:
-        torch.manual_seed(seed)  # h_0 is random -> seed for reproducibility
-        ids = tok(prompt, return_tensors="pt").input_ids.to(model.device)
-        with torch.no_grad():
-            model(input_ids=ids, num_steps=num_steps)  # int, NOT tensor; forward, NOT generate
-    finally:
-        h.remove()  # removed even if the forward raised
-
-    return torch.stack([latent[0, token_index, :] for latent in lat]).numpy()
-
-
-def extract_trajectory_v6(
-    model: Any,
-    tok: Any,
-    prompt: str,
-    num_steps: int = DEFAULT_NUM_STEPS,
-    seed: int = 0,
-    token_index: int = -1,
-) -> dict:
-    """Run ``prompt`` through ``num_steps`` recurrent unrolls and record the path AND logits.
-
-    Args:
-        model: A model handle from :func:`traj_geom.extraction.model.load_huginn`.
-        tok: The matching tokenizer.
-        prompt: Input prompt text.
-        num_steps: Number of recurrent unrolls r.
-        seed: Seed for the random recurrent initialisation h_0.
-        token_index: Prompt token position to trace; -1 = last (answer) token.
-
-    Returns:
-        dict containing:
-        - "latents": np.ndarray of shape [num_steps, HIDDEN_DIM]
-        - "logits": np.ndarray of shape [num_steps, VOCAB_SIZE]
-    """
-    mod = model.transformer.core_block[-1]
-    mod._forward_hooks.clear()  # drop hooks left by any crashed run
-
-    lat: list[torch.Tensor] = []
     logits_list: list[torch.Tensor] = []
-    
-    def v6_hook(m, i, o):
-        # o is the hidden state [batch, seq_len, hidden_dim]
-        # We must detach it to save memory, but KEEP in native model dtype (e.g. bfloat16)
+
+    def tracking_hook(m, i, o):
+        if not return_logits:
+            lat.append(o.detach().float().cpu())
+            return
+
+        # V6 Extraction: We must detach it to save memory, but KEEP in native model dtype
         h_state = o.detach()
         
         # Save the latent for the specific token, safely cast to float32 for numpy
         lat.append(h_state[0, token_index, :].cpu().float())
         
         # Compute logits for this step to track correctness over time
-        # Huginn standard projection: lm_head(ln_f(h))
         with torch.no_grad():
             try:
                 # Apply layer norm if present (runs natively in model dtype)
@@ -116,23 +82,21 @@ def extract_trajectory_v6(
                 # Store the logits for the target token, cast to float32 for numpy
                 logits_list.append(step_logits[0, token_index, :].cpu().float())
             except Exception:
-                # Fallback if the architecture is slightly different than expected
                 pass
 
-    h = mod.register_forward_hook(v6_hook)
+    h = mod.register_forward_hook(tracking_hook)
     try:
-        torch.manual_seed(seed)
+        torch.manual_seed(seed)  # h_0 is random -> seed for reproducibility
         ids = tok(prompt, return_tensors="pt").input_ids.to(model.device)
         with torch.no_grad():
-            model(input_ids=ids, num_steps=num_steps)
+            model(input_ids=ids, num_steps=num_steps)  # int, NOT tensor; forward, NOT generate
     finally:
-        h.remove()
+        h.remove()  # removed even if the forward raised
 
-    result = {
-        "latents": torch.stack(lat).numpy(),
-    }
-    
+    if not return_logits:
+        return torch.stack([latent[0, token_index, :] for latent in lat]).numpy()
+
+    result = {"latents": torch.stack(lat).numpy()}
     if logits_list:
         result["logits"] = torch.stack(logits_list).numpy()
-        
     return result

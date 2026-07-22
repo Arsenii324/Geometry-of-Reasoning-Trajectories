@@ -11,7 +11,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from scripts._common import load_model
-from traj_geom.extraction.hook import extract_trajectory_v6
+from traj_geom.extraction.hook import extract_trajectory
 from traj_geom.shapes.synthetic import make_three_scale_task
 
 def run_probe():
@@ -32,7 +32,7 @@ def run_probe():
         ans_token_id = tok.encode(ans, add_special_tokens=False)[-1]
         
         # Run heavy V6 extraction
-        out = extract_trajectory_v6(model, tok, task["prompt"], num_steps=num_steps, seed=0)
+        out = extract_trajectory(model, tok, task["prompt"], num_steps=num_steps, seed=0, return_logits=True)
         logits = out.get("logits")
         
         if logits is None:
