@@ -12,50 +12,49 @@ from tqdm import tqdm
 
 from scripts._common import load_model
 from traj_geom.extraction.hook import extract_trajectory
-from traj_geom.shapes.synthetic import make_three_scale_task
+from traj_geom.shapes.synthetic import make_counting_task
 
 def run_probe():
     model, tok = load_model()
     
-    # We will just scale active_len while holding neutral/irrelevant at 0
-    # to find the baseline 'steps-to-correctness' for pure reasoning.
-    active_lens = [1, 2, 3, 4, 5]
-    num_steps = 32
+    # Scale reasoning depth (number of operations)
+    depths = [2, 4, 6, 8, 10, 12, 14, 16]
+    num_steps = 64
     
     results = []
     
-    print("Running V6 Correctness Probe...")
-    for act in active_lens:
-        # Generate clean task without noise
-        task = make_three_scale_task(irrelevant_len=0, neutral_len=0, active_len=act, seed=42)
-        ans = str(task["answer"])
-        ans_token_id = tok.encode(ans, add_special_tokens=False)[-1]
-        
-        # Run heavy V6 extraction
-        out = extract_trajectory(model, tok, task["prompt"], num_steps=num_steps, seed=0, return_logits=True)
-        logits = out.get("logits")
-        
-        if logits is None:
-            print("Warning: Logits extraction failed. Check architecture compatibility.")
-            break
+    print("Running V6 Correctness Probe with counting task...")
+    for d in depths:
+        # We try a few seeds to ensure the answer isn't trivially guessed early
+        for seed in range(3):
+            task = make_counting_task(n_ops=d, seed=seed)
+            ans = str(task["answer"])
+            # encode the answer correctly
+            ans_token_id = tok.encode(ans, add_special_tokens=False)[-1]
             
-        # logits shape: [num_steps, vocab_size]
-        # Find the first step where the argmax is the correct answer
-        correct_at_step = -1
-        
-        for step in range(num_steps):
-            pred = logits[step].argmax()
-            if pred == ans_token_id:
-                correct_at_step = step
-                break
+            # Run extraction
+            out = extract_trajectory(model, tok, task["prompt"], num_steps=num_steps, seed=0, return_logits=True)
+            logits = out.get("logits")
+            
+            if logits is None:
+                print("Warning: Logits extraction failed.")
+                return
                 
-        results.append({
-            "active_len": act,
-            "correct_at_step": correct_at_step,
-            "target": ans
-        })
-        
-        print(f"Active Len: {act} | Correct At Step: {correct_at_step if correct_at_step != -1 else 'Never'}")
+            correct_at_step = -1
+            for step in range(num_steps):
+                pred = logits[step].argmax()
+                if pred == ans_token_id:
+                    correct_at_step = step
+                    break
+                    
+            results.append({
+                "depth": d,
+                "seed": seed,
+                "correct_at_step": correct_at_step,
+                "target": ans
+            })
+            
+            print(f"Depth: {d} | Seed: {seed} | Target: {ans} | Correct At Step: {correct_at_step if correct_at_step != -1 else 'Never'}")
         
     df = pd.DataFrame(results)
     df.to_csv("results/v6_correctness_probe.csv", index=False)
