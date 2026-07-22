@@ -47,7 +47,6 @@ from dataclasses import dataclass, field
 import numpy as np
 import torch
 from scipy.stats import spearmanr
-
 from spectral import spectral_norm_at_point
 from synthetic_tasks import SequenceCountingDataset
 from train_tiny_recursive import TinyRecursiveModel, train_and_evaluate

@@ -1,7 +1,7 @@
+
+import numpy as np
 import torch
 from torch.utils.data import Dataset
-import numpy as np
-from typing import Tuple, List
 
 
 class SequenceCountingDataset(Dataset):
@@ -16,19 +16,19 @@ class SequenceCountingDataset(Dataset):
         self.num_samples = num_samples
         self.seq_length = seq_length
         self.num_classes = num_classes
-        
+
         # Generate random sequences of 0 and 1
         # Probability of target '1' is 0.3
         self.sequences = np.random.choice([0, 1], size=(num_samples, seq_length), p=[0.7, 0.3])
         self.labels = np.sum(self.sequences == 1, axis=1)
-        
+
         # Clip labels to num_classes - 1
         self.labels = np.clip(self.labels, 0, num_classes - 1)
-        
+
     def __len__(self) -> int:
         return self.num_samples
-        
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
+
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         return torch.tensor(self.sequences[idx], dtype=torch.long), torch.tensor(self.labels[idx], dtype=torch.long)
 
 
@@ -42,14 +42,14 @@ class ParityTrackingDataset(Dataset):
         super().__init__()
         self.num_samples = num_samples
         self.seq_length = seq_length
-        
+
         self.sequences = np.random.choice([0, 1], size=(num_samples, seq_length), p=[0.5, 0.5])
         self.labels = np.sum(self.sequences, axis=1) % 2
-        
+
     def __len__(self) -> int:
         return self.num_samples
-        
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
+
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         return torch.tensor(self.sequences[idx], dtype=torch.long), torch.tensor(self.labels[idx], dtype=torch.long)
 
 
@@ -67,11 +67,11 @@ class FSATrackingDataset(Dataset):
         super().__init__()
         self.num_samples = num_samples
         self.seq_length = seq_length
-        
+
         # Generate random inputs (0 and 1)
         self.sequences = np.random.choice([0, 1], size=(num_samples, seq_length), p=[0.5, 0.5])
         self.labels = []
-        
+
         for seq in self.sequences:
             state = 0  # Initial state S0
             for char in seq:
@@ -82,24 +82,24 @@ class FSATrackingDataset(Dataset):
                 elif state == 2:
                     state = 2 if char == 0 else 0
             self.labels.append(state)
-            
+
         self.labels = np.array(self.labels)
-        
+
     def __len__(self) -> int:
         return self.num_samples
-        
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
+
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         return torch.tensor(self.sequences[idx], dtype=torch.long), torch.tensor(self.labels[idx], dtype=torch.long)
 
 
 # Simple helper to generate train/test splits for length extrapolation
 def get_extrapolation_datasets(
-    task_name: str, 
-    num_train: int = 5000, 
-    num_test: int = 1000, 
-    train_len: int = 15, 
+    task_name: str,
+    num_train: int = 5000,
+    num_test: int = 1000,
+    train_len: int = 15,
     test_len: int = 40
-) -> Tuple[Dataset, Dataset]:
+) -> tuple[Dataset, Dataset]:
     """
     Generates training data on short sequence lengths and test data on longer lengths
     to analyze extrapolation failure/success modes under contraction constraints.
@@ -115,5 +115,5 @@ def get_extrapolation_datasets(
         test_ds = FSATrackingDataset(num_test, test_len)
     else:
         raise ValueError(f"Unknown task name: {task_name}")
-        
+
     return train_ds, test_ds

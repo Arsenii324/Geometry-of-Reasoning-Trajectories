@@ -6,7 +6,6 @@ maps before trusting it on the TRM model. Run with:
 from __future__ import annotations
 
 import torch
-
 from spectral import spectral_norm_at_point
 
 

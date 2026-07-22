@@ -23,7 +23,7 @@ nonlinear map at a specific point instead of a fixed linear layer.
 
 from __future__ import annotations
 
-from typing import Callable
+from collections.abc import Callable
 
 import torch
 

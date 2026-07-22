@@ -23,14 +23,13 @@ from dataclasses import dataclass, field
 
 import numpy as np
 import torch
-import torch.optim as optim
 import torch.nn as nn
-from torch.utils.data import DataLoader
+import torch.optim as optim
 from scipy.stats import spearmanr
-
+from sequential_rnn import SequentialCountingRNN, jacobian_reg_loss
 from spectral import spectral_norm_at_point
 from synthetic_tasks import SequenceCountingDataset
-from sequential_rnn import SequentialCountingRNN, jacobian_reg_loss
+from torch.utils.data import DataLoader
 
 BETAS = (0.0, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0)
 SEEDS = (0, 1, 2)
