@@ -19,7 +19,9 @@ GOTCHAS (kept verbatim from the notebook):
 
 from __future__ import annotations
 
-MODEL_ID = "tomg-group-umd/huginn-0125"
+import os
+
+MODEL_ID = os.environ.get("HUGINN_MODEL_ID", "tomg-group-umd/huginn-0125")
 MODEL_REVISION = "bb6621b65e90b6a4b9b29ef88dc83866d450470c"  # freeze the remote code
 TRANSFORMERS_VERSION = "4.53.3"  # working window is ONLY 4.50–4.53
 
