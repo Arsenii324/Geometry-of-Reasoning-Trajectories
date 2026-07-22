@@ -96,25 +96,25 @@ def extract_trajectory_v6(
     
     def v6_hook(m, i, o):
         # o is the hidden state [batch, seq_len, hidden_dim]
-        # We must detach it to save memory
-        h_state = o.detach().float()
+        # We must detach it to save memory, but KEEP in native model dtype (e.g. bfloat16)
+        h_state = o.detach()
         
-        # Save the latent for the specific token
-        lat.append(h_state[0, token_index, :].cpu())
+        # Save the latent for the specific token, safely cast to float32 for numpy
+        lat.append(h_state[0, token_index, :].cpu().float())
         
         # Compute logits for this step to track correctness over time
         # Huginn standard projection: lm_head(ln_f(h))
         with torch.no_grad():
             try:
-                # Apply layer norm if present
+                # Apply layer norm if present (runs natively in model dtype)
                 if hasattr(model.transformer, 'ln_f'):
                     h_norm = model.transformer.ln_f(h_state)
                 else:
                     h_norm = h_state
-                # Project to vocab
+                # Project to vocab (weights are native dtype)
                 step_logits = model.lm_head(h_norm)
-                # Store the logits for the target token
-                logits_list.append(step_logits[0, token_index, :].cpu())
+                # Store the logits for the target token, cast to float32 for numpy
+                logits_list.append(step_logits[0, token_index, :].cpu().float())
             except Exception:
                 # Fallback if the architecture is slightly different than expected
                 pass
