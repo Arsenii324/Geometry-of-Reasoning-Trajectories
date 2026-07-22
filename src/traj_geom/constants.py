@@ -22,6 +22,11 @@ from __future__ import annotations
 import os
 
 MODEL_ID = os.environ.get("HUGINN_MODEL_ID", "tomg-group-umd/huginn-0125")
+# MODEL_REVISION only pins anything when MODEL_ID is a Hub repo id. If
+# HUGINN_MODEL_ID is overridden to a local path (e.g. a Kaggle dataset mount),
+# from_pretrained's `revision=` kwarg is silently ignored for local paths — you
+# get whatever code/weights are on disk, unpinned, no error. Check the local
+# copy matches this revision yourself before trusting results from that path.
 MODEL_REVISION = "bb6621b65e90b6a4b9b29ef88dc83866d450470c"  # freeze the remote code
 TRANSFORMERS_VERSION = "4.53.3"  # working window is ONLY 4.50–4.53
 

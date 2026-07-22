@@ -2,6 +2,12 @@
 /data/
 *.npz
 *.pt
+/results/trajectories/
+/results/*.log
+
+# Throwaway/external harness (Kaggle push scripts, pulled kernel outputs) —
+# not reproducible from a fresh clone, not meant to be committed.
+/scratch/
 
 # Python
 __pycache__/
