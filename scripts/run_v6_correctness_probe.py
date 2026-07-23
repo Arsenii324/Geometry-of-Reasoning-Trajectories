@@ -19,6 +19,20 @@ negative answers (e.g. "-2" -> ["-", "2"]), this checks whether the model
 predicts the leading token ("-") correctly, not the full string. Do not read
 `correct_at_step` as "the model's full answer is right from here on."
 
+BUG FOUND AND FIXED 2026-07-23, via scripts/diag_v6_token_gap.py: the prompt
+ends "...A:" with no trailing space, so the model's real next-token
+continuation is a SPACE-PREFIXED token (" 2", not "2") -- confirmed
+directly: for a depth=2 answer of "2", the bare token '2' sat at rank 27
+(prob 0.0023) while the space-prefixed ' 2' was in the top-5 (prob ~0.065),
+an order of magnitude more likely. Every prior run of this script computed
+`target_token_id` from the BARE answer string and found correct_at_step=-1
+for literally every depth/seed as a direct consequence -- not a finding
+about the model's ability, an artifact of checking the wrong token ID. Fixed
+by tokenizing `" " + ans` instead of `ans`. Any v6_correctness_probe.csv
+predating this fix is invalid for the same reason the coda-skip bug
+invalidated earlier copies -- check `architecture_state.md`'s verification
+practice / D12 before trusting a cached copy of this file.
+
 Run: uv run python -m scripts.run_v6_correctness_probe
 """
 
@@ -48,10 +62,14 @@ def compute() -> pd.DataFrame:
             try:
                 task = make_counting_task(n_ops=d, seed=seed)
                 ans = str(task["answer"])
-                # First token of the answer, not the last — the model predicts
-                # the leading token first (e.g. "-" before "2" for "-2"); using
-                # the last token silently ignores the sign.
-                ans_ids = tok.encode(ans, add_special_tokens=False)
+                # Space-prefixed, not bare: the prompt ends "...A:" with no
+                # trailing space, so the model's real continuation tokenizes
+                # as " 2", not "2" -- see module CAVEAT, found via
+                # diag_v6_token_gap.py. First token of THAT tokenization, not
+                # the last — the model predicts the leading token first (e.g.
+                # " -" before "2" for "-2"); using the last token would
+                # silently ignore the sign.
+                ans_ids = tok.encode(" " + ans, add_special_tokens=False)
                 if not ans_ids:
                     raise ValueError(f"answer {ans!r} tokenized to zero tokens")
                 target_token_id = ans_ids[0]

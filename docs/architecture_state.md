@@ -111,7 +111,7 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_contrast.py`, `run_phase.py`, `run_forceloop.py` | contrast/phase/forced-loop-budget experiments | yes | `contrast.csv` (n/a locally), `phase.csv`, `forceloop.csv` |
 | `run_homology.py` | persistent homology shape metric | yes | `homology.csv` |
 | `run_three_scale.py` | V6 — three-scale length ablation (the decoupled task) | yes | `three_scale.csv` — **real, post-fix data as of 2026-07-23** (Kaggle T4, all 180 configs succeeded). Result leans against H2: `winding`/`steps_settle` track `irrelevant_len` far more strongly than `active_len` — see `claims_ledger.md` D11. |
-| `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — real, post-fix data as of 2026-07-23 round 3. `validate_logits` passed 24/24 on real hardware. Data itself is a clean null (`correct_at_step=-1` everywhere) — see `claims_ledger.md` D12. |
+| `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — **deleted 2026-07-23 round 4, was invalid**: target token computed from the bare answer string, not the space-prefixed token the model actually continues with. Fixed in code, not yet rerun. See `claims_ledger.md` D12. |
 | `run_smoke_new_tasks.py` | smoke test for count_ones/projection + normed acceleration | no (overwrites) | `smoke_new_tasks.csv` |
 | `backfill_seq_len.py` | one-off: backfill `seq_len` onto switch/maxtask CSVs without GPU | n/a | mutates `switch.csv`/`maxtask.csv` in place |
 | `plot_trajectories.py` | PCA plot of count_ones/projection trajectories, shared basis per (task, n_ops) | n/a | `figures/pca_*.png` |
@@ -146,6 +146,15 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-23 (round 4) — round 3's "-1 everywhere" was a probe bug, not a
+  real finding.** Built `diag_v6_token_gap.py`, dumped real top-5 tokens.
+  Target token used bare answer string ("2"). Model's real continuation:
+  space-prefixed (" 2"). Bare token rank 27, prob 0.0023. Space-prefixed
+  token: in the top-5, prob ~0.065. Wrong token checked, every prior run.
+  Fixed: tokenize `" " + ans`. Old `v6_correctness_probe.csv` deleted, was
+  invalid. Not yet rerun with the fix. `claims_ledger.md` D12 updated.
+  Lesson: a suspicious all-negative result still needs a look before
+  trusting it, same as a suspicious all-positive one.
 - **2026-07-23 (round 3) — coda-skip fix confirmed correct on real hardware.
   `validate_logits` passed all 24/24 prompts, zero RuntimeErrors.** Round 2's
   fix (missing pre-coda `ln_f`) was right. `_replicate_coda_head` now trusted,

@@ -42,7 +42,10 @@ def main() -> None:
     for depth, seed in CASES:
         task = make_counting_task(n_ops=depth, seed=seed)
         ans = str(task["answer"])
-        ans_ids = tok.encode(ans, add_special_tokens=False)
+        # Space-prefixed: the prompt ends "...A:" with no trailing space, so
+        # the real continuation tokenizes as " 2", not "2" -- this is exactly
+        # the bug this diagnostic found on its first (bare-token) run.
+        ans_ids = tok.encode(" " + ans, add_special_tokens=False)
         target_id = ans_ids[0]
         target_str = tok.decode([target_id])
 
