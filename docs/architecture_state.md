@@ -111,7 +111,7 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_contrast.py`, `run_phase.py`, `run_forceloop.py` | contrast/phase/forced-loop-budget experiments | yes | `contrast.csv` (n/a locally), `phase.csv`, `forceloop.csv` |
 | `run_homology.py` | persistent homology shape metric | yes | `homology.csv` |
 | `run_three_scale.py` | V6 — three-scale length ablation (the decoupled task) | yes | `three_scale.csv` — **real, post-fix data as of 2026-07-23** (Kaggle T4, all 180 configs succeeded). Result leans against H2: `winding`/`steps_settle` track `irrelevant_len` far more strongly than `active_len` — see `claims_ledger.md` D11. |
-| `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — still not run post-fix; the 2026-07-23 Kaggle run never reached it (orchestrator died on `run_three_scale.py`'s reporting bug before starting it) — see decisions log |
+| `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — real, post-fix data as of 2026-07-23 round 3. `validate_logits` passed 24/24 on real hardware. Data itself is a clean null (`correct_at_step=-1` everywhere) — see `claims_ledger.md` D12. |
 | `run_smoke_new_tasks.py` | smoke test for count_ones/projection + normed acceleration | no (overwrites) | `smoke_new_tasks.csv` |
 | `backfill_seq_len.py` | one-off: backfill `seq_len` onto switch/maxtask CSVs without GPU | n/a | mutates `switch.csv`/`maxtask.csv` in place |
 | `plot_trajectories.py` | PCA plot of count_ones/projection trajectories, shared basis per (task, n_ops) | n/a | `figures/pca_*.png` |
@@ -126,11 +126,11 @@ Present in `results/`: `convergence.csv`, `counting_accuracy.csv`,
 `maxtask.csv`, `pararule.csv`, `phase.csv`, `smoke_new_tasks.csv`,
 `switch.csv`.
 
-`three_scale.csv` promoted into `results/` proper 2026-07-23 (real,
-post-fix, all 180 configs). `v6_correctness_probe.csv` still **not
-present** anywhere valid — old copies under `scratch/kaggle_output_*/`
-predate the coda-skip fix and are garbage; the 2026-07-23 rerun attempt
-never reached this script (see decisions log).
+`three_scale.csv` and `v6_correctness_probe.csv` both promoted into
+`results/` proper 2026-07-23 — real, post-fix data, both confirmed via
+Kaggle T4. Old copies under `scratch/kaggle_output_*/` predate the
+coda-skip fix and stay garbage; don't cite from `scratch/` anymore, use
+`results/` directly.
 
 **Orphaned data, no current producer** (found 2026-07-23 while building
 the automated consistency check below): `dissociation_results.csv` and
@@ -146,6 +146,15 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-23 (round 3) — coda-skip fix confirmed correct on real hardware.
+  `validate_logits` passed all 24/24 prompts, zero RuntimeErrors.** Round 2's
+  fix (missing pre-coda `ln_f`) was right. `_replicate_coda_head` now trusted,
+  not just reasoned-about. Real cost: correctness-timing data itself came
+  back a clean null — `correct_at_step=-1` for every depth/seed tested.
+  Cross-checked against `counting_accuracy.csv`: consistent with it, not
+  contradicting, but N=3 seeds here is small — doesn't rule out a real but
+  low hit rate. Full detail: `claims_ledger.md` D12. `results/v6_correctness_probe.csv`
+  now real and committed, first time ever.
 - **2026-07-23 (round 2) — the coda-skip fix's self-check caught that the
   fix was STILL wrong; found and fixed the real bug via direct source
   re-reading, not guessing.** Relaunched Kaggle for `run_v6_correctness_probe.py`
@@ -240,8 +249,16 @@ fixes. Do not treat code pulled from there as current.
 
 ## Open items
 
-- `three_scale.csv`/`v6_correctness_probe.csv` need a real GPU re-run with
-  the fixed `hook.py` before either is trustworthy; neither is in `results/`.
-- DataSphere per-hour/per-job unit cost for this project's GPU config is
-  still unverified — check the pricing page before running a real job there.
+- ~~`three_scale.csv`/`v6_correctness_probe.csv` need a real GPU re-run~~ —
+  done 2026-07-23, both real, both in `results/`, see decisions log + D11/D12.
+- ~~DataSphere per-hour unit cost unverified~~ — done 2026-07-23: `gt4.1`
+  (T4, matches what already worked on Kaggle) = 129,600 units/hr = $1.38/hr,
+  ~38.6 hours of runway on the 5,000,000-unit budget. Full config/pricing
+  table in `code_env_info/yandex-cloud-smiles-access.md`. Not yet actually
+  run a real job there — CLI verified working (`datasphere` via pipx,
+  `GRPC_DNS_RESOLVER=native` needed to work around a local sandbox DNS
+  issue), zero jobs on the project so far.
+- `winding_null_test` (built this session) has never been run against real
+  trajectory data — needs a fresh extraction saving raw `.npy` states, not
+  just summary-stat CSVs like `three_scale.csv` has.
 - `local_envs_venvs.md` in `code_env_info/` is an empty stub.

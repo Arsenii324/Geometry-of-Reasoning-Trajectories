@@ -33,8 +33,13 @@ GOTCHAS (hard-won — keep):
     abs diff across 24 real prompts, not noise) rather than silently
     returning wrong numbers, exactly what it's for. `_replicate_coda_head`
     below now runs both; `validate_logits=True` (default) checks the
-    reconstruction against a real forward() call's own logits on every use —
-    do not set it False until you've seen it pass at least once on your setup.
+    reconstruction against a real forward() call's own logits on every use.
+    CONFIRMED PASSING on real hardware 2026-07-23 (24/24 real prompts, T4,
+    zero RuntimeErrors) — the ln_f->coda->ln_f->lm_head reconstruction above
+    is real, verified, not just reasoned-about. Still leave
+    `validate_logits=True` on by default regardless: it costs one extra
+    forward pass and is the only thing standing between a real bug and
+    silently-wrong logits if this ever runs on a different revision/config.
 """
 
 from __future__ import annotations
