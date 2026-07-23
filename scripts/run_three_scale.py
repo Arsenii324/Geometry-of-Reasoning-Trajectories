@@ -93,18 +93,19 @@ def main() -> None:
 
     print("\n--- Correlation Analysis (Spearman rho) ---")
 
-    rho_active = spearman(cdf["active_len"], cdf["winding"])
-    print(f"|winding| ~ active_len      : {rho_active:>6.3f} (expect high +)")
+    # spearman() returns (rho, p) -- must unpack, not format the tuple itself.
+    rho_active, p_active = spearman(cdf["active_len"], cdf["winding"])
+    print(f"|winding| ~ active_len      : {rho_active:>6.3f} (p={p_active:.2g}) (expect high +)")
 
-    rho_neutral = spearman(cdf["neutral_len"], cdf["winding"])
-    print(f"|winding| ~ neutral_len     : {rho_neutral:>6.3f} (expect near 0)")
+    rho_neutral, p_neutral = spearman(cdf["neutral_len"], cdf["winding"])
+    print(f"|winding| ~ neutral_len     : {rho_neutral:>6.3f} (p={p_neutral:.2g}) (expect near 0)")
 
-    rho_irr = spearman(cdf["irrelevant_len"], cdf["winding"])
-    print(f"|winding| ~ irrelevant_len  : {rho_irr:>6.3f} (expect near 0)")
+    rho_irr, p_irr = spearman(cdf["irrelevant_len"], cdf["winding"])
+    print(f"|winding| ~ irrelevant_len  : {rho_irr:>6.3f} (p={p_irr:.2g}) (expect near 0)")
 
     print("\n--- Sanity check on raw sequence length ---")
-    rho_seq = spearman(cdf["seq_len"], cdf["winding"])
-    print(f"|winding| ~ seq_len (total) : {rho_seq:>6.3f} (the confounded metric)")
+    rho_seq, p_seq = spearman(cdf["seq_len"], cdf["winding"])
+    print(f"|winding| ~ seq_len (total) : {rho_seq:>6.3f} (p={p_seq:.2g}) (the confounded metric)")
 
 
 if __name__ == "__main__":

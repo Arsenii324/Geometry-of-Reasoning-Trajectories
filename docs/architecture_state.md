@@ -69,8 +69,8 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_convergence.py` | convergence metric sweep | yes | `convergence.csv` |
 | `run_contrast.py`, `run_phase.py`, `run_forceloop.py` | contrast/phase/forced-loop-budget experiments | yes | `contrast.csv` (n/a locally), `phase.csv`, `forceloop.csv` |
 | `run_homology.py` | persistent homology shape metric | yes | `homology.csv` |
-| `run_three_scale.py` | V6 — three-scale length ablation (the decoupled task) | yes | `three_scale.csv` — **not currently in `results/`, only under `scratch/kaggle_output_{5,6}/repo/results/`** |
-| `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — **existing copies (`scratch/kaggle_output_{5,6,7,8}/`) all predate the coda-skip fix in `hook.py` and are garbage; needs a fresh GPU run before the data means anything** |
+| `run_three_scale.py` | V6 — three-scale length ablation (the decoupled task) | yes | `three_scale.csv` — **real, post-fix data as of 2026-07-23** (Kaggle T4, all 180 configs succeeded). Result leans against H2: `winding`/`steps_settle` track `irrelevant_len` far more strongly than `active_len` — see `claims_ledger.md` D11. |
+| `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — still not run post-fix; the 2026-07-23 Kaggle run never reached it (orchestrator died on `run_three_scale.py`'s reporting bug before starting it) — see decisions log |
 | `run_smoke_new_tasks.py` | smoke test for count_ones/projection + normed acceleration | no (overwrites) | `smoke_new_tasks.csv` |
 | `backfill_seq_len.py` | one-off: backfill `seq_len` onto switch/maxtask CSVs without GPU | n/a | mutates `switch.csv`/`maxtask.csv` in place |
 | `plot_trajectories.py` | PCA plot of count_ones/projection trajectories, shared basis per (task, n_ops) | n/a | `figures/pca_*.png` |
@@ -85,14 +85,36 @@ Present in `results/`: `convergence.csv`, `counting_accuracy.csv`,
 `maxtask.csv`, `pararule.csv`, `phase.csv`, `smoke_new_tasks.csv`,
 `switch.csv`.
 
-**Not present** (only exist as pulled Kaggle kernel outputs under
-`scratch/kaggle_output_*/repo/results/`, never copied/committed into
-`results/` proper): `three_scale.csv`, `v6_correctness_probe.csv`. Treat
-anything quoted from those two as coming from `scratch/`, not `results/`,
-until someone deliberately promotes a post-fix run into `results/`.
+`three_scale.csv` promoted into `results/` proper 2026-07-23 (real,
+post-fix, all 180 configs). `v6_correctness_probe.csv` still **not
+present** anywhere valid — old copies under `scratch/kaggle_output_*/`
+predate the coda-skip fix and are garbage; the 2026-07-23 rerun attempt
+never reached this script (see decisions log).
 
 ## Decisions log (most recent first)
 
+- **2026-07-23 — first real post-fix Kaggle run: `three_scale.csv` real
+  data landed, `v6_correctness_probe.csv` still didn't run.** Launched a
+  T4 Kaggle kernel (avoids the old P100 sm_60 CUDA issue entirely, no
+  torch downgrade needed) against the now-fully-fixed
+  `feat/close-known-gaps` branch. `run_three_scale.py`'s extraction
+  succeeded completely (180/180 configs, ~17 min, `save_partial`
+  checkpointing worked as designed) — but `main()`'s reporting step then
+  crashed: `spearman()` returns `(rho, p)`, and the print code tried to
+  format the whole tuple with `:.3f`, `TypeError: unsupported format
+  string passed to tuple.__format__`. A real bug that static review
+  (ruff, reading the code) never caught, because it's a runtime type
+  mismatch, not a syntax issue — only surfaced by actually running it.
+  The orchestrator script (`scratch/kaggle_v6_rerun/run_kaggle.py`,
+  untracked) then propagated that failure and never attempted
+  `run_v6_correctness_probe.py` at all — a second real bug, this one in
+  the run orchestration itself (one experiment's failure shouldn't block
+  an unrelated one). Fixed both: unpacked the tuple correctly in
+  `run_three_scale.py`, and the orchestrator now isolates each experiment.
+  The recovered real data itself is a genuine, citable negative-leaning
+  result — see `claims_ledger.md` D11. `v6_correctness_probe.csv`,
+  and with it the first real-hardware confirmation of the coda-skip fix
+  itself, is still outstanding.
 - **2026-07-22 — fixed the coda-skip bug in `hook.py`'s `return_logits=True`
   path.** Root cause: the V6 logit-lens hook ran `ln_f`/`lm_head` straight on
   `core_block[-1]`'s output, skipping the two `coda` layers that
