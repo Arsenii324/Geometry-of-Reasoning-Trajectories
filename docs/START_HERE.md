@@ -103,10 +103,14 @@ gathered (`origin/pr-real-data` still at commit `900b8b4`, no new PR, repo
     **PARTIAL**, interrupted by session quota twice. Confirms the real
     training mechanics (r-sampling formula, truncated BPTT k=8, no
     training-time halting signal — directly answers `open_question_depth_calibration.md`'s
-    background question) against the actual paper (arXiv 2502.05171), plus
-    a longer unverified-leads list (ACT/PonderNet/DEQ contrast, a striking
-    unconfirmed "38% fewer loops" halting-rule claim, "J-Space" still
-    unresolved). Has a ready resume command for when quota clears.
+    background question) against the actual paper (arXiv 2502.05171).
+    "J-Space" resolved (a real 2026 Anthropic concept, "Jacobian Lens"
+    interpretability — a promising escalation path, not yet attempted) and
+    the "38% fewer loops" halting-rule claim confirmed (arXiv 2607.14427 —
+    NOT a Huginn result, a different 135M-param model, same architecture
+    class) via cheap direct reads rather than relaunching the full
+    workflow. ACT/PonderNet/DEQ contrast and a few other threads remain
+    genuinely open; resume command included if worth the cost.
 
 ## Where the non-doc work lives
 
