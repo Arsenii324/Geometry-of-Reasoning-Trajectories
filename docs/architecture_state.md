@@ -11,6 +11,46 @@ Not a replacement for `docs/START_HERE.md` — that's still the reading-order
 index. This is the "where is everything / what's the state of everything"
 reference to check before touching a file or asking "has this been run."
 
+## Verification practice — this doc is checked, not just trusted
+
+Prose documentation only stays true if someone remembers to update it every
+time something changes. This project has repeatedly found real drift that
+remembering-to-update didn't catch: the length-confound methodology defect
+(D10), Gemini's coda-skip bug, `run_three_scale.py`'s `spearman()`
+tuple-format crash that only surfaced by actually re-running it. So the
+inventory claims in this doc are backed by an automated check, not just
+this prose: `tests/test_architecture_consistency.py`, run every time
+`pytest` runs, asserts —
+1. every `results/*.csv` is named in this file (catches undocumented or
+   orphaned data — this is exactly how `dissociation_results.csv` and
+   `h2_loops.csv` were found, both committed in the project's first
+   commits with no current producing script, sitting undetected until
+   this check existed),
+2. every `scripts/run_*.py` is named in this file by exact filename (a
+   glob reference like "run_dissociation*.py" doesn't satisfy it),
+3. no `results/<name>.csv` is committed *before* the last commit to the
+   `scripts/run_*.py` documented as producing it — a script that changed
+   more recently than its own cached output is a real "does this data
+   still reflect what the code does" question.
+
+**What it deliberately can't automate**: whether a flagged script change
+was *substantive* (changed the actual computed values) or not (comments,
+resilience, unrelated refactor) — that needs a human/AI judgment call, not
+a timestamp diff. Reviewed-and-judged-safe cases are recorded explicitly
+in `tests/test_architecture_consistency.py`'s `_REVIEWED_NON_SUBSTANTIVE_CHANGES`
+dict, each with the commit and a stated reason — an audit trail, not a
+silent suppression. Remove an entry (making the check fire again) the
+moment its script changes for a reason that might actually matter.
+
+It also can't automate whether an *interpretation* of a CSV (a
+`claims_ledger.md` row, a narrative.md paragraph) has itself gone stale
+relative to the data or the analysis code that reads it. The manual
+complement: load-bearing numeric claims should cite the exact commit they
+were computed at (see `claims_ledger.md` D11's `results/three_scale.csv`
+citation) — not because that's automatically checked, but so a future
+reader can `git log <hash>..HEAD -- <script>` themselves and judge whether
+anything relevant changed since, rather than trusting the number on faith.
+
 ## Repo layout
 
 ```
@@ -65,7 +105,8 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_counting.py` | E2 — counting task, length-partial control | yes | `counting.csv` |
 | `run_switch.py`, `run_maxtask.py` | switch/maxtask analogues of E2 | yes | `switch.csv`, `maxtask.csv` |
 | `run_accuracy.py` | correctness via `generate_with_adaptive_compute` + regex parse | yes | `counting_accuracy.csv` |
-| `run_dissociation*.py` (3 variants) | winding vs steps-to-settle dissociation | yes | `dissociation*.csv` |
+| `run_dissociation.py` | E3, the length-matched track-vs-local dissociation | yes | `dissociation.csv` (--seeds 5) or `dissociation_15seed.csv` (--seeds 15) |
+| `run_dissociation_multiinit.py` | multi-init-seed robustness check on the same dissociation | yes | `dissoc_multiinit.csv` |
 | `run_convergence.py` | convergence metric sweep | yes | `convergence.csv` |
 | `run_contrast.py`, `run_phase.py`, `run_forceloop.py` | contrast/phase/forced-loop-budget experiments | yes | `contrast.csv` (n/a locally), `phase.csv`, `forceloop.csv` |
 | `run_homology.py` | persistent homology shape metric | yes | `homology.csv` |
@@ -90,6 +131,18 @@ post-fix, all 180 configs). `v6_correctness_probe.csv` still **not
 present** anywhere valid — old copies under `scratch/kaggle_output_*/`
 predate the coda-skip fix and are garbage; the 2026-07-23 rerun attempt
 never reached this script (see decisions log).
+
+**Orphaned data, no current producer** (found 2026-07-23 while building
+the automated consistency check below): `dissociation_results.csv` and
+`h2_loops.csv`. Both committed in the earliest commits (`17a944a`/`8b5e418`,
+"exp 2"/"exp 3"), predating `scripts/` entirely — almost certainly
+notebook-era output (`notebooks/01_mvp_h2.ipynb`), with no `run_*.py`
+anywhere in the current repo that regenerates either. Don't cite numbers
+from these without first checking whether `dissociation.csv`/
+`dissociation_15seed.csv` (the current, actively-produced equivalents)
+supersede them — they cover overlapping ground. Not deleted here since
+removing data isn't this doc's call to make unilaterally; flagged so
+nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
