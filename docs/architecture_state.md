@@ -251,13 +251,19 @@ fixes. Do not treat code pulled from there as current.
 
 - ~~`three_scale.csv`/`v6_correctness_probe.csv` need a real GPU re-run~~ —
   done 2026-07-23, both real, both in `results/`, see decisions log + D11/D12.
-- ~~DataSphere per-hour unit cost unverified~~ — done 2026-07-23: `gt4.1`
-  (T4, matches what already worked on Kaggle) = 129,600 units/hr = $1.38/hr,
-  ~38.6 hours of runway on the 5,000,000-unit budget. Full config/pricing
-  table in `code_env_info/yandex-cloud-smiles-access.md`. Not yet actually
-  run a real job there — CLI verified working (`datasphere` via pipx,
-  `GRPC_DNS_RESOLVER=native` needed to work around a local sandbox DNS
-  issue), zero jobs on the project so far.
+- ~~DataSphere per-hour unit cost unverified~~ / ~~never actually run a job
+  there~~ — both done 2026-07-23. `gt4.1` (T4, matches what already worked
+  on Kaggle) = 129,600 units/hr = $1.38/hr, ~38.6hr runway on the
+  5,000,000-unit budget. A real `c1.4` (CPU, cheapest tier) smoke-test job
+  ran end to end — `status: SUCCESS`, real stdout retrieved, ~232 units
+  spent. Working `config.yaml` pattern (needed real fixes beyond the docs'
+  own example: `env.python.type: manual` + explicit `version: "3.11"`
+  since `auto` fails when the local submitting interpreter is newer than
+  DataSphere's supported 3.8-3.12; entry script needs a real
+  `if __name__ == "__main__":` guard) recorded in
+  `code_env_info/yandex-cloud-smiles-access.md`. GPU tier (`gt4.1`) itself
+  still not exercised — only the CPU smoke test so far, deliberately, to
+  prove the mechanism cheaply before spending on GPU time.
 - `winding_null_test` (built this session) has never been run against real
   trajectory data — needs a fresh extraction saving raw `.npy` states, not
   just summary-stat CSVs like `three_scale.csv` has.
