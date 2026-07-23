@@ -21,11 +21,12 @@ correction), Anthropic circuit-tracing's actual architecture coverage
 real GSM8K/HellaSwag/ARC-C figures). This is the cheaper pattern to prefer
 over relaunching the full workflow for a narrow, single-source lookup.
 
-**Still open, would need the full workflow (or more targeted manual
-reads) to close**: the ACT/PonderNet/DEQ mechanistic details (real
-sources found, zero adversarial passes — see below, still useful as-is
-despite being unverified) and the winding-number null-model prior-art
-search (never even reached — see below).
+**Still genuinely open**: ACT/PonderNet's mechanism-level details beyond
+their high-level premise (DEQ is fully confirmed; see below), and the
+winding-number null-model prior-art search — this last one was never even
+reached by the original 5-search-angle scoping and would need a fresh,
+targeted search, not a resume (the current script's angles don't cover
+it). Only these two remain from the original 9 threads.
 
 **To resume the full workflow for those remaining threads** (partially
 free — the 52 already-cached agents replay instantly; still real new cost
@@ -129,30 +130,39 @@ text), real numbers, directly comparable to this project's own data**:
   shallowest, content words deepest) — a real, checkable point of
   comparison for this project's own per-token settling data.
 
-**ACT / PonderNet / DEQ mechanistic contrast** (thread 3, entirely
-unverified — real sources found, claims extracted, zero adversarial passes
-completed):
-- ACT (arXiv 1603.08983): learned sigmoidal halting unit, `N(t)` = first
-  step cumulative halting-activation crosses `1−ε`; trained via an
-  explicit "ponder cost" auxiliary loss with a hand-tuned `τ`; paper
-  itself reportedly flags high sensitivity to `τ` and no principled way to
-  set it.
-- PonderNet (arXiv 2107.05407): halting distribution is a genuine
-  (truncated) geometric distribution over per-step Bernoulli halting
-  probabilities — not a cumulative-threshold rule like ACT. Two-term loss:
-  expected prediction loss over halting steps, plus a KL-regularizer
-  against a geometric prior. Claims **unbiased** gradient estimates,
-  explicitly contrasted against ACT's claimed **biased** gradient (ACT's
-  cost term only backprops through the final computational step).
-- DEQ (arXiv 1909.01377): finds the fixed point directly via root-finding
-  (implicit differentiation), equivalent to an infinite-depth weight-tied
-  network; **constant memory** regardless of effective depth, since
-  gradients come from the implicit function theorem, not stored
-  activations across iterations.
-- None of this has been checked against Huginn's actual mechanism yet
-  beyond the confirmed items above — the mechanistic contrast argued
-  informally three turns ago in this conversation is consistent with these
-  unverified claims but not yet backed by a completed adversarial pass.
+**ACT / PonderNet / DEQ mechanistic contrast** (thread 3) — DEQ fully
+confirmed by direct read; ACT/PonderNet's abstracts confirm the high-level
+premise but not mechanism-level detail (would need the full paper text,
+not just the abstract, and returns were judged not worth another fetch
+round given how well-established these two papers already are in the
+literature):
+- **ACT (arXiv 1603.08983) — high-level premise confirmed** ("an algorithm
+  that allows recurrent neural networks to learn how many computational
+  steps to take"); the specific mechanism details (sigmoidal halting unit,
+  `1−ε` threshold-crossing, "ponder cost" loss, hyperparameter `τ`
+  sensitivity) are standard, frequently-cited facts about this paper but
+  were **not independently reconfirmed here** — treat as very likely
+  correct, not adversarially verified.
+- **PonderNet (arXiv 2107.05407) — high-level premise confirmed**
+  ("learns end-to-end the number of computational steps... effective
+  compromise between prediction accuracy, computational cost, and
+  generalization"); the specific claims (geometric halting distribution,
+  two-term loss with KL-regularizer, unbiased-vs-ACT's-biased gradient)
+  were **not independently reconfirmed here**, same caveat as above.
+- **DEQ (arXiv 1909.01377) — fully confirmed, direct quotes**: "directly
+  finds these equilibrium points via root-finding," "equivalent to running
+  an infinite depth (weight-tied) feedforward network," gradients via
+  "implicit differentiation" through the equilibrium point rather than
+  storing activations, "training and prediction in these networks require
+  only constant memory, regardless of the effective 'depth' of the
+  network" — an "up-to 88% memory reduction" reported on WikiText-103.
+  Exact match to the unverified claim from the prior partial run.
+- The mechanistic contrast argued informally earlier in this conversation
+  (Huginn has neither ACT's learned halting nor DEQ's implicit-equilibrium
+  guarantee — it's explicit truncated unrolling with a purely post-hoc
+  inference-time stopping rule) is consistent with everything found here,
+  and now has a real citation trail, even where ACT/PonderNet's finer
+  details weren't re-verified from primary text directly.
 
 ## Lu et al. 2507.02199 — RESOLVED (2026-07-23, direct read), the single most important related-work citation this project has
 
