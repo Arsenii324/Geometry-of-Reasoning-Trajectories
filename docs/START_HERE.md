@@ -99,6 +99,14 @@ gathered (`origin/pr-real-data` still at commit `900b8b4`, no new PR, repo
    process. No training involved; a clean negative result is treated as a
    real finding, not a failed check. Blocked on the same GPU rerun already
    queued elsewhere.
+10. **`deep_research_huginn_literature.md`** (added 2026-07-23) —
+    **PARTIAL**, interrupted by session quota twice. Confirms the real
+    training mechanics (r-sampling formula, truncated BPTT k=8, no
+    training-time halting signal — directly answers `open_question_depth_calibration.md`'s
+    background question) against the actual paper (arXiv 2502.05171), plus
+    a longer unverified-leads list (ACT/PonderNet/DEQ contrast, a striking
+    unconfirmed "38% fewer loops" halting-rule claim, "J-Space" still
+    unresolved). Has a ready resume command for when quota clears.
 
 ## Where the non-doc work lives
 

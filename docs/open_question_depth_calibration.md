@@ -22,6 +22,19 @@ mean depth, truncated-backprop window) are stated with hedges deliberately —
 **re-verify against the actual paper/model card before citing any of them as
 fact**, especially before writing them into anything paper-facing.
 
+UPDATE 2026-07-23: partially resolved by `deep_research_huginn_literature.md`
+(adversarial 3-0/2-1 consensus, direct quotes from arXiv 2502.05171). The
+recollection above was directionally correct: `r` really is sampled per
+training step (`r ~ Poisson(e^τ)+1`, `τ~N(log(r̄)−½σ²,σ)`, r̄=32, σ=1/2, heavy
+right tail), backprop really is truncated (k=8, not the full unroll), and
+there really is no training-time halting signal — only a post-hoc,
+inference-time KL-divergence threshold (5×10⁻⁴). That research run was
+itself interrupted by quota before finishing the adjacent threads (the
+paper's own test-time-scaling numbers, and a specific unverified claim
+about a training-free halting rule beating a learned router by "38% fewer
+loops" that bears directly on the question below) — see that file for what
+still needs resuming.
+
 ---
 
 ## The question
