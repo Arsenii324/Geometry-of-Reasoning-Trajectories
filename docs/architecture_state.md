@@ -111,7 +111,7 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_contrast.py`, `run_phase.py`, `run_forceloop.py` | contrast/phase/forced-loop-budget experiments | yes | `contrast.csv` (n/a locally), `phase.csv`, `forceloop.csv` |
 | `run_homology.py` | persistent homology shape metric | yes | `homology.csv` |
 | `run_three_scale.py` | V6 — three-scale length ablation (the decoupled task) | yes | `three_scale.csv` — **real, post-fix data as of 2026-07-23** (Kaggle T4, all 180 configs succeeded). Result leans against H2: `winding`/`steps_settle` track `irrelevant_len` far more strongly than `active_len` — see `claims_ledger.md` D11. |
-| `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — **deleted 2026-07-23 round 4, was invalid**: target token computed from the bare answer string, not the space-prefixed token the model actually continues with. Fixed in code, not yet rerun. See `claims_ledger.md` D12. |
+| `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — real, corrected (space-prefixed target) data as of 2026-07-23 round 5. 4/24 hits, ALL at step 1 with target=0 — a small-number prior, not counting. See `claims_ledger.md` D12. |
 | `run_smoke_new_tasks.py` | smoke test for count_ones/projection + normed acceleration | no (overwrites) | `smoke_new_tasks.csv` |
 | `backfill_seq_len.py` | one-off: backfill `seq_len` onto switch/maxtask CSVs without GPU | n/a | mutates `switch.csv`/`maxtask.csv` in place |
 | `plot_trajectories.py` | PCA plot of count_ones/projection trajectories, shared basis per (task, n_ops) | n/a | `figures/pca_*.png` |
