@@ -12,7 +12,7 @@ from __future__ import annotations
 import pandas as pd
 from tqdm import tqdm
 
-from scripts._common import cached, load_model
+from scripts._common import cached, load_model, save_partial
 from traj_geom.analysis.correlate import fmt_by_level, partial_spearman, spearman
 from traj_geom.data.loaders import enrich, load_pararule
 from traj_geom.metrics.dynamics import steps_to_settle
@@ -28,14 +28,24 @@ def compute() -> pd.DataFrame:
 
     model, tok = load_model()
     rows = []
+    n_failed = 0
     for depth in (2, 3, 4, 5):
         for row in tqdm(list(load_pararule(depth, n=N_PER_DEPTH)), desc=f"depth {depth}"):
-            row = enrich(row, tok)
-            tr = extract_trajectory(model, tok, row["prompt"], num_steps=64, seed=0)
-            row["winding"] = winding_of(tr, 4)
-            row["shape"] = classify_shape(tr)
-            row["steps_settle"] = steps_to_settle(tr)
-            rows.append(row)
+            try:
+                row = enrich(row, tok)
+                tr = extract_trajectory(model, tok, row["prompt"], num_steps=64, seed=0)
+                row["winding"] = winding_of(tr, 4)
+                row["shape"] = classify_shape(tr)
+                row["steps_settle"] = steps_to_settle(tr)
+                rows.append(row)
+            except Exception as e:  # noqa: BLE001 -- one bad example must not lose
+                # the rest of this sweep's already-completed rows.
+                n_failed += 1
+                print(f"depth={depth}: skipping an example after error: {e!r}")
+            else:
+                save_partial(rows, "pararule.csv")
+    if n_failed:
+        print(f"run_pararule: {n_failed} examples failed and were skipped.")
     return pd.DataFrame(rows)
 
 

@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from tqdm import tqdm
 
-from scripts._common import FIGURES_DIR, cached, load_model
+from scripts._common import FIGURES_DIR, cached, load_model, save_partial
 from traj_geom.analysis.correlate import fmt_by_level, spearman
 from traj_geom.metrics.dynamics import steps_to_settle
 from traj_geom.metrics.winding import winding_of
@@ -27,7 +27,7 @@ from traj_geom.shapes.synthetic import make_variants
 N_OPS = (4, 8, 16, 24, 32, 48)
 
 
-def _compute_fn(n_seeds: int):
+def _compute_fn(n_seeds: int, results_name: str):
     """Build the cache-miss compute for a given seed count."""
 
     def compute() -> pd.DataFrame:
@@ -35,20 +35,31 @@ def _compute_fn(n_seeds: int):
 
         model, tok = load_model()
         rows = []
+        n_failed = 0
         for n_ops in tqdm(N_OPS, desc=f"{n_seeds}seed"):
             for s in range(n_seeds):
                 v = make_variants(n_ops, seed=s)
                 for kind in ("track", "local"):
-                    tr = extract_trajectory(model, tok, v[kind], num_steps=64, seed=0)
-                    rows.append(
-                        {
-                            "n_ops": n_ops,
-                            "kind": kind,
-                            "seq_len": int(tok(v[kind], return_tensors="pt").input_ids.shape[1]),
-                            "winding": abs(winding_of(tr, burn=4)),
-                            "steps_settle": steps_to_settle(tr),
-                        }
-                    )
+                    try:
+                        seq_len = int(tok(v[kind], return_tensors="pt").input_ids.shape[1])
+                        tr = extract_trajectory(model, tok, v[kind], num_steps=64, seed=0)
+                        rows.append(
+                            {
+                                "n_ops": n_ops,
+                                "kind": kind,
+                                "seq_len": seq_len,
+                                "winding": abs(winding_of(tr, burn=4)),
+                                "steps_settle": steps_to_settle(tr),
+                            }
+                        )
+                    except Exception as e:  # noqa: BLE001 -- one bad config must not
+                        # lose the rest of this sweep's already-completed rows.
+                        n_failed += 1
+                        print(f"n_ops={n_ops} seed={s} kind={kind}: skipping after error: {e!r}")
+                    else:
+                        save_partial(rows, results_name)
+        if n_failed:
+            print(f"run_dissociation: {n_failed} configs failed and were skipped.")
         return pd.DataFrame(rows)
 
     return compute
@@ -97,7 +108,7 @@ def main() -> None:
     args = ap.parse_args()
 
     name = "dissociation.csv" if args.seeds == 5 else "dissociation_15seed.csv"
-    ctrl = cached(name, _compute_fn(args.seeds))
+    ctrl = cached(name, _compute_fn(args.seeds, name))
     for kind in ("track", "local"):
         s = ctrl[ctrl.kind == kind]
         # Canonical: per-level Spearman + N.

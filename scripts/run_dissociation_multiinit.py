@@ -12,7 +12,7 @@ from __future__ import annotations
 import pandas as pd
 from tqdm import tqdm
 
-from scripts._common import cached, load_model
+from scripts._common import cached, load_model, save_partial
 from traj_geom.analysis.correlate import fmt_by_level, spearman_by_level
 from traj_geom.metrics.convergence import path_independence
 from traj_geom.metrics.dynamics import contraction_rate, steps_to_settle
@@ -30,30 +30,43 @@ def compute() -> pd.DataFrame:
 
     model, tok = load_model()
     rows = []
+    n_failed = 0
     for n_ops in tqdm(N_OPS, desc="multi-init"):
         for task_s in range(N_TASK_SEEDS):
             v = make_variants(n_ops, seed=task_s)
             for kind in ("track", "local"):
-                seq_len = int(tok(v[kind], return_tensors="pt").input_ids.shape[1])
-                trajs = [
-                    extract_trajectory(model, tok, v[kind], num_steps=64, seed=i)
-                    for i in range(N_INIT_SEEDS)
-                ]
-                lam = path_independence(trajs[0], trajs[1])  # gap between two inits
-                for init_s, tr in enumerate(trajs):
-                    rows.append(
-                        {
-                            "n_ops": n_ops,
-                            "kind": kind,
-                            "task_seed": task_s,
-                            "init_seed": init_s,
-                            "seq_len": seq_len,
-                            "winding": abs(winding_of(tr, burn=4)),
-                            "steps_settle": steps_to_settle(tr),
-                            "contraction": contraction_rate(tr),
-                            "lyap": lam,
-                        }
+                try:
+                    seq_len = int(tok(v[kind], return_tensors="pt").input_ids.shape[1])
+                    trajs = [
+                        extract_trajectory(model, tok, v[kind], num_steps=64, seed=i)
+                        for i in range(N_INIT_SEEDS)
+                    ]
+                    lam = path_independence(trajs[0], trajs[1])  # gap between two inits
+                    for init_s, tr in enumerate(trajs):
+                        rows.append(
+                            {
+                                "n_ops": n_ops,
+                                "kind": kind,
+                                "task_seed": task_s,
+                                "init_seed": init_s,
+                                "seq_len": seq_len,
+                                "winding": abs(winding_of(tr, burn=4)),
+                                "steps_settle": steps_to_settle(tr),
+                                "contraction": contraction_rate(tr),
+                                "lyap": lam,
+                            }
+                        )
+                except Exception as e:  # noqa: BLE001 -- one bad (n_ops, seed, kind)
+                    # must not lose the rest of this multi-hour, 5x-init-per-point sweep.
+                    n_failed += 1
+                    print(
+                        f"n_ops={n_ops} task_s={task_s} kind={kind}: "
+                        f"skipping after error: {e!r}"
                     )
+                else:
+                    save_partial(rows, "dissoc_multiinit.csv")
+    if n_failed:
+        print(f"run_dissociation_multiinit: {n_failed} (n_ops, seed, kind) points failed.")
     return pd.DataFrame(rows)
 
 

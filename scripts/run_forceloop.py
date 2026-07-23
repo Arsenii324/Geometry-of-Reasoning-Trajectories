@@ -12,7 +12,7 @@ from __future__ import annotations
 import pandas as pd
 from tqdm import tqdm
 
-from scripts._common import cached, load_model
+from scripts._common import cached, load_model, save_partial
 from traj_geom.metrics.dynamics import steps_to_settle
 from traj_geom.metrics.winding import winding_of
 from traj_geom.shapes.gate import classify_shape
@@ -29,20 +29,30 @@ def compute() -> pd.DataFrame:
 
     model, tok = load_model()
     rows = []
+    n_failed = 0
     for ns in tqdm(NUM_STEPS, desc="num_steps"):
         for n_ops in N_OPS:
             for s in range(N_SEEDS):
-                v = make_variants(n_ops, seed=s)
-                tr = extract_trajectory(model, tok, v["track"], num_steps=ns, seed=0)
-                rows.append(
-                    {
-                        "num_steps": ns,
-                        "n_ops": n_ops,
-                        "winding": abs(winding_of(tr, burn=4)),
-                        "shape": classify_shape(tr),
-                        "steps_settle": steps_to_settle(tr),
-                    }
-                )
+                try:
+                    v = make_variants(n_ops, seed=s)
+                    tr = extract_trajectory(model, tok, v["track"], num_steps=ns, seed=0)
+                    rows.append(
+                        {
+                            "num_steps": ns,
+                            "n_ops": n_ops,
+                            "winding": abs(winding_of(tr, burn=4)),
+                            "shape": classify_shape(tr),
+                            "steps_settle": steps_to_settle(tr),
+                        }
+                    )
+                except Exception as e:  # noqa: BLE001 -- one bad config must not lose
+                    # the rest of this sweep's already-completed rows.
+                    n_failed += 1
+                    print(f"num_steps={ns} n_ops={n_ops} seed={s}: skipping after error: {e!r}")
+                else:
+                    save_partial(rows, "forceloop.csv")
+    if n_failed:
+        print(f"run_forceloop: {n_failed} configs failed and were skipped.")
     return pd.DataFrame(rows)
 
 

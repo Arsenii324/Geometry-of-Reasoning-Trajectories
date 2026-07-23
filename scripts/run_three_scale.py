@@ -18,7 +18,7 @@ from __future__ import annotations
 import pandas as pd
 from tqdm import tqdm
 
-from scripts._common import cached, load_model
+from scripts._common import cached, load_model, save_partial
 from traj_geom.analysis.correlate import spearman
 from traj_geom.metrics.dynamics import steps_to_settle
 from traj_geom.metrics.winding import winding_of
@@ -42,31 +42,48 @@ def compute() -> pd.DataFrame:
 
     total_iters = len(ACTIVE_LENS) * len(NEUTRAL_LENS) * len(IRRELEVANT_LENS) * N_SEEDS
 
+    n_failed = 0
     with tqdm(total=total_iters, desc="3-scale sweeps") as pbar:
         for act in ACTIVE_LENS:
             for neu in NEUTRAL_LENS:
                 for irr in IRRELEVANT_LENS:
                     for s in range(N_SEEDS):
-                        task = make_three_scale_task(
-                            irrelevant_len=irr, neutral_len=neu, active_len=act, seed=s
-                        )
-                        # 64 steps to match the main branch default.
-                        tr = extract_trajectory(model, tok, task["prompt"], num_steps=64, seed=0)
-                        seq_len = int(tok(task["prompt"], return_tensors="pt").input_ids.shape[1])
-
-                        rows.append(
-                            {
-                                "active_len": act,
-                                "neutral_len": neu,
-                                "irrelevant_len": irr,
-                                "seq_len": seq_len,
-                                "winding": abs(winding_of(tr, burn=4)),
-                                "steps_settle": steps_to_settle(tr),
-                                "answer_target": task["answer"],
-                            }
-                        )
+                        try:
+                            task = make_three_scale_task(
+                                irrelevant_len=irr, neutral_len=neu, active_len=act, seed=s
+                            )
+                            # 64 steps to match the main branch default.
+                            tr = extract_trajectory(
+                                model, tok, task["prompt"], num_steps=64, seed=0
+                            )
+                            seq_len = int(
+                                tok(task["prompt"], return_tensors="pt").input_ids.shape[1]
+                            )
+                            rows.append(
+                                {
+                                    "active_len": act,
+                                    "neutral_len": neu,
+                                    "irrelevant_len": irr,
+                                    "seq_len": seq_len,
+                                    "winding": abs(winding_of(tr, burn=4)),
+                                    "steps_settle": steps_to_settle(tr),
+                                    "answer_target": task["answer"],
+                                }
+                            )
+                        except Exception as e:  # noqa: BLE001 -- a single bad config
+                            # (OOM, tokenizer edge case) must not lose the other ~180
+                            # already-completed extractions on a multi-hour GPU sweep.
+                            n_failed += 1
+                            print(
+                                f"\nrun_three_scale: skipping act={act} neu={neu} irr={irr} "
+                                f"seed={s} after error: {e!r}"
+                            )
+                        else:
+                            save_partial(rows, "three_scale.csv")
                         pbar.update(1)
 
+    if n_failed:
+        print(f"run_three_scale: {n_failed}/{total_iters} configs failed and were skipped.")
     return pd.DataFrame(rows)
 
 

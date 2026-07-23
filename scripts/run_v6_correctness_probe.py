@@ -27,58 +27,66 @@ from __future__ import annotations
 import pandas as pd
 from tqdm import tqdm
 
-from scripts._common import cached, load_model
+from scripts._common import cached, load_model, save_partial
 from traj_geom.extraction.hook import extract_trajectory
 from traj_geom.shapes.synthetic import make_counting_task
 
 DEPTHS = (2, 4, 6, 8, 10, 12, 14, 16)
 N_SEEDS = 3
 NUM_STEPS = 64
+_RESULTS_NAME = "v6_correctness_probe.csv"
 
 
 def compute() -> pd.DataFrame:
     """Run the probe across depths/seeds; skip (not crash on) a bad extraction."""
     model, tok = load_model()
     rows = []
+    n_failed = 0
 
     for d in tqdm(DEPTHS, desc="depth"):
         for seed in range(N_SEEDS):
-            task = make_counting_task(n_ops=d, seed=seed)
-            ans = str(task["answer"])
-            # First token of the answer, not the last — the model predicts
-            # the leading token first (e.g. "-" before "2" for "-2"); using
-            # the last token silently ignores the sign.
-            target_token_id = tok.encode(ans, add_special_tokens=False)[0]
-
             try:
+                task = make_counting_task(n_ops=d, seed=seed)
+                ans = str(task["answer"])
+                # First token of the answer, not the last — the model predicts
+                # the leading token first (e.g. "-" before "2" for "-2"); using
+                # the last token silently ignores the sign.
+                ans_ids = tok.encode(ans, add_special_tokens=False)
+                if not ans_ids:
+                    raise ValueError(f"answer {ans!r} tokenized to zero tokens")
+                target_token_id = ans_ids[0]
+
                 out = extract_trajectory(
                     model, tok, task["prompt"], num_steps=NUM_STEPS, seed=0, return_logits=True
                 )
-            except RuntimeError as e:
-                print(f"depth={d} seed={seed}: extraction failed, skipping ({e})")
-                continue
+                logits = out.get("logits")
+                if logits is None:
+                    raise RuntimeError("no logits returned from extract_trajectory")
 
-            logits = out.get("logits")
-            if logits is None:
-                print(f"depth={d} seed={seed}: no logits returned, skipping")
-                continue
+                correct_at_step = -1
+                for step in range(len(logits)):
+                    if logits[step].argmax() == target_token_id:
+                        correct_at_step = step
+                        break
 
-            correct_at_step = -1
-            for step in range(len(logits)):
-                if logits[step].argmax() == target_token_id:
-                    correct_at_step = step
-                    break
+                rows.append(
+                    {"depth": d, "seed": seed, "correct_at_step": correct_at_step, "target": ans}
+                )
+            except Exception as e:  # noqa: BLE001 -- a single bad (depth, seed) must
+                # not lose the rest of this multi-hour GPU sweep's already-completed rows.
+                n_failed += 1
+                print(f"depth={d} seed={seed}: skipping after error: {e!r}")
+            else:
+                save_partial(rows, _RESULTS_NAME)
 
-            rows.append(
-                {"depth": d, "seed": seed, "correct_at_step": correct_at_step, "target": ans}
-            )
-
+    if n_failed:
+        print(f"run_v6_correctness_probe: {n_failed}/{len(DEPTHS) * N_SEEDS} configs failed.")
     return pd.DataFrame(rows)
 
 
 def main() -> None:
     """Report correctness-timing per depth."""
-    df = cached("v6_correctness_probe.csv", compute)
+    df = cached(_RESULTS_NAME, compute)
     print(df.groupby("depth")["correct_at_step"].agg(["mean", lambda s: (s >= 0).mean()]))
 
 

@@ -12,7 +12,7 @@ from __future__ import annotations
 import pandas as pd
 from tqdm import tqdm
 
-from scripts._common import cached, load_model
+from scripts._common import cached, load_model, save_partial
 from traj_geom.metrics.dynamics import contraction_rate, steps_to_settle
 from traj_geom.metrics.winding import winding_of
 from traj_geom.shapes.synthetic import make_counting_task
@@ -43,6 +43,7 @@ def compute() -> pd.DataFrame:
                         "contraction": contraction_rate(tr),
                     }
                 )
+                save_partial(rows, "counting_accuracy.csv")
             except Exception as e:  # noqa: BLE001  (skip flaky generations, keep going)
                 print("skip", n_ops, s, repr(e))
     return pd.DataFrame(rows)
