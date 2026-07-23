@@ -44,6 +44,16 @@ gathered (`origin/pr-real-data` still at commit `900b8b4`, no new PR, repo
 
 ## Reading order, start to finish
 
+0. **`project_plan.md`** (added 2026-07-24) — **the forward document; read this
+   if you want "what next and why."** The authoritative living plan: the
+   proposal-vs-actual gap matrix, the per-hypothesis verdict, the strategic
+   reframing (the negative/audit result as the primary thesis, corroborating
+   Lu et al.), the hypothesis→requirement→confound→control→statistic→
+   interpretation dependency spine, the keystone "efficient batch" extraction,
+   the phased plan (~6–10 GPU-hr ≈ one Kaggle week), the deep holes (per-position
+   spectral radius is undefined; geometry-vs-activations; the three_scale prefix
+   confound), the curator-decision list, and the uncertainty register. Built
+   from a multi-agent grounding+design+adversarial-verify pass, cross-checked.
 1. **This file** — orientation, you're here.
 2. **`narrative.md`** — **the main read; start here if you read only one
    thing.** One linear pass through the whole project in 14 sections:

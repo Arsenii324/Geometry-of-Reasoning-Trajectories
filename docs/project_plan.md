@@ -1,0 +1,611 @@
+# Project plan — Geometry of Reasoning Trajectories in Huginn-3.5B
+
+STATUS: **living plan, first authored 2026-07-24.** This is the authoritative
+"what the project is, where it actually stands vs. its own proposal, and what
+to do next and why" document. It supersedes scattered "further work" notes.
+Built from: the curator's proposal (`files/Smiles26Barannikov Proposal.pdf`),
+the H3 proof + team lit-survey (`files/`), every `docs/*.md`, a multi-agent
+grounding+design+adversarial-verify pass over the real code, and independent
+re-verification of the load-bearing empirical claims. Every non-obvious claim
+is tagged **[verified]** (I re-derived/read it this session), **[grounded]**
+(a subagent read it from source with file:line), or **[unverified]** (a lead
+that needs an external read or curator input before it is trusted).
+
+How this relates to the other docs: `claims_ledger.md` = every quantitative
+claim, tagged; `architecture_state.md` = file/experiment inventory + decisions
+log; `narrative.md` = the single-linear-read explanation; `deep_research_huginn_literature.md`
+= verified external literature. This plan is the **forward** document; those
+are the **backward** ones. When a number here contradicts an older doc, this
+one is newer — but re-verify before citing.
+
+---
+
+## 0. TL;DR
+
+The project set out (proposal, curator = Serguei Barannikov) to test whether
+the **geometry of Huginn-3.5B's latent path** (as it iterates its shared core
+block) reveals what it computes: **H1** three shapes (settle/loop/drift),
+**H2** winding ∝ reasoning depth *when it loops*, **H3** forced contraction
+destroys state-tracking. Goals **G1** (measure shapes at *every token, every
+depth*), **G2** (winding-vs-depth **plus a query–key alignment probe** — the
+curator's own method), **G3** (prove the contraction theorem + measure the
+spectral radius on real Huginn).
+
+**Where we actually are:** the theorem is proved but its *spectral radius has
+never been measured on real Huginn*; the QK probe is **0% done** though it is
+the curator's own method and half of G2; tracing is **answer-token-only**
+(violating G1 and, per the project's own data, looking exactly where the
+phenomenon is least present); and every direct winding-vs-depth test is null
+or a length/position artifact. The honest current verdict: **the project has
+mostly produced rigorous negatives**, and those negatives *independently
+corroborate* a Huginn-specific critique (Lu et al. 2507.02199) via a different
+methodology.
+
+**The plan** is one keystone GPU pass ("the efficient batch": all-token states
++ per-layer Q/K + per-step logits, saved once) that unblocks a fan of no-GPU
+analyses, then a small number of GPU escalations (joint spectral radius on
+real Huginn, QK-alignment), then writeup — total **~6–10 T4 GPU-hours ≈ one
+Kaggle week**. The primary deliverable is reframed as **a rigorous audit**:
+"here is what latent-trajectory geometry does and does not reveal about
+reasoning in a recurrent-depth transformer, with the null models, power
+analysis, and curator-aligned probes (QK, spectral radius, RTD) that prior
+positive-looking claims lacked." A confirmed positive (QK routing predicts
+shape/consistency; count decodable where readout fails) is upside on top.
+
+---
+
+## 1. Hypotheses, goals, and their exact form (from the proposal)
+
+The antecedents and quantifiers matter; most of the project's difficulty comes
+from ignoring them.
+
+- **H1 (A few shapes).** Every token's path is settle / loop / drift,
+  *distinguishable by three instruments*: Lyapunov exponent λ, self-return,
+  persistent-homology signature. → the claim is that **all three agree** and
+  separate the regimes.
+- **H2 (Loops track depth).** **When the path loops**, winding number grows
+  with required reasoning steps. → **conditional on looping**; a winding number
+  on a *settling* path is not a measurement of the object H2 is about.
+- **H3 (Why looping is necessary).** Forced strict contraction (ρ(∂ₕR)<1) ⇒
+  cannot hold a running count ⇒ state-tasks must loop/drift.
+- **G1** = instrument Huginn to record **each token's** path at **every depth
+  t≤r**; chart which shapes appear and when (tests H1).
+- **G2** = winding + loop-persistence vs depth (tests H2) **AND** whether the
+  **query–key routing** relates to which shape arises, linking to
+  logical-consistency scores — **Tulchinskii et al., EMNLP 2025, arXiv:2502.17017,
+  co-authored by Barannikov** [verified from proposal refs]. QK is the
+  proposal's *central mechanistic bet*: "within each repetition the only step
+  that introduces fresh cross-token information is attention… the feed-forward
+  layers then act position-wise" — confirmed true in Huginn's source
+  (attention couples positions; `GatedMLP` is position-wise) [grounded].
+- **G3** = state+prove the contraction theorem (done, `files/contraction_proof.md`,
+  algebra re-verified [verified]) + confirm on a synthetic state-tracking task.
+  Operationally: measure **spectral radius ρ(∂ₕR)** on Huginn.
+
+---
+
+## 2. Proposal-vs-actual gap matrix (the spine)
+
+| Goal / item | Demanded | Done | The shortfall |
+|---|---|---|---|
+| **G1** each token, every depth | all positions | answer token (`index -1`) only; full-depth ✓ | **answer-token-only** — the single largest design flaw (§10.1) |
+| **G2a** winding vs depth | on controllable tasks | measured; **null/negative** | tested on settling paths → not an H2 test (§10.2) |
+| **G2b** QK-alignment probe | curator's own method | **0% — one code comment, no Q/K ever hooked** | the highest-curator-alignment gap (§8.2) |
+| **G3a** contraction theorem | prove | proved + re-verified | — |
+| **G3b** spectral radius ρ on Huginn | measure | **only on a 64-D toy model, never on Huginn** | the number the whole H3 story presupposes (§8.3) |
+| Datasets | ProntoQA-OOD, PARARULE-Plus, MultiLogicEval (d≤6), GSM8K, synthetic w/ Lean/SAT labels | PARARULE d2–5 + synthetic (Python labels) | 3 of 4 reasoning datasets absent; PARARULE N=4 (significance structurally unreachable); no Lean/SAT labels |
+| Metrics | Lyapunov, spectral radius, PH-H1, winding, depth-vs-winding fit, accuracy-vs-depth | winding ✓; PH-H1 degenerate; depth-vs-winding null; **λ and ρ never measured on Huginn**; accuracy measured vs task-length not vs recurrence-depth | see §9 |
+| Baselines | KL-exit, second-diff exit, Yang, Movahedi | **0 of 4 run** | KL/second-diff runnable; Yang/Movahedi are training-time, inference-incompatible |
+
+Per-hypothesis verdict [grounded + verified]:
+- **H1** — covered but under-instrumented: regimes exist (force-loop B4, Fisher
+  p=0.01) but λ is unmeasured, PH is ≈0 by construction, and the dominant
+  "settle" is architecturally guaranteed (Geiping path-independence). The
+  Fisher p=0.01 "cleanest positive result" **has no reproducing code** —
+  `run_forceloop.py` computes no significance test [grounded]. Fix that first.
+- **H2** — **not tested.** Its conditioning event (looping) essentially never
+  occurs on the traced answer token; at Blayney's ~0.02% loop rate, the whole
+  project pooled expects **≈0.3 loops** [grounded]. Every forced test is null
+  (B1, C4) or a length/position artifact (D11, §9). Honest label: *untested,
+  below detection threshold* — not refuted.
+- **H3** — theorem correct; **applied claim architecture-dependent and, per the
+  project's own toy result (A6), likely does not transfer to Huginn's
+  context-reinjection topology**; ρ measurable inference-only but never done.
+
+---
+
+## 3. Strategic reframing — the negative/audit result is the primary thesis
+
+This is a decision the project has been avoiding and the plan makes explicit
+(adversarial completeness critic #2 [grounded]).
+
+Given the base rates — Blayney ~0.02% looping, D11 winding tracks length not
+content, D12 Huginn does not solve counting — **the most probable outcome of
+even the improved experiments is more well-characterized negatives.** The
+strongest, most defensible, most curator-aligned framing is therefore **not**
+"geometry reveals reasoning" but:
+
+> **A rigorous audit of what latent-trajectory geometry does and does not
+> reveal in a recurrent-depth transformer** — with the power analysis,
+> null models, all-position measurement, and curator-aligned probes (QK
+> alignment, spectral radius, RTD) that prior positive-looking winding claims
+> lacked; and an independent, methodologically-different confirmation of
+> Lu et al. (2507.02199).
+
+Why this is strong, not a consolation prize:
+- **Independent corroboration.** Lu et al. (Huginn-specific, logit/coda lens)
+  found "no clear temporal separation or structured latent reasoning pathway
+  across recurrence steps" [verified from critique doc]. This project reaches
+  the same place via *geometry/topology* — convergent evidence from an
+  orthogonal method is a real contribution.
+- **Methodology as contribution.** The claims-ledger discipline, the D10
+  length-confound diagnosis, the winding null model, the FDR correction, the
+  σ_max-vs-ρ precision — catching and fixing over-claims (including a real
+  fabrication and a coda-skip bug mid-project) is a citable audit-methodology
+  result.
+- **Upside preserved.** If QK routing *does* predict shape/consistency, or the
+  count *is* decodable where the readout fails, those are genuine positive
+  discoveries layered on top — the plan pursues them, but does not bet the
+  paper on them.
+
+Pre-commit this fallback thesis now so it is a first-class deliverable, not a
+scramble at the deadline.
+
+---
+
+## 4. The dependency spine: hypothesis → requirement → confound → control → statistic → interpretation
+
+This is the structure the project has been missing — "what stems from what."
+Read each row as: *to license a claim about the hypothesis, you need this
+measurement, which is threatened by this confound, which is neutralized by this
+control, reported with this statistic, and only then does a positive/negative
+mean what it seems to.*
+
+**H1 — shapes exist and separate.**
+- Requires: shape classification at **all token positions**, with all three
+  discriminators (λ, self-return, PH).
+- Confounds: (a) answer-token-only → measures the most-settling position;
+  (b) PCA manufactures apparent rotation from a high-D random walk;
+  (c) single-curve PH ≈ 0 by construction; (d) "settle" is architecturally
+  guaranteed so its dominance is not a discovery.
+- Controls: all-position extraction (§5); `winding_null_test` vs matched
+  random walk; population-cloud / delay-embedding PH (not single-curve);
+  report only the *enriched* (question-token / starved-budget) condition as
+  evidential.
+- Statistic: cluster separability in (λ, self-return, PH) space (silhouette /
+  GMM-BIC); cross-check that the three discriminators *agree*; BH-FDR.
+- Interpretation: CONFIRM iff ≈3 separable clusters **and** the three
+  discriminators agree **and** loops survive the null test. REFUTE/SCOPE iff a
+  continuum, or the discriminators disagree, or only settle exists even when
+  enriched.
+
+**H2 — winding ∝ depth, conditional on looping.**
+- Requires: (1) *induce* loops; (2) among genuine loopers only, winding vs
+  reasoning depth over ≥~10 depth levels.
+- Confounds: (a) the antecedent (looping) never satisfied; (b) length ≡
+  difficulty by construction (D10); (c) **even three_scale's "decoupling" is a
+  prefix-block length/position artifact** (§9, the deep one); (d) sign-arbitrary
+  |winding| on a per-trajectory PCA basis discards H2's *directional* "grows"
+  claim; (e) ~50 uncorrected tests.
+- Controls: starved-budget + question/digit tokens to raise loop rate;
+  winding_null_test as the loop filter; a **constant-total-length,
+  constant-answer-position** task redesign (§9); a **shared global projection**
+  (Geiping-style) for signed winding; BH-FDR; per-level canonical statistic.
+- Statistic: `spearman_by_level` (not per-row) + multivariate rank control;
+  power calc *conditional on genuine-loop rate* (§7).
+- Interpretation: CONFIRM iff winding rises with depth **within the looping
+  subset**, survives length control **and** the null test **and** FDR. REFUTE
+  iff flat/length-tracking within loops. **UNTESTABLE** (a legitimate terminal
+  outcome) iff no genuine loops arise even when enriched — must be stated as
+  such, never dressed as a null.
+
+**H3 — contraction destroys state.**
+- Requires: (1) measure whether Huginn actually contracts (joint σ_max of ∂ₕR);
+  (2) whether the running count survives (linear decodability under contraction).
+- Confounds: (a) σ_max is a **joint** [S·E]² quantity — **not** per-token
+  (§10.3); (b) operator-norm σ_max ≠ spectral radius ρ; (c) count "failure"
+  (D12) partly a multi-digit measurement artifact (§9); (d) a step-index probe
+  is trivially high (state settles monotonically).
+- Controls: report **joint** σ_max only, labeled as operator norm;
+  capped single-token answers; held-out probe R² beating a length-only
+  baseline; a shuffled-dynamics control for any progress probe.
+- Statistic: σ_max distribution across sampled iterates; held-out ridge-probe
+  R² vs length, conditioned on the σ_max regime; logistic task-success ~ σ_max
+  + probe-R² + depth.
+- Interpretation: CONFIRM applied-H3 iff (σ_max<1 ∧ count-undecodable ∧ fails).
+  **SCOPE-OUT** applied-H3 iff (σ_max<1 **yet** count decodable) — the A6 toy
+  prediction: contraction erases only h₀-dependence, and Huginn re-injects
+  context every step, so state carried by `e` survives. Either way the proven
+  theorem stands; only its *Huginn applicability* is at stake.
+
+---
+
+## 5. The keystone — one "efficient batch" extraction pass
+
+The single most important engineering fact [grounded, verified from `hook.py`
+and `raven_modeling_minimal.py`]: **GPU time is dominated by the unrolls, and
+the model already computes every token at every layer.** The hook already
+stores the full `[1, n_tokens, 5280]` tensor per unroll (`hook.py:122`); only
+the *return* (`hook.py:147`) throws all tokens but one away. Therefore:
+
+- **All-token capture is a return-statement change with zero extra GPU** —
+  memory grows ×n_tokens (~68 MB/prompt at 50 tokens, fp32).
+- Hooking `core_block[i].attn.Wqkv` for **Q/K** (G2), reconstructing per-step
+  **logits** via the already-validated `_replicate_coda_head` tail, and
+  evaluating **σ_max** at settled states all add *negligible* marginal GPU —
+  the unrolls are paid once.
+
+So **one instrumented pass (~0.3–1.5 GPU-hr per condition-set) produces the
+substrate for almost every analysis**, then everything downstream is offline.
+This collapses G1 + the QK substrate + the logit substrate + most of the
+rigor work into one Kaggle run.
+
+Concrete deliverable: upgrade `extract_trajectory` to optionally return/persist,
+per prompt, a self-describing record:
+- `latents [num_steps, n_tokens, 5280]` (all positions);
+- `qk` — reduced per-(layer, head, step) alignment scalars (see §8.2 for why
+  raw Q/K cannot be persisted: ~13 GB/prompt);
+- `logits` — top-k + answer-relevant, per step;
+- wired through `Trajectory.save` → `.npz` (today `types.py` has **no live
+  caller**; this makes it the backbone and gives `results/trajectories/*.npy`
+  a reproducible producer at last).
+
+Guardrails the adversarial pass flagged [grounded]:
+- **Persist a *sampled* subset of full `[T,H]` paths, not every position of
+  every prompt** — all-token × all-prompt ≈ 40 GB exceeds Kaggle's ~20 GB
+  output cap (M7). Keep reduced summaries for all; keep full paths for a
+  representative sample (enough for the null test and probes).
+- **The QK statistic must be locked *before* this pass** (reduced online), so
+  reading Tulchinskii 2502.17017 gates the GPU run, not parallel to it (M4).
+
+---
+
+## 6. The plan, phased and dependency-ordered
+
+Compute tags: **[0-GPU]**, **[GPU: n hr]**. Curator-decision points marked **[C]**.
+
+### Phase 0 — no-GPU rigor rescue (do first; gates the rest)
+0.1 **Power analysis + pre-registration** [0-GPU]. Compute E[loops]=p·N per
+   *condition* (answer-token/full-budget ≈ 0.3 loops project-wide; question-token
+   + system prompt ≈ up to 2.8%), the N needed to expect ≥5 genuine-winding
+   loops, and a Monte-Carlo Spearman power curve. Freeze the H1/H2/H3 test
+   families for FDR. **This converts "we found no loops" into the defensible
+   "the sampled condition is ~100× underpowered," and forbids citing any
+   answer-token null as evidence against H2.** [C] sign-off on "≥5 loops" bar.
+0.2 **Apply `benjamini_hochberg` to the existing ~50 correlations** [0-GPU],
+   within pre-registered families. Prime targets: the two unexplained
+   "significant" hits (maxtask winding~n_ops +0.943; dissociation local −0.943)
+   — likely FDR casualties, which *removes an embarrassment*.
+0.3 **Retire the degenerate length-partials** [0-GPU]. Codify that
+   counting/switch/maxtask/count_ones have rank-corr(n_ops, seq_len)=1.0 and
+   *cannot* be length-decoupled by construction (D10); stop reporting their
+   length-controlled numbers. Tighten the `partial_spearman` guard threshold
+   (0.999 currently passes dissociation's 0.9895 — a latent landmine).
+0.4 **Re-analyse three_scale properly, and correct D11** [0-GPU, partly done
+   this session]. The shipped `run_three_scale.py` reports only per-row
+   `spearman()`. The correct multivariate rank control (all three length scales
+   simultaneously) gives [verified by me]: active_len β=+0.130 **p=0.056**,
+   neutral_len −0.023 p=0.74, irrelevant_len −0.488 **p=6.9e-11**. The
+   single-confounder "flip to +0.318" a subagent flagged is an artifact of
+   controlling the *composite* seq_len — it does not survive the correct
+   analysis. **But even this is not a clean H2 test** (§9, the prefix confound):
+   because `irrelevant_len` is a prefix block, irrelevant_len's effect *is* a
+   total-length / answer-position effect. Honest D11: **winding is a
+   length/position artifact, not a reasoning-content signal.** Update the ledger.
+0.5 **Re-measure correctness without the single-token trap** [0-GPU for top-k
+   re-analysis; §Phase-3 for generation]. The multi-digit answer bug (§9) means
+   D12's "4/24, all target=0" is partly a measurement artifact, not proof the
+   model can't count. Re-score saved logits by top-k membership; validate any
+   accuracy claim on single-digit items first.
+
+### Phase 1 — the keystone extraction [GPU: ~1–2 hr]
+1.1 Implement the §5 efficient-batch pass (all-token latents + Q/K + logits +
+   `Trajectory.save`, sampled). Run over: three_scale (redesigned, §9),
+   PARARULE (extend loader to d≤6 [C]), a **starved-budget set (num_steps≈16)**
+   — the only in-project loop-inducing lever — and **question/digit token
+   positions**, not just the answer token. This one pass is the substrate for
+   Phases 2–3.
+
+### Phase 2 — no-GPU analyses on the substrate
+2.1 **`winding_null_test` on every real winding** [0-GPU]. Adjudicate whether
+   any winding — including the 13 force-loop "loops" (|winding|≈0.65, *under one
+   full turn*) — beats a matched-random-walk-through-PCA null. Caveat (M5): the
+   force-loop paths are only ~12 points; treat that adjudication as suggestive,
+   run the definitive test on longer trajectories.
+2.2 **Persistent homology done right** [0-GPU]. Replace single-curve H1 (≈0 by
+   construction) with (i) delay-embedding (Takens/Perea–Harer periodicity) and
+   (ii) population point clouds — each vs a surrogate null. This is **the
+   curator's own TDA specialty**; consider RTD (Barannikov et al. 2201.00058)
+   and persistence landscapes, which the team's own `theoretical_framework.md`
+   names as *better-supported than winding* for exactly this (§14).
+2.3 **All-token shape census** [0-GPU]. Chart shape-fraction by position class
+   (question/digit/content/whitespace/answer) and by budget → satisfies G1;
+   tests the literature's prediction that loops live on non-answer tokens.
+2.4 **Linear count / state probe on saved states** [0-GPU]. Ridge probe
+   `h_t(position) → running count`, held-out R², beating a length-only baseline,
+   swept over positions and layers. **Interpretation is subtle (M2): a positive
+   here SCOPES-OUT applied-H3** (count decodable under contraction = A6 on real
+   Huginn), it does not support it. **Do a step-index probe only with a
+   shuffled-dynamics control** (a settling state trivially encodes t) (L3).
+2.5 **Native exit-criteria vs correctness** [0-GPU for the 2 geometric
+   criteria; logits ride Phase 1]. If a *geometric* criterion (latent-diff,
+   cosine) predicts correctness, that is **direct evidence geometry carries
+   usable information** — a far stronger claim than any length-confounded
+   correlation. Clean negative is citable.
+2.6 **[DEEP] Geometry-vs-activations discriminator test** [0-GPU]. The
+   headline thesis is "geometry reveals what's computed," but a linear probe on
+   the 5280-d state proves the *state* holds the count, not that the *geometric
+   summary* (λ, winding, shape, self-return) is informative. **Test that
+   geometric features *alone* predict task identity / operation / correctness**
+   above chance and above the raw-state probe's leakage. Without this the
+   project proves things about activations while claiming things about geometry.
+   (Adversarial completeness #9 — the deepest conceptual hole.)
+2.7 **[DEEP] Path-independence null on the geometry itself** [rides Phase 1].
+   Huginn is *designed* so random h₀ → the same fixed point. If a path's
+   shape/winding is reproducible across init seeds, it may be an
+   architecture/init artifact, not a computation signal. Measure same-prompt
+   multi-init geometric reproducibility as a validity null. (Completeness #8.)
+
+### Phase 3 — GPU escalations
+3.1 **Joint spectral radius / operator norm on real Huginn** [GPU: ~3–6 hr].
+   Point the shape-fixed `spectral.py` at `core_block_forward`, evaluate at
+   sampled iterates along saved trajectories. **Report the JOINT σ_max only**
+   (the per-token version does not exist, §10.3), labeled *operator norm*, and
+   the along-path finite-time contraction. Closes G3b. Requires: fix
+   `spectral.py`'s 1-D tangent to `randn_like` + a new 2-D known-answer test
+   (M6 — it does *not* run on Huginn's `[S,5280]` state as-is); force SDPA/eager
+   + fp32 (JVP through flex_attention may be unsupported). **[C]/read** Yang
+   2605.26733 before attributing the method to Yang (`spectral.py` cites Miyato).
+3.2 **QK-alignment probe** [rides Phase 1 GPU; analysis 0-GPU]. §8.2 — the
+   curator's method, half of G2. Treat as *research on weight-tied recurrence*,
+   not a reimplementation (§9).
+3.3 **Spectral → state-tracking link** [GPU: ~0.5–1 hr]. Accuracy vs
+   **recurrence depth** (the proposal's axis; current data is vs task-length,
+   the wrong axis) paired with σ_max and probe-decodability → the H3 test.
+3.4 **Activation steering** [GPU: ~0.5–2 hr] — *only if 2.4 finds a decodable
+   direction*. Causal upgrade; compare the probed direction vs random/shuffled.
+
+### Phase 4 — baselines the proposal names [GPU: ~0.5 hr]
+4.1 Run **KL-exit** [Geiping] and **second-difference exit** head-to-head vs the
+   geometric criteria (does geometry beat cheap output-space heuristics?).
+   Position **Yang / Movahedi honestly as training-time, inference-incompatible**
+   context — cited, not run. (Completeness #5.)
+
+### Phase 5 — writeup + figures [0-GPU, non-negotiable]
+5.1 **Implement `analysis/plots.py`** (currently a stub — *no design can
+   produce a single figure until this exists*), freeze a figure list, reserve
+   calendar time. Treat the paper — not the last experiment — as the
+   deliverable. (Completeness #1, the most existential gap.)
+
+**Total GPU ≈ 6–10 T4-hours ≈ one Kaggle week**, DataSphere's 38.6 one-time
+hours held in reserve for a confirmatory spectral run only. Compute ledger §11.
+
+---
+
+## 7. Power & the "untestable" outcome (why this gates everything)
+
+H2's phenomenon may be **undetectable at any affordable N** in the sampled
+condition, and that is a *result*, not a failure. At Blayney's ~0.02%, the
+whole project pooled (~1,300 answer-token trajectories) expects **≈0.3 loops**;
+even the optimistic 2.81% (question tokens + system prompt) is a *ceiling* and
+"non-fixed-point" ⊋ "≥1 full winding turn" — the only real loops in-project
+carry |winding|≈0.65, under one turn [grounded]. So the plan **must**:
+(a) do the power calc *conditional on the genuine-winding-loop rate* before any
+GPU spend on H2; (b) report "H2 untestable-because-underpowered on Huginn" as a
+legitimate terminal outcome; (c) never treat an underpowered null as a
+refutation — the single most likely reviewer-fatal error.
+
+---
+
+## 8. The three curator goals, explicitly (G1/G2/G3)
+
+### 8.1 G1 — all-token, all-depth (the answer-token flaw)
+Answer-token-only is *arguably the central design flaw* [grounded]: it
+instruments the position where settling is strongest by design, where Geiping
+reportedly observes *no* orbits (they are on question/digit tokens), and where
+the project's own cross-branch split shows the depth signal is null (answer
+token) vs. present (content tokens). Fix = §5 keystone (a return-statement
+change; zero extra GPU). No current result should be read as characterizing
+"Huginn's geometry" — only *the answer token's* geometry.
+
+### 8.2 G2b — the QK-alignment probe (curator's own method, 0% done)
+Q/K **are** recoverable: hook `core_block[i].attn.Wqkv`, split by `self.chunks`
+→ `[B,S,55,96]` (55 heads, full MHA), **apply `qk_bias` (config has it ON)
+*then* RoPE** via `apply_rotary_emb_complex_like` to match what attention
+consumes [grounded]. But treat this as **research on weight-tied recurrence,
+not a reimplementation** (adversarial H5 [grounded]):
+- **Weight-tying breaks "consistency heads":** the same 4 layers × 55 heads
+  iterate 32× — a "head" now exists at 32 depths; which (layer, head, depth) is
+  "the" consistency head is a *design decision*, not a port.
+- **`freqs_cis` is a forward arg, not on the module** → a second hook is needed;
+  the probe is not "free plumbing."
+- **~7,000 tests (4×55×32) with honest held-out head selection will most likely
+  yield zero FDR survivors** — pre-register the likely null.
+- **"Logical-consistency scores" do not exist in-project** — Tulchinskii derives
+  them from labeled consistency data. **[C] the curator must supply/approve the
+  labeled dataset and the exact statistic** *before* the GPU pass (M4 gates it).
+  If no consistency dataset can be committed, keep only "QK-alignment vs shape"
+  and drop the consistency link.
+Still: this is the highest-curator-alignment deliverable and nearly free on the
+extraction pass — **promote it to a standalone must-do** regardless of which
+overall lens is chosen (completeness #7).
+
+### 8.3 G3b — spectral radius on real Huginn
+Never measured on Huginn (only a 64-D toy) [grounded]. `spectral.py` is
+self-tested but **only on 1-D maps and measures σ_max (operator norm), not ρ
+(spectral radius)** — a *defensible, stronger* choice for the contraction claim
+(σ_max<1 ⟹ ρ<1, which is what Banach needs), but it must be *labeled* as
+operator norm, not printed as "ρ(∂ₕR)." Three checkpoints before writeup:
+(1) read **Yang 2605.26733** — the README credits it but the code cites Miyato;
+(2) fix the 1-D→`[S,5280]` tangent + re-test (M6); (3) report the **joint**
+value only (§10.3).
+
+---
+
+## 9. Confounds & analytics register (the maths/stats layer)
+
+The controls that must be in place, and the ones the project got wrong.
+
+- **D10 (length ≡ difficulty).** Every synthetic task except three_scale has
+  rank-corr(n_ops, seq_len)=1.0; length-partial is degenerate there. Guarded
+  (raises) [verified]. Fix is task-design, not statistics.
+- **The three_scale *prefix* confound [verified, the deep one].** `irrelevant_len`
+  is a filler block placed *before* the sequence, so it lengthens total context
+  **and pushes the answer token to a later absolute position**. The three scales
+  are rank-orthogonal to *each other* but each is monotone in total seq_len and
+  answer-token position. So D11's headline ("winding tracks irrelevant_len") is
+  consistent with **winding tracking total length / absolute answer position** —
+  exactly the artifact three_scale was built to defeat. **No three_scale number
+  is an H2 test until the task is redesigned:** constant total token count,
+  constant answer position, vary only the active/neutral *ratio*, single-token
+  capped answer. [C] on the redesign.
+- **Joint-not-per-position σ_max [verified].** ∂h_{t+1}/∂h_t is one
+  `[S·E]×[S·E]` causal Jacobian; σ_max is a single number for the whole state.
+  "σ_max at question vs answer tokens" **does not exist** — drop that narrative;
+  report the joint contraction factor as the H3 premise.
+- **Multi-digit answers [grounded].** `make_count_ones`/`make_three_scale`/
+  `make_counting` answers are uncapped (and counting can be negative); a
+  first-token argmax sees only the leading digit/minus. Cap answers to a single
+  token (0–9 or modular) *before* trusting any accuracy/probe-target claim.
+- **"Lyapunov" is a convergence-rate proxy, not λ [grounded].** The implemented
+  quantity is mean log step-norm ratio — it cannot distinguish a slow-settling
+  path from a neutral loop. A true finite-time Lyapunov exponent needs the
+  top-singular-value growth of the *composed* Jacobian (~T× the σ_max cost, not
+  budgeted). Either budget it or demote H1 to two discriminators and concede λ
+  is unmeasured.
+- **Multiple comparisons.** ~48–50 uncorrected correlation tests project-wide;
+  BH built, applied to nothing. Pre-register families — the family boundary
+  *is* outcome-determining (pool the ~7,000 QK tests with the ~50 and all die).
+- **Winding null model.** Built, never applied to real data; blocked until raw
+  paths are saved (§5). Every winding number is currently un-null-tested.
+- **Multivariate control absent.** `partial_spearman` handles one z; three
+  simultaneous length scales need a rank/OLS multiple regression (I implemented
+  a 10-line version this session — fold it into `correlate.py`).
+- **Signed vs |winding|.** H2 claims winding *grows* (directional); the project
+  reports |winding| on a per-trajectory PCA basis, discarding sign. Use a
+  **shared global projection** (Geiping-style 6-D PCA) so sign is meaningful.
+
+---
+
+## 10. Deep problems / open holes (things that may not be solvable as framed)
+
+1. **Answer-token blindness** (§8.1) — a re-run fixes it; cheap.
+2. **H2 may be untestable on Huginn** (§7) — if genuine loops don't arise even
+   when enriched, H2 is untestable, not refuted. Terminal-outcome, must be
+   stated.
+3. **Per-position spectral radius is undefined** (§9) — a narrative all three
+   designs leaned on; unmeasurable. Only the joint value exists.
+4. **Applied-H3 may be scoped out for Huginn's architecture** (§4 H3) — the
+   theorem is proved but contraction erases only h₀-dependence, and Huginn
+   re-injects context every step, so the count may survive contraction (A6
+   predicts this). Confirming it on real Huginn is novel either way — but it
+   means H3-as-stated does not bind for Huginn.
+5. **Geometry vs activations** (§2.6) — the deepest conceptual hole: probing the
+   raw state is standard activation probing, not evidence that the *geometric
+   summary* is informative. Must be tested directly or the paper overclaims.
+6. **Path-independence** (§2.7) — if geometry is reproducible across init, it may
+   be an architecture artifact, not a computation signal.
+7. **Lean/SAT labels unmet** — a curator-scope decision to make and defend, not
+   silently skip.
+
+---
+
+## 11. Compute ledger
+
+| Step | GPU | Platform |
+|---|---|---|
+| Phase 0 (all rigor rescue) | 0 | — |
+| 1.1 keystone extraction (few conditions) | ~1–2 hr | Kaggle |
+| 2.x offline analyses | 0 | — |
+| 3.1 joint σ_max (real, could be 3–6 hr, M6/L6) | ~3–6 hr | Kaggle; DataSphere for a confirmatory 2nd run only |
+| 3.2 QK (rides 1.1) | ~0 marginal | Kaggle |
+| 3.3 accuracy-vs-depth | ~0.5–1 hr | Kaggle |
+| 3.4 steering (conditional) | ~0.5–2 hr | Kaggle |
+| 4.1 baselines | ~0.5 hr | Kaggle |
+| **Total** | **~6–10 hr** | **≈ one Kaggle week (30 hr renewable)** |
+
+Kaggle (renewable ~30 hr/week) is primary; DataSphere (~38.6 hr, one-time,
+non-renewable) is the finite backup — reserve it for the one irreversible
+confirmatory spectral run, not routine work.
+
+---
+
+## 12. Curator-decision points [C]
+
+Consolidated — take these to Barannikov:
+1. **QK statistic + a logical-consistency labeled dataset** (§8.2) — his own
+   method; the exact head/position/aggregation recipe and the label source.
+   Gates the QK GPU pass.
+2. **three_scale / synthetic redesign** (§9) — constant-length, constant-answer-
+   position, single-token answer; and whether to add ProntoQA-OOD / MultiLogicEval
+   (for N≥6 depth levels) and GSM8K.
+3. **Lean/SAT labels** — wire a checker, or de-scope with justification (§10.7).
+4. **σ_max-vs-ρ reporting** (§8.3) — confirm reporting operator norm is
+   acceptable for the H3 contraction claim.
+5. **The "≥5 genuine loops" power bar** and pre-registered FDR families (§7).
+6. **Primary-thesis decision** (§3) — commit the negative/audit framing as the
+   paper's spine, with positives as upside.
+
+---
+
+## 13. Uncertainty register (verify before citing)
+
+- **Yang 2605.26733** never read; `spectral.py` cites Miyato. Do not credit the
+  estimator to Yang until confirmed.
+- **Tulchinskii 2502.17017 exact statistic** never read in-repo — required
+  before any QK code.
+- **Lu et al.'s released code** (`github.com/wenquanlu/huginn-latent-cot`) —
+  diff against `hook.py`/`run_v6_correctness_probe.py` to avoid duplicating
+  their setup and to adopt multi-layer probing (they warn single-layer `[-1]`
+  hooking is method-sensitive).
+- **Blayney's 0.02% / 2.81% digits** — structurally confirmed, digits not
+  independently verified (arXiv fetch truncated before App. C).
+- **"Geiping observes orbits on question/digit tokens"** — project-stated, not
+  independently re-read from Geiping.
+- **Digit tokenization** — `" ".join(digits)` one-token-per-symbol is assumed,
+  never verified for this tokenizer (one no-GPU check).
+- **J-Space / Jacobian-lens** (Anthropic 2026) — real, reuses the validated
+  `_replicate_coda_head` tail; a stretch-goal probe, needs a careful read first.
+
+---
+
+## 14. Architecture-decision record — what narrowed, and why
+
+The team's own `theoretical_framework.md` envisioned a much broader program
+(training a solver, comparing TRM/HRM/URM/Universal-Transformer, RTD/zigzag/
+persistence-landscape TDA, grokking/rank/gradient training-dynamics metrics,
+Sudoku/maze/graph tasks). The project narrowed to **inference-only Huginn** —
+which is correct and matches the *proposal's* stated protocol (the framework was
+one teammate's broader initial survey). Consequences the plan should honor:
+- **Inference-only is the right scope** — it makes the work tractable and the
+  proposal explicitly requires it. Training-based items (Yang, Movahedi,
+  grokking metrics) are out by construction.
+- **But the framework's *better TDA tools* still apply inference-only and are
+  under-used:** the framework itself demotes winding to "auxiliary" and names
+  **persistent homology / RTD / zigzag / persistence landscapes** as
+  better-supported — and **RTD (Barannikov et al. 2201.00058) is another
+  curator-aligned, unused method** that directly fixes the single-curve-H1
+  problem by comparing trajectory *populations*. Fold RTD + persistence
+  landscapes into Phase 2.2 as first-class, not winding-only.
+- **Comparison architectures (URM, Universal Transformer)** are a clean future
+  extension but out of scope for the paper's core Huginn claims.
+
+---
+
+## 15. Immediately actionable (the honest down-payment)
+
+Everything in Phase 0 is doable now, no GPU, and rescues/re-scopes existing
+claims at zero risk. The highest-value first moves, in order:
+1. **BH-FDR across the ~50 existing correlations** (0.2) — recontextualizes
+   every "significant" claim at once.
+2. **Correct D11 in the ledger** with the verified multivariate result + the
+   prefix-confound caveat (0.4) — done analytically this session; just record it.
+3. **Reproduce the force-loop Fisher p=0.01 in code** (§2 verdict) — the
+   "cleanest positive result" currently has no reproducing script.
+4. **Power analysis + pre-registration** (0.1) — the honesty gate.
+5. **Implement the multivariate rank control in `correlate.py`** (§9) — the
+   codebase's one missing statistic.
+
+These five are the concrete next actions if/when work resumes; they need no
+compute and no curator input, and they make the eventual GPU pass (Phase 1)
+land on a rigorous foundation.
