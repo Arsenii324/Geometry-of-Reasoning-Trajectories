@@ -146,7 +146,28 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
-- **2026-07-23 — first real post-fix Kaggle run: `three_scale.csv` real
+- **2026-07-23 (round 2) — the coda-skip fix's self-check caught that the
+  fix was STILL wrong; found and fixed the real bug via direct source
+  re-reading, not guessing.** Relaunched Kaggle for `run_v6_correctness_probe.py`
+  after round 1's bugs were fixed. Result: `validate_logits=True` correctly
+  rejected the reconstruction on **all 24/24** real prompts, consistent
+  ~1.7-1.9 max abs logit diff (not noise — a systematic bug). This is
+  exactly what the self-check exists to catch, and it worked as designed —
+  the earlier "fix" was conceptually right (coda layers needed) but
+  incomplete. Re-fetched `raven_modeling_minimal.py` directly and confirmed
+  verbatim: `iterate_forward()` itself returns `self.transformer.ln_f(x)`
+  — the recurrent loop's own output is already normalized by the time
+  `forward()` receives it and feeds it to coda. `_replicate_coda_head` was
+  feeding the raw, pre-ln_f hooked state straight into coda, skipping this
+  first normalization entirely. Fixed: `ln_f -> coda -> ln_f -> lm_head`,
+  not `coda -> ln_f -> lm_head`. Full detail in `hook.py`'s own GOTCHAS.
+  A second, unrelated bug surfaced in the same run: `main()` crashed with
+  `KeyError: 'depth'` trying to `groupby` an empty DataFrame after every
+  config failed validation — fixed with an explicit empty-result check.
+  Both fixes pushed, a third Kaggle run launched to confirm `validate_logits`
+  actually passes now — genuinely unverified until that returns; this round's
+  `v6_correctness_probe.csv` is empty/invalid, same as before.
+- **2026-07-23 (round 1) — first real post-fix Kaggle run: `three_scale.csv` real
   data landed, `v6_correctness_probe.csv` still didn't run.** Launched a
   T4 Kaggle kernel (avoids the old P100 sm_60 CUDA issue entirely, no
   torch downgrade needed) against the now-fully-fixed

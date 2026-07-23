@@ -87,6 +87,14 @@ def compute() -> pd.DataFrame:
 def main() -> None:
     """Report correctness-timing per depth."""
     df = cached(_RESULTS_NAME, compute)
+    if df.empty:
+        # Every (depth, seed) failed -- compute() already printed why per
+        # config. Report that plainly instead of crashing on an empty
+        # DataFrame with no "depth" column to group by (this is exactly
+        # what happened on real hardware 2026-07-23, before the coda-skip
+        # reconstruction's missing pre-coda ln_f was found and fixed).
+        print(f"{_RESULTS_NAME}: 0 usable rows -- every config failed, nothing to report.")
+        return
     print(df.groupby("depth")["correct_at_step"].agg(["mean", lambda s: (s >= 0).mean()]))
 
 

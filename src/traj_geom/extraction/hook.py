@@ -17,16 +17,24 @@ GOTCHAS (hard-won — keep):
     reproducibility (it is an outlier; downstream winding uses a burn-in).
   * Use `model(...)` (forward), NOT generate.
   * If you ever want per-step LOGITS (return_logits=True): the real per-token
-    readout path is `core_block -> coda (2 layers) -> ln_f -> lm_head`
-    (verified against `RavenForCausalLM.forward()` in
-    `raven_modeling_minimal.py`). Hooking `core_block[-1]` alone gives you the
-    state *before* coda — running `ln_f` then `lm_head` straight on that,
-    skipping coda, produces logits that never correspond to anything the real
-    model predicts, at any step, including the last. `_replicate_coda_head`
-    below runs the actual coda blocks first; `validate_logits=True` (default)
-    checks the reconstruction against a real forward() call's own logits on
-    every use, since this has never been confirmed on real hardware — do not
-    set it False until you've seen it pass at least once on your setup.
+    readout path is `core_block -> ln_f -> coda (2 layers) -> ln_f -> lm_head`
+    (verified against `RavenForCausalLM.forward()`/`iterate_forward()` in
+    `raven_modeling_minimal.py` — `iterate_forward` itself returns
+    `self.transformer.ln_f(x)`, i.e. the recurrent loop's own output is
+    ALREADY normalized before `forward()` ever sees it and feeds it to coda;
+    a SECOND `ln_f` then runs after coda, before `lm_head`). Hooking
+    `core_block[-1]` gives you the *raw, pre-ln_f* state — skip either ln_f
+    call, or skip coda entirely, and the logits never correspond to anything
+    the real model predicts. GOTCHA WITHIN A GOTCHA, hard-won on real
+    hardware 2026-07-23: an earlier version of `_replicate_coda_head` only
+    had the ln_f call *after* coda (matching the visible `forward()` snippet
+    alone) and missed the one implicit inside `iterate_forward`'s own return
+    — `validate_logits=True` correctly caught this (consistent ~1.7-1.9 max
+    abs diff across 24 real prompts, not noise) rather than silently
+    returning wrong numbers, exactly what it's for. `_replicate_coda_head`
+    below now runs both; `validate_logits=True` (default) checks the
+    reconstruction against a real forward() call's own logits on every use —
+    do not set it False until you've seen it pass at least once on your setup.
 """
 
 from __future__ import annotations
@@ -41,19 +49,24 @@ from traj_geom.constants import DEFAULT_NUM_STEPS
 def _replicate_coda_head(
     model: Any, h_state: torch.Tensor, freqs_cis: torch.Tensor
 ) -> torch.Tensor:
-    """Run the model's own coda -> ln_f -> lm_head tail on an intermediate state.
+    """Run the model's own ln_f -> coda -> ln_f -> lm_head tail on an intermediate state.
 
-    Mirrors `RavenForCausalLM.forward()` exactly (block_idx counts down from
-    -1, no attention mask / KV-cache needed for this one-shot, non-generation
-    use). Do not shortcut this by calling `ln_f`/`lm_head` directly on
-    `h_state` — that skips the two coda layers and gives meaningless logits.
+    Mirrors `RavenForCausalLM.forward()` + `iterate_forward()` exactly
+    (block_idx counts down from -1, no attention mask / KV-cache needed for
+    this one-shot, non-generation use). Two ln_f calls, not one: the FIRST
+    is what `iterate_forward()` itself applies before ever returning its
+    result to `forward()` — skip it and you're feeding coda a state it was
+    never actually built to accept, which produced consistent ~1.7-1.9 max
+    abs logit differences on real hardware (2026-07-23) despite otherwise
+    looking structurally right. Do not shortcut this by calling `lm_head`
+    directly on `h_state`, or by running only one of the two `ln_f` calls.
     """
-    x = h_state
+    x = model.transformer.ln_f(h_state)  # iterate_forward's own pre-return normalization
     block_idx = torch.tensor(0, device=torch.device("cpu"), dtype=torch.long)
     for block in model.transformer.coda:
         block_idx -= 1
         x = block(x, freqs_cis, block_idx, None, None)
-    x = model.transformer.ln_f(x)
+    x = model.transformer.ln_f(x)  # forward()'s own post-coda normalization
     return model.lm_head(x)
 
 
