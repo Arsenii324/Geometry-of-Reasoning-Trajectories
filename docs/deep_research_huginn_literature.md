@@ -9,20 +9,22 @@ adversarially confirmed claims (2-3 vote consensus) plus 17 single-source,
 **not yet adversarially verified** claims, out of 117 total claims
 extracted from 24 sources across 5 search angles.
 
-**Two threads were separately closed out cheaply, without the expensive
-multi-agent workflow** — direct `WebFetch` reads instead, after the second
+**Most threads were closed out cheaply after that, without the expensive
+multi-agent workflow** — plain `WebFetch` reads instead, after the second
 quota exhaustion made another full resume look like a bad trade: "J-Space"
-(resolved, see below) and the three 2026-dated arXiv candidates for a
-"later Huginn analysis paper" (read directly, none of them turned out to
-be that — see below). This is the cheaper pattern to prefer over
-relaunching the full workflow for narrow, single-source lookups.
+(resolved), the three 2026-dated arXiv candidates for a "later Huginn
+analysis paper" (read directly, none of them turned out to be that), Lu et
+al. 2507.02199 (resolved — the single most relevant related-work paper
+this project has), Merrill/Grazzi re-verification (resolved, with a scope
+correction), Anthropic circuit-tracing's actual architecture coverage
+(resolved), and Huginn's own test-time-compute scaling numbers (resolved,
+real GSM8K/HellaSwag/ARC-C figures). This is the cheaper pattern to prefer
+over relaunching the full workflow for a narrow, single-source lookup.
 
 **Still open, would need the full workflow (or more targeted manual
-reads) to close**: Lu et al. 2507.02199 full read, Merrill/Grazzi
-re-verification against this project's specific attributed claims, the
-ACT/PonderNet/DEQ mechanistic details (real sources found, zero
-adversarial passes), whether circuit-tracing has been applied to any
-recurrent-depth architecture, and the winding-number null-model prior-art
+reads) to close**: the ACT/PonderNet/DEQ mechanistic details (real
+sources found, zero adversarial passes — see below, still useful as-is
+despite being unverified) and the winding-number null-model prior-art
 search (never even reached — see below).
 
 **To resume the full workflow for those remaining threads** (partially
@@ -84,16 +86,31 @@ Do not put any of these in a paper draft without independent confirmation.
   `"poisson-lognormal-filling"`, one of ~15 alternative schemes present in
   source but not necessarily used for the released checkpoint.
 
-**Test-time scaling** (thread 2 — the comparison against this project's
-own steps-to-settle findings, not yet actually done):
-- Model card claim: benchmark accuracy improves with more unrolling up to
-  roughly **num_steps=64**, flat beyond that. If true and verified, this
-  is directly comparable to this project's own `DEFAULT_NUM_STEPS=64`
-  choice — worth checking whether that constant was chosen for this exact
-  reason or independently landed on the same number.
-- Mean successive-step KL divergence drops **~4 orders of magnitude
-  between loop 2 and loop 16** — a concrete, checkable number against this
-  project's own `steps_to_settle` distributions if it holds up.
+**Test-time scaling — RESOLVED (2026-07-23, direct read of the full paper
+text), real numbers, directly comparable to this project's own data**:
+- **GSM8K (math reasoning)**: r=4 → ~9-10% accuracy; r=32 → ~28-38%
+  (without/with system prompt); r=64 with weight averaging → 38.6% strict
+  / 47.2% flexible. Large, real, monotone-ish gains from more recurrence
+  on a genuinely hard reasoning task.
+- **HellaSwag (commonsense)**: saturates fast — "only needs 8 iterations
+  to achieve near peak performance" (their Figure 7).
+- **ARC-C**: saturation point is **context-dependent** — without few-shot
+  examples, saturates around 8-12 iterations; with 25-50 few-shot
+  examples, saturation shifts to around 32 iterations (their Figure 9).
+- **Their own stated general principle** (direct quote): *"saturation is
+  highly task-dependent, on easier tasks the model saturates quicker,
+  whereas it benefits from more compute on others."* This is the paper's
+  own primary-source confirmation of task-dependent inference-time
+  saturation — not the same claim as training-time depth-calibration
+  (still unresolved), but real, concrete, and the closest thing to direct
+  evidence for "the model's compute usage responds to difficulty" this
+  research pass found. Directly comparable target for this project's own
+  `steps_to_settle` distributions once real GPU data exists — do these
+  project's own per-task saturation points land in the same 8-32 range,
+  and does easy-vs-hard task ordering match theirs?
+- Still unverified, not reached in this read: "mean successive-step KL
+  divergence drops ~4 orders of magnitude between loop 2 and loop 16" —
+  plausible, not yet confirmed against this specific source.
 - **UPDATE 2026-07-23, now confirmed (single direct read, not the full 3-vote
   adversarial pass, but a real quote from the actual abstract) — with an
   important scope correction**: the "38% fewer loops" claim is real, source
@@ -137,21 +154,102 @@ completed):
   informally three turns ago in this conversation is consistent with these
   unverified claims but not yet backed by a completed adversarial pass.
 
+## Lu et al. 2507.02199 — RESOLVED (2026-07-23, direct read), the single most important related-work citation this project has
+
+Full title recovered: **"Latent Chain-of-Thought? Decoding the
+Depth-Recurrent Transformer"**. Not a generic critique — **it analyzes
+Huginn-3.5B specifically**, the exact model this project studies, with
+methodology strikingly close to this project's own V6 correctness probe:
+
+- **Methods**: logit lens, "**Coda Lens**" probing, and **rank-trajectory
+  tracking of result tokens on arithmetic tasks**. "Coda Lens" is almost
+  certainly the published name for exactly what `hook.py`'s
+  `_replicate_coda_head` does (run the real coda→ln_f→lm_head tail on an
+  intermediate recurrent state) — worth citing precisely and checking
+  whether this project's implementation matches their definition before
+  claiming novelty for that technique.
+- **Finding 1**: "limited evidence of interpretable latent CoT by tracking
+  rank trajectories of final and intermediate result tokens" — i.e. they
+  ran essentially this project's own V6 probe design (does the correct
+  answer's rank/argmax emerge coherently across recurrent steps) and got a
+  **negative-leaning** result.
+- **Finding 2**: "significant probing inconsistencies across recurrent
+  blocks, where the interpretability of hidden states depends heavily on
+  both the layer index and the decoding method" — a direct, specific
+  warning that this project's own choice of *where* to hook
+  (`core_block[-1]`) and *how* to decode (coda vs. skipping it — the exact
+  bug fixed earlier this session) materially changes what you see. Their
+  finding that method choice matters this much is independent support for
+  having fixed the coda-skip bug rather than leaving it as "probably fine."
+- **Finding 3**: "increasing recurrence depth yields only marginal gains
+  and falls well short of models that explicitly externalize reasoning
+  steps" — a genuinely skeptical, negative-leaning verdict on whether
+  Huginn's recurrence depth buys much reasoning benefit at all. This
+  should be engaged with directly in this project's writeup, not
+  footnoted — if this project's own (not yet GPU-verified) findings turn
+  out more positive, that disagreement is itself the interesting result;
+  if they agree, that's independent corroboration.
+
+Code available: `github.com/wenquanlu/huginn-latent-cot` — worth diffing
+against this project's own `extraction/hook.py` and
+`run_v6_correctness_probe.py` before the GPU rerun, both to avoid
+duplicating their exact setup uncredited and to check whether their
+"probing inconsistency" finding suggests this project's own hook location/
+decoding choice needs a robustness check across multiple layers, not just
+`core_block[-1]`.
+
+## Merrill et al. 2404.08819 / Grazzi et al. 2411.12537 — RESOLVED (2026-07-23, direct reads), with a scope correction worth noting
+
+Both real, both confirmed, both **about a different architecture family
+than Huginn** — worth being precise about this before citing them again.
+
+- **Merrill et al.**: claims SSMs (Mamba-style) *and* transformers share
+  the same TC⁰ expressiveness ceiling — "SSMs cannot express computation
+  outside the complexity class TC⁰... cannot solve simple state-tracking
+  problems like permutation composition," and "the 'state' in an SSM is an
+  illusion: SSMs have similar expressiveness limitations to non-recurrent
+  models like transformers." This is about **SSMs vs. standard
+  transformers**, not specifically about weight-tied depth-recurrence —
+  the excerpt available doesn't distinguish recurrent-over-depth from
+  recurrent-over-time architectures at all.
+- **Grazzi et al.**: narrower still — specifically about **linear RNNs**
+  (Mamba, DeltaNet). Diagonal state-transition matrices restricted to
+  `[0,1]` can't solve parity; allowing negative eigenvalues (range
+  `[-1,1]`) fixes it and improves state-tracking generally.
+- **Scope correction for this project's own prior citation**: this
+  project's H3 toy-model `FINDINGS.md` cites both papers alongside its
+  own recurrent-over-time vs. recurrent-over-depth comparison. That
+  comparison's own two categories (classic Elman RNN vs. depth-recurrent
+  weight-tied network) are neither of these papers' actual subject (SSMs /
+  linear RNNs, a third family). The toy-model argument doesn't depend on
+  Merrill/Grazzi being about the same architecture — but citing them as if
+  directly supporting evidence for the depth-recurrent case specifically
+  would be imprecise. Treat them as adjacent theoretical context (the
+  general principle that "recurrent" doesn't automatically mean
+  "state-tracking-capable"), not as findings about Huginn's architecture
+  class.
+
+## Anthropic circuit-tracing — RESOLVED (2026-07-23, direct read): confirms it hasn't been applied to recurrent-depth architectures
+
+Direct read of `transformer-circuits.pub/2025/attribution-graphs/biology.html`
+confirms: applied only to **Claude 3.5 Haiku** (a standard, non-recurrent
+production transformer), plus a smaller comparison model and a finetuned
+"secret goal" variant — all standard architectures. The methodology
+description is built around "transformer-based language models" with
+ordinary MLP/attention layers processing token sequences once; **no
+mention of recurrent-depth, weight-tied, or iteratively-looped
+architectures anywhere**. Also worth noting for calibrating ambition here:
+the paper itself says only "approximately one quarter of the prompts"
+yielded satisfying circuit-level insight, and frames results as existence
+proofs, not comprehensive coverage — even on the architecture it was built
+for. This directly confirms the assessment made earlier in this
+conversation (circuit-tracing is realistically out of scope for this
+project's size/timeline) with actual evidence rather than just informed
+guessing: nobody has done the hard infrastructure work of applying this to
+a recurrent-depth model yet, so there's nothing to borrow.
+
 ## Threads with sources found but no claims extracted yet before quota died
 
-- **Lu et al. 2507.02199** (thread 4) — real paper, confirmed to exist
-  (html + pdf both found), plus a related repo
-  (`github.com/wenquanlu/huginn-latent-cot`) and a blog post
-  (`blog.bluedot.org/p/interpreting-latent-reasoning-in`) — genuinely
-  promising leads not yet read.
-- **Merrill et al. 2404.08819 / Grazzi et al. 2411.12537** (thread 5) —
-  both confirmed real (matches what this project already cites), not yet
-  re-verified against the specific claims this project attributes to them.
-- **Anthropic circuit-tracing** (thread 7) —
-  `transformer-circuits.pub/2025/attribution-graphs/{biology,methods}.html`
-  found (the real "On the Biology of a Large Language Model" work), but
-  whether it's been applied to any recurrent-depth/weight-tied
-  architecture specifically was never checked.
 - **Null-model prior art for winding number** (thread 8) — no sources
   found at all. The 5-search-angle scoping phase appears to have folded
   this into another angle or dropped it; still fully open. (This session
