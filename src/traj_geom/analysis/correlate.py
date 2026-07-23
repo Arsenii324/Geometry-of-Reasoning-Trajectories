@@ -2,12 +2,24 @@
 
 OWNER: Data+Analysis
 STATUS: implemented (from notebooks/01_mvp_h2.ipynb, spearman / partial_spearman).
+    benjamini_hochberg added 2026-07-23.
 TASK: rank correlation of a metric vs a task variable, plus a partial correlation
-    that regresses out a confounder z (prompt length L) on ranks.
-I/O: spearman(x, y) -> (rho, p) ; partial_spearman(x, y, z) -> (rho, p).
+    that regresses out a confounder z (prompt length L) on ranks, plus a
+    multiple-comparisons correction for when many such tests are run together.
+I/O: spearman(x, y) -> (rho, p) ; partial_spearman(x, y, z) -> (rho, p) ;
+    benjamini_hochberg(p_values) -> (q_values, significant).
 
 NOTE: partial correlation is done on ranks (rankdata) with a linear residualisation
     against z — scipy only, no pingouin needed.
+
+NOTE on benjamini_hochberg: this project runs many correlation tests across
+    scripts/tasks/metrics/length-scales with no multiple-comparisons
+    correction applied anywhere as of 2026-07-23 -- a real gap, flagged but
+    not yet closed. This function is the tool, provided uncorrected so far
+    because deciding what counts as one "family" of tests (per-script?
+    per-experiment? project-wide, for the paper's actual claims?) is an
+    interpretive call belonging to whoever writes those claims up, not
+    something to impose unilaterally by retrofitting every script's output.
 """
 
 from __future__ import annotations
@@ -136,3 +148,39 @@ def partial_spearman(
     ry = yr - np.polyval(np.polyfit(zr, yr, 1), zr)
     r = spearmanr(rx, ry)
     return float(r[0]), float(r[1])
+
+
+def benjamini_hochberg(
+    p_values: np.ndarray, alpha: float = 0.05
+) -> tuple[np.ndarray, np.ndarray]:
+    """Benjamini-Hochberg FDR correction for a family of hypothesis tests.
+
+    Standard step-up procedure: sort ascending, find the largest rank k with
+    p_(k) <= (k/m)*alpha, reject all i<=k. Adjusted p-values (q-values) are
+    the smallest FDR at which each hypothesis would be rejected, computed as
+    a monotone (enforced by cumulative min from the largest p-value down)
+    running min of p_(i)*m/i.
+
+    Args:
+        p_values: Raw p-values from one family of tests, shape [N]. Choosing
+            what counts as one "family" (all tests in one script? one
+            experiment? every correlation in the paper?) is the caller's
+            call, not this function's.
+        alpha: Target false discovery rate.
+
+    Returns:
+        ``(q_values, significant)`` — adjusted p-values in the original
+        input order, and a boolean array of which are significant at
+        ``alpha`` after correction (``q <= alpha``).
+    """
+    p = np.asarray(p_values, dtype=float)
+    m = len(p)
+    order = np.argsort(p)
+    ranked = p[order]
+    q_ranked = ranked * m / np.arange(1, m + 1)
+    q_ranked = np.minimum.accumulate(q_ranked[::-1])[::-1]  # enforce monotonicity
+    q_ranked = np.clip(q_ranked, 0.0, 1.0)
+
+    q = np.empty(m)
+    q[order] = q_ranked
+    return q, q <= alpha

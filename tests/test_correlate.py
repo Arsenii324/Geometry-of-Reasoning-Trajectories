@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from traj_geom.analysis.correlate import partial_spearman, spearman_by_level
+from traj_geom.analysis.correlate import benjamini_hochberg, partial_spearman, spearman_by_level
 
 
 def _levels_df(levels: tuple[int, ...], slope: float) -> pd.DataFrame:
@@ -60,3 +60,33 @@ def test_partial_spearman_works_for_genuinely_independent_confounder() -> None:
     rho, p = partial_spearman(y, x, z)
     assert rho == pytest.approx(1.0, abs=0.05)
     assert 0.0 <= p <= 1.0
+
+
+def test_benjamini_hochberg_canonical_example() -> None:
+    """Hand-verifiable worked example (the standard BH illustration): of 10
+    p-values, only the smallest clears the step-up threshold at alpha=0.05.
+
+    Thresholds are (i/10)*0.05 for i=1..10: [.005,.01,.015,.02,.025,.03,
+    .035,.04,.045,.05]. Only p_(1)=0.005 <= 0.005 holds; every later i fails
+    its own threshold, so the step-up procedure stops at k=1.
+    """
+    p = np.array([0.005, 0.011, 0.02, 0.04, 0.13, 0.25, 0.5, 0.7, 0.9, 0.99])
+    q, sig = benjamini_hochberg(p, alpha=0.05)
+    assert sig.tolist() == [True, False, False, False, False, False, False, False, False, False]
+    assert q[0] == pytest.approx(0.05)  # q_(1) = p_(1) * 10 / 1
+    assert np.all(np.diff(q[np.argsort(p)]) >= -1e-12)  # q must be monotone in sorted-p order
+
+
+def test_benjamini_hochberg_all_significant_boundary() -> None:
+    """p_(i) = (i/m)*alpha exactly for every i -> every q collapses to alpha."""
+    p = np.array([0.01, 0.02, 0.03, 0.04, 0.05])
+    q, sig = benjamini_hochberg(p, alpha=0.05)
+    assert q == pytest.approx([0.05] * 5)
+    assert sig.all()
+
+
+def test_benjamini_hochberg_none_significant() -> None:
+    """All p-values far above alpha -> nothing survives correction."""
+    p = np.array([0.2, 0.4, 0.6, 0.8])
+    q, sig = benjamini_hochberg(p, alpha=0.05)
+    assert not sig.any()
