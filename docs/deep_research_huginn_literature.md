@@ -22,11 +22,9 @@ real GSM8K/HellaSwag/ARC-C figures). This is the cheaper pattern to prefer
 over relaunching the full workflow for a narrow, single-source lookup.
 
 **Still genuinely open**: ACT/PonderNet's mechanism-level details beyond
-their high-level premise (DEQ is fully confirmed; see below), and the
-winding-number null-model prior-art search — this last one was never even
-reached by the original 5-search-angle scoping and would need a fresh,
-targeted search, not a resume (the current script's angles don't cover
-it). Only these two remain from the original 9 threads.
+their high-level premise (DEQ is fully confirmed; see below). The
+winding-number null-model search below was run via targeted `WebSearch` +
+direct reads and turned up adjacent contemporary work, but no direct hit.
 
 **To resume the full workflow for those remaining threads** (partially
 free — the 52 already-cached agents replay instantly; still real new cost
@@ -258,15 +256,50 @@ project's size/timeline) with actual evidence rather than just informed
 guessing: nobody has done the hard infrastructure work of applying this to
 a recurrent-depth model yet, so there's nothing to borrow.
 
-## Threads with sources found but no claims extracted yet before quota died
+## Null-model prior art for winding number — searched directly (2026-07-23), no direct hit, but a real adjacent-field find
 
-- **Null-model prior art for winding number** (thread 8) — no sources
-  found at all. The 5-search-angle scoping phase appears to have folded
-  this into another angle or dropped it; still fully open. (This session
-  separately built and shipped a first-principles null-model check —
-  `winding_null_test` in `src/traj_geom/metrics/winding.py` — without
-  waiting on this literature search; worth reconciling once/if prior art
-  turns up.)
+Two targeted `WebSearch` queries (not the expensive workflow) plus direct
+reads of the two most promising results. No paper doing exactly "winding
+number / persistent homology + a random-walk or surrogate-data null model
+on an LLM's hidden-state trajectory" turned up. What did turn up: an
+active, contemporary (April–June 2026) research area studying geometric
+structure in LLM latent reasoning trajectories generally, none of it using
+winding number specifically or targeting recurrent-depth/Huginn:
+
+- **"Invariant Reasoning Directions in Latent Trajectories of Language
+  Models"** (arXiv 2606.29164): finds that contrastive refinement signals
+  between stronger/weaker reasoning trajectories have "a highly
+  concentrated low-rank structure" — a small number of latent *directions*
+  (not winding/rotation) explain most of the variation. Introduces TILR, a
+  training-free intervention constraining latent updates to this subspace;
+  improved paraphrase-consistency ~10%, cut trajectory variance up to 50%
+  without hurting accuracy. Six unspecified reasoning benchmarks, no
+  mention of Huginn or recurrent-depth architectures, no discussion of
+  task-difficulty scaling.
+- **"Geometric Latent Reasoning Induces Shorter Generations in LLMs"**
+  (arXiv 2606.02248): a different geometric approach — reasoning as a
+  learned continuous path through *token-embedding* space (a trained
+  "transition head" predicting direction updates, anchored to real CoT
+  traces), not a passive observation of a model's own internal recurrent
+  dynamics the way this project's winding number is. Tested on Qwen3
+  (standard transformer), not Huginn. Finding: this continuous-path
+  mechanism lets the model reach correct answers in substantially fewer
+  generation steps.
+
+**Read on this**: neither is prior art for this project's specific
+method (winding number as a passive geometric probe of Huginn's own
+recurrent-unroll dynamics, validated against a random-walk surrogate) —
+they're adjacent work using different geometric techniques (low-rank
+directions; a trained continuous path) on different architectures
+(standard transformers, not recurrent-depth). Their existence is genuine,
+useful field-level context — "geometric structure in latent reasoning
+trajectories carries real signal" is an active, validated finding
+elsewhere in the literature, by different means — but they don't answer
+the specific null-model question. This project's own `winding_null_test`
+(`src/traj_geom/metrics/winding.py`, built earlier this session,
+independent of this search) appears to be a genuinely novel check, not a
+reinvention of an existing wheel — though absence of evidence from two
+searches isn't proof nothing exists, just the best this pass could find.
 
 ## "J-Space" — RESOLVED (2026-07-23, direct read of transformer-circuits.pub/2026/workspace/)
 
