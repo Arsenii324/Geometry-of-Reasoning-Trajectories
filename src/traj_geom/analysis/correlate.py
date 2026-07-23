@@ -84,22 +84,54 @@ def spearman(x: np.ndarray, y: np.ndarray) -> tuple[float, float]:
 
 
 def partial_spearman(
-    x: np.ndarray, y: np.ndarray, z: np.ndarray
+    x: np.ndarray, y: np.ndarray, z: np.ndarray, collinearity_thresh: float = 0.999
 ) -> tuple[float, float]:
     """Partial Spearman correlation of x and y, controlling for z.
 
     Ranks x, y, z; linearly residualises the x- and y-ranks against the z-rank;
     then correlates the residuals.
 
+    GUARD (added 2026-07-23, see claims_ledger.md D10): if x or y is
+    (near-)perfectly rank-collinear with z -- true of y=n_ops against
+    z=seq_len for every synthetic task in this project except
+    make_three_scale_task -- residualising that variable against z leaves
+    ~0 real variance in its residual. The correlation below would then be
+    computed almost entirely from polyfit's floating-point rounding error,
+    not signal: not a crash, just an ordinary-looking float driven by
+    noise. Raises instead of silently returning that. Callers that expect
+    this on known-degenerate data (run_counting.py, run_switch.py,
+    run_maxtask.py, called as partial_spearman(metric, n_ops, seq_len))
+    must catch it.
+
     Args:
         x: First variable, shape [N].
         y: Second variable, shape [N].
         z: Confounder to control for (e.g. prompt length L), shape [N].
+        collinearity_thresh: raise if |Spearman(x, z)| or |Spearman(y, z)|
+            exceeds this.
 
     Returns:
         ``(rho, p_value)`` of the z-controlled correlation.
+
+    Raises:
+        ValueError: if x or y is too rank-collinear with z for
+            residualisation to leave any real variance to correlate.
     """
     xr, yr, zr = rankdata(x), rankdata(y), rankdata(z)
+
+    rho_xz = float(spearmanr(xr, zr)[0])
+    rho_yz = float(spearmanr(yr, zr)[0])
+    culprit, rho_bad = ("x", rho_xz) if abs(rho_xz) >= abs(rho_yz) else ("y", rho_yz)
+    if abs(rho_bad) > collinearity_thresh:
+        raise ValueError(
+            f"partial_spearman: {culprit} is rank-collinear with z "
+            f"(rho={rho_bad:.6f}, threshold={collinearity_thresh}) -- "
+            f"residualising {culprit} against z would leave no real variance "
+            "to correlate; any rho returned would be floating-point noise, "
+            "not signal. This confounder cannot be partialled out with this "
+            "data (see claims_ledger.md D10)."
+        )
+
     rx = xr - np.polyval(np.polyfit(zr, xr, 1), zr)
     ry = yr - np.polyval(np.polyfit(zr, yr, 1), zr)
     r = spearmanr(rx, ry)

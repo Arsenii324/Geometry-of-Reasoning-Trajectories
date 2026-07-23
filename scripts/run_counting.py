@@ -54,10 +54,13 @@ def main() -> None:
     # Secondary (per-row):
     print("|winding|~n_ops [per-row]:", spearman(cdf["n_ops"], cdf["winding"]))
     print("steps~n_ops    [per-row]:", spearman(cdf["n_ops"], cdf["steps_settle"]))
-    print(
-        "|winding|~n_ops [per-row, partial|L]:",
-        partial_spearman(cdf["winding"], cdf["n_ops"], cdf["seq_len"]),
-    )
+    try:
+        print(
+            "|winding|~n_ops [per-row, partial|L]:",
+            partial_spearman(cdf["winding"], cdf["n_ops"], cdf["seq_len"]),
+        )
+    except ValueError as e:
+        print(f"|winding|~n_ops [per-row, partial|L]: skipped -- {e}")
 
 
 if __name__ == "__main__":

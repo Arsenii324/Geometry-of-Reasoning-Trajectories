@@ -65,14 +65,14 @@ def main() -> None:
     # Secondary (per-row):
     print("switch | steps~n_ops   [per-row]:", spearman(sw["n_ops"], sw["steps_settle"]))
     print("switch | winding~n_ops [per-row]:", spearman(sw["n_ops"], sw["winding"]))
-    print(
-        "switch | steps~n_ops   [per-row, partial|L]:",
-        partial_spearman(sw["steps_settle"], sw["n_ops"], sw["seq_len"]),
-    )
-    print(
-        "switch | winding~n_ops [per-row, partial|L]:",
-        partial_spearman(sw["winding"], sw["n_ops"], sw["seq_len"]),
-    )
+    for label, col in (("steps", "steps_settle"), ("winding", "winding")):
+        try:
+            print(
+                f"switch | {label}~n_ops [per-row, partial|L]:",
+                partial_spearman(sw[col], sw["n_ops"], sw["seq_len"]),
+            )
+        except ValueError as e:
+            print(f"switch | {label}~n_ops [per-row, partial|L]: skipped -- {e}")
 
 
 if __name__ == "__main__":

@@ -66,14 +66,14 @@ def main() -> None:
     # Secondary (per-row):
     print("maxtask | steps~n_ops   [per-row]:", spearman(mx["n_ops"], mx["steps_settle"]))
     print("maxtask | winding~n_ops [per-row]:", spearman(mx["n_ops"], mx["winding"]))
-    print(
-        "maxtask | steps~n_ops   [per-row, partial|L]:",
-        partial_spearman(mx["steps_settle"], mx["n_ops"], mx["seq_len"]),
-    )
-    print(
-        "maxtask | winding~n_ops [per-row, partial|L]:",
-        partial_spearman(mx["winding"], mx["n_ops"], mx["seq_len"]),
-    )
+    for label, col in (("steps", "steps_settle"), ("winding", "winding")):
+        try:
+            print(
+                f"maxtask | {label}~n_ops [per-row, partial|L]:",
+                partial_spearman(mx[col], mx["n_ops"], mx["seq_len"]),
+            )
+        except ValueError as e:
+            print(f"maxtask | {label}~n_ops [per-row, partial|L]: skipped -- {e}")
 
 
 if __name__ == "__main__":
