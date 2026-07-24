@@ -121,6 +121,13 @@ _REVIEWED_NON_SUBSTANTIVE_CHANGES: dict[str, str] = {
         "rows still reflect what's computed; only how they're summarised "
         "changed. Verified by re-running main() against the unchanged CSV."
     ),
+    "power_curve.csv": (
+        "2026-07-24 (0accc95): run_power_analysis.py's BLAYNEY_RATE_OPTIMISTIC "
+        "correction (2.81% -> 0.14%, see claims_ledger.md B9) only touches the "
+        "loop-rate functions -- spearman_power_curve() (this CSV's producer) "
+        "is byte-identical, confirmed by the file being byte-identical after "
+        "re-running with the fixed script."
+    ),
 }
 
 

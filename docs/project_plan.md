@@ -358,6 +358,14 @@ Compute tags: **[0-GPU]**, **[GPU: n hr]**. Curator-decision points marked **[C]
    shape/winding is reproducible across init seeds, it may be an
    architecture/init artifact, not a computation signal. Measure same-prompt
    multi-init geometric reproducibility as a validity null. (Completeness #8.)
+   **Confirmed 2026-07-24 as a live concern, not hypothetical, by reading
+   Geiping et al. directly (§13)**: their own paper states "the same
+   orbital patterns, fixed points, or directional drifts emerge regardless
+   of initialization" — this project's own `path_independence` metric
+   already exists (`dissoc_multiinit.csv`'s `lyap` column) but has never
+   been read as a validity null on the *shape itself*, only reported as a
+   secondary stat. Raises the credence that this test matters, not just
+   that it's thorough to include.
 
 ### Phase 3 — GPU escalations
 3.1 **Joint spectral radius / operator norm on real Huginn** [GPU: ~3–6 hr].
@@ -701,8 +709,27 @@ Consolidated — take these to Barannikov:
   and their Algorithm 1 (FFT-based orbit detection, τ=0.05, ρ=0.9) is a
   second, independently-designed classifier worth comparing against
   `classify_shape`.
-- **"Geiping observes orbits on question/digit tokens"** — project-stated, not
-  independently re-read from Geiping.
+- **RESOLVED 2026-07-24 — "Geiping observes orbits on question/digit
+  tokens"**, read directly from the downloaded PDF (arXiv 2502.05171,
+  §"Iteration Trajectories", Figures 11-12). **Partially right, and the
+  imprecise part matters.** Confirmed: digit tokens do show orbits — their
+  own worked example is literally the token `" 3"` in a GSM8K problem
+  ("the state of the token quickly falls into an orbit pattern in all
+  three pairs of PCA directions"). But "question tokens" is not quite what
+  they say — that phrase actually describes a *different* figure (Fig. 11,
+  norm-distance-to-fixed-point): "key parts of the question, and the start
+  of the model response, are 'deliberated' much more in latent space" —
+  slower *convergence*, not necessarily orbiting. The orbit examples they
+  give beyond digits are specific structural/deliberation words — `"makes"`,
+  `"thinks"` — "tokens... that determine the structure of the response,"
+  not question tokens as a class. **Correction for this project's own
+  usage: say "orbits on digit/arithmetic tokens and certain structural
+  words; deliberation (slow convergence, not necessarily orbiting) is
+  stronger on question tokens" — two distinct claims from two different
+  figures, previously conflated into one.** Separately, their paper states
+  path-independence directly (quoted in §2.7 above) — real, primary-source
+  support for treating the geometry-vs-activations/path-independence
+  concern as live, not merely hypothetical.
 - **RESOLVED 2026-07-24 — Digit tokenization.** Loaded the real tokenizer
   (CPU, no GPU needed) and checked directly: `" ".join(digits)` gives exactly
   one token per digit for both `'0'`/`'1'` sequences (`make_count_ones_task`'s
