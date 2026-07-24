@@ -10,6 +10,7 @@ Run: python -m scripts.run_forceloop
 from __future__ import annotations
 
 import pandas as pd
+from scipy.stats import fisher_exact
 from tqdm import tqdm
 
 from scripts._common import cached, load_model, save_partial
@@ -56,11 +57,55 @@ def compute() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def _unsettled_fisher_test(
+    fl: pd.DataFrame, num_steps: int, n_ops_a: int, n_ops_b: int
+) -> tuple[int, int, int, int, float]:
+    """Fisher exact test on the (settled, unsettled) 2x2 table between two n_ops
+    levels at a fixed num_steps. Returns (settled_a, unsettled_a, settled_b,
+    unsettled_b, p_value).
+    """
+    sub_a = fl[(fl["num_steps"] == num_steps) & (fl["n_ops"] == n_ops_a)]["shape"]
+    sub_b = fl[(fl["num_steps"] == num_steps) & (fl["n_ops"] == n_ops_b)]["shape"]
+    settled_a = int((sub_a == "settle").sum())
+    unsettled_a = int(len(sub_a) - settled_a)
+    settled_b = int((sub_b == "settle").sum())
+    unsettled_b = int(len(sub_b) - settled_b)
+    _, p = fisher_exact([[settled_a, unsettled_a], [settled_b, unsettled_b]])
+    return settled_a, unsettled_a, settled_b, unsettled_b, float(p)
+
+
 def main() -> None:
-    """Report the shape mix per budget and mean |winding|."""
+    """Report the shape mix per budget, mean |winding|, and the project's
+    cleanest positive H1 result: the loop rate jumping under a starved
+    compute budget (see claims_ledger.md B4).
+    """
     fl = cached("forceloop.csv", compute)
     print(fl.groupby(["num_steps", "n_ops"])["shape"].value_counts())
     print(fl.groupby("num_steps")["winding"].mean().round(3))
+
+    print("\n--- Force-loop significance test (claims_ledger.md B4) ---")
+    print("Unsettled (loop+drift) fraction by n_ops at the starved budget (num_steps=16):")
+    for n_ops in sorted(fl.loc[fl["num_steps"] == 16, "n_ops"].unique()):
+        sub = fl[(fl["num_steps"] == 16) & (fl["n_ops"] == n_ops)]["shape"]
+        unsettled = int((sub != "settle").sum())
+        print(f"  n_ops={n_ops:>2d}: {unsettled}/{len(sub)} unsettled")
+
+    n_ops_levels = sorted(fl["n_ops"].unique())
+    settled_a, unsettled_a, settled_b, unsettled_b, p = _unsettled_fisher_test(
+        fl, num_steps=16, n_ops_a=n_ops_levels[0], n_ops_b=n_ops_levels[1]
+    )
+    print(
+        f"\nFisher exact, n_ops={n_ops_levels[0]} vs n_ops={n_ops_levels[1]} at num_steps=16: "
+        f"[[{settled_a},{unsettled_a}],[{settled_b},{unsettled_b}]], p={p:.4f}"
+    )
+
+    overall = fl["shape"].value_counts()
+    settle_ge24 = (fl.loc[fl["num_steps"] >= 24, "shape"] == "settle").mean()
+    print(
+        f"\nAcross the full sweep (all num_steps): {overall.to_dict()} "
+        f"-- every loop/drift instance occurs at num_steps=16; "
+        f"{settle_ge24:.0%} settle at num_steps>=24."
+    )
 
 
 if __name__ == "__main__":

@@ -94,7 +94,11 @@ _REVIEWED_NON_SUBSTANTIVE_CHANGES: dict[str, str] = {
         "2026-07-23 (d009d4e): same checkpointing-only change as dissociation.csv."
     ),
     "forceloop.csv": (
-        "2026-07-23 (d009d4e): same checkpointing-only change as dissociation.csv."
+        "2026-07-23 (d009d4e): same checkpointing-only change as dissociation.csv. "
+        "2026-07-24: main() also gained the Fisher exact test reproducing "
+        "claims_ledger.md B4 -- compute() untouched, verified the new numbers "
+        "match the ledger's already-recorded values exactly against the "
+        "unchanged CSV."
     ),
     "maxtask.csv": (
         "2026-07-23 (843505d): same print-step-only guard as counting.csv, "
@@ -109,6 +113,13 @@ _REVIEWED_NON_SUBSTANTIVE_CHANGES: dict[str, str] = {
     "switch.csv": (
         "2026-07-23 (843505d): same print-step-only guard as counting.csv, "
         "unrelated to compute()."
+    ),
+    "three_scale.csv": (
+        "2026-07-24 (5a39e03): run_three_scale.py's main() gained the "
+        "canonical per-level stat + multivariate_rank_control reporting -- "
+        "compute() (the extraction loop) is byte-identical, so the cached "
+        "rows still reflect what's computed; only how they're summarised "
+        "changed. Verified by re-running main() against the unchanged CSV."
     ),
 }
 
