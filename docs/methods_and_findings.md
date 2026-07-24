@@ -14,6 +14,141 @@ verification status, rows referenced below as D1–D20, B4, etc.).
 
 ---
 
+## Part 0 — Orientation: the whole thing on one page
+
+Read this before the details; everything after is an expansion of it. Terms in
+**bold** here are defined precisely where they are first used later.
+
+### 0.1 The three hypotheses, stated precisely
+
+Every experiment in this document is an attempt to test one of these. The project
+proposal states them; here they are exactly, with their antecedents (which matter
+more than the conclusions).
+
+- **H1 — a few shapes.** Every token's latent trajectory (Part I.2) is one of
+  three geometric types — **settle** (converges to a point), **loop** (orbits),
+  **drift** (moves without returning) — and the three are *distinguishable by
+  geometry*. The proposal names three discriminating instruments; here is how each
+  maps to what is actually implemented, which is itself part of the finding:
+  a **Lyapunov exponent λ** → in practice the convergence-rate proxy
+  `contraction`/`lyap` (II.4), and it is init-noise-dominated (VI.3); a
+  **self-return** measure → in practice `classify_shape`'s loop test, "did the path
+  come back near a point it visited ≥3 steps earlier" (II.3); **persistent
+  homology** → implemented but degenerate on a single curve (VIII.10). So H1's
+  taxonomy is real (validated in V.8) but only one of its three instruments
+  (self-return, via `classify_shape`) is on solid footing.
+- **H2 — loops encode depth.** ***Conditional on the trajectory looping***, the
+  **winding number** grows with the number of reasoning steps the task requires.
+  The antecedent is load-bearing: a winding number measured on a *settling* path
+  is not a measurement of the thing H2 is about, and (Part I.2) at full budget on
+  our tasks the answer token essentially always settles.
+- **H3 — contraction forbids counting.** If the recurrent update is forced to
+  *strictly contract* — **spectral radius** ρ < 1, where ρ is the largest absolute
+  eigenvalue of the one-step **Jacobian** ∂hₜ₊₁/∂hₜ (the matrix of partial
+  derivatives of the next hidden state with respect to the current one) — then it
+  cannot hold a running count, so state-tracking tasks *must* loop or drift rather
+  than settle.
+
+### 0.2 Which metric tests which hypothesis
+
+| Metric (Part II) | Hypothesis it serves | Status |
+|---|---|---|
+| **shape** (settle/loop/drift) | H1 (the taxonomy itself) | measured, validated (V.8) |
+| **winding** | H2 (the "loops encode depth" quantity) | measured; never null-tested (II.1) |
+| **spectral radius ρ** | H3 (the contraction quantity) | **never measured on Huginn** (VII) |
+| **steps_settle** | auxiliary ("effective compute" proxy; in no hypothesis directly) | measured |
+| **contraction/lyap** | auxiliary (convergence-rate stand-in) | measured; init-noise-dominated (VI.3) |
+| persistent homology H1 | H1's third instrument | degenerate on single curves (VIII.10) |
+
+So: two of the three hypotheses' *primary* quantities are in trouble before any
+result — H3's ρ is unmeasured, and H1's homology instrument is degenerate. H2's
+winding is measured but un-adjudicated against chance.
+
+### 0.3 The codebase in seven layers (where any piece lives)
+
+An abstract map, so you can place any function without hunting filenames:
+
+1. **Model / extraction** — load Huginn at the pinned revision, run the forward
+   pass, hook the core block, return the trajectory (+ optionally reconstruct
+   per-unroll logits). *One model, one extraction path.*
+2. **Task generators** — pure functions `prompt-string ← (difficulty, seed)`:
+   counting, switch, maxtask, variants (track/local), three_scale, three_scale_modk,
+   count_ones, projection. No model here — just text.
+3. **Metrics** — `trajectory → scalar`: winding, steps_settle, shape,
+   convergence/lyap, homology. No statistics here — just per-trajectory geometry.
+4. **Statistics / analysis** — the tests (Part III): per-level Spearman + the
+   critical-value table, partial_spearman, multivariate_rank_control,
+   benjamini_hochberg, Fisher-combine. No model, no trajectories — just numbers.
+5. **Experiment runners** — glue one generator × a difficulty sweep × extraction ×
+   metrics → one results CSV. Each is a thin `run_*.py`.
+6. **Rigor / meta** — the FDR sweep, the power analysis, the pre-registration, and
+   an executable test that checks the docs match the real repo state.
+7. **Theory / toy** — the H3 contraction proof (paper math) plus a *separate*
+   toy-model codebase that tests H3 empirically on models runnable without a GPU.
+
+The clean dependency is: **layers 2+3 have no GPU dependency** (generators are
+text, metrics run on saved `.npy` arrays), **layer 1 needs the GPU**, and **layer
+4 needs neither** (it reads CSVs). This is why most of the analysis in this doc is
+0-GPU: the expensive extraction (layer 1) already happened and its outputs are
+cached.
+
+### 0.4 The experiments, by type
+
+Grouping the individual experiments (Part V) into kinds, so the *shape* of the
+evidence is visible:
+
+- **Synthetic, length-confounded** (nominally H2/H3): counting, switch, maxtask,
+  count_ones — all have difficulty ≡ length (Part IV), so none can isolate depth.
+- **Length-controlled by design** (the actual H2 tests): three_scale
+  (prefix-confounded, V.6), three_scale_modk (clean, V.5, at N=7 and N=15).
+- **Length-matched dissociation** (H3): track vs local, at 5 and 15 seeds (V.3).
+- **Compute-budget / regime** (H1): forceloop, phase (V.1).
+- **External validation of the detector** (H1): Blayney persona reproduction (V.8).
+- **Correctness / interpretability**: counting_accuracy (real generation), the
+  per-unroll logit-lens probe (V.4).
+- **Robustness / meta**: dissoc_multiinit (init seeds, VI.3), FDR + power (VI.4).
+- **Real (non-synthetic) reasoning data**: PARARULE, N=4 (V.7).
+- **Theory**: contraction proof + toy sweep (VII).
+
+### 0.5 Experiment ↔ analysis-method grid
+
+Which post-analysis each experiment feeds (compact map; PL-Sp = per-level
+Spearman, part = partial_spearman, MV = multivariate rank control, Fish-c =
+Fisher-combine p-values, Fish-x = Fisher exact 2×2, PB = point-biserial, shape =
+classify_shape counts, all fold into the project-wide BH-FDR):
+
+| Experiment | PL-Sp | part | MV | Fish-c | Fish-x | PB | shape |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| counting / switch / maxtask | ● | ✗(raises) | | | | | ● |
+| three_scale | ● | | ● | | | | |
+| three_scale_modk (N7, N15) | ● | | ● | ● | | | |
+| dissociation (5s, 15s) | ● | | | | | | |
+| forceloop / phase | | | | | ● | | ● |
+| blayney_repro | | | | | | | ● |
+| counting_accuracy | | | | | | ● | |
+| pararule | ● | ● | | | | | ● |
+| dissoc_multiinit | ● | | | | | | |
+
+("✗(raises)" = the length control is *attempted but refuses to run* because the
+confounder is rank-collinear — Part III.2; that refusal is itself a result, D10.)
+
+### 0.6 What matters most (if you read nothing else)
+
+In priority order, because the build-up in Parts I–V can bury the punchline:
+
+1. **On the one clean, adequately-powered test, H2 is not supported** — winding
+   does not track depth once length is genuinely controlled (V.5, VI.1).
+2. **The model *fails* the counting task at the depths where the winding "signal"
+   appears, and the geometry does not separate correct from incorrect answers**
+   (V.4). This reframes every "positive": they are measured on wrong answers.
+3. **Every winding "positive" is a length confound** (Part IV, VI.1).
+4. **The one live, replicated effect is not about winding**: settling *speed*
+   (steps_settle) tracks whether a task's answer accumulates vs. saturates (VI.2).
+5. **The defensible contribution is the audit itself** — the confound catalogue,
+   the non-replication check, the power analysis — plus finding 4.
+
+---
+
 ## Part I — The object of study
 
 ### I.1 The model, concretely
@@ -61,14 +196,16 @@ positions is a one-line change (the hook already sees the full `[1, n_tokens,
 Limitations. The random `h₀` is an outlier point, so metrics drop the first few
 steps as a burn-in.
 
-For the correctness probe (Part V.4) we also reconstruct, per unroll, what the
-model *would* predict if it stopped there: run the intermediate state through the
-model's own tail `final-LN → coda → final-LN → output-head`. Getting this exactly
-right required reading the model source directly — the recurrent loop already
-applies one layernorm before returning its state, so the naive `coda → LN → head`
-is wrong and a built-in check (`validate_logits`) caught it by comparing against a
-real forward pass (D12). This is the one place we reconstruct logits; everywhere
-else we only use the hidden-state geometry.
+For the correctness probe (Part V.4) we also apply a **logit lens** — decode an
+*intermediate* hidden state through the model's output head to read off "what
+token would the model predict if it stopped unrolling here." Concretely we run
+the intermediate state through the model's own tail `final-LN → coda → final-LN →
+output-head`. Getting this exactly right required reading the model source
+directly — the recurrent loop already applies one layernorm before returning its
+state, so the naive `coda → LN → head` is wrong and a built-in check
+(`validate_logits`, which compares the reconstruction against a genuine forward
+pass and raises on mismatch) caught it (D12). This is the one place we reconstruct
+logits; everywhere else we use only the hidden-state geometry.
 
 ---
 
@@ -138,8 +275,9 @@ Implementation (`classify_shape`, `settle_frac = 0.1`, `return_frac = 0.25`):
 none tuned or validated against a ground truth; "loop" is a return-to-near-a-past-
 point heuristic, not a topological cycle detector. This is an independent method
 from the winding number (Part II.1) and from Blayney et al.'s FFT-based orbit
-detector — agreement across methods (Part V.5) is evidence the thresholds aren't
-pathological, but they remain choices.
+detector — agreement across methods (Part V.8, where our detector reproduces
+Blayney's loop rate) is evidence the thresholds aren't pathological, but they
+remain choices.
 
 ### II.4 contraction / lyap — convergence rate (NOT a Lyapunov exponent)
 
@@ -215,7 +353,10 @@ two-sided t-test p-value.
 **Assumptions:** (1) the t-tests assume approximately normal residuals — on
 rank-transformed data this is an approximation, acceptable at these N but not
 exact; (2) a **condition-number guard** (raise above 1e10) catches near-singular
-designs where individual coefficients become numerically meaningless. Note a
+designs — the condition number is the ratio of the largest to smallest singular
+value of the design matrix, and a huge ratio means the predictors are nearly
+linearly dependent, so their individual coefficients become numerically
+meaningless. Note a
 distinct, subtler trap this does *not* catch and that we found by hand: if two
 predictors are *perfectly linearly dependent by construction* (Part V.5b, where
 `neutral = total − active − irrelevant` with total fixed makes irrelevant and
@@ -421,7 +562,8 @@ cautionary tale that motivated V.5.
 ### V.8 First real loops — external positive control (D14)
 
 - **Setup.** Reproduce Blayney et al.'s "Long Persona" system prompt (a specific
-  verbatim persona text known to induce orbits) on 24 GSM8K questions, capturing
+  verbatim persona text known to induce orbits) on 24 **GSM8K** questions (a
+  standard benchmark of grade-school math word problems), capturing
   **all token positions** (7,122 trajectories), vs a no-system-prompt baseline.
   Classify each with `classify_shape`.
 - **Result.** Per-token loop rate **0.1286% (7/5445)** under Long Persona vs
@@ -510,19 +652,31 @@ concern).
   context at step 0 — so contraction erasing `h₀`-memory need not forbid the count.
   It only bites if the count is encoded the *streamed* way (accumulated over steps,
   no re-injection).
-- **The toy test (A6), on models we can run without a GPU.** A recurrent-over-
-  **depth** toy (re-injects context each step, like Huginn): a linear probe decodes
-  the count with **R² ≥ 0.996 at every contraction strength tested**, *including*
-  ρ≈0.25. A recurrent-over-**time** toy (streaming Elman RNN, no re-injection):
-  probe R² **cliffs to ~0** as soon as contraction forces ρ<0.14. Same contraction,
-  opposite outcome, decided by the re-injection topology.
+- **The toy test (A6), on models we can run without a GPU.** Two small recurrent
+  models trained on a synthetic count, swept from non-contracting to strongly
+  contracting (a regularizer β pushes ρ down). A recurrent-over-**depth** toy
+  (re-injects the full input each step, like Huginn): a linear probe decodes the
+  count with **R² ≥ 0.996 at every contraction strength tested**, *including*
+  ρ≈0.25. A recurrent-over-**time** toy (a streaming vanilla RNN — an Elman RNN,
+  one input token per step, no re-injection): probe R² **cliffs to ~0** as soon as
+  contraction forces ρ<0.14. Same contraction, opposite outcome, decided entirely
+  by the re-injection topology. (This mirrors the two ways a "recurrent net" can
+  be built — iterating *depth* on a fixed input vs. stepping *through a sequence* —
+  and only the latter matches the theorem's streaming assumption.)
 - **Verdict.** The proof stands; its *applied* claim ("contraction ⇒ can't count ⇒
   must loop") is a property of streaming recurrence and **likely does not bind on
   Huginn's architecture.** Crucially, **the spectral radius has never been measured
   on real Huginn** (only the toy), so H3-on-Huginn is *scoped*, not tested. (A code
-  note: the toy estimator computes σ_max via power iteration on JᵀJ — the Miyato
-  2018 spectral-norm recipe — which upper-bounds but is not equal to the true ρ
-  that Yang et al.'s direct-J iteration computes; σ_max ≥ ρ always.)
+  note on *which* quantity the toy estimator actually computes, because two are
+  easily confused: it estimates **σ_max**, the largest *singular value* of the
+  Jacobian J, via **power iteration** — repeatedly applying JᵀJ to a vector and
+  renormalizing, which converges to the top eigenvector of JᵀJ; this is the Miyato
+  et al. 2018 spectral-normalization recipe. σ_max is *not* the same as the true
+  **spectral radius ρ** (largest absolute *eigenvalue* of J), which Yang et al.'s
+  direct power-iteration on J itself would compute. They coincide only for normal
+  matrices; in general **σ_max ≥ ρ**, so σ_max *upper-bounds* the contraction factor
+  — good enough to certify "contracts if σ_max<1," but it is not literally ρ. This
+  distinction was a real error in the project's own README, corrected this session.)
 
 ---
 
