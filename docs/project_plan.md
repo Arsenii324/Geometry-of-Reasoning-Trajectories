@@ -336,11 +336,17 @@ Compute tags: **[0-GPU]**, **[GPU: n hr]**. Curator-decision points marked **[C]
    because `irrelevant_len` is a prefix block, irrelevant_len's effect *is* a
    total-length / answer-position effect. Honest D11: **winding is a
    length/position artifact, not a reasoning-content signal.** Update the ledger.
-0.5 **Re-measure correctness without the single-token trap** [0-GPU for top-k
-   re-analysis; §Phase-3 for generation]. The multi-digit answer bug (§9) means
-   D12's "4/24, all target=0" is partly a measurement artifact, not proof the
-   model can't count. Re-score saved logits by top-k membership; validate any
-   accuracy claim on single-digit items first.
+0.5 **Re-measure correctness without the single-token trap** [GPU, small --
+   CORRECTED 2026-07-24, was wrongly tagged 0-GPU: checked
+   `run_v6_correctness_probe.py`'s `compute()` directly, it only persists
+   `correct_at_step`/`target`, never the raw logits or top-k, so there's
+   nothing cached to re-analyze offline]. The multi-digit AND negative-sign
+   answer bug (§9, confirmed live 2026-07-24: 11/24 of D12's own rows have
+   negative targets, which also split into 2 tokens) means D12's "4/24, all
+   target=0" undercounts real accuracy -- ~46% of rows were unmeasurable by
+   construction, not misses. Needs a small re-run: modify `compute()` to
+   check top-k membership (or full multi-token match) instead of strict
+   single-token argmax, then re-extract on Kaggle.
 
 ### Phase 1 — the keystone extraction [GPU: ~1–2 hr]
 1.1 Implement the §5 efficient-batch pass (all-token latents + Q/K + logits +
