@@ -83,36 +83,52 @@ _REVIEWED_NON_SUBSTANTIVE_CHANGES: dict[str, str] = {
         "2026-07-23 (843505d/d009d4e): run_counting.py's partial_spearman call "
         "gained a try/except ValueError around the *print* step (the new "
         "collinearity guard), unrelated to compute() -- the cached CSV's values "
-        "are from the unchanged compute() path."
+        "are from the unchanged compute() path. 2026-07-24: gained a STATUS "
+        "docstring line only (documentation practice pass), no code change."
+    ),
+    "convergence.csv": (
+        "2026-07-24: run_convergence.py gained a STATUS docstring line only "
+        "(documentation practice pass, adding what every other script already "
+        "had) -- no change to the convergence-descriptor computation itself."
     ),
     "dissociation.csv": (
         "2026-07-23 (d009d4e): run_dissociation.py's compute() gained "
         "try/except + save_partial() per iteration -- same extraction logic, "
-        "just resilient to a crash mid-sweep now."
+        "just resilient to a crash mid-sweep now. 2026-07-24: gained a STATUS "
+        "docstring line only, no code change."
     ),
     "dissoc_multiinit.csv": (
-        "2026-07-23 (d009d4e): same checkpointing-only change as dissociation.csv."
+        "2026-07-23 (d009d4e): same checkpointing-only change as dissociation.csv. "
+        "2026-07-24: gained a STATUS docstring line only, no code change."
     ),
     "forceloop.csv": (
         "2026-07-23 (d009d4e): same checkpointing-only change as dissociation.csv. "
         "2026-07-24: main() also gained the Fisher exact test reproducing "
         "claims_ledger.md B4 -- compute() untouched, verified the new numbers "
         "match the ledger's already-recorded values exactly against the "
-        "unchanged CSV."
+        "unchanged CSV. Also gained a STATUS docstring line, no further code change."
+    ),
+    "homology.csv": (
+        "2026-07-24: run_homology.py gained a STATUS docstring line only "
+        "(documentation practice pass) -- no change to the H1-persistence "
+        "computation itself."
     ),
     "maxtask.csv": (
         "2026-07-23 (843505d): same print-step-only guard as counting.csv, "
-        "unrelated to compute()."
+        "unrelated to compute(). 2026-07-24: gained a STATUS docstring line "
+        "only, no code change."
     ),
     "pararule.csv": (
         "2026-07-23 (d009d4e): same checkpointing-only change as dissociation.csv."
     ),
     "phase.csv": (
-        "2026-07-23 (d009d4e): same checkpointing-only change as dissociation.csv."
+        "2026-07-23 (d009d4e): same checkpointing-only change as dissociation.csv. "
+        "2026-07-24: gained a STATUS docstring line only, no code change."
     ),
     "switch.csv": (
         "2026-07-23 (843505d): same print-step-only guard as counting.csv, "
-        "unrelated to compute()."
+        "unrelated to compute(). 2026-07-24: gained a STATUS docstring line "
+        "only, no code change."
     ),
     "three_scale.csv": (
         "2026-07-24 (5a39e03): run_three_scale.py's main() gained the "
