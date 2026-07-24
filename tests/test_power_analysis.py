@@ -7,6 +7,7 @@ loop-rate arithmetic (which is exact, not simulated) precisely.
 
 from __future__ import annotations
 
+import pandas as pd
 import pytest
 from scripts.run_power_analysis import (
     BLAYNEY_RATE_BASELINE,
@@ -57,6 +58,32 @@ def test_loop_rate_power_table_current_pool_does_not_clear_baseline_bar() -> Non
     assert current["n_draws"] == 1294
     assert current["expected_loops"] == pytest.approx(1294 * BLAYNEY_RATE_BASELINE)
     assert not current["clears_bar_of_5"]
+
+
+def test_committed_power_loop_rate_csv_matches_the_function_output() -> None:
+    """Regression check the OTHER tests above don't cover: they all call
+    loop_rate_power_table()/n_needed_for_bar() fresh, never reading the
+    actually-committed results/power_loop_rate.csv -- so a manual edit or a
+    future code change left unrun would go undetected. Read the real file
+    and compare against a fresh recompute directly.
+    """
+    committed = pd.read_csv("results/power_loop_rate.csv")
+    fresh = loop_rate_power_table()
+    pd.testing.assert_frame_equal(
+        committed.reset_index(drop=True), fresh.reset_index(drop=True), check_exact=False
+    )
+    # And pin the specific numbers docs/power_and_preregistration.md cites.
+    baseline_current = committed[
+        committed["scenario"].str.contains("current answer-token pool")
+        & committed["rate"].str.contains("baseline")
+    ].iloc[0]
+    assert baseline_current["expected_loops"] == pytest.approx(0.259, abs=0.001)
+    keystone_100 = committed[
+        committed["scenario"].str.contains("M=1000 prompts x S=100 tok")
+        & committed["rate"].str.contains("baseline")
+    ].iloc[0]
+    assert keystone_100["expected_loops"] == pytest.approx(20.0)
+    assert bool(keystone_100["clears_bar_of_5"])
 
 
 def test_spearman_power_increases_with_effect_size_and_sample_size() -> None:
