@@ -33,7 +33,8 @@ more than the conclusions).
   a **Lyapunov exponent λ** → in practice the convergence-rate proxy
   `contraction`/`lyap` (II.4), and it is init-noise-dominated (VI.3); a
   **self-return** measure → in practice `classify_shape`'s loop test, "did the path
-  come back near a point it visited ≥3 steps earlier" (II.3); **persistent
+  come back near a point it visited *more than 3 steps* earlier" (II.3, the window
+  is a strict `> 3`, so a point exactly 3 steps back does not count); **persistent
   homology** → implemented but degenerate on a single curve (VIII.10). So H1's
   taxonomy is real (validated in V.8) but only one of its three instruments
   (self-return, via `classify_shape`) is on solid footing.
@@ -99,8 +100,11 @@ evidence is visible:
 
 - **Synthetic, length-confounded** (nominally H2/H3): counting, switch, maxtask,
   count_ones — all have difficulty ≡ length (Part IV), so none can isolate depth.
-- **Length-controlled by design** (the actual H2 tests): three_scale
-  (prefix-confounded, V.6), three_scale_modk (clean, V.5, at N=7 and N=15).
+- **Length-controlled *by intent*** (the actual H2 tests): three_scale —
+  *attempted* the control but **failed** it (its filler was a prefix, so it still
+  moved length/position, V.6), and three_scale_modk — the one that *succeeds* at
+  holding length constant (clean, V.5, at N=7 and N=15), modulo one residual
+  confound (V.5b). Only modk belongs in "length-controlled" without an asterisk.
 - **Length-matched dissociation** (H3): track vs local, at 5 and 15 seeds (V.3).
 - **Compute-budget / regime** (H1): forceloop, phase (V.1).
 - **External validation of the detector** (H1): Blayney persona reproduction (V.8).
@@ -115,19 +119,30 @@ evidence is visible:
 Which post-analysis each experiment feeds (compact map; PL-Sp = per-level
 Spearman, part = partial_spearman, MV = multivariate rank control, Fish-c =
 Fisher-combine p-values, Fish-x = Fisher exact 2×2, PB = point-biserial, shape =
-classify_shape counts, all fold into the project-wide BH-FDR):
+classify_shape counts, all correlation tests fold into the project-wide BH-FDR).
+The `shape` column is only marked where that CSV actually stores a shape/regime
+classification — `switch`, `maxtask`, `three_scale`, `modk`, `dissociation`, and
+`counting_accuracy` compute winding/steps but not a stored shape:
 
 | Experiment | PL-Sp | part | MV | Fish-c | Fish-x | PB | shape |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| counting / switch / maxtask | ● | ✗(raises) | | | | | ● |
+| counting | ● | ✗(raises) | | | | | ● |
+| switch / maxtask | ● | ✗(raises) | | | | | |
 | three_scale | ● | | ● | | | | |
 | three_scale_modk (N7, N15) | ● | | ● | ● | | | |
 | dissociation (5s, 15s) | ● | | | | | | |
-| forceloop / phase | | | | | ● | | ● |
+| dissoc_multiinit | ●¹ | | | | | | |
+| forceloop | | | | | ● | | ● |
+| phase | | | | | | | ●² |
 | blayney_repro | | | | | | | ● |
 | counting_accuracy | | | | | | ● | |
 | pararule | ● | ● | | | | | ● |
-| dissoc_multiinit | ● | | | | | | |
+
+¹ `dissoc_multiinit`'s headline analysis is not a Spearman at all but a
+within-vs-between-config variance *ratio* (VI.3); it also reports a per-level rho.
+² `phase` stores the taxonomy under the column name `regime`, not `shape` — same
+three labels, and it runs no Fisher test (it is a raw phase map, not a
+significance test).
 
 ("✗(raises)" = the length control is *attempted but refuses to run* because the
 confounder is rank-collinear — Part III.2; that refusal is itself a result, D10.)
@@ -139,9 +154,14 @@ In priority order, because the build-up in Parts I–V can bury the punchline:
 1. **On the one clean, adequately-powered test, H2 is not supported** — winding
    does not track depth once length is genuinely controlled (V.5, VI.1).
 2. **The model *fails* the counting task at the depths where the winding "signal"
-   appears, and the geometry does not separate correct from incorrect answers**
-   (V.4). This reframes every "positive": they are measured on wrong answers.
-3. **Every winding "positive" is a length confound** (Part IV, VI.1).
+   appears** — accuracy is ~0% (0–12.5%) for `n_ops ≥ 8` — **and the geometry does
+   not separate correct from incorrect answers** (V.4). This reframes the
+   significant winding "positives": they are measured on wrong answers.
+3. **The only two *statistically significant* winding "positives" are length
+   confounds** (counting and maxtask, both +0.943 with difficulty rank-collinear
+   with length; Part IV, VI.1). (Other winding correlations exist but are not
+   significant — e.g. the length-*matched* dissociation-track +0.771 is not a
+   length confound, just below the N=6 significance bar and non-replicating.)
 4. **The one live, replicated effect is not about winding**: settling *speed*
    (steps_settle) tracks whether a task's answer accumulates vs. saturates (VI.2).
 5. **The defensible contribution is the audit itself** — the confound catalogue,
@@ -266,9 +286,10 @@ interchangeable with this one.
 Implementation (`classify_shape`, `settle_frac = 0.1`, `return_frac = 0.25`):
 1. If the **last** step's displacement is below 10% of the max → **settle**.
 2. Otherwise, form the full pairwise-distance matrix of the trajectory points;
-   look only at pairs **more than 3 steps apart** in time; if the *minimum* such
-   far-in-time distance is below 25% of the overall maximum distance → **loop**
-   (the path came back near a point it visited ≥3 steps earlier).
+   look only at pairs **more than 3 steps apart** in time (strict `> 3`, so a pair
+   exactly 3 steps apart is excluded); if the *minimum* such far-in-time distance
+   is below 25% of the overall maximum distance → **loop** (the path came back near
+   a point it visited more than 3 steps earlier).
 3. Otherwise → **drift**.
 
 **Assumptions:** three hard-coded thresholds (0.1, 0.25, the ">3 steps" window),
@@ -405,10 +426,13 @@ guarantee.
 
 ---
 
-## Part IV — The confound that shapes every result: length ≡ difficulty (D10)
+## Part IV — The confound that shapes most results: length ≡ difficulty (D10)
 
-In every synthetic task, making the problem harder means adding tokens. For
-`make_counting_task` the prompt is literally
+In the **naive counting-family** synthetic tasks — counting, switch, maxtask,
+count_ones — making the problem harder means adding tokens. (This is *not* true of
+three_scale / three_scale_modk, which were built specifically to break it by
+holding total length fixed, Part V.5–V.6; the confound below is exactly why those
+had to exist.) For `make_counting_task` the prompt is literally
 
 ```
 Start at 0. Add 1. Subtract 1. Add 1. ... Final total? A:
@@ -420,12 +444,14 @@ and each additional operation (`n_ops`) is exactly one more `"Add 1."` /
 function of each other; their rank correlation is exactly 1.0** (the raw values
 differ — e.g. `seq_len ≈ 3·n_ops + 10` — but rank-for-rank they are identical).
 
-Consequence: any correlation of a metric with `n_ops` **is numerically identical**
-to its correlation with `seq_len`. Depth and length cannot be separated, the
-length control cannot be run (III.2 raises), and this holds for counting, switch,
-maxtask, and count_ones alike. This is not a bug to fix with a better statistic;
-it is a property of the task designs, and it is why the "clean" tasks (Part V.5)
-had to be built.
+Consequence: any **rank** correlation of a metric with `n_ops` (Spearman — what
+this project uses) **is numerically identical** to its rank correlation with
+`seq_len`, because the two share an identical rank order (a Pearson correlation
+would *not* be identical, since the raw values differ — but we never use Pearson
+for this). Depth and length cannot be separated, the length control cannot be run
+(III.2 raises), and this holds for counting, switch, maxtask, and count_ones
+alike. This is not a bug to fix with a better statistic; it is a property of the
+task designs, and it is why the "clean" tasks (Part V.5) had to be built.
 
 ---
 
@@ -464,6 +490,17 @@ the exact statistic + criterion + result, and the honest verdict.
   cannot be read as depth rather than length. And the "effect" isn't even
   consistent: switch's winding is flat, maxtask's steps_settle *decreases* with
   length.
+- **Two more tasks in the same family, documented here so the taxonomy has no
+  dangling members: `count_ones`** (count the 1s in a 0/1 string) and
+  **`projection`** (successive shifts along basis vectors), both in
+  `full_synthetic_experiments.csv`, both **D10-length-confounded** (rank-corr 1.0),
+  swept over 8 `n_ops` levels. They add a third geometry metric, `mean_normed_accel`
+  (how much the step direction+size keeps changing). count_ones's
+  `mean_normed_accel~n_ops = −0.976` (p=3e-5, N=8) is the *tightest* monotone
+  relationship in the whole project — but, being length-confounded, it is
+  uninterpretable as depth (it reappears in VI.2 only as a confounded lead).
+  projection's is weak (−0.19, n.s.). Neither gets its own subsection because
+  neither adds a length-clean datapoint.
 
 ### V.3 The length-matched dissociation (E3) and its non-replication (D13)
 
@@ -510,9 +547,11 @@ the exact statistic + criterion + result, and the honest verdict.
   the total token count by construction: it lays down `active_len` ones,
   `irrelevant_len` filler symbols `x`, and `neutral_len = total_len − active_len −
   irrelevant_len` zeros, **shuffled together into one sequence** (no prefix
-  block), and asks for `active_len % modulus` — always a **single-token** answer,
-  sidestepping the multi-digit-answer problem. Verified: tokenized `seq_len` is
-  **exactly constant** (std = 0) across the whole sweep.
+  block), and asks for `active_len % modulus` — a **single-token** answer whenever
+  `modulus ≤ 10` (the answer is then a single digit 0–9; the generator enforces
+  `2 ≤ modulus ≤ 10`, and the runs use moduli {2, 5}), sidestepping the
+  multi-digit-answer problem. Verified: tokenized `seq_len` is **exactly constant**
+  (std = 0) across the whole sweep.
 - **Setup + statistic.** Two runs: N=7 active_len levels (126 rows) and **N=15**
   (270 rows), each × 3 irrelevant lengths × 2 moduli × 3 seeds, `num_steps=64`.
   Per-modulus per-level Spearman, then **Fisher-combine** the two moduli (III.4).
@@ -608,10 +647,20 @@ strongest datapoint against H2.**
 steps_settle~difficulty is **positive on every task whose answer accumulates**
 (counting +0.93, switch +0.78, pararule +0.80, dissociation-track +0.81,
 three_scale +1.00) and **negative on every task whose answer saturates or wraps**
-(maxtask −0.77, modk both moduli, Fisher p=0.0006). A real, systematic
-phenomenological pattern; mechanism unknown. (A confounded but even tighter lead:
-count_ones `mean_normed_accel~n_ops = −0.976`, p=3e-5 — but same D10 length
-confound.)
+(maxtask −0.77, modk both moduli, Fisher p=0.0006). **Why this is not merely
+another length effect:** counting (accumulate) and maxtask (saturate) are *both*
+D10-length-confounded — difficulty rises with length in both — yet their
+steps_settle signs are *opposite* (+0.93 vs −0.77). A pure length effect would
+give them the *same* sign, so the accumulate-vs-saturate distinction adds
+something beyond length. And the cleanest single datapoint (modk, V.5) is at
+*constant* length, so its negative sign cannot be length at all. A real,
+systematic phenomenological pattern; mechanism unknown. Preconditions worth
+stating: this is `steps_settle` (an internal-dynamics proxy, II.2), **not**
+accuracy — V.4 shows steps_settle does not track correctness; and the individual
+per-task ρ values are mostly at N≤7 (only modk-N15 is well-powered), so the
+*pattern* is the claim, not any one task's significance. (A confounded but even
+tighter-looking lead: count_ones `mean_normed_accel~n_ops = −0.976`, p=3e-5 — but
+same D10 length confound, so uninterpretable on its own.)
 
 ### VI.3 Not all metrics are init-robust (D19)
 
@@ -701,11 +750,17 @@ concern).
    the shared model doesn't fully guarantee (III.4); BH's family boundary is a
    judgment call (III.5); the power numbers assume a normal generator (III.6);
    point-biserial's p is approximate at this N (III.6).
-7. **Geometry vs. activations, untested** — a positive linear probe on the raw
-   5280-d state shows the *state* holds information; it does **not** show the
-   *geometric summary* (winding/shape/λ) is what carries it. The deepest conceptual
-   gap: the project measures things about activations while claiming things about
-   geometry.
+7. **Geometry vs. activations, untested** — the evidence that Huginn's *state*
+   holds the answer information is the V.4 logit lens (the model's own pretrained
+   output head — a *fixed* linear readout — puts the correct count in its top-5).
+   Note this is a logit lens, **not** a *trained* linear probe on the activations
+   (no such probe has been fit on real Huginn; the trained-probe result is on the
+   toy model, VII). Either way, showing the *state* linearly decodes to the answer
+   does **not** show the *geometric summary* (winding / shape / λ) is what carries
+   it. The deepest conceptual gap: the project measures things about activations
+   (or their pretrained readout) while claiming things about geometry — and it has
+   never tested whether the geometric features *alone* predict anything above the
+   raw state.
 8. **One residual confound survives even in the clean task** (V.5b).
 9. **Only one non-synthetic dataset** (PARARULE, and it's N=4). Three of four
    proposal datasets and all four named baselines are not run. The curator's own
