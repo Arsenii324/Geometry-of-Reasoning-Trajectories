@@ -122,7 +122,7 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_contrast.py`, `run_phase.py`, `run_forceloop.py` | contrast/phase/forced-loop-budget experiments | yes | `contrast.csv` (n/a locally), `phase.csv`, `forceloop.csv` |
 | `run_homology.py` | persistent homology shape metric | yes | `homology.csv` |
 | `run_three_scale.py` | V6 — three-scale length ablation (the decoupled task) | yes | `three_scale.csv` — **real, post-fix data as of 2026-07-23** (Kaggle T4, all 180 configs succeeded). Result leans against H2: `winding`/`steps_settle` track `irrelevant_len` far more strongly than `active_len` — see `claims_ledger.md` D11. |
-| `run_three_scale_modk.py` | modulus-counting length-decoupled task, D11's prefix confound fixed by construction | yes | `three_scale_modk.csv` — **real data, 2026-07-24, Kaggle T4, all 126 configs succeeded.** seq_len confirmed exactly constant (42, std=0.0). Clean null on winding~active_len at both moduli tested — see `claims_ledger.md` D15. |
+| `run_three_scale_modk.py` | modulus-counting length-decoupled task, D11's prefix confound fixed by construction | yes | `three_scale_modk.csv` (N=7 default) — real data, all 126 configs succeeded, seq_len constant (42, std=0.0), clean null on winding~active_len. `three_scale_modk_extended.csv` (N=15, `--extended`) — **real data, 2026-07-24, Kaggle T4, all 270 configs succeeded**, seq_len constant (54, std=0.0), winding null replicates more decisively (Fisher p=0.266), steps_settle~active_len replicates and strengthens (Fisher p=0.0006). See `claims_ledger.md` D15. |
 | `diag_blayney_repro.py` | Phase 1.2 positive control — reproduce Blayney's known loop-inducing condition | no (one-off diagnostic) | `blayney_repro.csv` — **real data, 2026-07-24, Kaggle T4.** First real loops observed outside forceloop.csv: 7/5445 (0.1286%) long_persona, matching Blayney's 0.14%. See `claims_ledger.md` D14. |
 | `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, correctness timing (strict argmax AND top-5) | yes | `v6_correctness_probe.csv` — real data, re-run 2026-07-24 with the top-k/single-token-answer fix. Top-5 hit rate on the honestly-verifiable single-token subset: **13/13 (100%)**, almost always by step 1; strict argmax only 4/13. Substantially revises the old "small-number prior, doesn't count" reading. See `claims_ledger.md` D12. |
 | `run_smoke_new_tasks.py` | smoke test for count_ones/projection + normed acceleration | no (overwrites) | `smoke_new_tasks.csv` |
@@ -140,7 +140,7 @@ Present in `results/`: `blayney_repro.csv`, `convergence.csv`,
 `fdr_correction.csv`, `forceloop.csv`, `full_synthetic_experiments.csv`,
 `h2_loops.csv`, `homology.csv`, `maxtask.csv`, `pararule.csv`, `phase.csv`,
 `power_curve.csv`, `power_loop_rate.csv`, `smoke_new_tasks.csv`,
-`switch.csv`, `three_scale_modk.csv`.
+`switch.csv`, `three_scale_modk.csv`, `three_scale_modk_extended.csv`.
 
 `three_scale.csv` and `v6_correctness_probe.csv` both promoted into
 `results/` proper 2026-07-23 — real, post-fix data, both confirmed via
@@ -162,6 +162,18 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-24 — D15 replicated at N=15 (vs N=7): winding null holds up
+  stronger, steps_settle effect strengthens.** `run_three_scale_modk.py
+  --extended`, 270 real Huginn-3.5B configs, Kaggle T4, seq_len confirmed
+  exactly constant (54, std=0.0) at the larger scale too. winding~active_len:
+  Fisher-combined p=0.266 (was 0.something at N=7 too, but now with real
+  power behind the null -- ~44-57% power to catch rho=0.5 at N=15, so this
+  is a genuine absence, not just "still underpowered"). steps_settle~active_len:
+  Fisher-combined p=0.0006 (was 0.015 at N=7) -- both moduli individually
+  significant now (p=0.034, p=0.0016), essentially unchanged effect size at
+  mod=5 (-0.750 -> -0.739), somewhat weaker at mod=2 (-0.775 -> -0.549) but
+  still significant alone. Real replication, not just a bigger N repeating
+  the same small-sample luck. See `claims_ledger.md` D15.
 - **2026-07-24 — D12 rerun with top-k fix substantially revises the
   "small-number prior" story.** Two real bugs on the way: (1) forgot
   `logits` from `extract_trajectory` is numpy not torch, `.topk()`

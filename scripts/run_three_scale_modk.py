@@ -1,10 +1,15 @@
 """Experiment — winding vs length-decoupled MODULUS counting.
 
 OWNER: Data+Analysis
-STATUS: implemented 2026-07-24. `make_three_scale_modk_task` fixes D11's
-    prefix confound by construction (constant total_len, no distinguished
-    prefix region) rather than approximately, and generalises
-    `make_switch_task`'s mod-2 parity to modulus 2..10.
+STATUS: implemented 2026-07-24, both grids run on real Huginn-3.5B.
+    `make_three_scale_modk_task` fixes D11's prefix confound by construction
+    (constant total_len, no distinguished prefix region) rather than
+    approximately, and generalises `make_switch_task`'s mod-2 parity to
+    modulus 2..10. Default grid (N=7): clean null on winding~active_len.
+    Extended grid (N=15, --extended): winding null REPLICATES more
+    decisively (Fisher p=0.266); steps_settle~active_len REPLICATES and
+    strengthens (Fisher p=0.0006, both moduli individually significant).
+    See claims_ledger.md D15 for both runs' exact numbers.
 TASK: sweep (active_len, irrelevant_len, modulus, seed) at FIXED total_len
     and score each trajectory's geometry, so winding can be checked
     against active_len with total length and answer position held

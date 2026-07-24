@@ -709,10 +709,15 @@ The controls that must be in place, and the ones the project got wrong.
   winding~active_len at either modulus tested (rho=+0.179 mod=2,
   rho=−0.036 mod=5, both n.s. at N=7). This is the project's first
   genuinely unconfounded H2 test, and it agrees with D11's negative
-  reading on cleaner footing. See `claims_ledger.md` D15 (also notes an
-  unplanned, not-yet-significant steps_settle~active_len pattern worth a
-  follow-up). A larger sweep (more active_len levels for N>=10, or a
-  wider modulus range) is a natural Phase 2 extension, not yet done.
+  reading on cleaner footing. **REPLICATED same day at N=15**
+  (`--extended`, 270 configs, seq_len constant at 54): winding null holds
+  up more decisively (Fisher-combined p=0.266, and at N=15 this project's
+  own power curve gives real power to detect a moderate effect, so this
+  is a genuine absence now, not just "still underpowered"). The
+  unplanned steps_settle~active_len pattern flagged as "worth a
+  follow-up" **replicated and got stronger, not weaker** (Fisher-combined
+  p=0.0006 vs the N=7 run's p=0.015, both moduli individually significant
+  at N=15). See `claims_ledger.md` D15 for both runs' exact numbers.
 - **Joint-not-per-position σ_max [verified].** ∂h_{t+1}/∂h_t is one
   `[S·E]×[S·E]` causal Jacobian; σ_max is a single number for the whole state.
   "σ_max at question vs answer tokens" **does not exist** — drop that narrative;
