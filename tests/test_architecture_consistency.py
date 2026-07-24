@@ -144,6 +144,15 @@ _REVIEWED_NON_SUBSTANTIVE_CHANGES: dict[str, str] = {
         "is byte-identical, confirmed by the file being byte-identical after "
         "re-running with the fixed script."
     ),
+    "three_scale_modk.csv": (
+        "2026-07-24 (83a81fe): run_three_scale_modk.py's compute()/grid were "
+        "parameterized into a GRIDS dict (adding an --extended preset for a "
+        "D15 follow-up) -- the 'default' grid's values (total_len=24, "
+        "active_lens=(0,3,6,9,12,15,18), irrelevant_lens=(0,3,6), moduli=(2,5), "
+        "n_seeds=3) are byte-identical to the prior hardcoded constants, "
+        "confirmed by tests/test_three_scale_modk_results.py's pinned values "
+        "still passing unchanged against this CSV."
+    ),
 }
 
 
