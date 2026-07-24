@@ -272,15 +272,28 @@ Compute tags: **[0-GPU]**, **[GPU: n hr]**. Curator-decision points marked **[C]
    families for FDR. **This converts "we found no loops" into the defensible
    "the sampled condition is ~100× underpowered," and forbids citing any
    answer-token null as evidence against H2.** [C] sign-off on "≥5 loops" bar.
-0.2 **Apply `benjamini_hochberg` to the existing ~50 correlations** [0-GPU],
-   within pre-registered families. Prime targets: the two unexplained
-   "significant" hits (maxtask winding~n_ops +0.943; dissociation local −0.943)
-   — likely FDR casualties, which *removes an embarrassment*.
-0.3 **Retire the degenerate length-partials** [0-GPU]. Codify that
-   counting/switch/maxtask/count_ones have rank-corr(n_ops, seq_len)=1.0 and
-   *cannot* be length-decoupled by construction (D10); stop reporting their
-   length-controlled numbers. Tighten the `partial_spearman` guard threshold
-   (0.999 currently passes dissociation's 0.9895 — a latent landmine).
+0.2 **DONE 2026-07-24 — Apply `benjamini_hochberg` to the existing ~50
+   correlations** [0-GPU]. `scripts/run_fdr_correction.py`, 46 tests across 9
+   experiments, project-wide and per-experiment families (agree here: 20/46
+   survive either way). **Prediction corrected by the actual run**: the two
+   prime-target hits (maxtask winding~n_ops +0.943, dissociation local
+   winding~n_ops −0.943) both *survive* FDR (q=0.0123) — they are not FDR
+   casualties. They're still not trustworthy, for reasons FDR doesn't touch:
+   maxtask's n_ops is D10-degenerate (rank-corr(n_ops,seq_len)=1.0, so
+   "winding~n_ops" ≡ "winding~seq_len"); dissociation's local −0.943 fails to
+   replicate at 3× the seeds (15-seed: rho=−0.543, p=0.27, an actual
+   casualty there). Only 2/22 raw-significant tests are pure FDR casualties
+   (both `dissociation_5seed`'s marginal steps_settle~n_ops per-level,
+   p=0.0499). See `claims_ledger.md` D13.
+0.3 **PARTLY DONE — Retire the degenerate length-partials** [0-GPU]. Codified
+   that counting/switch/maxtask/count_ones have rank-corr(n_ops, seq_len)=1.0
+   and *cannot* be length-decoupled by construction (D10); the guard already
+   raises for these, so none of their length-controlled numbers get reported
+   as real. **DONE 2026-07-24: tightened the `partial_spearman` guard
+   threshold 0.999 -> 0.95** — the old threshold missed dissociation's
+   real 0.9895 collinearity (a landmine, no live caller yet). Not yet done:
+   an explicit sweep to confirm no *other* uncaught degenerate confounder
+   exists outside the four already-known tasks.
 0.4 **Re-analyse three_scale properly, and correct D11** [0-GPU, partly done
    this session]. The shipped `run_three_scale.py` reports only per-row
    `spearman()`. The correct multivariate rank control (all three length scales
@@ -596,16 +609,21 @@ one teammate's broader initial survey). Consequences the plan should honor:
 
 Everything in Phase 0 is doable now, no GPU, and rescues/re-scopes existing
 claims at zero risk. The highest-value first moves, in order:
-1. **BH-FDR across the ~50 existing correlations** (0.2) — recontextualizes
-   every "significant" claim at once.
-2. **Correct D11 in the ledger** with the verified multivariate result + the
-   prefix-confound caveat (0.4) — done analytically this session; just record it.
-3. **Reproduce the force-loop Fisher p=0.01 in code** (§2 verdict) — the
-   "cleanest positive result" currently has no reproducing script.
-4. **Power analysis + pre-registration** (0.1) — the honesty gate.
-5. **Implement the multivariate rank control in `correlate.py`** (§9) — the
-   codebase's one missing statistic.
+1. **DONE 2026-07-24 — BH-FDR across the ~50 existing correlations** (0.2) —
+   `scripts/run_fdr_correction.py`. Recontextualized every "significant"
+   claim; both prime-target hits survive FDR itself but are independently
+   explained away (D10 confound, non-replication) — see D13.
+2. **DONE — Correct D11 in the ledger** with the verified multivariate result +
+   the prefix-confound caveat (0.4) — now real code
+   (`multivariate_rank_control` in `correlate.py`), wired into
+   `run_three_scale.py`, tested against the cached CSV.
+3. **DONE — Reproduce the force-loop Fisher p=0.01 in code** (§2 verdict) —
+   `run_forceloop.py`'s `main()` now runs the real Fisher exact test,
+   verified to match the ledger exactly.
+4. **Power analysis + pre-registration** (0.1) — the honesty gate. Not yet done.
+5. **DONE — Implement the multivariate rank control in `correlate.py`** (§9) —
+   done as part of item 2 above.
 
-These five are the concrete next actions if/when work resumes; they need no
-compute and no curator input, and they make the eventual GPU pass (Phase 1)
-land on a rigorous foundation.
+Remaining: item 4 (power analysis + pre-registration) is the last Phase 0
+piece; it needs no compute and no curator input either, and gates any future
+H2 claim about loop rate.

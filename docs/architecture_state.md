@@ -113,6 +113,7 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_three_scale.py` | V6 — three-scale length ablation (the decoupled task) | yes | `three_scale.csv` — **real, post-fix data as of 2026-07-23** (Kaggle T4, all 180 configs succeeded). Result leans against H2: `winding`/`steps_settle` track `irrelevant_len` far more strongly than `active_len` — see `claims_ledger.md` D11. |
 | `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — real, corrected (space-prefixed target) data as of 2026-07-23 round 5. 4/24 hits, ALL at step 1 with target=0 — a small-number prior, not counting. See `claims_ledger.md` D12. |
 | `run_smoke_new_tasks.py` | smoke test for count_ones/projection + normed acceleration | no (overwrites) | `smoke_new_tasks.csv` |
+| `run_fdr_correction.py` | Phase 0 — BH-FDR across every project correlation test, 0-GPU | no (reads other CSVs directly) | `fdr_correction.csv` — 46 tests, 20/46 survive. See `claims_ledger.md` D13. |
 | `backfill_seq_len.py` | one-off: backfill `seq_len` onto switch/maxtask CSVs without GPU | n/a | mutates `switch.csv`/`maxtask.csv` in place |
 | `plot_trajectories.py` | PCA plot of count_ones/projection trajectories, shared basis per (task, n_ops) | n/a | `figures/pca_*.png` |
 | `extract.py`, `run_mvp.py` | earlier/MVP-era extraction entry points | — | — |
@@ -121,10 +122,10 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 
 Present in `results/`: `convergence.csv`, `counting_accuracy.csv`,
 `counting.csv`, `dissoc_multiinit.csv`, `dissociation_15seed.csv`,
-`dissociation_results.csv`, `dissociation.csv`, `forceloop.csv`,
-`full_synthetic_experiments.csv`, `h2_loops.csv`, `homology.csv`,
-`maxtask.csv`, `pararule.csv`, `phase.csv`, `smoke_new_tasks.csv`,
-`switch.csv`.
+`dissociation_results.csv`, `dissociation.csv`, `fdr_correction.csv`,
+`forceloop.csv`, `full_synthetic_experiments.csv`, `h2_loops.csv`,
+`homology.csv`, `maxtask.csv`, `pararule.csv`, `phase.csv`,
+`smoke_new_tasks.csv`, `switch.csv`.
 
 `three_scale.csv` and `v6_correctness_probe.csv` both promoted into
 `results/` proper 2026-07-23 — real, post-fix data, both confirmed via
@@ -146,6 +147,19 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-24 — BH-FDR sweep done; plan's own prediction was wrong.**
+  `scripts/run_fdr_correction.py`, 46 tests across 9 experiments, 0-GPU.
+  Raw p<0.05: 22/46. Survives BH-FDR: 20/46 (project-wide and
+  per-experiment families agree here). Plan expected the two "prime
+  target" hits (maxtask winding~n_ops +0.943, dissociation local −0.943)
+  to be FDR casualties — **wrong, both survive** (q=0.0123). Real problem
+  elsewhere: maxtask's n_ops IS seq_len (D10, rank-corr=1.0, guard already
+  raises on it); dissociation's local hit fails to replicate at 3x seeds
+  (15-seed: rho=-0.543, p=0.27, genuinely dies there). Only 2 true FDR
+  casualties, both marginal (p=0.0499). Lesson: don't trust a plan's own
+  prediction of an outcome over the actual run, even your own plan's.
+  `claims_ledger.md` D13, `project_plan.md` §0.2 corrected. Test pins the
+  full result against cached CSVs.
 - **2026-07-24 — Phase 0 rescues from `project_plan.md` §15, started.** Four
   checkpoints so far, each own commit on `feat/close-known-gaps`. (1)
   `multivariate_rank_control()` added to `correlate.py` — real code now,
