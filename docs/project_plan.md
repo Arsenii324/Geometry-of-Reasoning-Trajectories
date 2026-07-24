@@ -214,9 +214,40 @@ mean what it seems to.*
   + probe-R² + depth.
 - Interpretation: CONFIRM applied-H3 iff (σ_max<1 ∧ count-undecodable ∧ fails).
   **SCOPE-OUT** applied-H3 iff (σ_max<1 **yet** count decodable) — the A6 toy
-  prediction: contraction erases only h₀-dependence, and Huginn re-injects
-  context every step, so state carried by `e` survives. Either way the proven
-  theorem stands; only its *Huginn applicability* is at stake.
+  prediction, **now derived precisely, not just asserted (2026-07-24, re-read
+  `contraction_proof.md` directly)**: the theorem's own map is
+  `h_{t+1} = R_θ(h_t; e)`, with `e` an explicit, FIXED argument, never
+  iterated — §3 of that doc proves `d(h_t,h_t') ≤ c^t d(h_0,h_0')` for two
+  DIFFERENT initial states `h_0 ≠ h_0'` at the SAME `e`; it says nothing
+  about `e`-dependence, and the fixed point `h*(e)` (§2, Banach) is itself a
+  function of `e` — nothing in the proof constrains how rich `e ↦ h*(e)` can
+  be. §5's jump from "h_0-difference decays" to "count states S_0..S_{N-1}
+  collapse" is only valid if the count is encoded the way `h_0` is —
+  i.e. as an evolving, accumulated, streamed state (the classic-RNN
+  picture the theorem's own worked example assumes). **For this project's
+  actual counting tasks, it isn't**: `e` is the *entire* prompt (all
+  tokens, reinjected via input-injection every unroll — Huginn's own
+  `adapter(cat[x, input_embeds])`), so "how many ones are in the sequence"
+  is already fully present in `e` at t=0, readable by a static function of
+  `e`, with zero need to iteratively accumulate it over recurrence steps.
+  Contraction kills genuinely dynamical/streamed information; it says
+  nothing about static functions of the always-visible context. This is
+  exactly why `src/h3_results`'s own toy sweep (A6) shows the
+  recurrent-over-**depth** model (full context reinjected every step,
+  matching Huginn) keeps count-R²≥0.996 under strong contraction while the
+  recurrent-over-**time** model (one token per step, no reinjection —
+  genuinely streaming) collapses to R²≈0. **Sharper implication than
+  previously stated**: if this holds, H3's contraction mechanism does not
+  even *predict* a counting failure on Huginn's actual counting tasks —
+  so this project's own empirical finding that Huginn fails to count
+  (`counting_accuracy.csv`, 0% at n_ops>=8) needs a *different* causal
+  story (training-distribution mismatch, insufficient capacity in the
+  learned `e -> h*(e)` readout, task novelty) — it should **not** be
+  narrated as "confirms the contraction bottleneck," since the theorem,
+  applied honestly to this architecture, doesn't forbid counting here in
+  the first place. Either way the proven theorem stands; only its *Huginn
+  applicability*, and the causal story for the counting failure, are at
+  stake.
 
 ---
 
@@ -315,9 +346,20 @@ Compute tags: **[0-GPU]**, **[GPU: n hr]**. Curator-decision points marked **[C]
 1.1 Implement the §5 efficient-batch pass (all-token latents + Q/K + logits +
    `Trajectory.save`, sampled). Run over: three_scale (redesigned, §9),
    PARARULE (extend loader to d≤6 [C]), a **starved-budget set (num_steps≈16)**
-   — the only in-project loop-inducing lever — and **question/digit token
-   positions**, not just the answer token. This one pass is the substrate for
-   Phases 2–3.
+   — the only in-project loop-inducing lever tried so far — and
+   **question/digit token positions**, not just the answer token. This one
+   pass is the substrate for Phases 2–3.
+1.2 **NEW 2026-07-24 — reproduce Blayney et al.'s exact loop-inducing
+   condition first** [0-GPU cost beyond 1.1's own extraction]. Don't only
+   hope this project's own enrichments produce loops — their "Long
+   Persona" system prompt (verbatim in `docs/claims_ledger.md` B9, from
+   arXiv 2604.11791 App. C) is a literature-confirmed, already-measured
+   loop-inducing lever (0.14% per-token orbit rate on Huginn, vs. 0.02%
+   baseline). Run it verbatim on Huginn as a known-working positive
+   control before trusting any of this project's own task designs to
+   produce loops — if this project's extraction pipeline can't reproduce
+   loops under conditions independently shown to produce them, that's a
+   pipeline bug to find now, not a finding about H2.
 
 ### Phase 2 — no-GPU analyses on the substrate
 2.1 **`winding_null_test` on every real winding** [0-GPU]. Adjudicate whether
@@ -594,11 +636,28 @@ The controls that must be in place, and the ones the project got wrong.
    stated.
 3. **Per-position spectral radius is undefined** (§9) — a narrative all three
    designs leaned on; unmeasurable. Only the joint value exists.
-4. **Applied-H3 may be scoped out for Huginn's architecture** (§4 H3) — the
-   theorem is proved but contraction erases only h₀-dependence, and Huginn
-   re-injects context every step, so the count may survive contraction (A6
-   predicts this). Confirming it on real Huginn is novel either way — but it
-   means H3-as-stated does not bind for Huginn.
+4. **Applied-H3 may be scoped out for Huginn's architecture** (§4 H3, derived
+   precisely 2026-07-24 not just asserted) — the theorem's map
+   `h_{t+1}=R_θ(h_t;e)` only proves *initial-state* (`h_0`) differences
+   decay; `e` (the full reinjected prompt) is held fixed throughout the
+   proof and is never shown to decay. Since this project's counting tasks
+   make the count fully readable from `e` at t=0 (all tokens visible,
+   reinjected every unroll), the theorem's mechanism doesn't bind on the
+   count *by construction* here — it only would if the count were encoded
+   the way `h_0` is (genuinely streamed/accumulated, one token at a time,
+   no reinjection). A6's toy result is exactly this contrast: full-context
+   reinjection (matching Huginn) keeps count-R²>=0.996 under strong
+   contraction; a no-reinjection streaming counterpart collapses to
+   R²~=0.00. **Consequence**: this project's own empirical counting
+   failure (`counting_accuracy.csv`, 0% at n_ops>=8) should not be
+   narrated as evidence *for* the contraction bottleneck — H3, applied
+   honestly to an architecture with full-context reinjection, doesn't
+   predict that failure in the first place. The real cause is a separate,
+   still-open question (training-distribution mismatch, a learnability
+   gap in the `e -> h*(e)` readout, task novelty) — confirming H3 on real
+   Huginn (measuring σ_max, checking count-decodability) is still novel
+   and worth doing, but it tests a narrower, more precisely scoped claim
+   than "why Huginn can't count."
 5. **Geometry vs activations** (§2.6) — the deepest conceptual hole: probing the
    raw state is standard activation probing, not evidence that the *geometric
    summary* is informative. Must be tested directly or the paper overclaims.
@@ -745,8 +804,22 @@ Consolidated — take these to Barannikov:
   first-token-argmax check on any n_ops>9 count_ones/counting/three_scale
   item is checking the wrong thing, exactly as already flagged, now with a
   live confirmation instead of an assumption.
-- **J-Space / Jacobian-lens** (Anthropic 2026) — real, reuses the validated
-  `_replicate_coda_head` tail; a stretch-goal probe, needs a careful read first.
+- **CORRECTED 2026-07-24 — J-Space / Jacobian-lens compute cost.** Earlier
+  framing ("one linearized-attribution pass," cheap) was wrong, caught on
+  challenge and re-verified against the actual methodology
+  (transformer-circuits.pub/2026/workspace/). J-lens is **not** computed
+  per-example. It requires a precompute pass over a ~1,000-prompt
+  calibration corpus, `J_ℓ = E_{t,t',prompt}[∂h_final,t'/∂h_ℓ,t]`, averaged
+  into a stored `d_model x d_model` matrix *per layer* — genuinely
+  comparable in cost to a real extraction sweep (1000 forward+backward
+  passes, times however many effective depths get distinguished for a
+  weight-tied model, same "which (layer, depth)" ambiguity QK has), not a
+  one-off probe. Deprioritization is now doubly justified: not in the
+  original proposal (bonus, not required), AND genuinely GPU-heavy, not
+  just under-researched. Still the strongest interpretability escalation
+  path this project has found; revisit only after the required QK/spectral
+  deliverables ship, and only with a real compute budget line for the
+  calibration pass.
 
 ---
 

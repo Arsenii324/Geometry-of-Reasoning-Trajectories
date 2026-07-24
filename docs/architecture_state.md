@@ -79,9 +79,19 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 - `kaggle-cli-guide.md` — full Kaggle CLI reference (push/status/logs/output,
   GPU selection gotchas, T4 vs P100 sm_60 CUDA break, submission shapes).
 - `yandex-cloud-smiles-access.md` — Yandex Cloud DataSphere access notes for
-  the team's shared grant. Confirmed live via API: project
-  `Online_project24_2` (id `bt14qn4u9t3n09nfjoqu`), unit balance **5,000,000,
-  untouched**. Deployment mechanism is DataSphere Jobs
+  the team's shared grant. Re-checked live 2026-07-24: original project
+  `Online_project24_2` (id `bt14qn4u9t3n09nfjoqu`) shows unit balance
+  **5,000,000** — same round number as before, even though 2 real jobs ran
+  on it (1 SUCCESS, 1 ERROR, `bt1csk570bg4jaq6tdme`/`bt1n02qvocurm6dsbvme`,
+  58s/58s on `c1.4` CPU config, ~232 units estimated cost each). **Don't
+  read "5,000,000" as "literally untouched"** — real compute did run, the
+  balance display may just round/lag below ~0.01% of the total budget; no
+  way found yet to query exact spend to more precision. Also found (same
+  day): a SECOND community (`smiles2026`, id `bt1qioruc9l0ev470t53`,
+  created 2026-07-22) with a new project `Online_Project19_3`
+  (`bt1730riliibkg6u7fhb`) not previously visible — its `:unitBalance`
+  endpoint returns empty `{}` (zero/unallocated, not "more credits yet").
+  Worth re-checking later. Deployment mechanism is DataSphere Jobs
   (`pip install datasphere`, `datasphere project job execute -p <id> -c
   config.yaml`) or JupyterLab in-browser. **Open gap**: actual per-hour/
   per-job unit burn rate for this project's GPU config was never queried
