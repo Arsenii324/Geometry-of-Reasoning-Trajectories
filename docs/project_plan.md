@@ -39,7 +39,14 @@ phenomenon is least present); and every direct winding-vs-depth test is null
 or a length/position artifact. The honest current verdict: **the project has
 mostly produced rigorous negatives**, and those negatives *independently
 corroborate* a Huginn-specific critique (Lu et al. 2507.02199) via a different
-methodology.
+methodology. **Update 2026-07-24 (D14)**: the phenomenon H1/H2 are about is
+now confirmed real and detectable on this project's own pipeline — reproducing
+Blayney et al.'s "Long Persona" condition found real loops (0.1286% per-token,
+matching their 0.14%) for the first time outside the artificially-starved
+`forceloop.csv` sweep, some spanning multiple full turns. The negatives above
+are not a pipeline failure to see loops; they're a base-rate/design problem
+(answer-token-only tracing, short synthetic prompts) that this result helps
+pin down, not a reason to doubt the phenomenon exists.
 
 **The plan** is one keystone GPU pass ("the efficient batch": all-token states
 + per-layer Q/K + per-step logits, saved once) that unblocks a fan of no-GPU
@@ -356,17 +363,21 @@ Compute tags: **[0-GPU]**, **[GPU: n hr]**. Curator-decision points marked **[C]
    — the only in-project loop-inducing lever tried so far — and
    **question/digit token positions**, not just the answer token. This one
    pass is the substrate for Phases 2–3.
-1.2 **NEW 2026-07-24 — reproduce Blayney et al.'s exact loop-inducing
-   condition first** [0-GPU cost beyond 1.1's own extraction]. Don't only
-   hope this project's own enrichments produce loops — their "Long
-   Persona" system prompt (verbatim in `docs/claims_ledger.md` B9, from
-   arXiv 2604.11791 App. C) is a literature-confirmed, already-measured
-   loop-inducing lever (0.14% per-token orbit rate on Huginn, vs. 0.02%
-   baseline). Run it verbatim on Huginn as a known-working positive
-   control before trusting any of this project's own task designs to
-   produce loops — if this project's extraction pipeline can't reproduce
-   loops under conditions independently shown to produce them, that's a
-   pipeline bug to find now, not a finding about H2.
+1.2 **DONE 2026-07-24 — reproduced Blayney et al.'s exact loop-inducing
+   condition, pipeline confirmed working, real loops observed for the
+   first time.** `scripts/diag_blayney_repro.py`, `results/blayney_repro.csv`
+   (Kaggle T4, 24 GSM8K examples x 2 conditions, all token positions).
+   `long_persona`: 7/5445 loops (0.1286%), matching Blayney's own 0.14%
+   per-token rate closely. `no_system_prompt`: 1/1677 (0.0596%) vs their
+   0.02% baseline (N too small to pin down precisely, not inconsistent).
+   **This project has now directly observed and quantified real winding
+   loops for the first time ever outside the artificially-starved
+   forceloop.csv condition** — several with |winding| well over 1 full
+   turn (up to 7.18), unlike forceloop's own |winding|~=0.65 loops. See
+   `claims_ledger.md` D14. Confirms the extraction pipeline is not the
+   reason H1/H2 tests keep coming back null on this project's own
+   answer-token-only synthetic tasks — the phenomenon is real and
+   detectable, just very rare, exactly as the literature predicts.
 
 ### Phase 2 — no-GPU analyses on the substrate
 2.1 **`winding_null_test` on every real winding** [0-GPU]. Adjudicate whether
@@ -615,10 +626,18 @@ The controls that must be in place, and the ones the project got wrong.
   the answer is `active_len % modulus` — single-token for any active_len at
   any modulus 2..10 (generalises `make_switch_task`'s mod-2 parity to a
   full family; modulus itself is a new difficulty axis, distinguishing
-  more residue classes needs more state per H3's own framing). Not yet run
-  on real Huginn — feeds Phase 1's keystone extraction (§5) rather than a
-  standalone runner script, since Phase 1's redesigned three_scale sweep
-  will supersede a bespoke one anyway.
+  more residue classes needs more state per H3's own framing).
+  **RUN 2026-07-24 on real Huginn** (`scripts/run_three_scale_modk.py`,
+  Kaggle T4, 126 configs, all succeeded): `seq_len` confirmed exactly
+  constant (42 tokens, std=0.0) across the whole sweep — the design's
+  core guarantee held in practice. Result: **clean null**, no significant
+  winding~active_len at either modulus tested (rho=+0.179 mod=2,
+  rho=−0.036 mod=5, both n.s. at N=7). This is the project's first
+  genuinely unconfounded H2 test, and it agrees with D11's negative
+  reading on cleaner footing. See `claims_ledger.md` D15 (also notes an
+  unplanned, not-yet-significant steps_settle~active_len pattern worth a
+  follow-up). A larger sweep (more active_len levels for N>=10, or a
+  wider modulus range) is a natural Phase 2 extension, not yet done.
 - **Joint-not-per-position σ_max [verified].** ∂h_{t+1}/∂h_t is one
   `[S·E]×[S·E]` causal Jacobian; σ_max is a single number for the whole state.
   "σ_max at question vs answer tokens" **does not exist** — drop that narrative;

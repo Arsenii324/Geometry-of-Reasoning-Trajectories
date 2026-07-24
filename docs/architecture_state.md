@@ -122,7 +122,8 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_contrast.py`, `run_phase.py`, `run_forceloop.py` | contrast/phase/forced-loop-budget experiments | yes | `contrast.csv` (n/a locally), `phase.csv`, `forceloop.csv` |
 | `run_homology.py` | persistent homology shape metric | yes | `homology.csv` |
 | `run_three_scale.py` | V6 — three-scale length ablation (the decoupled task) | yes | `three_scale.csv` — **real, post-fix data as of 2026-07-23** (Kaggle T4, all 180 configs succeeded). Result leans against H2: `winding`/`steps_settle` track `irrelevant_len` far more strongly than `active_len` — see `claims_ledger.md` D11. |
-| `run_three_scale_modk.py` | modulus-counting length-decoupled task, D11's prefix confound fixed by construction | yes | `three_scale_modk.csv` — not yet run, launched on Kaggle 2026-07-24, see decisions log |
+| `run_three_scale_modk.py` | modulus-counting length-decoupled task, D11's prefix confound fixed by construction | yes | `three_scale_modk.csv` — **real data, 2026-07-24, Kaggle T4, all 126 configs succeeded.** seq_len confirmed exactly constant (42, std=0.0). Clean null on winding~active_len at both moduli tested — see `claims_ledger.md` D15. |
+| `diag_blayney_repro.py` | Phase 1.2 positive control — reproduce Blayney's known loop-inducing condition | no (one-off diagnostic) | `blayney_repro.csv` — **real data, 2026-07-24, Kaggle T4.** First real loops observed outside forceloop.csv: 7/5445 (0.1286%) long_persona, matching Blayney's 0.14%. See `claims_ledger.md` D14. |
 | `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — real, corrected (space-prefixed target) data as of 2026-07-23 round 5. 4/24 hits, ALL at step 1 with target=0 — a small-number prior, not counting. See `claims_ledger.md` D12. |
 | `run_smoke_new_tasks.py` | smoke test for count_ones/projection + normed acceleration | no (overwrites) | `smoke_new_tasks.csv` |
 | `run_fdr_correction.py` | Phase 0 — BH-FDR across every project correlation test, 0-GPU | no (reads other CSVs directly) | `fdr_correction.csv` — 46 tests, 20/46 survive. See `claims_ledger.md` D13. |
@@ -133,13 +134,13 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 
 ## results/ inventory — what's actually committed vs not
 
-Present in `results/`: `convergence.csv`, `counting_accuracy.csv`,
-`counting.csv`, `dissoc_multiinit.csv`, `dissociation_15seed.csv`,
-`dissociation_results.csv`, `dissociation.csv`, `fdr_correction.csv`,
-`forceloop.csv`, `full_synthetic_experiments.csv`, `h2_loops.csv`,
-`homology.csv`, `maxtask.csv`, `pararule.csv`, `phase.csv`,
+Present in `results/`: `blayney_repro.csv`, `convergence.csv`,
+`counting_accuracy.csv`, `counting.csv`, `dissoc_multiinit.csv`,
+`dissociation_15seed.csv`, `dissociation_results.csv`, `dissociation.csv`,
+`fdr_correction.csv`, `forceloop.csv`, `full_synthetic_experiments.csv`,
+`h2_loops.csv`, `homology.csv`, `maxtask.csv`, `pararule.csv`, `phase.csv`,
 `power_curve.csv`, `power_loop_rate.csv`, `smoke_new_tasks.csv`,
-`switch.csv`.
+`switch.csv`, `three_scale_modk.csv`.
 
 `three_scale.csv` and `v6_correctness_probe.csv` both promoted into
 `results/` proper 2026-07-23 — real, post-fix data, both confirmed via
@@ -161,6 +162,32 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-24 — Real GPU runs, both Kaggle and DataSphere. First-ever
+  loops observed outside forceloop.csv.** Kaggle T4: `diag_blayney_repro.py`
+  (24 GSM8K examples x 2 conditions) and `run_three_scale_modk.py` (126
+  configs) both completed. Blayney repro: 7/5445 (0.1286%) long_persona
+  loops, matching Blayney's own 0.14% closely -- first real loops this
+  project has ever seen outside the starved-budget sweep, some spanning
+  multiple full turns (up to |winding|=7.18, vs forceloop's ~=0.65).
+  Confirms the pipeline works and the phenomenon is real, just rare.
+  modk sweep: seq_len confirmed exactly constant (42, std=0.0) across all
+  126 rows -- clean null on winding~active_len, the project's first
+  genuinely unconfounded H2 test. See `claims_ledger.md` D14/D15.
+  DataSphere GPU (parallel, per explicit instruction to monitor closely
+  and go incrementally): first-ever GPU job on this account. Two real
+  infra bugs found and fixed in sequence -- (1) auto-discovered torch
+  (2.13.0) bundles CUDA 13, incompatible with the gt4.1 node's driver
+  (caps at CUDA 12.2); (2) pinning torch==2.4.1 to fix that broke
+  Huginn's own model code, which imports `torch.nn.attention.
+  flex_attention` (added in torch 2.5) -- needed >=2.5 AND still
+  CUDA-12-compatible. Also hit and fixed a real `datasphere` CLI bug:
+  `local-paths: []` (empty list) silently collapses to `None` via a
+  truthy-check inconsistency, crashing job submission -- fix is a
+  non-empty placeholder list. Full details in
+  `code_env_info/yandex-cloud-smiles-access.md`'s new "GPU jobs" section.
+  Balance check: `unitBalance` still displays `5000000` after ~15 minutes
+  of combined real GPU time across 3 jobs -- confirmed this is a
+  display/billing lag, not zero cost; don't trust it as a live tracker.
 - **2026-07-24 — Two corrections + one new task generator, from being
   challenged on sloppy explanations.** (1) H3/task-reinjection: re-derived
   properly from `contraction_proof.md`'s own `h_{t+1}=R_theta(h_t;e)` --
