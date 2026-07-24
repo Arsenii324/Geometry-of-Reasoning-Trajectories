@@ -427,18 +427,62 @@ Q/K **are** recoverable: hook `core_block[i].attn.Wqkv`, split by `self.chunks`
 *then* RoPE** via `apply_rotary_emb_complex_like` to match what attention
 consumes [grounded]. But treat this as **research on weight-tied recurrence,
 not a reimplementation** (adversarial H5 [grounded]):
+
+**RESOLVED 2026-07-24 — read Tulchinskii et al. 2502.17017 directly (was in
+the uncertainty register, §13).** The exact statistic:
+`S_QK^(l,h)(c,s,a_i) = q_{a_i}^(l,h) · k_s^(l,h)` — a plain dot product
+between the query vector at the *candidate answer token* `a_i` (`"true"` or
+`"false"`) and the key vector at the token marking *the end of the
+statement* `s`, at one specific (layer, head). Prediction = whichever
+candidate (`true`/`false`) gets the higher score; **no threshold, no
+learned classifier, no multiple continuations — one forward pass**. The
+(layer, head) is not fixed a priori: it's **selected per task-setup on a
+600-example calibration set (300 true / 300 false)**, then evaluated on a
+held-out test set — i.e. head selection is itself part of the method, not
+a hyperparameter to guess. **Datasets used are exactly the ones this
+project already partially uses**: ProntoQA-OOD, PARARULE Plus, and
+Extended-Multi-LogiEval (1,000+ samples) — all three named in the original
+proposal (§2's gap matrix), of which this project currently runs only
+PARARULE at d2-5. Reported accuracy: ~88-98% on ProntoQA-OOD Modus-Ponens
+(depths 1-5) vs. ~61-67% baseline; weaker cross-dataset transfer (only
+3/5 selected heads beat baseline by >10% on PARARULE Plus when the head
+was chosen elsewhere) — **the method does not trivially transfer across
+task distributions, so a head selected on one dataset should not be
+assumed valid on another.** **Confirmed: the paper never discusses
+recurrent, looped, or weight-tied architectures** — "all experiments were
+performed with frozen pre-trained LLMs" (1.5B-70B, standard transformers).
+The port to Huginn's weight-tied recurrence is genuinely novel, not an
+application of an existing recipe — this independently confirms the
+adversarial concern below, now grounded rather than hypothesized.
+
 - **Weight-tying breaks "consistency heads":** the same 4 layers × 55 heads
   iterate 32× — a "head" now exists at 32 depths; which (layer, head, depth) is
-  "the" consistency head is a *design decision*, not a port.
+  "the" consistency head is a *design decision*, not a port. **Now sharper**:
+  the original method's head-selection step (calibrate per-setup on 600
+  labeled examples) still applies — it just needs to search over
+  `(layer, head, depth)` triples instead of `(layer, head)` pairs, and the
+  calibration set requirement is now precisely known (>=300/300 per class,
+  matching the original paper's scale).
 - **`freqs_cis` is a forward arg, not on the module** → a second hook is needed;
   the probe is not "free plumbing."
 - **~7,000 tests (4×55×32) with honest held-out head selection will most likely
-  yield zero FDR survivors** — pre-register the likely null.
-- **"Logical-consistency scores" do not exist in-project** — Tulchinskii derives
-  them from labeled consistency data. **[C] the curator must supply/approve the
-  labeled dataset and the exact statistic** *before* the GPU pass (M4 gates it).
-  If no consistency dataset can be committed, keep only "QK-alignment vs shape"
-  and drop the consistency link.
+  yield zero FDR survivors** — pre-register the likely null. Calibration-set
+  selection (as the original paper does) is a legitimate alternative to
+  raw FDR correction across all 7,000 — select on a held-out calibration
+  split first, then test only the winning head on a separate test split,
+  matching Tulchinskii's own protocol rather than inventing a new one.
+- **"Logical-consistency scores" do not exist in-project as true/false
+  labels** — Tulchinskii's own labels come directly from the three named
+  benchmarks (ProntoQA-OOD, PARARULE Plus, Extended-Multi-LogiEval), not a
+  separately-annotated "consistency" dataset — so the label-sourcing
+  problem is smaller than previously framed: it is "extend the loader to
+  the other two named datasets," not "invent a new labeling scheme."
+  **[C] the curator must still confirm the exact `(layer, head, depth)`
+  search protocol and sign off on porting a same-token-position dot
+  product (query at the answer token, key at the statement-end token) to
+  Huginn's shared-weight, per-unroll representation** *before* the GPU pass
+  (M4 gates it). If no consistency dataset can be committed, keep only
+  "QK-alignment vs shape" and drop the consistency link.
 Still: this is the highest-curator-alignment deliverable and nearly free on the
 extraction pass — **promote it to a standalone must-do** regardless of which
 overall lens is chosen (completeness #7).
@@ -448,10 +492,40 @@ Never measured on Huginn (only a 64-D toy) [grounded]. `spectral.py` is
 self-tested but **only on 1-D maps and measures σ_max (operator norm), not ρ
 (spectral radius)** — a *defensible, stronger* choice for the contraction claim
 (σ_max<1 ⟹ ρ<1, which is what Banach needs), but it must be *labeled* as
-operator norm, not printed as "ρ(∂ₕR)." Three checkpoints before writeup:
-(1) read **Yang 2605.26733** — the README credits it but the code cites Miyato;
+operator norm, not printed as "ρ(∂ₕR)."
+
+**RESOLVED 2026-07-24 — read Yang et al. 2605.26733 directly (was in the
+uncertainty register, §13): title "Stabilizing Recurrent Dynamics for
+Test-Time Scalable Latent Reasoning in Looped Language Models" (STARS
+method). The code's Miyato citation is correct; the README's Yang credit
+is wrong, and it's not just an attribution slip — they compute genuinely
+different quantities via genuinely different algorithms.** Yang's JSRR
+does power iteration **directly on J**: `v <- Jv/‖Jv‖`, converging to J's
+dominant eigenvector, estimating `ρ(J) ≈ ‖Jv‖₂` (Lyapunov-linearization
+stability, matching H3's own `ρ(∂ₕR)` notation exactly). `spectral.py`
+instead does power iteration **on JᵀJ** (via JVP-then-VJP composition),
+converging to J's dominant *singular* vector — that's the classic Miyato
+et al. 2018 spectral-normalization recipe, correctly self-cited, and it
+estimates σ_max, not ρ. **These coincide only when J is normal (symmetric
+in the real case); for a general nonlinear recurrent Jacobian there is no
+reason to expect that, so `spectral.py`'s current estimator measures the
+*wrong* quantity for a literal `ρ(∂ₕR)` claim** (it still correctly upper-
+bounds ρ, since σ_max>=ρ always — the σ_max<1⟹ρ<1 contraction argument
+above still holds, but a report of "ρ" specifically would need the
+direct-J power iteration instead). Also: Yang's method is **training-time
+only** (a regularization loss during SFT, `L_STARS = (1-λ)L_SFT + λ·L_JSRR`)
+— confirms it's inference-incompatible as a baseline, already correctly
+flagged (§2 gap matrix, "Yang/Movahedi are training-time"); they test on
+Ouro-1.4B (a LoopLM, not Huginn), GSM8K, +4.01% peak.
+
+Checkpoints before writeup, updated: (1) ~~read Yang 2605.26733~~ DONE —
+`spectral.py`'s estimator and Yang's are confirmed different algorithms for
+different quantities, not the same thing under two names; decide [C]
+whether the paper report `σ_max` (already implemented, upper-bounds ρ) or
+implement the cheaper direct-J power iteration to report actual `ρ`
+(closer to what H3 literally states, ~1 extra JVP call, no VJP needed);
 (2) fix the 1-D→`[S,5280]` tangent + re-test (M6); (3) report the **joint**
-value only (§10.3).
+value only (§10.3), labeled correctly for whichever of the two is chosen.
 
 ---
 
@@ -563,10 +637,18 @@ Consolidated — take these to Barannikov:
 
 ## 13. Uncertainty register (verify before citing)
 
-- **Yang 2605.26733** never read; `spectral.py` cites Miyato. Do not credit the
-  estimator to Yang until confirmed.
-- **Tulchinskii 2502.17017 exact statistic** never read in-repo — required
-  before any QK code.
+- **RESOLVED 2026-07-24 — Yang 2605.26733**, read directly. Confirmed: NOT
+  the same estimator as `spectral.py`. Yang's JSRR does power iteration
+  directly on J (estimates ρ, training-time-only regularizer); `spectral.py`
+  does power iteration on JᵀJ (estimates σ_max) — correctly self-cited to
+  Miyato 2018, not Yang. Full detail in §8.3. The README's Yang credit is
+  wrong and should be corrected [C, whether to fix now or as part of a
+  larger README pass].
+- **RESOLVED 2026-07-24 — Tulchinskii 2502.17017 exact statistic**, read
+  directly (WebFetch of the arXiv HTML, not abstract-only). Full detail in
+  §8.2. Still open: the exact `(layer, head, depth)` search protocol for
+  Huginn's weight-tied case is a [C] curator decision, not resolved by
+  reading the paper.
 - **Lu et al.'s released code** (`github.com/wenquanlu/huginn-latent-cot`) —
   diff against `hook.py`/`run_v6_correctness_probe.py` to avoid duplicating
   their setup and to adopt multi-layer probing (they warn single-layer `[-1]`
