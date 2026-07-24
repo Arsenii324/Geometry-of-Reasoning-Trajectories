@@ -365,6 +365,79 @@ Compute tags: **[0-GPU]**, **[GPU: n hr]**. Curator-decision points marked **[C]
    — the only in-project loop-inducing lever tried so far — and
    **question/digit token positions**, not just the answer token. This one
    pass is the substrate for Phases 2–3.
+
+   **Concrete build order (2026-07-24, expanded from the §5 sketch into
+   actionable substeps — not yet implemented, this is the design).** Split
+   into what's ready to build now vs. genuinely [C]-blocked, so the
+   not-blocked parts don't sit idle waiting on a curator answer:
+
+   a. **All-token latents [ready, 0 new risk].** `diag_blayney_repro.py`'s
+      `_extract_all_positions` already prototypes this (mirrors `hook.py`'s
+      own `return_logits=False` hook, which already captures every
+      position — only the return statement slices). Promoting this into
+      `hook.py` itself as a real `extract_trajectory(..., token_index=None)`
+      mode (returning `[num_steps, n_tokens, 5280]`) is mechanical: copy the
+      prototype's hook, keep the existing single-token path as the default
+      for backward compat with every script that calls it today.
+   b. **Logits, all positions [ready].** `_replicate_coda_head` already
+      takes a `[1, n_tokens, hidden]` state and returns `[1, n_tokens,
+      vocab]` logits — the existing per-step reconstruction already works
+      for every position, `hook.py`'s current code just slices to
+      `token_index` afterward (line ~146). Persisting top-k (not full
+      vocab) per position per step keeps this cheap: `[num_steps, n_tokens,
+      k]` instead of `[num_steps, n_tokens, vocab]` (a ~6000x reduction at
+      k=5, vocab~=30k).
+   c. **Q/K hooking mechanics [ready, the recipe is NOT the same as the
+      search protocol].** Hook `core_block[i].attn.Wqkv` for each of the 4
+      layers (Huginn-0125 is `(2,4,2)_I`: 2 prelude, 4 core_block, 2 coda,
+      per Blayney et al. Table 1, read in full this session) — a SECOND
+      hook per layer, alongside the existing `core_block[-1]` state hook.
+      `freqs_cis` is a forward arg, not a module attribute, so it must be
+      captured via a hook on a parent module or passed through explicitly
+      (already flagged as a real gotcha, not newly discovered). Split the
+      fused QKV output by `self.chunks`, apply `qk_bias` (config confirmed
+      ON), then RoPE via `apply_rotary_emb_complex_like` — this exact
+      sequence was verified against the real source this session (§8.2),
+      not guessed. **What this step does NOT decide**: which (layer, head,
+      unroll-step) to actually use for Tulchinskii's `S_QK` statistic —
+      that's 1.1d below, and it's [C]-blocked.
+   d. **QK statistic + search protocol [C]-blocked, do not implement past
+      the hook itself without curator sign-off].** Tulchinskii's exact
+      formula is now known (§8.2): `S_QK^(l,h) = q_{a_i}^(l,h) · k_s^(l,h)`,
+      one `(layer, head)` selected via a 600-example calibration split
+      (300/300 per class). For Huginn's weight-tied recurrence this becomes
+      a `(layer, head, unroll-step)` search — 4 x 55 x 32 = 7,040
+      candidates (matches the "~7,000 tests" figure already used
+      project-wide, e.g. §9's FDR-family note). **Persist reduced scalars,
+      not raw Q/K**: for a small, fixed set of (query-position,
+      key-position) pairs of interest (e.g. query at each candidate answer
+      token, key at the last question/statement token), compute and store
+      the dot product directly during the extraction pass, at every
+      `(layer, head, step)` — this is what makes the ~13 GB/prompt raw-Q/K
+      problem (§8.2) go away: a `[4, 55, 32]` float array per
+      query/key-position pair (~35 KB/prompt) instead of raw `[4, 55, 32,
+      96]` tensors. **Still needs from the curator**: the consistency-
+      labeled dataset (now known to just be ProntoQA-OOD/PARARULE
+      Plus/Multi-LogiEval directly, all public — §8.2's RESOLVED note — so
+      this is a scope/format decision, not a data-access blocker), and
+      explicit confirmation that searching over unroll-step as a third axis
+      is an acceptable port of the original 2D (layer,head) recipe.
+   e. **`Trajectory.save` wiring [ready].** `types.py`'s `Trajectory`
+      dataclass already has a working `.save()`/`.load()` `.npz` contract
+      with zero live callers — wire steps (a)+(b) through it directly,
+      giving `results/trajectories/*.npz` (not the orphaned legacy `.npy`
+      files, see architecture_state.md) a real, reproducible producer for
+      the first time.
+   f. **Storage guardrail [ready, already specified in §5]**: full `[T,H]`
+      paths for a *sampled* subset only (representative, enough for
+      `winding_null_test`/probes), reduced summaries (winding/shape/
+      steps_settle, already the existing convention) for every prompt.
+
+   Net: (a), (b), (e), (f) and the Q/K *hooking mechanics* in (c) can all be
+   built and tested (on a toy prompt, 0 GPU cost beyond a smoke test) before
+   any curator conversation happens. Only (d)'s actual *search* — which
+   (layer,head,step) triples get scored and reported as "the" QK signal —
+   waits on [C].
 1.2 **DONE 2026-07-24 — reproduced Blayney et al.'s exact loop-inducing
    condition, pipeline confirmed working, real loops observed for the
    first time.** `scripts/diag_blayney_repro.py`, `results/blayney_repro.csv`
