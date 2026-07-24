@@ -105,7 +105,8 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 |---|---|---|
 | `make_counting_task`, `make_switch_task`, `make_max_task`, `make_variants` | deterministic (rho=1.0) | original (notebook-derived); length-partial control is mathematically degenerate for all of these — see `claims_ledger.md` D10 |
 | `make_count_ones_task`, `make_projection_task` | deterministic (rho=1.0) | added 2026-07-19, same confound as above, now documented in-docstring |
-| `make_three_scale_task` | **independent** (irrelevant_len / neutral_len / active_len vary separately) | added 2026-07-19; the *only* task in the repo that actually decouples length from difficulty |
+| `make_three_scale_task` | **independent** (irrelevant_len / neutral_len / active_len vary separately) | added 2026-07-19; decouples length from difficulty, but has its own known prefix confound — `claims_ledger.md` D11 |
+| `make_three_scale_modk_task` | **independent, AND total_len constant by construction** (neutral_len is derived) | added 2026-07-24; fixes D11's prefix confound properly (no distinguished prefix region, answer position provably constant across a sweep); answer is `active_len % modulus`, single-token for any active_len; generalises `make_switch_task`'s mod-2 to modulus 2..10. Not yet run on real Huginn — feeds Phase 1 (`project_plan.md` §5/§9). |
 
 ## scripts/ inventory (one experiment each unless noted)
 
@@ -159,6 +160,23 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-24 — Two corrections + one new task generator, from being
+  challenged on sloppy explanations.** (1) H3/task-reinjection: re-derived
+  properly from `contraction_proof.md`'s own `h_{t+1}=R_theta(h_t;e)` --
+  `e` held fixed throughout the proof, only `h_0`-differences shown to
+  decay. This project's counting tasks make the count fully readable from
+  `e` (full context, reinjected every unroll), so H3's mechanism doesn't
+  bind on the count by construction here -- matches the A6 toy result
+  exactly. Consequence: this project's own counting failure should not be
+  narrated as confirming H3. (2) J-lens compute: was wrong calling it "one
+  pass" -- verified against the actual method, needs a ~1000-prompt
+  calibration corpus per layer, genuinely GPU-heavy. (3)
+  `make_three_scale_modk_task` added (`synthetic.py`, 6 tests): fixes
+  D11's prefix confound properly (constant total_len by construction, no
+  prefix region) and generalises `make_switch_task`'s mod-2 to modulus
+  2..10, single-token answer guaranteed. Also checked DataSphere credits
+  live: original project balance unchanged display-wise despite 2 real
+  jobs; found a second, empty-balance project in a newly-visible community.
 - **2026-07-24 — Self-caught error: power analysis used wrong Blayney rate,
   fixed same day.** Downloaded Blayney et al.'s real PDF (WebFetch truncates
   the HTML), read Appendix C Tables 3-4 directly. The "2.81%" figure this

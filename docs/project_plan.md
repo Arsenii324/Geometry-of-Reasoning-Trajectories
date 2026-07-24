@@ -344,7 +344,8 @@ Compute tags: **[0-GPU]**, **[GPU: n hr]**. Curator-decision points marked **[C]
 
 ### Phase 1 — the keystone extraction [GPU: ~1–2 hr]
 1.1 Implement the §5 efficient-batch pass (all-token latents + Q/K + logits +
-   `Trajectory.save`, sampled). Run over: three_scale (redesigned, §9),
+   `Trajectory.save`, sampled). Run over: three_scale (redesigned, §9 —
+   `make_three_scale_modk_task` now exists, ready to use),
    PARARULE (extend loader to d≤6 [C]), a **starved-budget set (num_steps≈16)**
    — the only in-project loop-inducing lever tried so far — and
    **question/digit token positions**, not just the answer token. This one
@@ -599,7 +600,19 @@ The controls that must be in place, and the ones the project got wrong.
   exactly the artifact three_scale was built to defeat. **No three_scale number
   is an H2 test until the task is redesigned:** constant total token count,
   constant answer position, vary only the active/neutral *ratio*, single-token
-  capped answer. [C] on the redesign.
+  capped answer. [C] on the redesign. **DONE 2026-07-24 —
+  `make_three_scale_modk_task`** (`src/traj_geom/shapes/synthetic.py`,
+  6 tests) implements exactly this redesign: `neutral_len` derived so
+  `total_len` (and therefore answer position) is constant by construction
+  across an active_len/irrelevant_len sweep, all three symbol kinds
+  shuffled into one sequence (no distinguished prefix region at all), and
+  the answer is `active_len % modulus` — single-token for any active_len at
+  any modulus 2..10 (generalises `make_switch_task`'s mod-2 parity to a
+  full family; modulus itself is a new difficulty axis, distinguishing
+  more residue classes needs more state per H3's own framing). Not yet run
+  on real Huginn — feeds Phase 1's keystone extraction (§5) rather than a
+  standalone runner script, since Phase 1's redesigned three_scale sweep
+  will supersede a bespoke one anyway.
 - **Joint-not-per-position σ_max [verified].** ∂h_{t+1}/∂h_t is one
   `[S·E]×[S·E]` causal Jacobian; σ_max is a single number for the whole state.
   "σ_max at question vs answer tokens" **does not exist** — drop that narrative;
