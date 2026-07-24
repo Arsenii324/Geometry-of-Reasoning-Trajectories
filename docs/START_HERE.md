@@ -44,6 +44,20 @@ gathered (`origin/pr-real-data` still at commit `900b8b4`, no new PR, repo
 
 ## Reading order, start to finish
 
+00. **`methods_and_findings.md`** (added 2026-07-24) — **the from-zero document;
+   read this if you know the papers by name but not the concrete setups.** Fully
+   self-contained: the model architecture and extraction concretely (the actual
+   forward hook, the unrolls, the coda reconstruction), every metric's real
+   implementation and its fragilities (winding = per-trajectory-PCA-to-2D +
+   signed-angle-sum, sign-arbitrary, un-null-tested; steps_settle; the exact
+   classify_shape thresholds), a dedicated statistical-methods layer that states
+   every test's assumptions and where they bite (the crit-table's no-ties
+   assumption, Fisher's independence assumption, partial_spearman's collinearity
+   guard, the power curve's normal-generator assumption, …), then every
+   experiment as an explicit test with its number and pass/fail criterion, plus
+   consolidated limitations. Longer than `results_report.md` below but assumes no
+   prior context.
+
 0a. **`results_report.md`** (added 2026-07-24) — **the backward document; read
    this if you want "what did we actually find, and how sure are we."** An
    exhaustive, per-experiment results report organized by hypothesis (H1/H2/H3),
