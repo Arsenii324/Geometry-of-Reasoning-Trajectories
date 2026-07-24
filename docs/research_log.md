@@ -1,5 +1,11 @@
 # Research Log
 
+> **STALE AS OF 2026-07-24.** Last entry predates the coda-skip fix's
+> second round, D11-D15, and a full literature-verification pass. Read
+> `project_plan.md` + `claims_ledger.md` for current status before trusting
+> anything below as the latest word. See
+> `docs/verifiability_and_accountability.md`. Not rewritten, just flagged.
+
 Format: reverse-chronological entries. Each entry is a "knot" — whatever mix of
 hypothesis update, evidence, literature, discussion, and open questions actually
 belongs together for that problem. Don't force separate sections if the problem

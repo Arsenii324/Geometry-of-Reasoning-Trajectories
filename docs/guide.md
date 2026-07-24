@@ -1,5 +1,11 @@
 # Operating guide — Geometry of Reasoning Trajectories
 
+> **STALE AS OF 2026-07-24** for status/results claims (commands and repo
+> orientation are likely still fine). Predates the coda-skip fix's second
+> round, D11-D15, and a full literature-verification pass. Read
+> `project_plan.md` + `claims_ledger.md` for current status. See
+> `docs/verifiability_and_accountability.md`. Not rewritten, just flagged.
+
 A single-handed reference: what this repo actually is, how to run it, what's
 broken, and what the team was doing when. Written from reading every module,
 running the test suites (main and the open PR branch, in a disposable

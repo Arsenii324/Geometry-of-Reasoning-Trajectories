@@ -1,5 +1,13 @@
 # End-to-end guide: Geometry of Reasoning Trajectories
 
+> **STALE AS OF 2026-07-24** for anything result-related (hypothesis status,
+> claimed numbers) — commands/conventions below are likely still accurate,
+> but every claimed *result* predates the coda-skip fix's second round,
+> D11-D15, and a full literature-verification pass. Cross-check any specific
+> number against `claims_ledger.md`; read `project_plan.md` for current
+> status. See `docs/verifiability_and_accountability.md`. Not rewritten,
+> just flagged.
+
 One document meant to let you operate this project alone: understand why it
 exists, review what's actually been established vs merely claimed, rerun any
 experiment with different parameters, and write new ones that fit the

@@ -133,6 +133,13 @@ gathered (`origin/pr-real-data` still at commit `900b8b4`, no new PR, repo
     strong rho=0.7 effect). Freezes a 10-item pre-registered test family for
     the Phase 1/2 keystone analyses. `claims_ledger.md` D13 (the BH-FDR
     sweep this doc's power numbers contextualize) is a companion read.
+12. **`verifiability_and_accountability.md`** (added 2026-07-24) — not a
+    findings doc, a practices doc: the requirements analysis behind this
+    project's verification conventions (why `claims_ledger.md` is tagged
+    the way it is, what a script's `STATUS` line is for), an audit against
+    those requirements, and what was fixed (9 scripts gained missing
+    `STATUS` lines; docs 2-6 below got "STALE AS OF" banners). Read this if
+    you're wondering "can I trust doc X" rather than "is claim Y true."
 
 ## Where the non-doc work lives
 

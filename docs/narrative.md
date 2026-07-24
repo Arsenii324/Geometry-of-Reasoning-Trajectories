@@ -1,5 +1,16 @@
 # The project, end to end
 
+> **STALE AS OF 2026-07-24.** This file was last substantively updated
+> 2026-07-22 and predates: the coda-skip fix's second round, D11's
+> multivariate/prefix-confound refinement, D12's two corrections (bare-token
+> bug, then the top-k re-score), D13-D15 (BH-FDR, the first real loops ever
+> observed, the first clean H2 test), and a full literature-verification
+> pass (Tulchinskii/Yang/Blayney/Geiping/Lu et al., all read from primary
+> sources). Read `project_plan.md` first for current status;
+> `claims_ledger.md` for any specific number. See
+> `docs/verifiability_and_accountability.md` for how this banner came to
+> exist. Content below is otherwise unchanged — not rewritten, just flagged.
+
 A single linear read: what's being studied, why, how it's measured, what
 each experiment actually found, and where that leaves the project's three
 hypotheses. Written to be read once, start to finish, by someone who wants

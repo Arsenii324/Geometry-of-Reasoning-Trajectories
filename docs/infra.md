@@ -1,5 +1,14 @@
 # Code infrastructure — architecture, conventions, cookbook
 
+> **STALE AS OF 2026-07-24** — architecture/conventions described below are
+> probably still accurate, but this predates several new modules and
+> functions added since (`multivariate_rank_control`, `benjamini_hochberg`
+> usage, `run_fdr_correction.py`, `run_power_analysis.py`,
+> `make_three_scale_modk_task`, the `diag_*.py` one-off-diagnostic
+> convention). See `architecture_state.md` (kept current, not this file)
+> for the up-to-date module/results inventory, and
+> `docs/verifiability_and_accountability.md`. Not rewritten, just flagged.
+
 Distinct from the other three docs in here: `research_log.md` is the
 discussion trace, `guide.md` is "how do I set up and reproduce this,"
 `claims_ledger.md` is "is this specific number true." This one is the
