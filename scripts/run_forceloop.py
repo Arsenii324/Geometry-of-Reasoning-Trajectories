@@ -3,6 +3,9 @@
 Reproduces results/forceloop.csv. At num_steps=16 loops emerge for longer counts;
 at >=24 steps everything settles again. Loops are a symptom of too little compute,
 not of depth per se. OWNER: Shapes+Gate.
+STATUS: implemented, verified-live. The project's cleanest positive H1 result
+    (Fisher exact p=0.0101, see claims_ledger.md B4) -- main() now runs that
+    test itself (added 2026-07-24), not just a hand-computed number.
 
 Run: python -m scripts.run_forceloop
 """

@@ -2,6 +2,12 @@
 
 Reproduces results/maxtask.csv. Unlike counting/switch, steps-to-settle does NOT
 rise with length here (rho negative) — the effect is not universal. OWNER: Data+Analysis.
+STATUS: implemented, verified-live. `winding~n_ops [per-level]=+0.943` survives
+    BH-FDR correction (q=0.012, claims_ledger.md D13) but is not trustworthy
+    regardless: `n_ops` is rank-correlated 1.0 with `seq_len` here (D10, same
+    as counting.py) -- the guarded `partial_spearman` call raises on this data
+    for exactly that reason, so "winding~n_ops" is indistinguishable from
+    "winding~seq_len."
 
 Run: uv run python -m scripts.run_maxtask
 """

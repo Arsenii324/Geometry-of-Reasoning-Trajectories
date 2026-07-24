@@ -124,7 +124,7 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_three_scale.py` | V6 — three-scale length ablation (the decoupled task) | yes | `three_scale.csv` — **real, post-fix data as of 2026-07-23** (Kaggle T4, all 180 configs succeeded). Result leans against H2: `winding`/`steps_settle` track `irrelevant_len` far more strongly than `active_len` — see `claims_ledger.md` D11. |
 | `run_three_scale_modk.py` | modulus-counting length-decoupled task, D11's prefix confound fixed by construction | yes | `three_scale_modk.csv` — **real data, 2026-07-24, Kaggle T4, all 126 configs succeeded.** seq_len confirmed exactly constant (42, std=0.0). Clean null on winding~active_len at both moduli tested — see `claims_ledger.md` D15. |
 | `diag_blayney_repro.py` | Phase 1.2 positive control — reproduce Blayney's known loop-inducing condition | no (one-off diagnostic) | `blayney_repro.csv` — **real data, 2026-07-24, Kaggle T4.** First real loops observed outside forceloop.csv: 7/5445 (0.1286%) long_persona, matching Blayney's 0.14%. See `claims_ledger.md` D14. |
-| `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — real, corrected (space-prefixed target) data as of 2026-07-23 round 5. 4/24 hits, ALL at step 1 with target=0 — a small-number prior, not counting. See `claims_ledger.md` D12. |
+| `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, correctness timing (strict argmax AND top-5) | yes | `v6_correctness_probe.csv` — real data, re-run 2026-07-24 with the top-k/single-token-answer fix. Top-5 hit rate on the honestly-verifiable single-token subset: **13/13 (100%)**, almost always by step 1; strict argmax only 4/13. Substantially revises the old "small-number prior, doesn't count" reading. See `claims_ledger.md` D12. |
 | `run_smoke_new_tasks.py` | smoke test for count_ones/projection + normed acceleration | no (overwrites) | `smoke_new_tasks.csv` |
 | `run_fdr_correction.py` | Phase 0 — BH-FDR across every project correlation test, 0-GPU | no (reads other CSVs directly) | `fdr_correction.csv` — 46 tests, 20/46 survive. See `claims_ledger.md` D13. |
 | `run_power_analysis.py` | Phase 0 — loop-rate + Spearman-detection power analysis, 0-GPU | no (reads other CSVs + pure simulation) | `power_loop_rate.csv`, `power_curve.csv`. See `docs/power_and_preregistration.md`. |
@@ -162,6 +162,30 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-24 — D12 rerun with top-k fix substantially revises the
+  "small-number prior" story.** Two real bugs on the way: (1) forgot
+  `logits` from `extract_trajectory` is numpy not torch, `.topk()`
+  crashed 24/24 configs on the first Kaggle attempt -- fixed with
+  `np.argpartition`, verified locally against `np.argsort` before
+  relaunching. (2) The fix itself: single-token vs multi-token answers
+  now distinguished (11/24 of D12's rows have negative targets, which
+  ALSO split into 2 tokens like magnitude>=10 does -- a leading-"-"-token
+  match confirms nothing about the actual value). Real result on the
+  13 honestly-verifiable single-token rows: top-5 hit rate 13/13 (100%),
+  usually by unroll step 1; strict argmax only 4/13. The model reliably
+  shortlists the right count, a small-number bias usually wins the final
+  pick. Old "doesn't count, just a prior" reading was too strong. See
+  `claims_ledger.md` D12.
+- **2026-07-24 — Added STATUS lines to 9 scripts that never had them**
+  (`run_convergence/counting/dissociation/dissociation_multiinit/
+  forceloop/homology/maxtask/phase/switch.py`) -- all notebook-derived,
+  pre-session, had OWNER but no STATUS, unlike every script touched this
+  session. Real, checkable inconsistency, not cosmetic: STATUS is where
+  a reader learns a script's result is degenerate (D10), doesn't
+  replicate (D13), or measures something narrower than its docstring
+  implies (H1 on single curves, D-series pointers) without cross-referencing
+  the ledger first. Content only, no logic changes; each STATUS line cites
+  the specific claims_ledger.md ID it summarizes.
 - **2026-07-24 — Real GPU runs, both Kaggle and DataSphere. First-ever
   loops observed outside forceloop.csv.** Kaggle T4: `diag_blayney_repro.py`
   (24 GSM8K examples x 2 conditions) and `run_three_scale_modk.py` (126

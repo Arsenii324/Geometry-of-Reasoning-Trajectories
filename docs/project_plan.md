@@ -343,17 +343,19 @@ Compute tags: **[0-GPU]**, **[GPU: n hr]**. Curator-decision points marked **[C]
    because `irrelevant_len` is a prefix block, irrelevant_len's effect *is* a
    total-length / answer-position effect. Honest D11: **winding is a
    length/position artifact, not a reasoning-content signal.** Update the ledger.
-0.5 **Re-measure correctness without the single-token trap** [GPU, small --
-   CORRECTED 2026-07-24, was wrongly tagged 0-GPU: checked
-   `run_v6_correctness_probe.py`'s `compute()` directly, it only persists
-   `correct_at_step`/`target`, never the raw logits or top-k, so there's
-   nothing cached to re-analyze offline]. The multi-digit AND negative-sign
-   answer bug (§9, confirmed live 2026-07-24: 11/24 of D12's own rows have
-   negative targets, which also split into 2 tokens) means D12's "4/24, all
-   target=0" undercounts real accuracy -- ~46% of rows were unmeasurable by
-   construction, not misses. Needs a small re-run: modify `compute()` to
-   check top-k membership (or full multi-token match) instead of strict
-   single-token argmax, then re-extract on Kaggle.
+0.5 **DONE 2026-07-24 — re-measured correctness without the single-token
+   trap, and the result substantially revises D12.** `run_v6_correctness_probe.py`
+   now separates single-token answers (0-9, honestly verifiable, 13/24 rows)
+   from multi-token ones (negative/>=10, 11/24 rows, leading-token-only) and
+   records `topk_correct_at_step` (top-5) alongside strict argmax. Real
+   Kaggle rerun: **top-5 hit rate on the single-token subset is 13/13
+   (100%)**, almost always by unroll step 1; strict argmax finds it only
+   4/13 (all `target=0`). The model reliably shortlists the correct count in
+   its top-5 candidates — it just usually loses the final argmax pick to a
+   generic small-number bias. "Small-number prior, doesn't count" (the old
+   D12 reading) was too strong; see `claims_ledger.md` D12's 2026-07-24
+   update for the full, more accurate picture. N=13 still small, not a
+   powered rate estimate, but 13/13 is a strong signal regardless.
 
 ### Phase 1 — the keystone extraction [GPU: ~1–2 hr]
 1.1 Implement the §5 efficient-batch pass (all-token latents + Q/K + logits +

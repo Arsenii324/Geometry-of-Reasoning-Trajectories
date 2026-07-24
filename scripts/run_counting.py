@@ -2,6 +2,11 @@
 
 Reproduces results/counting.csv. All trajectories settle, but effective compute
 (steps-to-settle) and |winding| rise with the count length. OWNER: Data+Analysis.
+STATUS: implemented, verified-live. `seq_len` is a deterministic function of
+    `n_ops` for this task (rank-corr=1.0) -- the length-partial control below
+    is mathematically degenerate, guarded (raises) by `partial_spearman`, see
+    claims_ledger.md D10. Do not read a length-controlled number from this
+    script as a real result.
 
 Run: python -m scripts.run_counting
 """

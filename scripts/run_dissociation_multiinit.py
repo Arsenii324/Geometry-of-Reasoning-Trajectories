@@ -3,6 +3,10 @@
 Reproduces results/dissoc_multiinit.csv (10 lengths x 6 task-seeds x 5 init-seeds).
 Checks whether the track steps-to-settle trend survives across initialisation seeds
 (it is only ~1 step and unstable). Cached: analysis-only without GPU. OWNER: Data+Analysis.
+STATUS: implemented, real data (dissoc_multiinit.csv, 600 rows). Reports
+    per-level rho only (no p-value) -- see project_plan.md §2.7 for why this
+    same data (`path_independence`, its own `lyap` column) is also a candidate
+    validity-null test for the geometry itself, not yet run as one.
 
 Run: uv run python -m scripts.run_dissociation_multiinit
 """

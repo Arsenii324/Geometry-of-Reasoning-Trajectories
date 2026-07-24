@@ -6,6 +6,12 @@ but not `local`, the effect is state-holding, not prompt length.
 
 Reproduces results/dissociation.csv (--seeds 5) or dissociation_15seed.csv
 (--seeds 15) and (re)draws figures/dissociation.png. OWNER: Data+Analysis.
+STATUS: implemented, verified-live. The 5-seed run's "local winding~n_ops
+    [per-level] = -0.943" does NOT replicate at 15 seeds (rho drops to -0.543,
+    n.s., and even flips sign in the per-row statistic) -- a small-N artifact,
+    not a BH-FDR casualty (it survives FDR at 5 seeds; the 15-seed rerun is
+    what actually kills it). See claims_ledger.md D13. Prefer --seeds 15 for
+    any claim; --seeds 5 alone is not trustworthy for this specific number.
 
 Run: python -m scripts.run_dissociation --seeds 15
 """

@@ -3,6 +3,12 @@
 Reads trajectories/manifest.csv + the *.npy point clouds, scores each with the
 diameter-normalised max H1 persistence, and writes results/homology.csv.
 Requires the `tda` extra (ripser). OWNER: Extraction+Winding.
+STATUS: implemented, but H1 on a SINGLE curve is ~0 by mathematical
+    construction (a single 1-D path has no independent 1-cycles to detect,
+    regardless of whether the underlying dynamics loop) -- this is not a
+    finding about Huginn, see project_plan.md §10 item 3 and
+    `theoretical_framework.md`, which names population-level/delay-embedding
+    homology (not implemented here) as the methodologically sound version.
 
 Run: uv run python scripts/run_homology.py
 """

@@ -3,6 +3,13 @@
 Reproduces results/switch.csv. A light-on/off parity task also needs state-holding;
 steps-to-settle rises with n_ops just as for counting, showing the effect is not
 specific to arithmetic. OWNER: Data+Analysis.
+STATUS: implemented, verified-live. Same D10 length-degeneracy as
+    `run_counting.py`/`run_maxtask.py` (`n_ops` vs `seq_len` rank-corr=1.0) --
+    the guarded `partial_spearman` call raises on this data, no trustworthy
+    length-controlled number exists for this task. Generalised to a full
+    modulus family (not just mod-2 parity) by
+    `make_three_scale_modk_task`/`run_three_scale_modk.py` (2026-07-24),
+    which also fixes the length confound this task can't.
 
 Run: python -m scripts.run_switch
 """

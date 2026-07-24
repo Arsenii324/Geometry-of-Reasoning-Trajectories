@@ -3,6 +3,10 @@
 Reads trajectories/manifest.csv + the *.npy point clouds, scores each with the
 model-free convergence descriptors, and writes results/convergence.csv. No GPU
 needed. OWNER: Extraction+Winding.
+STATUS: implemented, verified-live 2026-07-18 (claims_ledger.md B10). Depends
+    on the `trajectories/*.npy` point clouds already being saved -- no current
+    script writes new ones (see architecture_state.md's orphaned-data note);
+    re-running this against fresh data would need that wired up first.
 
 Run: uv run python scripts/run_convergence.py
 """

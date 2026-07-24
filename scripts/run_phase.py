@@ -3,6 +3,11 @@
 Reproduces results/phase.csv and generates figures/phase.png: for each combination
 of compute budget (num_steps) and count length (n_ops), the fraction of runs that
 did NOT settle (loop/drift). OWNER: Shapes+Gate.
+STATUS: implemented, verified-live. Same underlying phenomenon as
+    `run_forceloop.py`'s B4 result (starved compute budget induces loops) --
+    this script maps it over a wider (num_steps, n_ops) grid but runs no
+    significance test itself; `run_forceloop.py` is the one with the real
+    Fisher exact test (claims_ledger.md B4).
 
 Run: python -m scripts.run_phase
 """
