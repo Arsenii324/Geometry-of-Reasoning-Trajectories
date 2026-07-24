@@ -32,6 +32,16 @@ are marked, not silently scored as if fully checked. (2) `topk_correct_at_step`
 as a softer, additional diagnostic — the model can be "close" (target in
 top-5, not top-1) without registering under the strict criterion.
 
+BUG FOUND AND FIXED 2026-07-24, same day, via a real Kaggle run: the first
+version of this fix called `.topk()` on `logits[step]`, assuming a torch
+Tensor — but `extract_trajectory`'s `return_logits=True` path converts to
+a plain numpy array before returning (`hook.py`: `torch.stack(logits_list)
+.numpy()`), and numpy has no `.topk()`. `.argmax()` coincidentally worked
+before this fix (numpy has its own `.argmax()`), which is exactly why the
+bug wasn't caught by that method — every (depth, seed) failed with
+`AttributeError` on the first real run. Fixed with `np.argpartition`
+instead of `.topk()`.
+
 BUG FOUND AND FIXED 2026-07-23, via scripts/diag_v6_token_gap.py: the prompt
 ends "...A:" with no trailing space, so the model's real next-token
 continuation is a SPACE-PREFIXED token (" 2", not "2") -- confirmed
@@ -51,6 +61,7 @@ Run: uv run python -m scripts.run_v6_correctness_probe
 
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
@@ -103,7 +114,11 @@ def compute() -> pd.DataFrame:
                     if correct_at_step == -1 and step_logits.argmax() == target_token_id:
                         correct_at_step = step
                     if topk_correct_at_step == -1:
-                        topk_ids = step_logits.topk(TOP_K).indices.tolist()
+                        # step_logits is a plain numpy array (extract_trajectory
+                        # converts before returning) -- no .topk(), use
+                        # argpartition. Order within the top-K doesn't matter,
+                        # only membership.
+                        topk_ids = np.argpartition(step_logits, -TOP_K)[-TOP_K:]
                         if target_token_id in topk_ids:
                             topk_correct_at_step = step
                     if correct_at_step != -1 and topk_correct_at_step != -1:
