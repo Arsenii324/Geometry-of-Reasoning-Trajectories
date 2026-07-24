@@ -10,14 +10,26 @@ TASK: sweep (active_len, irrelevant_len, modulus, seed) at FIXED total_len
     against active_len with total length and answer position held
     genuinely constant -- the actual clean H2 test three_scale was
     supposed to be (project_plan.md §9).
-I/O: -> results/three_scale_modk.csv (active_len, irrelevant_len,
-    neutral_len, total_len, modulus, seq_len, winding, steps_settle,
-    answer_target).
+I/O: -> results/three_scale_modk.csv (default grid) or
+    results/three_scale_modk_extended.csv (--extended), same columns
+    (active_len, irrelevant_len, neutral_len, total_len, modulus, seq_len,
+    winding, steps_settle, answer_target).
 
-Run: uv run python -m scripts.run_three_scale_modk
+EXTENDED 2026-07-24 (project_plan.md follow-up on D15's steps_settle~active_len
+    observation, Fisher-combined p=0.015 at N=7/modulus -- underpowered per
+    docs/power_and_preregistration.md's own N=7 power curve). `--extended`
+    switches to N=15 active_len levels (vs 7) at a wider total_len=36 (vs 24)
+    -- a genuine replication attempt at properly-powered N, saved to a
+    SEPARATE file so the original D15 numbers (tied to the exact 126-row,
+    total_len=24 run) stay reproducible and this can be compared side by
+    side, not silently overwritten.
+
+Run: uv run python -m scripts.run_three_scale_modk [--extended]
 """
 
 from __future__ import annotations
+
+import argparse
 
 import pandas as pd
 from tqdm import tqdm
@@ -30,34 +42,52 @@ from traj_geom.shapes.synthetic import make_three_scale_modk_task
 
 # Fixed total length across the whole sweep -- the actual property this
 # task exists to guarantee. active_len + irrelevant_len must stay
-# <= TOTAL_LEN for every combo below (18+6=24=TOTAL_LEN at the extreme).
-TOTAL_LEN = 24
-ACTIVE_LENS = (0, 3, 6, 9, 12, 15, 18)
-IRRELEVANT_LENS = (0, 3, 6)
-MODULI = (2, 5)
-N_SEEDS = 3
+# <= TOTAL_LEN for every combo (checked per-grid below).
+GRIDS = {
+    "default": {
+        "results_name": "three_scale_modk.csv",
+        "total_len": 24,
+        "active_lens": (0, 3, 6, 9, 12, 15, 18),
+        "irrelevant_lens": (0, 3, 6),
+        "moduli": (2, 5),
+        "n_seeds": 3,
+    },
+    "extended": {
+        "results_name": "three_scale_modk_extended.csv",
+        "total_len": 36,
+        "active_lens": tuple(range(0, 29, 2)),  # 0,2,...,28 -- N=15 levels
+        "irrelevant_lens": (0, 3, 6),
+        "moduli": (2, 5),
+        "n_seeds": 3,
+    },
+}
 
 
-def compute() -> pd.DataFrame:
+def compute(grid: dict) -> pd.DataFrame:
     """Extract a trajectory per modk-task config and score its geometry."""
     from traj_geom.extraction.hook import extract_trajectory
 
     model, tok = load_model()
     rows = []
+    total_len = grid["total_len"]
+    active_lens = grid["active_lens"]
+    irrelevant_lens = grid["irrelevant_lens"]
+    moduli = grid["moduli"]
+    n_seeds = grid["n_seeds"]
 
-    total_iters = len(ACTIVE_LENS) * len(IRRELEVANT_LENS) * len(MODULI) * N_SEEDS
+    total_iters = len(active_lens) * len(irrelevant_lens) * len(moduli) * n_seeds
 
     n_failed = 0
     with tqdm(total=total_iters, desc="modk sweeps") as pbar:
-        for act in ACTIVE_LENS:
-            for irr in IRRELEVANT_LENS:
-                for k in MODULI:
-                    for s in range(N_SEEDS):
+        for act in active_lens:
+            for irr in irrelevant_lens:
+                for k in moduli:
+                    for s in range(n_seeds):
                         try:
                             task = make_three_scale_modk_task(
                                 active_len=act,
                                 irrelevant_len=irr,
-                                total_len=TOTAL_LEN,
+                                total_len=total_len,
                                 modulus=k,
                                 seed=s,
                             )
@@ -72,7 +102,7 @@ def compute() -> pd.DataFrame:
                                     "active_len": act,
                                     "irrelevant_len": irr,
                                     "neutral_len": task["neutral_len"],
-                                    "total_len": TOTAL_LEN,
+                                    "total_len": total_len,
                                     "modulus": k,
                                     "seq_len": seq_len,
                                     "winding": abs(winding_of(tr, burn=4)),
@@ -89,7 +119,7 @@ def compute() -> pd.DataFrame:
                                 f"k={k} seed={s} after error: {e!r}"
                             )
                         else:
-                            save_partial(rows, "three_scale_modk.csv")
+                            save_partial(rows, grid["results_name"])
                         pbar.update(1)
 
     if n_failed:
@@ -102,7 +132,12 @@ def main() -> None:
     genuinely clean H2 test this project will have run (project_plan.md
     §9's own prescribed fix, not an approximation of it).
     """
-    cdf = cached("three_scale_modk.csv", compute)
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--extended", action="store_true", help="use the N=15-level replication grid")
+    args = ap.parse_args()
+    grid = GRIDS["extended"] if args.extended else GRIDS["default"]
+
+    cdf = cached(grid["results_name"], lambda: compute(grid))
 
     print("\n--- Sanity: seq_len must be ~constant across the whole sweep ---")
     print(cdf["seq_len"].describe())
@@ -112,7 +147,7 @@ def main() -> None:
     print(f"|winding| ~ active_len (all modk pooled): {rho:>6.3f} (p={p:.2g})")
 
     print("\n--- Canonical per-level Spearman, split by modulus ---")
-    for k in MODULI:
+    for k in grid["moduli"]:
         sub = cdf[cdf["modulus"] == k]
         print(f"modulus={k}: winding~active_len", fmt_by_level(sub, "active_len", "winding"))
         print(
