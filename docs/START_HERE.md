@@ -54,6 +54,8 @@ gathered (`origin/pr-real-data` still at commit `900b8b4`, no new PR, repo
    spectral radius is undefined; geometry-vs-activations; the three_scale prefix
    confound), the curator-decision list, and the uncertainty register. Built
    from a multi-agent grounding+design+adversarial-verify pass, cross-checked.
+   **Its Phase 0 (§15, "no-GPU rigor rescue") is now fully executed** — see
+   `power_and_preregistration.md` below and `claims_ledger.md` D13.
 1. **This file** — orientation, you're here.
 2. **`narrative.md`** — **the main read; start here if you read only one
    thing.** One linear pass through the whole project in 14 sections:
@@ -121,6 +123,16 @@ gathered (`origin/pr-real-data` still at commit `900b8b4`, no new PR, repo
     class) via cheap direct reads rather than relaunching the full
     workflow. ACT/PonderNet/DEQ contrast and a few other threads remain
     genuinely open; resume command included if worth the cost.
+11. **`power_and_preregistration.md`** (added 2026-07-24) — the honesty gate
+    before any further GPU spend on H2. Two power problems computed live
+    against real data: the genuine-winding-loop rate (need ~25,000
+    (token,trajectory) draws at Blayney's baseline rate for E[loops]>=5;
+    current pool is 1,294, correctly predicting the zero loops actually
+    observed) and Spearman detection power at this project's small N (4-10)
+    task-difficulty levels (N=6 gives only 30% power to detect even a
+    strong rho=0.7 effect). Freezes a 10-item pre-registered test family for
+    the Phase 1/2 keystone analyses. `claims_ledger.md` D13 (the BH-FDR
+    sweep this doc's power numbers contextualize) is a companion read.
 
 ## Where the non-doc work lives
 

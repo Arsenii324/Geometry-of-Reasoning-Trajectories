@@ -114,6 +114,7 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_v6_correctness_probe.py` | V6 — per-unroll logit lens, first-token correctness timing | yes | `v6_correctness_probe.csv` — real, corrected (space-prefixed target) data as of 2026-07-23 round 5. 4/24 hits, ALL at step 1 with target=0 — a small-number prior, not counting. See `claims_ledger.md` D12. |
 | `run_smoke_new_tasks.py` | smoke test for count_ones/projection + normed acceleration | no (overwrites) | `smoke_new_tasks.csv` |
 | `run_fdr_correction.py` | Phase 0 — BH-FDR across every project correlation test, 0-GPU | no (reads other CSVs directly) | `fdr_correction.csv` — 46 tests, 20/46 survive. See `claims_ledger.md` D13. |
+| `run_power_analysis.py` | Phase 0 — loop-rate + Spearman-detection power analysis, 0-GPU | no (reads other CSVs + pure simulation) | `power_loop_rate.csv`, `power_curve.csv`. See `docs/power_and_preregistration.md`. |
 | `backfill_seq_len.py` | one-off: backfill `seq_len` onto switch/maxtask CSVs without GPU | n/a | mutates `switch.csv`/`maxtask.csv` in place |
 | `plot_trajectories.py` | PCA plot of count_ones/projection trajectories, shared basis per (task, n_ops) | n/a | `figures/pca_*.png` |
 | `extract.py`, `run_mvp.py` | earlier/MVP-era extraction entry points | — | — |
@@ -125,7 +126,8 @@ Present in `results/`: `convergence.csv`, `counting_accuracy.csv`,
 `dissociation_results.csv`, `dissociation.csv`, `fdr_correction.csv`,
 `forceloop.csv`, `full_synthetic_experiments.csv`, `h2_loops.csv`,
 `homology.csv`, `maxtask.csv`, `pararule.csv`, `phase.csv`,
-`smoke_new_tasks.csv`, `switch.csv`.
+`power_curve.csv`, `power_loop_rate.csv`, `smoke_new_tasks.csv`,
+`switch.csv`.
 
 `three_scale.csv` and `v6_correctness_probe.csv` both promoted into
 `results/` proper 2026-07-23 — real, post-fix data, both confirmed via
@@ -147,6 +149,23 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-24 — Phase 0 complete: power analysis + pre-registration
+  written, the last §15 item.** `scripts/run_power_analysis.py`,
+  `docs/power_and_preregistration.md`. Two power problems, both real:
+  (1) loop-rate — Blayney baseline 0.02% needs 25,000 (token,trajectory)
+  draws for E[loops]>=5; current real pool is 1,294 (E=0.26, correctly
+  predicts the zero loops actually observed outside forceloop.csv,
+  1,198/1,198 settle); keystone extraction needs >=500 prompts averaging
+  >=100 tokens to clear the bar. (2) detection power — Monte Carlo (5000
+  trials/cell) shows N=6 (this project's modal level count) gives only 30%
+  power to detect even rho=0.7; need N>=20 for 80% power at that effect
+  size. Both independently mean a null H2 result on current task designs
+  is "untestable," not "refuted." Froze a 10-item pre-registered test list
+  for Phase 1/2 (H1 items 1-3, H2 items 4-6, H3 items 7-8, validity checks
+  9-10) so nothing gets added post-hoc after seeing keystone data. Fast
+  tests pin the exact (non-simulated) arithmetic; the full Monte Carlo grid
+  (~60s) stays out of the pytest suite, run via the script directly.
+  **All 5 Phase 0 items from project_plan.md §15 now done.**
 - **2026-07-24 — BH-FDR sweep done; plan's own prediction was wrong.**
   `scripts/run_fdr_correction.py`, 46 tests across 9 experiments, 0-GPU.
   Raw p<0.05: 22/46. Survives BH-FDR: 20/46 (project-wide and

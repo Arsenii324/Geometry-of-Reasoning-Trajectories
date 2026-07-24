@@ -1,0 +1,11 @@
+scenario,n_draws,rate,expected_loops,clears_bar_of_5
+"current answer-token pool (real, this project)",1294,Blayney baseline (0.02%),0.25880000000000003,False
+"current answer-token pool (real, this project)",1294,Blayney optimistic ceiling (2.81%),36.3614,True
+"keystone all-token, M=500 prompts x S=30 tok",15000,Blayney baseline (0.02%),3.0,False
+"keystone all-token, M=500 prompts x S=30 tok",15000,Blayney optimistic ceiling (2.81%),421.5,True
+"keystone all-token, M=500 prompts x S=100 tok",50000,Blayney baseline (0.02%),10.0,True
+"keystone all-token, M=500 prompts x S=100 tok",50000,Blayney optimistic ceiling (2.81%),1405.0,True
+"keystone all-token, M=1000 prompts x S=50 tok",50000,Blayney baseline (0.02%),10.0,True
+"keystone all-token, M=1000 prompts x S=50 tok",50000,Blayney optimistic ceiling (2.81%),1405.0,True
+"keystone all-token, M=1000 prompts x S=100 tok",100000,Blayney baseline (0.02%),20.0,True
+"keystone all-token, M=1000 prompts x S=100 tok",100000,Blayney optimistic ceiling (2.81%),2810.0,True
