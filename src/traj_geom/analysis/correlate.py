@@ -44,6 +44,19 @@ from scipy.stats import t as _student_t
 # sample. No threshold is reachable at N=4, so it falls through to the same
 # "n/a" path already used for N>10, rather than implying 1.000 is a bar that
 # could ever be met.
+#
+# GOTCHA (found 2026-07-24, see claims_ledger.md D15): this table is exact
+# permutation enumeration over N DISTINCT ranks -- it assumes no ties among
+# the N level-means. Real level-means CAN tie (e.g. three_scale_modk.csv's
+# modulus=2 group: two different active_len levels averaged to the exact
+# same steps_settle). When ties are present, |rho| >= this table's
+# threshold is neither necessary nor sufficient for p<0.05 -- scipy's own
+# p-value (which does account for ties) can disagree with this table right
+# at the boundary (a real case: N=7, |rho|=0.775 < crit=0.786 reads "n.s."
+# here, but scipy.stats.spearmanr's own p for that exact data was 0.041,
+# below 0.05). If `ycol` group-means might tie, prefer the p-value
+# `spearmanr` itself returns over a table lookup, or note the tie
+# explicitly when reporting a table-based verdict.
 _SPEARMAN_CRIT_P05: dict[int, float] = {
     5: 1.000,
     6: 0.886,
