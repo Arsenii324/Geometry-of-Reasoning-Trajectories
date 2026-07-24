@@ -44,6 +44,16 @@ gathered (`origin/pr-real-data` still at commit `900b8b4`, no new PR, repo
 
 ## Reading order, start to finish
 
+0a. **`results_report.md`** (added 2026-07-24) — **the backward document; read
+   this if you want "what did we actually find, and how sure are we."** An
+   exhaustive, per-experiment results report organized by hypothesis (H1/H2/H3),
+   every number recomputed from the raw CSVs and cross-checked by an adversarial
+   pass. Includes the honesty headline (the model *fails* the counting task at
+   the depths where the geometry "signals" appear; geometry doesn't separate
+   right from wrong answers), the confound catalogue, the power analysis, and an
+   explicit limitations/future-work section. Pairs with `project_plan.md` (0
+   below): report = what was found, plan = what to do next.
+
 0. **`project_plan.md`** (added 2026-07-24) — **the forward document; read this
    if you want "what next and why."** The authoritative living plan: the
    proposal-vs-actual gap matrix, the per-hypothesis verdict, the strategic
