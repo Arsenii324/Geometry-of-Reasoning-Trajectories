@@ -40,6 +40,16 @@ GOTCHAS (hard-won — keep):
     `validate_logits=True` on by default regardless: it costs one extra
     forward pass and is the only thing standing between a real bug and
     silently-wrong logits if this ever runs on a different revision/config.
+    EXTERNALLY CONFIRMED 2026-07-24: Lu et al.'s released code
+    (`github.com/wenquanlu/huginn-latent-cot`, `huginn-predrank/
+    raven_modeling_minimal.py`) independently implements the identical
+    `ln_f -> coda -> ln_f -> lm_head` reconstruction for their own
+    per-unroll logit-lens probe — a second, independent, published
+    implementation doing the same thing, not just this project's own
+    self-check (see `docs/project_plan.md` §13). Their probe also hooks
+    every one of the 4 `core_block` layers per unroll (this file hooks only
+    `core_block[-1]`, one capture per unroll) — a real granularity gap,
+    not yet adopted here, see the same doc section.
 """
 
 from __future__ import annotations

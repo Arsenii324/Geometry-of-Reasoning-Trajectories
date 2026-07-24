@@ -649,10 +649,41 @@ Consolidated — take these to Barannikov:
   §8.2. Still open: the exact `(layer, head, depth)` search protocol for
   Huginn's weight-tied case is a [C] curator decision, not resolved by
   reading the paper.
-- **Lu et al.'s released code** (`github.com/wenquanlu/huginn-latent-cot`) —
-  diff against `hook.py`/`run_v6_correctness_probe.py` to avoid duplicating
-  their setup and to adopt multi-layer probing (they warn single-layer `[-1]`
-  hooking is method-sensitive).
+- **RESOLVED 2026-07-24 — Lu et al.'s released code**
+  (`github.com/wenquanlu/huginn-latent-cot`), fetched and diffed directly
+  (`huginn-predrank/raven_modeling_minimal.py`, their patched fork of the
+  model source, vs. this project's `hook.py`). Two concrete findings:
+  1. **Independent confirmation this project's hard-won coda-reconstruction
+     fix is mathematically correct.** Their probing code does exactly
+     `ln_f -> coda -> ln_f -> lm_head` on an intermediate state
+     (`raven_modeling_minimal.py`'s `core_block_forward`: `x_probe =
+     ln_f(x)`, run through `self.transformer.coda`, then `x_probe =
+     ln_f(x_probe)`, then `lm_head(x_probe)`) — the identical double-`ln_f`
+     pattern this project's `_replicate_coda_head` uses, found independently
+     via two rounds of `validate_logits` catching a systematic bug (§Errors,
+     `claims_ledger.md` D12). A second, independent, published
+     implementation doing the same reconstruction is strong external
+     validation, not just an internal self-check.
+  2. **Confirms the single-layer `[-1]` hooking concern concretely, with an
+     exact granularity gap now known.** This project's `hook.py:110` hooks
+     only `core_block[-1]` — one capture per full 4-layer unroll (32
+     captures for `num_steps=32`). Lu et al. probe **after every one of the
+     4 core_block layers**, inside the layer loop itself (128 captures for
+     the same 32 unrolls) — 4x finer time resolution on exactly the
+     question this project studies (per-step trajectory shape). Their
+     `core_block_forward`'s probing branch uses a separate `x_probe`
+     variable and never touches the real `x`/cache the forward pass returns
+     — confirms the "probe without disturbing the real computation" pattern
+     this project's hook also relies on is sound. **Not adopted here yet**
+     (would require hooking all 4 `core_block[i]` layers, not just `[-1]`,
+     ~4x the extraction memory/compute for the same unroll count) — flagged
+     as a Phase 1 design choice, not implemented in this pass. One
+     non-issue ruled out: their code needs `deepcopy(past_key_values)`
+     during probing because `model.generate`'s incremental KV cache would
+     otherwise get corrupted by the probe's coda pass; this project's
+     `extract_trajectory` does a single non-cached forward pass (grepped
+     `hook.py`: no `past_key_values`/`use_cache` reference anywhere), so
+     that specific gotcha does not apply here.
 - **Blayney's 0.02% / 2.81% digits** — structurally confirmed, digits not
   independently verified (arXiv fetch truncated before App. C).
 - **"Geiping observes orbits on question/digit tokens"** — project-stated, not
