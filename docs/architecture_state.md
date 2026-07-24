@@ -149,6 +149,25 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-24 — Self-caught error: power analysis used wrong Blayney rate,
+  fixed same day.** Downloaded Blayney et al.'s real PDF (WebFetch truncates
+  the HTML), read Appendix C Tables 3-4 directly. The "2.81%" figure this
+  project has cited since 2026-07-17 is a per-EXAMPLE rate ("any question
+  token shows the behavior"), not per-token — `power_and_preregistration.md`'s
+  first version (written earlier the same day) used it as a per-token
+  Poisson rate anyway. Correct per-token ceiling is **0.14%** (Table 3,
+  Long Persona). N-needed-for-5-loops corrected from 178 to ~3,571; the
+  "current pool would show ~36 loops but shows 0" anomaly (which needed an
+  awkward "rate doesn't transfer" caveat) is gone — corrected E[loops]=1.8,
+  observing 0 is unremarkable (~16% chance under Poisson). Fixed
+  `run_power_analysis.py`, `power_and_preregistration.md`, `claims_ledger.md`
+  B9 (now has the full verified table), `project_plan.md` §7/§13. Also
+  resolved Blayney's Orbit-specific rate (0.01%-0.13%, closer to this
+  project's own metric) and their FFT-based classifier (Algorithm 1) as a
+  second reference implementation worth comparing against `classify_shape`.
+  Lesson: a WebFetch HTML summary of a 39-page paper with 63 figures is not
+  the same as reading the actual tables — worth the PDF download when a
+  number will be used in real arithmetic, not just cited.
 - **2026-07-24 — Digit tokenization uncertainty resolved, live check not
   assumption.** `scripts/diag_tokenization.py`, tokenizer-only (CPU, no
   GPU/weights). Both spaced and unspaced digit strings give exactly one

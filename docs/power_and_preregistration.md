@@ -6,8 +6,20 @@ power calc computed *before* the keystone pass, and a frozen family of
 tests it will be scored against, so results can't be cherry-picked after
 the fact.
 
+**CORRECTED same day** after downloading and reading Blayney et al.'s actual
+PDF (the first version of this doc relied on a WebFetch HTML summary of
+the paper that conflated two different quantities). The original "2.81%
+optimistic ceiling" was Table 4's per-EXAMPLE rate ("does *any* question
+token in this example show the behavior"), not a per-token rate —
+mechanically much larger than any single token's real probability because
+it aggregates over every token in the example. The correct per-token
+ceiling, from Table 3 directly, is **0.14%** (Huginn, "Long Persona"
+system prompt). This changes the "optimistic" N-needed-for-bar from 178 to
+**~3,571** and every downstream keystone-scale recommendation below.
+See `claims_ledger.md` B9 for the full table.
+
 Script: `scripts/run_power_analysis.py` (0-GPU). Data: `results/power_loop_rate.csv`,
-`results/power_curve.csv`. Verified live 2026-07-24; re-run to reproduce.
+`results/power_curve.csv`. Verified live 2026-07-24 (post-correction); re-run to reproduce.
 
 ---
 
@@ -19,10 +31,12 @@ one does not answer the other.
 **(A) Can we expect to observe a genuine winding LOOP at all**, at the rates
 the literature reports for this architecture class? This is a Poisson-style
 expectation over (token, trajectory) draws, gated by Blayney et al.
-(arXiv:2604.11791, `claims_ledger.md` B9): only **0.02%** of tokens are
-non-fixed-point at baseline, up to **2.81%** under a question-token +
-system-prompt condition (an upper ceiling from a different setup, not this
-project's).
+(arXiv:2604.11791 Table 3, `claims_ledger.md` B9): only **0.02%** of tokens
+are non-fixed-point with no system prompt, rising to **0.14%** under their
+"Long Persona" system-prompt condition — both PER-TOKEN rates, from the same
+table, directly comparable to each other (unlike the paper's separately-
+reported per-example "2.81%" figure, which answers a different question and
+must not be used here — see the correction note above).
 
 **(B) Given N task-difficulty "levels" (4-10, every synthetic task in this
 project), can a Spearman test detect a real winding-vs-depth correlation** if
@@ -42,19 +56,14 @@ every single one settles.
 | Rate | N needed for E[loops] >= 5 |
 |---|---|
 | Blayney baseline (0.02%) | **25,000** draws |
-| Blayney optimistic ceiling (2.81%) | **178** draws |
+| Blayney Long Persona (0.14%) | **~3,571** draws |
 
-At the *current* pool (1,294), E[loops] = 0.26 under the baseline rate — the
-correctly-powered prediction is "expect to see none," which is exactly what
-was observed. **The project's near-total absence of loops in real data is
-consistent with a true, undetected H2 effect under Blayney's baseline rate —
-it is not evidence against H2.** (If the *optimistic* 2.81% ceiling applied to
-this project's own tasks, the current pool would already be expected to show
-~36 loops; it shows zero. That is itself informative: whatever produces
-Blayney's higher rate in their conditions — likely their specific
-long-persona/padded prompts — does not transfer to this project's short
-synthetic tasks. Do not cite the 2.81% figure as if it applies here without
-re-deriving it on this project's own prompt style.)
+At the *current* pool (1,294), E[loops] = 0.26 under the baseline rate and
+E[loops] = 1.81 under the Long Persona rate — both correctly predict "expect
+to see zero or very few," which is exactly what was observed (P(zero events)
+under Poisson(1.81) is ~16%, unremarkable). **The project's near-total
+absence of loops in real data is consistent with a true, undetected H2
+effect under either Blayney rate — it is not evidence against H2.**
 
 **What would it take to clear the bar?** A keystone all-token extraction
 (project_plan.md §5) turns every prompt's *entire* token sequence into
@@ -62,20 +71,22 @@ re-deriving it on this project's own prompt style.)
 by ~S (tokens/prompt) at zero extra GPU cost (the unrolls are already
 computed for every token; only the return statement currently discards them).
 
-| Scenario | Draws | E[loops] @ baseline | Clears bar of 5? |
-|---|---|---|---|
-| Current answer-token pool (real) | 1,294 | 0.26 | No |
-| Keystone, 500 prompts x 30 tok | 15,000 | 3.0 | No |
-| Keystone, 500 prompts x 100 tok | 50,000 | 10.0 | **Yes** |
-| Keystone, 1000 prompts x 50 tok | 50,000 | 10.0 | **Yes** |
-| Keystone, 1000 prompts x 100 tok | 100,000 | 20.0 | **Yes** |
+| Scenario | Draws | E[loops] @ baseline | E[loops] @ Long Persona | Clears bar of 5 @ baseline? |
+|---|---|---|---|---|
+| Current answer-token pool (real) | 1,294 | 0.26 | 1.81 | No |
+| Keystone, 500 prompts x 30 tok | 15,000 | 3.0 | 21.0 | No |
+| Keystone, 500 prompts x 100 tok | 50,000 | 10.0 | 70.0 | **Yes** |
+| Keystone, 1000 prompts x 50 tok | 50,000 | 10.0 | 70.0 | **Yes** |
+| Keystone, 1000 prompts x 100 tok | 100,000 | 20.0 | 140.0 | **Yes** |
 
 **Recommendation for Phase 1 scale** [C, see §4]: the keystone pass needs
 **at least ~500 prompts averaging >=100 tokens each** (or equivalent draws)
 to have a reasonable expectation of clearing the baseline-rate bar. Shorter
 synthetic prompts (the ~30-token end of this project's current range) do not
-clear it even at 500 prompts — either lengthen the task templates or extract
-more prompts.
+clear it even at 500 prompts under the pessimistic rate (though they would
+under the Long Persona rate: 21 expected) — either lengthen the task
+templates, extract more prompts, or accept the more optimistic assumption
+knowingly [C].
 
 ## 3. (B) Depth-correlation detection power
 
@@ -149,10 +160,12 @@ that family.
 - **An underpowered null on H2 must be reported as "untestable at this N,"
   never as "H2 refuted."** Both §2 and §3 independently show the current
   task designs cannot detect a moderate true effect even if one exists.
-- **The 2.81% Blayney ceiling must not be cited as this project's expected
-  rate** without first re-deriving a comparable rate on this project's own
-  prompts — §2 shows the current data is inconsistent with that rate
-  transferring here.
+- **Blayney's per-example "2.81%" figure (Table 4) must never be used as a
+  per-token/per-draw rate** — it answers a different question ("does any
+  token in this example show the behavior") and is not comparable to the
+  0.02%/0.14% per-token rates (Table 3) this document's arithmetic depends
+  on. This mistake was made once already in this document's first version
+  and corrected same-day; see the top-of-file changelog note.
 - **The "≥5 genuine loops" bar** (project_plan.md §12 point 5) is used
   throughout this document as the working definition of "enough to analyze
   at all" — proposed here, not yet confirmed by the curator. [C]

@@ -42,7 +42,7 @@ def test_n_needed_for_bar_exact_arithmetic() -> None:
     optimistic_row = needed[needed["rate_value"] == BLAYNEY_RATE_OPTIMISTIC].iloc[0]
     assert baseline_row["n_needed_for_5_loops"] == pytest.approx(LOOP_BAR / BLAYNEY_RATE_BASELINE)
     assert baseline_row["n_needed_for_5_loops"] == pytest.approx(25000.0)
-    assert optimistic_row["n_needed_for_5_loops"] == pytest.approx(177.9, abs=0.1)
+    assert optimistic_row["n_needed_for_5_loops"] == pytest.approx(3571.4, abs=0.1)
 
 
 def test_loop_rate_power_table_current_pool_does_not_clear_baseline_bar() -> None:

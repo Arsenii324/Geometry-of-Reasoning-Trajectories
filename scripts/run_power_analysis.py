@@ -3,23 +3,26 @@
 on H2, since an underpowered null must never be reported as a refutation).
 
 OWNER: Data+Analysis
-STATUS: implemented 2026-07-24.
+STATUS: implemented 2026-07-24. CORRECTED same day after reading Blayney et
+    al.'s actual PDF Appendix C (the first version relied on a WebFetch
+    HTML summary that conflated two different quantities -- see the
+    BLAYNEY_RATE_OPTIMISTIC comment below and claims_ledger.md B9).
 TASK: two independent power questions this project had never actually
     computed:
     (1) Genuine-winding-LOOP rate power. At Blayney et al.'s (arXiv:2604.11791,
-        see claims_ledger.md B9) measured non-fixed-point token rates --
-        0.02% baseline, up to 2.81% under a question-token/system-prompt
-        condition -- how many (token, trajectory) draws are needed to
-        expect >=5 genuine loops, and does this project's current/planned
-        extraction scale clear that bar? Cross-checked against this
-        project's own real data: outside the artificially-starved
-        forceloop.csv sweep (num_steps=16), the answer-token-only pool
-        (n=1294 winding/shape-classified real extractions, counted live
-        below) shows ZERO loop/drift trajectories at full compute budget --
-        consistent with, not contradicting, the Blayney-rate power
-        calculation (E[loops] at 0.02% on n=1294 is ~0.26, i.e. "expect to
-        see none" is the correctly-powered prediction, not evidence H2 is
-        false).
+        Appendix C Table 3, see claims_ledger.md B9) measured PER-TOKEN
+        non-fixed-point rates -- 0.02% with no system prompt, 0.14% under
+        their "Long Persona" system-prompt condition -- how many
+        (token, trajectory) draws are needed to expect >=5 genuine loops,
+        and does this project's current/planned extraction scale clear
+        that bar? Cross-checked against this project's own real data:
+        outside the artificially-starved forceloop.csv sweep
+        (num_steps=16), the answer-token-only pool (n=1294 winding/shape-
+        classified real extractions, counted live below) shows ZERO
+        loop/drift trajectories at full compute budget -- consistent with,
+        not contradicting, the Blayney-rate power calculation (E[loops] at
+        0.02% on n=1294 is ~0.26, i.e. "expect to see none" is the
+        correctly-powered prediction, not evidence H2 is false).
     (2) Depth-correlation DETECTION power. At the small N (4-10) "levels"
         this project's synthetic tasks actually produce, what statistical
         power does a per-level Spearman test have to detect a range of true
@@ -45,11 +48,19 @@ from scipy.stats import spearmanr
 
 from scripts._common import RESULTS_DIR
 
-# Blayney et al. arXiv:2604.11791 Appendix C -- fraction of TOKENS that are
-# non-fixed-point (i.e. could in principle show up as a genuine winding
-# loop), not fraction of whole trajectories. See claims_ledger.md B9.
-BLAYNEY_RATE_BASELINE = 0.0002  # 0.02%
-BLAYNEY_RATE_OPTIMISTIC = 0.0281  # 2.81%, question-token + system-prompt condition
+# Blayney et al. arXiv:2604.11791 Appendix C, Table 3 -- fraction of TOKENS
+# (not examples, not trajectories) that are individually non-fixed-point.
+# See claims_ledger.md B9. CORRECTED 2026-07-24: the original version of
+# this script used 2.81% here, sourced from an automated HTML summary that
+# turned out to conflate Table 3 (per-token) with Table 4 (per-EXAMPLE,
+# "at least one question token in this example shows the behavior
+# anywhere" -- a fundamentally different, much larger quantity precisely
+# because it aggregates over every token in the example). Confirmed by
+# reading the actual PDF: Table 3's Huginn-0125, Long-Persona-system-prompt
+# PER-TOKEN rate is 0.14%, not 2.81%. Using 2.81% as a per-draw Poisson
+# rate overstated the "optimistic ceiling" N-needed-for-bar by ~20x.
+BLAYNEY_RATE_BASELINE = 0.0002  # 0.02%, no system prompt, Table 3
+BLAYNEY_RATE_OPTIMISTIC = 0.0014  # 0.14%, "Long Persona" system prompt, Table 3
 LOOP_BAR = 5  # project_plan.md §12 point 5's proposed "genuine loops" power bar
 
 # Files with a winding/shape classification -- the current answer-token-only
@@ -111,7 +122,7 @@ def loop_rate_power_table() -> pd.DataFrame:
     for label, n in scenarios:
         for rate_name, rate in (
             ("Blayney baseline (0.02%)", BLAYNEY_RATE_BASELINE),
-            ("Blayney optimistic ceiling (2.81%)", BLAYNEY_RATE_OPTIMISTIC),
+            ("Blayney Long Persona (0.14%)", BLAYNEY_RATE_OPTIMISTIC),
         ):
             expected = n * rate
             rows.append(
@@ -134,7 +145,7 @@ def n_needed_for_bar() -> pd.DataFrame:
         [
             {"rate": "Blayney baseline (0.02%)", "rate_value": BLAYNEY_RATE_BASELINE,
              "n_needed_for_5_loops": LOOP_BAR / BLAYNEY_RATE_BASELINE},
-            {"rate": "Blayney optimistic ceiling (2.81%)", "rate_value": BLAYNEY_RATE_OPTIMISTIC,
+            {"rate": "Blayney Long Persona (0.14%)", "rate_value": BLAYNEY_RATE_OPTIMISTIC,
              "n_needed_for_5_loops": LOOP_BAR / BLAYNEY_RATE_OPTIMISTIC},
         ]
     )

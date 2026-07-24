@@ -399,10 +399,14 @@ hours held in reserve for a confirmatory spectral run only. Compute ledger §11.
 
 H2's phenomenon may be **undetectable at any affordable N** in the sampled
 condition, and that is a *result*, not a failure. At Blayney's ~0.02%, the
-whole project pooled (~1,300 answer-token trajectories) expects **≈0.3 loops**;
-even the optimistic 2.81% (question tokens + system prompt) is a *ceiling* and
-"non-fixed-point" ⊋ "≥1 full winding turn" — the only real loops in-project
-carry |winding|≈0.65, under one turn [grounded]. So the plan **must**:
+whole project pooled (1,294 answer-token trajectories, counted live) expects
+**≈0.26 loops**; even their own "Long Persona" system-prompt condition's
+per-token rate (**0.14%**, Table 3 — NOT the 2.81% figure, which is a
+different per-example statistic, see §13 and `power_and_preregistration.md`)
+expects only ≈1.8, and "non-fixed-point" ⊋ "≥1 full winding turn" — the only
+real loops in-project carry |winding|≈0.65, under one turn [grounded]. See
+`power_and_preregistration.md` (2026-07-24) for the full power calc,
+including the N-needed-for-≥5-loops table. So the plan **must**:
 (a) do the power calc *conditional on the genuine-winding-loop rate* before any
 GPU spend on H2; (b) report "H2 untestable-because-underpowered on Huginn" as a
 legitimate terminal outcome; (c) never treat an underpowered null as a
@@ -684,8 +688,19 @@ Consolidated — take these to Barannikov:
      `extract_trajectory` does a single non-cached forward pass (grepped
      `hook.py`: no `past_key_values`/`use_cache` reference anywhere), so
      that specific gotcha does not apply here.
-- **Blayney's 0.02% / 2.81% digits** — structurally confirmed, digits not
-  independently verified (arXiv fetch truncated before App. C).
+- **RESOLVED 2026-07-24 — Blayney's exact digits**, read directly from the
+  downloaded PDF's Appendix C Tables 3-4 (HTML fetches truncate this
+  paper). Confirmed 0.02% and 2.81% are both real numbers **but measure
+  different things**: 0.02%/0.14% (Table 3) are per-TOKEN rates; 2.81%
+  (Table 4) is a per-EXAMPLE "at least one hit anywhere" rate, not directly
+  comparable. This corrected a same-day error in
+  `power_and_preregistration.md`'s first version, which had used 2.81% as
+  a per-token rate. Full table in `claims_ledger.md` B9. Also newly
+  available: their Orbit-specific (not broader non-fixed-point) per-token
+  rate is 0.01%-0.13%, closer to this project's own winding-loop metric;
+  and their Algorithm 1 (FFT-based orbit detection, τ=0.05, ρ=0.9) is a
+  second, independently-designed classifier worth comparing against
+  `classify_shape`.
 - **"Geiping observes orbits on question/digit tokens"** — project-stated, not
   independently re-read from Geiping.
 - **RESOLVED 2026-07-24 — Digit tokenization.** Loaded the real tokenizer
