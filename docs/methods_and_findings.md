@@ -462,7 +462,7 @@ guarantee.
 
 ---
 
-## Part IV — The confound behind every significant winding result: length ≡ difficulty (D10)
+## Part IV — The confound behind the significant winding *positives*: length ≡ difficulty (D10)
 
 In the **naive counting-family** synthetic tasks — counting, switch, maxtask,
 count_ones — making the problem harder means adding tokens. (This is *not* true of
@@ -689,9 +689,16 @@ Assembling the per-level winding~difficulty ρ across all tasks:
 | modk N=7 | +0.107 | 7 | **yes** |
 | modk N=15 | −0.125 | 15 | **yes** |
 
-No consistent sign; the only two significant hits are the length-confounded pair;
-every genuinely length-clean test is null-to-negative. This is the **single
-strongest datapoint against H2.**
+No consistent sign; the only two significant *positive* hits are the
+length-confounded pair (counting, maxtask); every genuinely length-clean test is
+null-to-negative. (The table shows the accumulation-relevant `track` variant of
+dissociation. Its counterpart `local` gives a significant *negative*
+winding~n_ops = −0.943 at 5 seeds — but that is the length-*matched*,
+non-replicating hit from V.3, not a positive and not a length confound; at 15
+seeds it decays to −0.543, n.s. Either way it does not support H2.) Assembled this
+way, the table is the **clearest cross-task summary of the case against H2** — it
+shows the incoherence at a glance; the single strongest *controlled* test is
+separately V.5 (the length-clean, adequately-powered null).
 
 ### VI.2 Steps_settle tracks answer structure, not difficulty per se (D18)
 
