@@ -10,7 +10,19 @@ is uncertain, underpowered, or confounded, that is said, not omitted.
 
 Two companion docs: `results_report.md` (the same findings, more compact, assumes
 domain fluency) and `claims_ledger.md` (every claim tagged with its evidence and
-verification status, rows referenced below as D1–D20, B4, etc.).
+verification status). References below of the form D10, D15, B4, A6, E1, E3 are
+that ledger's row IDs — D-rows are cross-cutting/meta claims, B-rows are the
+original experiment results, A-rows are theory, C-rows are code claims, E-labels
+are the proposal's experiment names — look any of them up there for the full
+evidence trail.
+
+**One notation warning to avoid a real ambiguity:** the symbol **ρ** is used for
+*two different things* here, because both are standard. In every experiment/
+statistics context (Parts III, V, VI) **ρ is Spearman's rank-correlation
+coefficient**. In the H3 discussion only (0.1 and Part VII) **ρ is the spectral
+radius** — and there it is always written "spectral radius ρ" in full. If you see a
+bare ρ, it is the Spearman one. (Part VII also introduces σ_max, the largest
+singular value, a distinct quantity from ρ.)
 
 ---
 
@@ -41,8 +53,10 @@ more than the conclusions).
 - **H2 — loops encode depth.** ***Conditional on the trajectory looping***, the
   **winding number** grows with the number of reasoning steps the task requires.
   The antecedent is load-bearing: a winding number measured on a *settling* path
-  is not a measurement of the thing H2 is about, and (Part I.2) at full budget on
-  our tasks the answer token essentially always settles.
+  is not a measurement of the thing H2 is about, and at full budget on our tasks
+  the answer token settles in **every** extraction we have — zero loops on the
+  answer token were ever observed except under an artificially starved compute
+  budget (V.1) or on non-answer positions of a persona-prompted GSM8K run (V.8).
 - **H3 — contraction forbids counting.** If the recurrent update is forced to
   *strictly contract* — **spectral radius** ρ < 1, where ρ is the largest absolute
   eigenvalue of the one-step **Jacobian** ∂hₜ₊₁/∂hₜ (the matrix of partial
@@ -75,8 +89,9 @@ An abstract map, so you can place any function without hunting filenames:
 2. **Task generators** — pure functions `prompt-string ← (difficulty, seed)`:
    counting, switch, maxtask, variants (track/local), three_scale, three_scale_modk,
    count_ones, projection. No model here — just text.
-3. **Metrics** — `trajectory → scalar`: winding, steps_settle, shape,
-   convergence/lyap, homology. No statistics here — just per-trajectory geometry.
+3. **Metrics** — `trajectory → scalar or label`: winding, steps_settle (scalars),
+   shape (a label in {settle,loop,drift}), contraction/lyap, homology. No
+   statistics here — just per-trajectory geometry.
 4. **Statistics / analysis** — the tests (Part III): per-level Spearman + the
    critical-value table, partial_spearman, multivariate_rank_control,
    benjamini_hochberg, Fisher-combine. No model, no trajectories — just numbers.
@@ -87,11 +102,15 @@ An abstract map, so you can place any function without hunting filenames:
 7. **Theory / toy** — the H3 contraction proof (paper math) plus a *separate*
    toy-model codebase that tests H3 empirically on models runnable without a GPU.
 
-The clean dependency is: **layers 2+3 have no GPU dependency** (generators are
-text, metrics run on saved `.npy` arrays), **layer 1 needs the GPU**, and **layer
-4 needs neither** (it reads CSVs). This is why most of the analysis in this doc is
-0-GPU: the expensive extraction (layer 1) already happened and its outputs are
-cached.
+The dependency structure: **the layer-2 and layer-4 code imports no GPU/torch**
+(generators are text, statistics read CSVs); **layer 1 needs the GPU**; **layer 3
+(metrics) is numpy-only but needs a trajectory to run on**. Most raw trajectories
+were *not* saved — the experiment runners compute the metrics inline during
+extraction and persist only the scalar outputs to CSVs (the exception is the 15
+banked `.npy` trajectories used by convergence/homology). This is why most of the
+analysis in this doc is 0-GPU (it re-reads the cached CSVs, layer 4), and also why
+re-deriving a metric or running the winding null test needs a *fresh* extraction
+(layer 1) rather than an offline replay.
 
 ### 0.4 The experiments, by type
 
@@ -187,14 +206,15 @@ The **core block's 4 layers share one set of weights across all N repetitions**
 (weight-tied recurrence in depth). "Reasoning depth" at test time = **N, the
 number of unrolls** — you can dial it at inference without retraining. We use
 `N = num_steps = 64` unless a specific experiment starves it. The recurrence is
-*context-re-injecting*: the original prompt embedding is fed back in at every
-unroll (this matters for H3, Part V). Each hidden state we look at has dimension
-**5280**.
+*context-re-injecting*: the prompt's full input embeddings (all token positions)
+are concatenated back in at every unroll, not just carried implicitly in the
+hidden state (this is the crux of the H3 analysis, Part VII). Each hidden state we
+look at has dimension **5280**.
 
 One implementation detail with downstream consequences: the recurrent loop is
 started from a **random** initial hidden state `h₀` (Gaussian noise), seeded by
 `torch.manual_seed(seed)`. Almost all results below fix `seed=0`; only one
-experiment varies it (Part VI, init-robustness).
+experiment varies it (init-robustness, Part VI.3).
 
 ### I.2 A trajectory, and how it is extracted
 
@@ -210,11 +230,15 @@ trajectory ∈ ℝ^[num_steps, 5280]
 — one point per unroll, in unroll order. That path through latent space is the
 "trajectory" every metric below is computed on. We run `model(input_ids, num_steps)`
 (a plain forward pass, **not** `.generate`), and by default keep only **one token
-position** — the last one, the answer token (`token_index = -1`). Capturing all
-positions is a one-line change (the hook already sees the full `[1, n_tokens,
-5280]` tensor; we currently slice it) but has not been run at scale — see
-Limitations. The random `h₀` is an outlier point, so metrics drop the first few
-steps as a burn-in.
+position** — the **last input position** (`token_index = -1`), whose next-token
+prediction is the model's answer (the prompts end in `"A:"`, so this is the `:`
+position and its prediction is the answer). We call it "the answer token" below as
+shorthand, but note it is the position that *produces* the answer, not a token of
+the answer itself. Capturing all positions is a one-line change (the hook already
+sees the full `[1, n_tokens, 5280]` tensor; we currently slice it) but has not
+been run at scale — see Limitations. The random `h₀` makes the first state an
+outlier; only the **winding** metric drops a burn-in for this (`burn = 4`), the
+other metrics use the full path.
 
 For the correctness probe (Part V.4) we also apply a **logit lens** — decode an
 *intermediate* hidden state through the model's output head to read off "what
@@ -229,11 +253,19 @@ logits; everywhere else we use only the hidden-state geometry.
 
 ---
 
-## Part II — The four metrics, exactly as implemented
+## Part II — The four per-trajectory metrics, exactly as implemented
 
-Everything downstream is a correlation of one of these four scalars against a
-task difficulty variable. So the implementation *and the fragility* of each
-matters.
+These are the four quantities computed directly from a single trajectory — three
+scalars (**winding**, **steps_settle**, **contraction/lyap**) and one categorical
+label (**shape** ∈ {settle, loop, drift}). Two of them (**winding**,
+**steps_settle**) feed rank correlations against a difficulty variable; **shape**
+feeds category counts and a Fisher exact test, not a correlation; **contraction/
+lyap** is mostly unused as a correlate and shows up in the init-robustness variance
+analysis (VI.3). (The other two
+quantities named in Part 0.2 — the spectral radius ρ and persistent homology —
+are *not* in this list: ρ is never measured on Huginn, VII; homology is degenerate
+on single curves and covered in VIII.10.) The implementation *and the fragility*
+of each matters.
 
 ### II.1 winding — "does the path loop, and how much?"
 
@@ -260,9 +292,11 @@ Implementation (`winding_of`):
   randomized on the hypersphere — preserves how far each step moved, destroys
   directional correlation) to ask "is this winding bigger than chance?" **That
   null test is implemented but has never been run on real trajectories**, because
-  the summary CSVs store only the scalar `winding`, not the raw path. So *every*
-  winding number reported below is currently un-null-tested. This is a real, known
-  gap (D-series, `winding_null_test`).
+  the summary CSVs store only the scalar `winding`, not the raw path (a full
+  trajectory is `[64, 5280]` floats; the CSVs keep one number per trajectory). So
+  *every* winding number reported below is currently un-null-tested. This is a
+  real, known gap, flagged in ledger row D11 (which notes the `winding_null_test`
+  could not be run on `three_scale.csv` for exactly this reason).
 - **The sign is arbitrary** (PCA components are sign-ambiguous), which is why we
   take `|winding|`. That in turn discards the *directional* content H2 is
   literally about ("winding grows" is a signed statement).
@@ -319,26 +353,27 @@ assumptions are load-bearing.
 ### III.1 The core statistic: per-level Spearman
 
 **Why not just correlate all rows.** Each difficulty level (e.g. `n_ops = 8`) is
-measured with several random seeds, producing several correlated rows. Treating
-those as independent inflates the effective sample size and manufactures
-significance ("pseudoreplication"). So the **canonical statistic** first
-**collapses each level to its group-mean**, then computes Spearman's rank
-correlation over the N *level-means* (`spearman_by_level`).
+measured with multiple random seeds (5 to 15, depending on the task), producing
+that many correlated rows per level. Treating those rows as independent inflates
+the effective sample size and manufactures significance ("pseudoreplication" —
+counting correlated repeated measurements as if they were independent samples). So
+the **canonical statistic** first **collapses each level to its group-mean**, then
+computes Spearman's rank correlation over the N *level-means* (`spearman_by_level`).
 
 **Spearman itself** measures *monotone* (not linear) association via ranks — this
 is the property you already know. The subtleties are in the **p-value and the
 sample size**:
 
-- The number of levels is **small** — N = 4, 5, 6, 7, or (once) 15. At such N,
-  scipy's default Spearman p-value (a t-distribution approximation) is only
-  asymptotically valid. To avoid trusting that approximation, the project uses an
-  **exact-permutation critical-value table** `_SPEARMAN_CRIT_P05`: the smallest
-  |ρ| that reaches two-tailed p<0.05, computed by enumerating all N! rank
-  orderings. At **N=6 the bar is |ρ|≥0.886**; at **N=5 it is 1.000** (only a
-  perfect correlation is significant); at **N=4 it is unreachable** — the smallest
-  achievable two-tailed p is 2/24≈**0.083**, so *no* result at N=4 can ever be
-  significant at 0.05, however clean it looks (this is why PARARULE, Part V.6, is
-  formally inconclusive by construction).
+- The number of levels is **small** — N = 4, 5, 6, 7, 8, or (once) 15 across the
+  various tasks. At such N, scipy's default Spearman p-value (a t-distribution
+  approximation) is only asymptotically valid. To avoid trusting that
+  approximation, the project uses an **exact-permutation critical-value table**
+  `_SPEARMAN_CRIT_P05`: the smallest |ρ| that reaches two-tailed p<0.05, computed
+  by enumerating all N! rank orderings. At **N=6 the bar is |ρ|≥0.886**; at **N=5
+  it is 1.000** (only a perfect correlation is significant); at **N=4 it is
+  unreachable** — the smallest achievable two-tailed p is 2/24≈**0.083**, so *no*
+  result at N=4 can ever be significant at 0.05, however clean it looks (this is
+  why PARARULE, Part V.7, is formally inconclusive by construction).
 - **Critical assumption of that table: no ties among the level-means.** The table
   is exact-permutation over *distinct* ranks. Real means can tie — found in the
   modk data (Part V.5): two active_len levels averaged to the *exact* same
@@ -366,10 +401,10 @@ synthetic counting-type task, where difficulty and length are rank-correlated
 
 ### III.3 Multiple simultaneous confounds: multivariate_rank_control
 
-For a task varying several length scales at once (Part V.5), `multivariate_rank_control`
-rank-transforms the response and all predictors, fits **one ordinary least-squares
-regression** with an intercept, and reports each predictor's coefficient and a
-two-sided t-test p-value.
+For a task varying three length scales at once — active, neutral, irrelevant
+(Part V.5) — `multivariate_rank_control` rank-transforms the response and all three
+predictors, fits **one ordinary least-squares regression** with an intercept, and
+reports each predictor's coefficient and a two-sided t-test p-value.
 
 **Assumptions:** (1) the t-tests assume approximately normal residuals — on
 rank-transformed data this is an approximation, acceptable at these N but not
@@ -377,13 +412,14 @@ exact; (2) a **condition-number guard** (raise above 1e10) catches near-singular
 designs — the condition number is the ratio of the largest to smallest singular
 value of the design matrix, and a huge ratio means the predictors are nearly
 linearly dependent, so their individual coefficients become numerically
-meaningless. Note a
-distinct, subtler trap this does *not* catch and that we found by hand: if two
-predictors are *perfectly linearly dependent by construction* (Part V.5b, where
-`neutral = total − active − irrelevant` with total fixed makes irrelevant and
-neutral exact opposites at fixed active), their individual coefficients are not
-separately identifiable even though the design isn't flagged singular — a real
-residual confound.
+meaningless. Note a distinct, subtler trap this guard does *not* catch, found by
+hand: a coefficient can be un-interpretable even when the design is well-
+conditioned, if the predictors are constrained by construction. In the modk task
+(V.5b) the symbol counts satisfy `active + neutral + irrelevant = total` (a fixed
+constant), so raising `irrelevant` necessarily lowers `neutral` — the `irrelevant`
+coefficient then measures "swap a neutral token for a filler token," not a pure
+filler effect, and no amount of good conditioning fixes that. It is an
+identifiability problem coming from the *task design*, not the numerics.
 
 ### III.4 Combining independent replications: Fisher's method
 
@@ -413,20 +449,20 @@ guarantee.
   fixed (hypergeometric) — the standard reading of "exact" here.
 - **Point-biserial correlation** (correctness, Part V.4): Pearson correlation
   between a binary (correct/incorrect) and a continuous variable; its p-value
-  assumes the continuous variable is roughly normal within each group. At N=56
+  assumes the continuous variable is approximately normal within each group. At N=56
   with a lopsided binary (mostly-incorrect) it is approximate, not exact.
 - **Monte-Carlo power curve** (Part VI): simulates data from a **bivariate-normal**
   generating process (where Spearman ≈ Pearson) to estimate detection power. Real
   trajectory data need not match that generator, so the power numbers are
   *indicative* — good enough to say "N=6 is badly underpowered," not to quote a
   power to three digits.
-- **Binomial / Wilson interval** (Blayney per-example rate, Part V.5-adjacent, D14):
+- **Binomial / Wilson interval** (Blayney per-example rate, Part V.8, D14):
   treats each example as an independent Bernoulli trial; if examples are not
   exchangeable the interval is optimistic.
 
 ---
 
-## Part IV — The confound that shapes most results: length ≡ difficulty (D10)
+## Part IV — The confound behind every significant winding result: length ≡ difficulty (D10)
 
 In the **naive counting-family** synthetic tasks — counting, switch, maxtask,
 count_ones — making the problem harder means adding tokens. (This is *not* true of
@@ -439,10 +475,17 @@ Start at 0. Add 1. Subtract 1. Add 1. ... Final total? A:
 ```
 
 and each additional operation (`n_ops`) is exactly one more `"Add 1."` /
-`"Subtract 1."` clause — one more (roughly fixed-length) token group. So
-**difficulty `n_ops` and token length `seq_len` are a strictly increasing
-function of each other; their rank correlation is exactly 1.0** (the raw values
-differ — e.g. `seq_len ≈ 3·n_ops + 10` — but rank-for-rank they are identical).
+`"Subtract 1."` clause. Crucially, `"Add 1."` and `"Subtract 1."` tokenize to the
+**same** length — 3 tokens each (`Add`/`Subtract` are each a single token) — so
+*which* operations a given seed picks never changes the token count, only *how
+many* operations there are does. That is why, at a fixed `n_ops`, `seq_len` is
+**exactly** constant across seeds (verified: one distinct `seq_len` value per
+level), and therefore **difficulty `n_ops` and token length `seq_len` are a
+strictly increasing function of each other with rank correlation exactly 1.0** —
+not approximately (the raw values differ — `seq_len = 3·n_ops + 10` for counting —
+but rank-for-rank they are identical). The same holds for switch
+(`"Flip."`/`"Wait."`, 2 tokens each) and maxtask (single-digit numbers, 1 token
+each).
 
 Consequence: any **rank** correlation of a metric with `n_ops` (Spearman — what
 this project uses) **is numerically identical** to its rank correlation with
@@ -494,8 +537,9 @@ the exact statistic + criterion + result, and the honest verdict.
   dangling members: `count_ones`** (count the 1s in a 0/1 string) and
   **`projection`** (successive shifts along basis vectors), both in
   `full_synthetic_experiments.csv`, both **D10-length-confounded** (rank-corr 1.0),
-  swept over 8 `n_ops` levels. They add a third geometry metric, `mean_normed_accel`
-  (how much the step direction+size keeps changing). count_ones's
+  swept over 8 `n_ops` levels. Their CSVs carry an additional geometry metric not
+  stored for the other tasks, `mean_normed_accel` (how much the step direction and
+  size keep changing from step to step). count_ones's
   `mean_normed_accel~n_ops = −0.976` (p=3e-5, N=8) is the *tightest* monotone
   relationship in the whole project — but, being length-confounded, it is
   uninterpretable as depth (it reappears in VI.2 only as a confounded lead).
@@ -564,17 +608,22 @@ the exact statistic + criterion + result, and the honest verdict.
   an order of magnitude stronger than the N=7 run's p=0.015 (strengthening with N
   is what a real effect does). Direction: **more content to count → the path
   settles *faster***.
-- **V.5b — a residual confound even here.** Because `neutral = total − active −
-  irrelevant` with total fixed, at any fixed `active_len` the counts `irrelevant`
-  and `neutral` are **perfect linear opposites (correlation −1.0)**. So a
-  3-way regression's "winding~irrelevant" coefficient is not separately
-  identifiable from −(the neutral coefficient), and a large "winding~modulus"
-  term (β=+0.69) almost surely reflects the question text literally changing
-  ("modulo 2" vs "modulo 5"). Milder than V.6 below, but real — even the clean
-  task has one residual confound (D20).
+- **V.5b — a residual confound even here.** The three symbol counts always sum to
+  the fixed total: `active + neutral + irrelevant = total_len`. So you cannot raise
+  one while holding the other two fixed — adding one `irrelevant` (`x`) token at a
+  fixed `active_len` necessarily *removes* one `neutral` (`0`) token. The 3-way
+  regression's predictors are `active`, `irrelevant`, `modulus` (neutral is left
+  out precisely because including all three plus an intercept would be perfectly
+  collinear), so the estimated `irrelevant` coefficient (β=−0.21, p=4e-5) actually
+  measures "swap a 0 for an x" — it conflates any filler effect with a
+  neutral-token effect and cannot be read as a pure filler effect. Separately, the
+  large `modulus` coefficient (β=+0.69, p=6e-29) almost surely reflects the
+  question text literally changing ("modulo 2" vs "modulo 5"), not a difficulty
+  effect. Milder than V.6 below, but real — even the clean task has one residual
+  confound (D20).
 - **Verdict.** On the best-controlled test, **H2 is not supported** (winding null
-  at proper power). The live finding is elsewhere: settling *speed* depends on task
-  structure (Part VII).
+  at proper power). The one live finding is elsewhere: settling *speed* depends on
+  task structure (VI.2).
 
 ### V.6 The original three-scale task and its prefix confound (D11)
 
@@ -606,11 +655,13 @@ cautionary tale that motivated V.5.
   **all token positions** (7,122 trajectories), vs a no-system-prompt baseline.
   Classify each with `classify_shape`.
 - **Result.** Per-token loop rate **0.1286% (7/5445)** under Long Persona vs
-  **0.0596% (1/1677)** baseline — the former within ~8% of Blayney's own
-  independently-measured 0.14%. **Novel:** all 7 loops sit at relative position
+  **0.0596% (1/1677)** baseline. The Long-Persona rate is close to Blayney's own
+  independently-measured 0.14% — but it rests on only 7 events, so this is
+  order-of-magnitude agreement, not a precise match; the baseline (1 event) is too
+  small to compare at all. **Novel:** all 7 loops sit at relative position
   **0.819–0.897** (the last fifth of the prompt); zero in the first two-thirds
-  (D20); the strongest lands on the token `" makes"` — one Geiping et al. name as
-  orbit-prone.
+  (D20); the strongest lands on the token `" makes"` — a token Geiping et al. name
+  as orbit-prone.
 - **Verdict.** The pipeline's own shape detector finds real, non-starved loops at
   the same rate as an independent method — a **passing validation** that our
   `classify_shape` measures the same phenomenon the literature does. (Caveat: the
@@ -691,10 +742,17 @@ concern).
 
 ## Part VII — H3 (contraction), separately
 
-- **The theorem** (Banach fixed point): a strictly contracting recurrent map
-  (spectral radius < 1) has a unique fixed point and **erases memory of its
-  initial state `h₀`** exponentially, with a maximum distinguishable-history bound.
-  The algebra is independently re-verified as correct.
+- **The theorem** (Banach fixed point): a strictly contracting recurrent map has a
+  unique fixed point and **erases memory of its initial state `h₀`** exponentially,
+  with a maximum distinguishable-history bound. The algebra is independently
+  re-verified as correct. **Precision note on "contracting":** the theorem's
+  contraction condition is a *Lipschitz* constant `c < 1` (‖R(x)−R(y)‖ ≤ c‖x−y‖),
+  which for the linearized map is the largest **singular value** σ_max < 1 — this
+  is *not* the same as the **spectral radius** ρ < 1 that H3 is stated with (0.1).
+  Since ρ ≤ σ_max always, ρ < 1 is *necessary but not sufficient* for the theorem
+  to apply; the quantity that actually controls contraction is σ_max (which is what
+  the toy estimator, and any future real-Huginn measurement, should compute — see
+  the code note at the end of this section).
 - **The scope subtlety.** The theorem only proves *initial-state* memory decays,
   with the context held fixed. Huginn **re-injects the full prompt every unroll**,
   and for the counting task the count is fully readable from that re-injected
@@ -703,19 +761,24 @@ concern).
   no re-injection).
 - **The toy test (A6), on models we can run without a GPU.** Two small recurrent
   models trained on a synthetic count, swept from non-contracting to strongly
-  contracting (a regularizer β pushes ρ down). A recurrent-over-**depth** toy
-  (re-injects the full input each step, like Huginn): a linear probe decodes the
-  count with **R² ≥ 0.996 at every contraction strength tested**, *including*
-  ρ≈0.25. A recurrent-over-**time** toy (a streaming vanilla RNN — an Elman RNN,
-  one input token per step, no re-injection): probe R² **cliffs to ~0** as soon as
-  contraction forces ρ<0.14. Same contraction, opposite outcome, decided entirely
-  by the re-injection topology. (This mirrors the two ways a "recurrent net" can
-  be built — iterating *depth* on a fixed input vs. stepping *through a sequence* —
-  and only the latter matches the theorem's streaming assumption.)
+  contracting (a regularizer β drives the contraction factor down). The contraction
+  axis reported below is the toy's own measured value: its code column is named
+  `rho`, but it is populated by the same σ_max estimator described in the code note
+  (JᵀJ power iteration), so these are really **σ_max** values, not true spectral
+  radii. A recurrent-over-**depth** toy (re-injects the full input each step, like
+  Huginn): a linear probe decodes the count with **R² ≥ 0.996 at every contraction
+  strength tested**, *including* σ_max≈0.25. A recurrent-over-**time** toy (a
+  streaming vanilla RNN — an Elman RNN, one input token per step, no re-injection):
+  probe R² **cliffs to ~0** as soon as contraction forces σ_max<0.14. Same
+  contraction, opposite outcome, decided entirely by the re-injection topology.
+  (This mirrors the two ways a "recurrent net" can be built — iterating *depth* on
+  a fixed input vs. stepping *through a sequence* — and only the latter matches the
+  theorem's streaming assumption.)
 - **Verdict.** The proof stands; its *applied* claim ("contraction ⇒ can't count ⇒
   must loop") is a property of streaming recurrence and **likely does not bind on
-  Huginn's architecture.** Crucially, **the spectral radius has never been measured
-  on real Huginn** (only the toy), so H3-on-Huginn is *scoped*, not tested. (A code
+  Huginn's architecture.** Crucially, **no contraction quantity (neither σ_max nor
+  ρ) has ever been measured on real Huginn** (only on the toy), so H3-on-Huginn is
+  *scoped*, not tested. (A code
   note on *which* quantity the toy estimator actually computes, because two are
   easily confused: it estimates **σ_max**, the largest *singular value* of the
   Jacobian J, via **power iteration** — repeatedly applying JᵀJ to a vector and
@@ -741,10 +804,12 @@ concern).
    against chance.
 3. **Single init seed** — headline numbers fix `seed=0`; the one robustness check
    shows contraction is init-noise-dominated (VI.3).
-4. **Spectral radius never measured on real Huginn** — H3's central quantity is
+4. **No contraction quantity measured on real Huginn** — neither σ_max nor the
+   spectral radius ρ (H3's central quantity) has been computed on Huginn; both are
    toy-only.
 5. **Small N everywhere but once** — N=4 is provably inconclusive, N=6 is
-   underpowered (~0.66 at ρ=0.9); only the N=15 modk run is adequately powered.
+   underpowered (~0.66 power at a true Spearman ρ=0.9); only the N=15 modk run is
+   adequately powered.
 6. **Statistical-assumption caveats that actually bite:** the crit-value table
    breaks on ties (III.1, real case in V.5); Fisher's method assumes independence
    the shared model doesn't fully guarantee (III.4); BH's family boundary is a
@@ -762,10 +827,12 @@ concern).
    never tested whether the geometric features *alone* predict anything above the
    raw state.
 8. **One residual confound survives even in the clean task** (V.5b).
-9. **Only one non-synthetic dataset** (PARARULE, and it's N=4). Three of four
-   proposal datasets and all four named baselines are not run. The curator's own
-   QK-alignment probe (Tulchinskii et al. — a query·key dot product with per-setup
-   head calibration) is 0% implemented.
+9. **Only one non-synthetic dataset used *as a reasoning-depth test*** (PARARULE,
+   N=4). Of the proposal's four named datasets, only PARARULE is used that way;
+   GSM8K appears only inside the loop-detection control (V.8), and ProntoQA-OOD and
+   MultiLogicEval are not run at all. None of the four named baselines are run. The
+   curator's own QK-alignment probe (Tulchinskii et al. — a query·key dot product
+   with per-setup head calibration) is 0% implemented.
 10. **Homology is degenerate** — persistent-homology H1 on a single 1-D curve is
     ~0 by construction (no independent 1-cycles); the sound population/delay-
     embedding version is not implemented, so H1's third named discriminator is
@@ -778,9 +845,10 @@ concern).
 Across ~14 experiments on real Huginn-3.5B, the project has produced mostly
 **rigorous negatives**. H1's shape taxonomy is real and the detector is validated
 against an independent method, but at full budget on these tasks only "settle"
-occurs. **H2 (winding grows with depth) is not supported**: every apparent
-positive is a perfect length confound, and the one properly length-controlled,
-adequately-powered test is null. H3's theorem is correct but its applied claim
+occurs. **H2 (winding grows with depth) is not supported**: every *statistically
+significant* winding-vs-difficulty positive is a perfect length confound (the
+non-confounded positives are all non-significant), and the one properly
+length-controlled, adequately-powered test is null. H3's theorem is correct but its applied claim
 likely does not bind on Huginn's re-injecting architecture, and its central
 quantity was never measured on the real model. And critically, the model **fails**
 the counting task at the depths where the geometry "signals" appear, with the
