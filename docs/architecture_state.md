@@ -149,6 +149,17 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-24 — Digit tokenization uncertainty resolved, live check not
+  assumption.** `scripts/diag_tokenization.py`, tokenizer-only (CPU, no
+  GPU/weights). Both spaced and unspaced digit strings give exactly one
+  token per digit on this tokenizer (`make_count_ones_task`'s "n_ops
+  tokens, always" claim confirmed) — the earlier "should we add spaces"
+  question turns out not to change token count here. Second check confirms
+  the already-flagged multi-digit-answer problem directly: answers 0-9 are
+  one token, answers >=10 split in two with the first token being only the
+  leading digit — any first-token-argmax accuracy check silently breaks
+  above n_ops=9 on count_ones/counting/three_scale. `project_plan.md` §13
+  updated (RESOLVED).
 - **2026-07-24 — Phase 0 complete: power analysis + pre-registration
   written, the last §15 item.** `scripts/run_power_analysis.py`,
   `docs/power_and_preregistration.md`. Two power problems, both real:

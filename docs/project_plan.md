@@ -575,8 +575,21 @@ Consolidated — take these to Barannikov:
   independently verified (arXiv fetch truncated before App. C).
 - **"Geiping observes orbits on question/digit tokens"** — project-stated, not
   independently re-read from Geiping.
-- **Digit tokenization** — `" ".join(digits)` one-token-per-symbol is assumed,
-  never verified for this tokenizer (one no-GPU check).
+- **RESOLVED 2026-07-24 — Digit tokenization.** Loaded the real tokenizer
+  (CPU, no GPU needed) and checked directly: `" ".join(digits)` gives exactly
+  one token per digit for both `'0'`/`'1'` sequences (`make_count_ones_task`'s
+  own docstring claim "n_ops tokens, always" is confirmed correct) — and,
+  separately, so does the *unspaced* concatenation (`'01010110101'` also
+  tokenizes 1 char/token on this tokenizer), so the earlier open question
+  ("should we do spaces between them") turns out not to matter for token
+  count on this specific tokenizer, only for whether a leading space
+  attaches to each digit. **Also confirms the multi-digit-answer problem
+  (§9) directly**: single-digit answers (0-9) are always exactly one token,
+  but answers >=10 split into 2 tokens with the first token being only the
+  leading digit (`" 12"` -> `[" 1", "2"]`, `" 20"` -> `[" 2", "0"]`) — a
+  first-token-argmax check on any n_ops>9 count_ones/counting/three_scale
+  item is checking the wrong thing, exactly as already flagged, now with a
+  live confirmation instead of an assumption.
 - **J-Space / Jacobian-lens** (Anthropic 2026) — real, reuses the validated
   `_replicate_coda_head` tail; a stretch-goal probe, needs a careful read first.
 
