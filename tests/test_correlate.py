@@ -6,7 +6,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from traj_geom.analysis.correlate import benjamini_hochberg, partial_spearman, spearman_by_level
+from traj_geom.analysis.correlate import (
+    benjamini_hochberg,
+    multivariate_rank_control,
+    partial_spearman,
+    spearman_by_level,
+)
 
 
 def _levels_df(levels: tuple[int, ...], slope: float) -> pd.DataFrame:
@@ -90,3 +95,65 @@ def test_benjamini_hochberg_none_significant() -> None:
     p = np.array([0.2, 0.4, 0.6, 0.8])
     q, sig = benjamini_hochberg(p, alpha=0.05)
     assert not sig.any()
+
+
+def test_multivariate_rank_control_recovers_known_effect_and_null() -> None:
+    """y depends only on x1; x2 is independent noise -> x1 significant, x2 not.
+
+    Controlling jointly must not smear x1's real effect onto the unrelated x2.
+    """
+    rng = np.random.default_rng(0)
+    x1 = np.repeat([1, 3, 5, 7, 9], 8)
+    x2 = rng.integers(0, 20, size=x1.shape)  # independent of x1 and of y
+    y = 2.0 * x1 + rng.normal(scale=0.3, size=x1.shape)
+
+    result = multivariate_rank_control(y, {"x1": x1, "x2": x2})
+    beta1, p1 = result["x1"]
+    beta2, p2 = result["x2"]
+    assert beta1 > 0
+    assert p1 < 0.01
+    assert p2 > 0.05
+
+
+def test_multivariate_rank_control_reproduces_verified_three_scale_d11() -> None:
+    """Regression-pins the exact verified D11 numbers (claims_ledger.md) against
+    the real cached three_scale.csv, so this statistic can't silently drift.
+    """
+    df = pd.read_csv("results/three_scale.csv")
+    result = multivariate_rank_control(
+        df["winding"].to_numpy(),
+        {
+            "active_len": df["active_len"].to_numpy(),
+            "neutral_len": df["neutral_len"].to_numpy(),
+            "irrelevant_len": df["irrelevant_len"].to_numpy(),
+        },
+    )
+    beta_active, p_active = result["active_len"]
+    beta_neutral, p_neutral = result["neutral_len"]
+    beta_irrelevant, p_irrelevant = result["irrelevant_len"]
+    assert beta_active == pytest.approx(0.130, abs=0.001)
+    assert p_active == pytest.approx(0.056, abs=0.001)
+    assert p_neutral == pytest.approx(0.741, abs=0.001)
+    assert beta_irrelevant == pytest.approx(-0.488, abs=0.001)
+    assert p_irrelevant < 1e-9
+
+
+def test_multivariate_rank_control_raises_on_near_singular_design() -> None:
+    """Two predictors that are near-duplicates of each other must raise, not
+    return numerically meaningless individual betas.
+    """
+    rng = np.random.default_rng(0)
+    x1 = np.arange(30) + rng.normal(scale=1e-6, size=30)
+    x2 = np.arange(30) + rng.normal(scale=1e-6, size=30)  # ~identical ranks to x1
+    y = rng.normal(size=30)
+    with pytest.raises(ValueError, match="near-singular"):
+        multivariate_rank_control(y, {"x1": x1, "x2": x2})
+
+
+def test_multivariate_rank_control_raises_on_insufficient_dof() -> None:
+    """n=3 observations, 2 predictors + intercept -> 0 degrees of freedom."""
+    y = np.array([1.0, 2.0, 3.0])
+    x1 = np.array([3.0, 1.0, 2.0])
+    x2 = np.array([2.0, 3.0, 1.0])
+    with pytest.raises(ValueError, match="degrees of freedom"):
+        multivariate_rank_control(y, {"x1": x1, "x2": x2})

@@ -2,11 +2,17 @@
 
 OWNER: Data+Analysis
 STATUS: implemented (from notebooks/01_mvp_h2.ipynb, spearman / partial_spearman).
-    benjamini_hochberg added 2026-07-23.
+    benjamini_hochberg added 2026-07-23. multivariate_rank_control added
+    2026-07-24 (see claims_ledger.md D11 -- this is the function that
+    produced D11's verified multivariate correction, folded in from an
+    inline ad hoc script into real, tested code).
 TASK: rank correlation of a metric vs a task variable, plus a partial correlation
     that regresses out a confounder z (prompt length L) on ranks, plus a
-    multiple-comparisons correction for when many such tests are run together.
+    multiple-comparisons correction for when many such tests are run together,
+    plus a multivariate rank control for when several confounders vary
+    simultaneously and must be controlled for jointly, not one at a time.
 I/O: spearman(x, y) -> (rho, p) ; partial_spearman(x, y, z) -> (rho, p) ;
+    multivariate_rank_control(y, predictors) -> {name: (beta, p)} ;
     benjamini_hochberg(p_values) -> (q_values, significant).
 
 NOTE: partial correlation is done on ranks (rankdata) with a linear residualisation
@@ -29,6 +35,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from scipy.stats import rankdata, spearmanr
+from scipy.stats import t as _student_t
 
 # Critical |rho| for Spearman at p<0.05 (two-tailed) by number of levels N.
 # N=4 is intentionally absent: exact permutation enumeration over all 24
@@ -148,6 +155,80 @@ def partial_spearman(
     ry = yr - np.polyval(np.polyfit(zr, yr, 1), zr)
     r = spearmanr(rx, ry)
     return float(r[0]), float(r[1])
+
+
+def multivariate_rank_control(
+    y: np.ndarray,
+    predictors: dict[str, np.ndarray],
+    condition_number_thresh: float = 1e10,
+) -> dict[str, tuple[float, float]]:
+    """Multiple rank-OLS regression of y on several simultaneous confounders.
+
+    ``partial_spearman`` controls for one z at a time. When several candidate
+    confounders vary simultaneously (e.g. three_scale's active_len /
+    neutral_len / irrelevant_len), controlling for them one at a time can
+    misattribute a joint effect to whichever variable happens to be
+    partialled out. See claims_ledger.md D11: a single-confounder partial
+    correlation on the composite ``seq_len`` reported active_len flipping to
+    rho=+0.318 -- an artifact of partialling out the composite instead of
+    the three individual length scales together. Controlling for all three
+    simultaneously (this function) does not reproduce that flip.
+
+    Ranks y and every predictor (Spearman is Pearson-on-ranks), fits one OLS
+    with an intercept and all predictors at once, and returns each
+    predictor's coefficient and its two-sided p-value from a t-test on that
+    coefficient -- the rank-based analogue of a multiple regression's
+    partial-effect test.
+
+    Args:
+        y: Response variable, shape [N].
+        predictors: name -> array of shape [N], one entry per simultaneous
+            confounder/predictor to control for jointly.
+        condition_number_thresh: raise if the ranked design matrix's
+            condition number exceeds this -- near-collinear predictors make
+            individual betas numerically meaningless (the multivariate
+            analogue of ``partial_spearman``'s single-z collinearity guard).
+
+    Returns:
+        Dict mapping each predictor name to ``(beta, p_value)``, in the same
+        order as ``predictors``.
+
+    Raises:
+        ValueError: if the ranked design matrix is (near-)singular, or if
+            there are not enough observations for the requested number of
+            predictors.
+    """
+    names = list(predictors)
+    y_rank = rankdata(y).astype(float)
+    x_rank = np.column_stack([rankdata(predictors[name]).astype(float) for name in names])
+    n, k = x_rank.shape
+
+    design = np.column_stack([np.ones(n), x_rank])
+    dof = n - (k + 1)
+    if dof <= 0:
+        raise ValueError(
+            f"multivariate_rank_control: {n} observations, {k} predictors + "
+            "intercept -- zero or negative degrees of freedom, cannot fit."
+        )
+
+    cond = float(np.linalg.cond(design))
+    if cond > condition_number_thresh:
+        raise ValueError(
+            f"multivariate_rank_control: ranked design matrix is near-singular "
+            f"(condition number={cond:.3e}, threshold={condition_number_thresh}) -- "
+            "predictors are too rank-collinear with each other for individual "
+            "betas to be numerically meaningful."
+        )
+
+    beta, *_ = np.linalg.lstsq(design, y_rank, rcond=None)
+    resid = y_rank - design @ beta
+    sigma2 = float(resid @ resid) / dof
+    xtx_inv = np.linalg.inv(design.T @ design)
+    se = np.sqrt(np.diag(xtx_inv) * sigma2)
+    t_stats = beta / se
+    p_values = 2.0 * _student_t.sf(np.abs(t_stats), dof)
+
+    return {name: (float(beta[i + 1]), float(p_values[i + 1])) for i, name in enumerate(names)}
 
 
 def benjamini_hochberg(
