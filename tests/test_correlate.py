@@ -54,6 +54,24 @@ def test_partial_spearman_raises_on_rank_collinear_confounder() -> None:
         partial_spearman(y, n_ops, seq_len)
 
 
+def test_partial_spearman_raises_on_dissociation_shaped_near_collinearity() -> None:
+    """The tightened 0.95 threshold (project_plan.md §0.3) must catch
+    dissociation.csv's real rho=0.9895 n_ops-vs-seq_len collinearity, which
+    the old 0.999 threshold silently passed -- a landmine, since no script
+    calls partial_spearman on this data yet but nothing stopped one from
+    starting to.
+    """
+    n_ops = np.repeat([4, 8, 16, 24, 32], 6)
+    rng = np.random.default_rng(0)
+    # seq_len mostly tracks n_ops but with a little real independent jitter
+    # (the two prompt "kind"s in dissociation.csv), reproducing rho~0.99,
+    # not exactly 1.0.
+    seq_len = n_ops * 3 + 10 + rng.integers(0, 2, size=n_ops.shape)
+    y = rng.normal(size=n_ops.shape)
+    with pytest.raises(ValueError, match="rank-collinear"):
+        partial_spearman(y, n_ops, seq_len)
+
+
 def test_partial_spearman_works_for_genuinely_independent_confounder() -> None:
     """z independent of x (three_scale-style) must NOT raise, and should
     return an ordinary, well-defined result.

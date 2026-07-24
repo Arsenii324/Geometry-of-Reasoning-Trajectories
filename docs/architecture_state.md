@@ -146,6 +146,20 @@ nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
 
+- **2026-07-24 — Phase 0 rescues from `project_plan.md` §15, started.** Four
+  checkpoints so far, each own commit on `feat/close-known-gaps`. (1)
+  `multivariate_rank_control()` added to `correlate.py` — real code now,
+  was inline ad hoc script. Reproduces D11's exact numbers against cached
+  `three_scale.csv`. Wired into `run_three_scale.py`'s `main()`; `compute()`
+  untouched. (2) `run_forceloop.py` now runs the actual Fisher exact test
+  for B4 (was hand-computed, typed into ledger, no reproducing script).
+  Matches ledger exactly: p=0.0101, 82/13/1 settle/loop/drift. (3)
+  `partial_spearman`'s collinearity guard tightened 0.999 -> 0.95 — old
+  threshold missed `dissociation.csv`'s real rho=0.9895 n_ops-vs-seq_len
+  collinearity (a landmine, no live caller yet but nothing stopped one
+  starting). New threshold still clears `pararule.csv`'s real rho=0.816.
+  Tests added for all three. 31/31 green, ruff clean throughout. Next:
+  BH-FDR sweep (§0.2), power analysis + pre-registration (§0.1).
 - **2026-07-23 (round 4) — round 3's "-1 everywhere" was a probe bug, not a
   real finding.** Built `diag_v6_token_gap.py`, dumped real top-5 tokens.
   Target token used bare answer string ("2"). Model's real continuation:

@@ -103,24 +103,36 @@ def spearman(x: np.ndarray, y: np.ndarray) -> tuple[float, float]:
 
 
 def partial_spearman(
-    x: np.ndarray, y: np.ndarray, z: np.ndarray, collinearity_thresh: float = 0.999
+    x: np.ndarray, y: np.ndarray, z: np.ndarray, collinearity_thresh: float = 0.95
 ) -> tuple[float, float]:
     """Partial Spearman correlation of x and y, controlling for z.
 
     Ranks x, y, z; linearly residualises the x- and y-ranks against the z-rank;
     then correlates the residuals.
 
-    GUARD (added 2026-07-23, see claims_ledger.md D10): if x or y is
-    (near-)perfectly rank-collinear with z -- true of y=n_ops against
-    z=seq_len for every synthetic task in this project except
-    make_three_scale_task -- residualising that variable against z leaves
-    ~0 real variance in its residual. The correlation below would then be
-    computed almost entirely from polyfit's floating-point rounding error,
-    not signal: not a crash, just an ordinary-looking float driven by
-    noise. Raises instead of silently returning that. Callers that expect
-    this on known-degenerate data (run_counting.py, run_switch.py,
-    run_maxtask.py, called as partial_spearman(metric, n_ops, seq_len))
-    must catch it.
+    GUARD (added 2026-07-23, see claims_ledger.md D10; threshold tightened
+    2026-07-24 per project_plan.md §0.3): if x or y is (near-)perfectly
+    rank-collinear with z -- true of y=n_ops against z=seq_len for every
+    synthetic task in this project except make_three_scale_task --
+    residualising that variable against z leaves ~0 real variance in its
+    residual. The correlation below would then be computed almost entirely
+    from polyfit's floating-point rounding error, not signal: not a crash,
+    just an ordinary-looking float driven by noise. Raises instead of
+    silently returning that. Callers that expect this on known-degenerate
+    data (run_counting.py, run_switch.py, run_maxtask.py, called as
+    partial_spearman(metric, n_ops, seq_len)) must catch it.
+
+    The threshold was originally 0.999, which only catches exact-or-
+    floating-point-noise collinearity (rho=1.0). It silently passed
+    dissociation.csv's real n_ops-vs-seq_len collinearity (rho=0.9895 --
+    seq_len still varies a little at fixed n_ops via the `kind` field, so
+    it's not exactly 1.0) even though only ~2% of x's rank variance would
+    survive residualisation there too -- a result any downstream reader
+    would trust as an ordinary partial correlation. No script currently
+    calls partial_spearman on dissociation data, but the guard should not
+    depend on that staying true. 0.95 catches this case while leaving
+    pararule.csv's real, non-degenerate depth-vs-seq_len collinearity
+    (rho=0.816) untouched.
 
     Args:
         x: First variable, shape [N].
