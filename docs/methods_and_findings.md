@@ -10,18 +10,32 @@ is uncertain, underpowered, or confounded, that is said, not omitted.
 
 VERIFICATION PROVENANCE (2026-07-25): every quantitative and factual claim in
 this document was re-derived from source in a dedicated max-depth pass —
-experimental numbers recomputed from the raw `results/*.csv`; model facts
-(revision `bb6621b…`, `n_embd=5280`, prelude/recurrent/coda = 2/4/2,
-`mean_recurrence=32`) read from the pinned `raven_config_minimal.py`/`config.json`;
-code thresholds (collinearity 0.95, condition-number 1e10, settle/return frac
-0.1/0.25, the `>3` loop window, burn=4) read from the actual functions; the
-Spearman critical-value table (N6=0.886, N5=1.000, N4 absent) from
-`_SPEARMAN_CRIT_P05`; row counts checked as levels×seeds; attributions
-(Miyato 2018, Yang, Tulchinskii, Geiping, Blayney) against the primary sources
-read this session. Rounding is consistent throughout (e.g. steps-Fisher
-0.00059→0.0006, dissociation p 0.2657→0.27, contraction ratio 1.715→1.72). No
-discrepancy was found; the load-bearing numbers are additionally pinned by
-regression tests (`tests/test_*`).
+experimental numbers recomputed from the raw `results/*.csv`; code thresholds
+(collinearity 0.95, condition-number 1e10, settle/return frac 0.1/0.25, the `>3`
+loop window, burn=4) read from the actual functions; the Spearman critical-value
+table (N6=0.886, N5=1.000, N4 absent) from `_SPEARMAN_CRIT_P05`; row counts
+checked as levels×seeds; attributions (Miyato 2018, Yang, Tulchinskii, Geiping,
+Blayney) against the primary sources read this session. Rounding is consistent
+throughout (steps-Fisher 0.00059→0.0006, dissociation p 0.2657→0.27, contraction
+ratio 1.715→1.72). Load-bearing numbers are additionally pinned by regression
+tests (`tests/test_*`).
+
+The **model/architecture facts** (prelude=2, recurrent-block=4, coda=2,
+`n_embd=5280`, `n_heads=55`, `mean_recurrence=32`, `effective_expected_depth=132`
+= 2+2+4×32 as a cross-check) were read from the *instance* `config.json` in the
+locally-cached `bb6621b…` snapshot — i.e. the model's actual published config at
+that revision, not merely the class defaults in `raven_config_minimal.py` (which
+happen to agree). Provenance chain and its one limit, stated honestly: this
+config *is* revision `bb6621b`, which equals the `MODEL_REVISION` constant the
+code loads with, and HF revisions are immutable content-addressed commit hashes —
+so the Kaggle runs (which pinned the same revision) downloaded byte-identical
+files. The only step not *directly* observed is the Kaggle download itself; it is
+inferred from the immutable-revision guarantee, not inspected on the Kaggle box.
+Independently, this architecture (2/4/2, 5280-d) is invariant across huginn-0125
+revisions, so the facts hold even for any pre-session CSV. Note the config records
+`torch_dtype: float32` (stored weights) while this project *loads* in bfloat16 —
+"bfloat16" in Part I.1 is the deliberately-chosen compute dtype, not the config's
+stored dtype; these are different things and both statements are correct.
 
 Two companion docs: `results_report.md` (the same findings, more compact, assumes
 domain fluency) and `claims_ledger.md` (every claim tagged with its evidence and
