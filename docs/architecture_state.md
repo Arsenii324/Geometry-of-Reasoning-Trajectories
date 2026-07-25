@@ -128,6 +128,7 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_smoke_new_tasks.py` | smoke test for count_ones/projection + normed acceleration | no (overwrites) | `smoke_new_tasks.csv` |
 | `run_fdr_correction.py` | Phase 0 — BH-FDR across every project correlation test, 0-GPU | no (reads other CSVs directly) | `fdr_correction.csv` — 46 tests, 20/46 survive. See `claims_ledger.md` D13. |
 | `run_power_analysis.py` | Phase 0 — loop-rate + Spearman-detection power analysis, 0-GPU | no (reads other CSVs + pure simulation) | `power_loop_rate.csv`, `power_curve.csv`. See `docs/power_and_preregistration.md`. |
+| `run_winding_null.py` | matched-random-walk null test on the 140 banked raw trajectories — adjudicates the winding metric itself, 0-GPU | yes | `winding_null.csv` — **real result 2026-07-25: 82.1% of trajectories wind LESS than their step-size-matched null (median z=−5.61); only 9/140 beat it after FDR. See `claims_ledger.md` D22.** |
 | `backfill_seq_len.py` | one-off: backfill `seq_len` onto switch/maxtask CSVs without GPU | n/a | mutates `switch.csv`/`maxtask.csv` in place |
 | `plot_trajectories.py` | PCA plot of count_ones/projection trajectories, shared basis per (task, n_ops) | n/a | `figures/pca_*.png` |
 | `extract.py`, `run_mvp.py` | earlier/MVP-era extraction entry points | — | — |
@@ -140,7 +141,8 @@ Present in `results/`: `blayney_repro.csv`, `convergence.csv`,
 `fdr_correction.csv`, `forceloop.csv`, `full_synthetic_experiments.csv`,
 `h2_loops.csv`, `homology.csv`, `maxtask.csv`, `pararule.csv`, `phase.csv`,
 `power_curve.csv`, `power_loop_rate.csv`, `smoke_new_tasks.csv`,
-`switch.csv`, `three_scale_modk.csv`, `three_scale_modk_extended.csv`.
+`switch.csv`, `three_scale_modk.csv`, `three_scale_modk_extended.csv`,
+`winding_null.csv`.
 
 `three_scale.csv` and `v6_correctness_probe.csv` both promoted into
 `results/` proper 2026-07-23 — real, post-fix data, both confirmed via
@@ -161,6 +163,28 @@ removing data isn't this doc's call to make unilaterally; flagged so
 nobody cites them as if they were current.
 
 ## Decisions log (most recent first)
+
+- **2026-07-25 — Ran the winding null test; the "it's blocked" premise was
+  false, and the metric fails.** Docs had said for weeks that
+  `winding_null_test` cannot run because raw per-step paths aren't saved.
+  Wrong: **140 real Huginn trajectories with full raw `[T,5280]` paths sit in
+  `results/trajectories/`** (untracked, no producer script, no manifest —
+  which is why they were overlooked). Ran the test at 0 GPU cost:
+  **82.1% of real trajectories wind LESS than a matched random walk**
+  (median z=−5.61; 66.4% at p=1.000); only 9/140 beat the null after FDR.
+  Mechanism verified: paths settle at step ≈14, then only jitter — a random
+  walk turns that jitter into accumulated angle, the real path doesn't
+  rotate. So the z-gap widens with budget (−1.62 at ns=64 → −15.99 at
+  ns=128) while observed winding stays flat. Root cause of the ubiquitous
+  ≈0.62 value: `winding_number` uses the trajectory's own centroid as
+  rotation center, and a settling path collapses 18× toward it, sweeping
+  ~0.6 turns by construction. Consequence: winding is near-constant on
+  answer tokens (modk-N15 std **0.005**), so **H2 as operationalized was
+  largely untestable there, not tested-and-refuted** — a sharpening of
+  D15/D16. Caveat recorded: the banked trajectories' provenance is
+  undocumented (and the `track_*` files `convergence.csv` used are gone), so
+  this is a verdict on the *metric*, not on a specific condition. Full detail
+  + all caveats: `claims_ledger.md` D22.
 
 - **2026-07-24 — D15 replicated at N=15 (vs N=7): winding null holds up
   stronger, steps_settle effect strengthens.** `run_three_scale_modk.py
