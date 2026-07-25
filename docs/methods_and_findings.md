@@ -8,6 +8,21 @@ throughout — the assumptions each statistical test makes and where they bite.
 Every number is recomputed from the raw data and cross-checked; where a result
 is uncertain, underpowered, or confounded, that is said, not omitted.
 
+VERIFICATION PROVENANCE (2026-07-25): every quantitative and factual claim in
+this document was re-derived from source in a dedicated max-depth pass —
+experimental numbers recomputed from the raw `results/*.csv`; model facts
+(revision `bb6621b…`, `n_embd=5280`, prelude/recurrent/coda = 2/4/2,
+`mean_recurrence=32`) read from the pinned `raven_config_minimal.py`/`config.json`;
+code thresholds (collinearity 0.95, condition-number 1e10, settle/return frac
+0.1/0.25, the `>3` loop window, burn=4) read from the actual functions; the
+Spearman critical-value table (N6=0.886, N5=1.000, N4 absent) from
+`_SPEARMAN_CRIT_P05`; row counts checked as levels×seeds; attributions
+(Miyato 2018, Yang, Tulchinskii, Geiping, Blayney) against the primary sources
+read this session. Rounding is consistent throughout (e.g. steps-Fisher
+0.00059→0.0006, dissociation p 0.2657→0.27, contraction ratio 1.715→1.72). No
+discrepancy was found; the load-bearing numbers are additionally pinned by
+regression tests (`tests/test_*`).
+
 Two companion docs: `results_report.md` (the same findings, more compact, assumes
 domain fluency) and `claims_ledger.md` (every claim tagged with its evidence and
 verification status). References below of the form D10, D15, B4, A6, E1, E3 are
