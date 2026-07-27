@@ -1,0 +1,32 @@
+{
+  "audit_ref": "docs/rigor_audit.md sections 7, 12",
+  "bytes": 1351808,
+  "compute_dtype": "bfloat16",
+  "compute_dtype_evidence": "VERIFIED: bf16 round-trip identical (True).",
+  "confidence": "RECOVERED_BY_AUDIT_2026_07_25",
+  "converged": true,
+  "converged_evidence": "ns=16 groups end with an inter-orbit gap of 6.5-7.1 vs 1.2-1.6 for ns=64; ns=16 rows are NOT converged and must not be used for settled-state metrics.",
+  "dtype": "float32",
+  "file": "local_n48_ns64_init0.npy",
+  "git_commit": "fc6908dc110d40b47cdf0bb54f3d5629c8f897db",
+  "git_dirty": true,
+  "init_seed": 0,
+  "init_seed_evidence": "VERIFIED as a genuine initialization seed: files share (kind, n_ops, num_steps) and differ only in this field, and their pairwise gap contracts (53.4 -> 1.4), which requires a shared prompt.",
+  "kind": "trajectory",
+  "kind_label": "local",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_ops": 48,
+  "num_steps": 64,
+  "produced_by": "/Users/a2mogus/build-projs/barannikov-work/Geometry-of-Reasoning-Trajectories/scripts/backfill_provenance.py",
+  "run_id": "20260725T195437Z-786258f0",
+  "sha256": "c3608b6c3231a11d3ff50a82c589625b581d7fe17e34ef2de13459c811771177",
+  "shape": [
+    64,
+    5280
+  ],
+  "supports": "path-independence and map-contraction measurement (the only raw paths in the project that do)",
+  "task_seed": null,
+  "task_seed_evidence": "UNKNOWN: manifest.csv records no task seed.",
+  "written_utc": "2026-07-25T19:54:42.261942+00:00"
+}
