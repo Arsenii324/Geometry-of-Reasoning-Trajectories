@@ -29,6 +29,7 @@ guaranteed at any active_len (verified via `scripts/diag_tokenization.py`).
 
 from __future__ import annotations
 
+import itertools
 import random
 
 
@@ -268,4 +269,111 @@ def make_three_scale_modk_task(
         "neutral_len": neutral_len,
         "total_len": total_len,
         "modulus": modulus,
+    }
+
+
+def make_running_count_task(m: int = 64, seed: int = 0, p_one: float = 0.5) -> dict:
+    """Barannikov Task a: a running count over a FIXED-LENGTH binary string.
+
+    The minimal algorithm is a register with values in Z updated by the
+    translation T_1 : s -> s+1, applied once per `1` seen. The point of the
+    design is that `m` is fixed, so difficulty (the final count) varies while
+    the token count does NOT.
+
+    WHY THE FIXED LENGTH MATTERS. Every other generator in this module has
+    rank-corr(n_ops, seq_len) = exactly 1.000 (docs/rigor_audit.md section 21),
+    which makes partial correlation on length mathematically degenerate and
+    means no existing synthetic result can separate difficulty from length.
+    Holding `m` fixed breaks that at the source.
+
+    WHAT TO PROBE FOR. Not an ambient-space translation:
+    `docs/register_geometry.md` shows RMSNorm confines states to a shell of
+    relative thickness ~7.3e-5, which bounds a straight-line register to 0.0144
+    per increment over m=64 -- 62x below the arithmetic noise floor. The
+    norm-preserving realisation is a ROTATION, or equivalently a translation in
+    tangent/log-map coordinates, which agrees with Barannikov's framing at
+    small angle.
+
+    Args:
+        m: String length, held fixed across difficulty levels.
+        seed: Random seed for the bit string.
+        p_one: Probability of a `1` at each position; varying this varies the
+            final count at constant length.
+
+    Returns:
+        ``{"prompt", "answer", "bits", "running", "m"}`` where ``running[i]``
+        is the target ``y_i = #{j <= i : x_j = 1}`` for per-position probing.
+    """
+    rng = random.Random(seed)
+    bits = [1 if rng.random() < p_one else 0 for _ in range(m)]
+    running = list(itertools.accumulate(bits))
+    return {
+        "prompt": "Sequence: " + " ".join(map(str, bits)) + ". How many ones? A:",
+        "answer": running[-1],
+        "bits": bits,
+        "running": running,
+        "m": m,
+    }
+
+
+def make_nesting_depth_task(m: int = 64, seed: int = 0, balanced: bool = True) -> dict:
+    """Barannikov Task b: nesting depth of a parenthesis string.
+
+    `(` applies T_+1 and `)` applies T_-1, so the register is the same Z-action
+    as Task a but with both signs. Length is fixed at `m` characters.
+
+    WHY `balanced` IS THE INTERESTING CASE. A winding number is an element of
+    pi_1(R^2 minus a point) = Z and requires a CLOSED curve; a trajectory is an
+    open arc, which is why every winding number this project has computed is a
+    real number with no quantisation and no homotopy invariance
+    (docs/rigor_audit.md section 2 of the metric discussion). A *balanced*
+    string starts at depth 0 and returns to depth 0. If the depth register is
+    realised as a rotation, the state returns to its start and **the curve
+    closes** -- making the position-indexed winding a genuine integer
+    invariant. That predicts QUANTISATION, a far stronger and more falsifiable
+    signature than any correlation.
+
+    Generating `balanced=False` strings gives the matched control: same length,
+    same symbol alphabet, no return to zero, so no closure and no quantisation
+    expected.
+
+    Args:
+        m: Number of symbols (forced even when ``balanced``).
+        seed: Random seed.
+        balanced: Whether the string is a balanced parenthesis sequence.
+
+    Returns:
+        ``{"prompt", "answer", "symbols", "depths", "max_depth", "balanced", "m"}``
+        where ``depths[i]`` is the per-position target and ``answer`` is the
+        maximum depth reached.
+    """
+    rng = random.Random(seed)
+    if balanced:
+        m -= m % 2
+        symbols: list[str] = []
+        open_count = 0
+        for i in range(m):
+            remaining = m - i
+            # keep it a valid balanced string: never close below zero, and
+            # always leave room to close what is still open
+            if open_count == 0:
+                take_open = True
+            elif open_count == remaining:
+                take_open = False
+            else:
+                take_open = rng.random() < 0.5
+            symbols.append("(" if take_open else ")")
+            open_count += 1 if take_open else -1
+    else:
+        symbols = [rng.choice(["(", ")"]) for _ in range(m)]
+
+    depths = list(itertools.accumulate(1 if s == "(" else -1 for s in symbols))
+    return {
+        "prompt": "Sequence: " + " ".join(symbols) + ". What is the maximum nesting depth? A:",
+        "answer": max(depths) if depths else 0,
+        "symbols": symbols,
+        "depths": depths,
+        "max_depth": max(depths) if depths else 0,
+        "balanced": balanced and depths[-1] == 0,
+        "m": len(symbols),
     }
