@@ -163,11 +163,23 @@ sum bits in one pass; its representational frame rotates into a stable basis
 over ~16 unrolls; and it is progressively transferred into the answer token
 over ~24. The depth requirement in §1.1 is about the last of these.
 
-Two honest limits. R² = 0.675 at r=1 is already high, so the depth-dependent
-part is the final +0.318, not the whole thing. And at r=64 the per-instance
-readout error does **not** track difficulty (rho = −0.017, p = 0.803; mean
-error 0.93 counts) — consistent with the curve having saturated, but it means
-the direct link to §1.1 is not yet demonstrated.
+**Two honest limits, one of which splits the claim.** R² = 0.675 at r=1 is
+already high, so the depth-dependent part is the final +0.318, not the whole
+thing.
+
+More importantly: per-instance readout error was tested at **every** depth and
+does **not** track difficulty anywhere — rho ranges −0.09 to +0.16 across
+r = 1…64, the one nominal hit (r=8, p=0.016) dies under Bonferroni over nine
+tests, and the signs alternate. Mean error does fall steeply (6.94 → 0.93
+counts).
+
+So depth buys readout *in aggregate*, but that does **not** explain why harder
+instances need more of it. The two measurements ask different questions: a
+linear probe asks whether the count is PRESENT in the answer-token state (it is,
+R²=0.65 at r=1), while §1.1's r\* asks when the model's own logit margin
+saturates. Information availability and the model's use of it are different
+things, and §1.1's difficulty-dependence lives in the latter — which the probe
+bypasses. That is the open question.
 
 ### 1.2d The original thesis is true — at the right index (D39)
 
