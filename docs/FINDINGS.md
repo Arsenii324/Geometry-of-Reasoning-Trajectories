@@ -1,0 +1,269 @@
+# Findings
+
+Huginn-3.5B (`tomg-group-umd/huginn-0125`, revision `bb6621b6…`), 2026-07-26/27.
+Every number below is reproducible from a script in `scripts/`; the ledger row
+is cited for each. Evidence levels are stated, including for the negatives.
+
+**Read `docs/state_of_knowledge.md` for the full picture including retractions,
+and `docs/backlog_not_done.md` for what was never attempted.**
+
+---
+
+## The one-paragraph version
+
+The original hypothesis — that latent-trajectory *geometry* encodes reasoning
+depth — is not supported, and the metrics that appeared to support it were
+measuring the recording window and the arithmetic precision rather than the
+model. But the underlying idea survives in two other places, both now measured:
+**required recurrent depth does scale with difficulty** at fixed prompt length,
+and **Huginn maintains a linearly-decodable counting register** that behaves as
+a ℤ-action, which is what the curator's tasks asked about. Separately, the
+project turned up a fact about the architecture that is independent of any of
+this: **bfloat16 rounding makes the model appear to converge ~4.6× sooner than
+it does.** And the two positives turn out to be *dissociated*: the register is
+complete after a single unroll and only its representational frame rotates with
+depth, so whatever the extra depth buys on harder instances, it is not building
+the register.
+
+---
+
+## 1. Positive results
+
+### 1.1 Required depth scales with difficulty — confound-free (D35)
+
+At Barannikov's design (m = 64 fixed, difficulty varied by the number of ones),
+**all 200 prompts tokenise to exactly 77 tokens**, so difficulty and prompt
+length are decoupled by construction rather than by statistical control.
+
+Measure: teacher-forced `log P(gold) − log P(distractor)` at every unroll,
+marginalised over surface forms, with the threshold r\* defined as the first
+unroll where the margin reaches 90% of its final level and stays there.
+
+```
+pre-registered test, complete cases   rho = +0.175, p = 0.044, n = 133
+censoring-aware, all instances        rho = +0.225, p = 1.3e-03, n = 200
+                                      bootstrap 95% CI [+0.086, +0.355]
+```
+
+67/200 instances never resolve within 64 unrolls, and those have **higher**
+counts (36.5 vs 30.0, p = 0.014) — so dropping them removes the largest r\*
+values and biases the estimate *downward*. Treating them as right-censored
+strengthens the result, as the bias direction predicts. The censoring rate is
+itself a second, independent signature: harder instances are both slower to
+resolve and likelier never to.
+
+Effect size is modest: mean r\* rises from 28.9 (counts 2–15) to 50.2 (38–50).
+
+A hypothesis of mine — that difficulty is really about *balance*, since a count
+of 58/64 is as uniform as 6/64 — was tested and **rejected** twice: entropy
+gives rho = +0.139 against count's +0.225 and adds +0.020 R² in a joint rank
+regression.
+
+### 1.2 A counting register exists, and it is a ℤ-action (D34, D36)
+
+Found by subtraction, not by a probe. For per-position states, form
+`Δ_i = h_{i+1} − h_i` and take
+
+$$v = \text{mean}(\Delta \mid \text{increment}) - \text{mean}(\Delta \mid \text{decrement})$$
+
+No fitted parameters, so nothing to overfit.
+
+**The direction is shared across independent strings:**
+
+| condition | pairwise cosine | vs random (sd 1/√5280 = 0.0138) |
+|---|---|---|
+| Task a (running count) | **+0.9199** | 66.8 σ |
+| Task b (balanced parens) | **+0.9383** | 68.2 σ |
+| Task b (unbalanced control) | **+0.8847** | 64.3 σ |
+
+All 16 strings per condition select the same digit-region offset, so the search
+found the real region rather than per-string noise.
+
+**It carries the accumulated value, not position or token identity.** The target
+is `y_{i−1}` — the register value *before* the current symbol, which token
+identity at position *i* cannot explain — with position and current symbol both
+partialled out:
+
+```
+Task a       r = +0.2686   16/16 same sign   p = 9.2e-10
+Task b bal   r = +0.2248   16/16             p = 2.4e-06
+Task b unbal r = +0.2890   16/16             p = 9.5e-11
+```
+
+Task b is the harder test: depth is a *signed* bridge, so `R²(depth ~ position)`
+is only 0.160 and a direction tracking "how far along am I" cannot fake it. For
+Task a, position alone explains 98.5% of a running count, which is why the raw
+uncontrolled probe R² of 0.892 was worthless.
+
+**It behaves as a group action.** Two-step displacement along v, by symbol pair:
+
+```
+                 ((        ()        )(        ))     matched vs 0
+balanced      +31.61    +16.39    −17.26    −29.67    −0.44 (p=0.891)
+unbalanced    +30.33    +20.39    −17.29    −31.84    +1.55 (p=0.666)
+```
+
+`(` and `)` displace symmetrically, and **a matched pair returns the state to
+where it started** — that is `T₋₁ = T₊₁⁻¹`. Nothing in the construction of v
+forces this. Deviation from strict additivity: `()` reads +16.4 rather than 0,
+so the *earlier* symbol of a pair dominates the two-step difference; additive in
+the mean, not term by term.
+
+**The two tasks use separate axes** — cosine between Task a's `+1` direction and
+Task b's `(` direction is **+0.058**. No reuse of a single increment axis.
+
+### 1.2b Recurrence rotates the register, it does not build it (D37)
+
+The two positives above stood unconnected. If unrolling *constructs* the
+register, its decodability should rise with unroll count. Measured in one
+forward pass per string, states captured at every unroll:
+
+```
+r         1      2      4      8     16     32     64
+register_r   +0.248 +0.257 +0.242 +0.255 +0.251 +0.250 +0.250     rho=+0.006  p=0.958
+|cos(v_r,v_final)|  0.454  0.562  0.727  0.906  0.992  1.000  1.000   rho=+0.990  p=5.5e-72
+```
+
+**The content is fully present after a single core-block application and does
+not grow. The direction rotates, reaching 99% alignment by r≈16.** All 12 seeds
+follow the same rotation curve (across-seed sd falls 0.014 → 0.000), so this is
+not an averaging artifact.
+
+I had pre-registered the opposite prediction. The consequence matters: since the
+register is complete at r=1, the extra depth that harder instances require in
+§1.1 is **not** being spent building it. What it is spent on is open.
+
+Caveat: `|cos| → 1` is partly definitional as r → 64. The informative part is
+the shape of the approach, not the endpoint.
+
+### 1.3 H3's premise, measured exactly for the first time (D31)
+
+Implicitly-restarted Arnoldi on autodiff Jacobian-vector products at the
+converged state, float32:
+
+```
+rho = 0.7935 / 0.8042 / 0.8083   at n_ops 64 / 32 / 8   (mean 0.8020)
+```
+
+Contraction confirmed, varying under 2% across an 8× difficulty range —
+independently corroborating a two-orbit estimate of 0.84–0.90 obtained from
+different data by a different method. The leading eigenvalue is **complex in
+3/3 prompts**, in conjugate pairs, with 8–10 oscillatory modes: **the recurrent
+map rotates**, even though winding cannot detect it (§2.1).
+
+Scoping correction: contraction forbids an *unbounded* register, not a bounded
+one. The converged neighbourhood spans ~1.4 units across 5279 tangent
+dimensions — ample to separate 64 states, which is what §1.2 finds.
+
+### 1.4 bfloat16 masks ~4.6× of the computation (D30)
+
+Same prompts, same seed, only the compute dtype varying:
+
+```
+dtype        residual radius    regime ends at
+bfloat16          1.1895            20.7
+float16           0.1548            32.3
+float32           0.000290          96.3      (of 127)
+```
+
+bf16 → fp16 gives 7.7× against 8× predicted, slope −0.981 against −1. So the
+post-convergence residual is **arithmetic**, not a limit set.
+
+The larger implication is in the third column. "Huginn settles at t ≈ 14" — the
+fact the entire project was built on — holds **only in bfloat16**. In float32 the
+same prompts keep converging to t ≈ 96. Low precision does not merely add a
+floor; it *truncates visible computation*. This is a claim about the published
+architecture, and it generalises to any convergence claim made about an
+iterative system in low precision.
+
+---
+
+## 2. Negative results
+
+### 2.1 Winding does not measure rotation (D28)
+
+Under an on-manifold null (calibration arm 6.4% against 5% nominal, so the
+construction is unbiased), the effect **flips sign with `num_steps`**:
+
+```
+ns=64    obs−null = +0.0127   mean z = +10.97   (n=60)
+ns=128   obs−null = −0.0091   mean z =  −5.58   (n=80)
+```
+
+In both tasks independently, strata differing at p = 1e-11. `num_steps` is a
+recording budget: the same prompts and weights, recorded longer, reverse the
+comparison. **|winding| tracks how much arithmetic noise was recorded, not the
+trajectory's content.**
+
+### 2.2 Winding does not track difficulty (D26)
+
+Permutation test on real trajectories only — no surrogate model, so the manifold,
+convergence profile, noise floor and anisotropy are all preserved by
+construction. No stratum survives BH or Bonferroni; signs disagree across strata;
+one nominal hit in four is what chance gives (P = 0.185).
+
+### 2.3 No quantisation of winding on balanced strings (D32)
+
+`docs/register_geometry.md` derived that a balanced string closes the curve,
+making position-indexed winding a genuine integer invariant, and predicted
+near-integer values. Measured distance to nearest integer: balanced 0.281,
+unbalanced 0.353. The pre-registered comparison passes (p = 0.0005) **but is
+misleading** — against the actual no-quantisation reference (uniform → 0.250),
+balanced strings are *not* closer (p = 0.9954). The gap is driven by unbalanced
+strings being anomalously far, not balanced ones being close.
+
+### 2.4 H1 was never tested (rigor_audit §18)
+
+`shapes.gate.classify_shape` returns "settle" for **140/140** trajectories
+because it compares the last step to the *largest* step, and `s[-1]/s.max()`
+maxes at 0.0188 against a 0.10 threshold. "loop" and "drift" are unreachable. An
+instrument with one attainable output cannot test a three-way hypothesis.
+
+---
+
+## 3. What this means for the curator's tasks
+
+The register content is **present and linearly decodable** in both Task a and
+Task b, and behaves as the ℤ-action the minimal-algorithm framing specifies.
+Three design points from this work:
+
+1. **Probe in tangent coordinates, not ambient space.** RMSNorm confines the
+   state to a shell of relative thickness 7.3e-5, which bounds a straight-line
+   register to 0.0144 per increment over m=64 — 62× below the arithmetic noise
+   floor, and the bound survives a 1000× error in its one input. A translation
+   register is architecturally impossible; a rotation (equivalently a tangent
+   translation, which agrees at small angle) is not.
+2. **Fixed m is doing real work.** Every other synthetic generator in this
+   project has `rank-corr(difficulty, seq_len) = exactly 1.000`, which makes a
+   length control mathematically degenerate. Fixing m breaks it at the source,
+   and §1.1 is the first result here that cannot be prompt length.
+3. **Probe the latents, not the output.** Model accuracy on counting is ~10%,
+   and the apparent successes are a zero-prior artifact — correctness is
+   perfectly separated by whether the answer happens to be 0 (4/5 vs 0/8, all at
+   unroll 1).
+
+Do **not** read the register off a winding number: §2.1 and §2.3 show winding
+sees neither the rotation that is present in the map (§1.3) nor the register
+that is present in the states (§1.2).
+
+---
+
+## 4. Honesty notes
+
+- Six claims of mine were retracted during this work, including a wrong
+  noise-floor formula, an underpowered "reversal", and a symmetry test that was
+  an algebraic identity (`n_open/n_close`, giving 31/32 = 0.96875 with sd
+  1.9e-16 — no model property can be that constant). All are recorded in the
+  ledger with their diagnoses rather than deleted.
+- The register correlation carries an ~18.5% leakage estimate from residualising
+  position over all 64 points. Real, but far from the exact determination that
+  invalidated an earlier probe.
+- 16 of 18 historical results files have **no raw data on disk**, so their
+  conclusions cannot be corrected without GPU re-runs. That is the concrete cost
+  of storing derived scalars and discarding what produced them.
+- Effect sizes are modest throughout: rho ≈ 0.23 for depth scaling, r ≈ 0.27 for
+  the register. These are real and pre-registered, not large.
+
+Verification: 193 tests, `ruff check src scripts tests` clean, 155 artifacts
+hash-verified, all GPU results from Kaggle T4 kernels whose logs are in
+`scratch/kaggle_*/out/`.

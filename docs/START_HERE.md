@@ -1,5 +1,18 @@
 # Start here
 
+> **⚠ PARTIALLY SUPERSEDED — read `docs/state_of_knowledge.md` first.**
+> This file predates the two-pass rigor audit of 2026-07-25/26
+> (`docs/rigor_audit.md`, `claims_ledger.md` D24–D26) and contains at least one
+> claim the audit overturned. Known overturns that may appear below:
+> `steps_settle` is a proxy for the contraction rate, **not** for effective
+> compute; the "82.1% wind less than their null" result rests on an
+> off-manifold null and is deleted; `cos = −0.276` is a noise-regime artifact
+> (the computing-regime value is **+0.084**); "homology max persistence 0.009"
+> is a normalisation artifact; and the "Movahedi et al." citation could not be
+> located. Nothing here has been deleted — this notice is additive, and the
+> text is left as its authors wrote it.
+
+
 Six docs accumulated in this folder over two sessions (2026-07-17,
 2026-07-18) plus code artifacts elsewhere in the repo. This is the index —
 what to read, in what order, for what purpose. Written 2026-07-18, after a

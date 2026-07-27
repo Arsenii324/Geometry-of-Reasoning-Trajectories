@@ -1,3 +1,25 @@
+# ============================================================================
+# STALE / NOT AUTHORITATIVE -- read docs/rigor_audit.md section 11 first.
+#
+# NOTHING PARSES THIS FILE. Its only two referents, scripts/extract.py and
+# scripts/run_mvp.py, name it as an argparse default but are unimplemented
+# stubs (extract.py's body is a TODO string). No experiment in results/ was
+# produced with these values, and several contradict every actual run:
+#
+#   num_steps: 32          -> real runs used 16 / 64 / 128
+#   dataset: pararule-plus -> the synthetic tasks in shapes/synthetic.py were
+#                             used for the count_ones / projection sweeps
+#   device/dtype           -> set in code by extraction/model.py's defaults
+#                             (device="cuda", dtype=torch.bfloat16), not here
+#
+# The bf16 default in particular is load-bearing: it sets the numerical noise
+# floor that rigor_audit sections 1-3 turn on. Take extraction/model.py as the
+# source of truth for it, not this file.
+#
+# Kept, rather than deleted, because it records the MVP-era intent and both
+# stubs still reference the path. Do not cite it as run configuration.
+# ============================================================================
+
 # Default configuration for the latent-trajectory MVP (H2).
 # Everything here is inference-only: the model is never trained.
 

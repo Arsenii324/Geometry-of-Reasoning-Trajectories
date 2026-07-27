@@ -1,5 +1,18 @@
 # Research Log
 
+> **⚠ PARTIALLY SUPERSEDED — read `docs/state_of_knowledge.md` first.**
+> This file predates the two-pass rigor audit of 2026-07-25/26
+> (`docs/rigor_audit.md`, `claims_ledger.md` D24–D26) and contains at least one
+> claim the audit overturned. Known overturns that may appear below:
+> `steps_settle` is a proxy for the contraction rate, **not** for effective
+> compute; the "82.1% wind less than their null" result rests on an
+> off-manifold null and is deleted; `cos = −0.276` is a noise-regime artifact
+> (the computing-regime value is **+0.084**); "homology max persistence 0.009"
+> is a normalisation artifact; and the "Movahedi et al." citation could not be
+> located. Nothing here has been deleted — this notice is additive, and the
+> text is left as its authors wrote it.
+
+
 > **STALE AS OF 2026-07-24.** Last entry predates the coda-skip fix's
 > second round, D11-D15, and a full literature-verification pass. Read
 > `project_plan.md` + `claims_ledger.md` for current status before trusting

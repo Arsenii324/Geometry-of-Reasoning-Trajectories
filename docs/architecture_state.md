@@ -1,5 +1,18 @@
 # Architecture & experiment state — living doc
 
+> **⚠ PARTIALLY SUPERSEDED — read `docs/state_of_knowledge.md` first.**
+> This file predates the two-pass rigor audit of 2026-07-25/26
+> (`docs/rigor_audit.md`, `claims_ledger.md` D24–D26) and contains at least one
+> claim the audit overturned. Known overturns that may appear below:
+> `steps_settle` is a proxy for the contraction rate, **not** for effective
+> compute; the "82.1% wind less than their null" result rests on an
+> off-manifold null and is deleted; `cos = −0.276` is a noise-regime artifact
+> (the computing-regime value is **+0.084**); "homology max persistence 0.009"
+> is a normalisation artifact; and the "Movahedi et al." citation could not be
+> located. Nothing here has been deleted — this notice is additive, and the
+> text is left as its authors wrote it.
+
+
 Started 2026-07-22. Distinct from the other docs in this folder:
 `narrative.md`/`research_log.md`/`claims_ledger.md` explain and evidence
 *findings*; `infra.md` is the original (2026-07-18) architecture reference.
@@ -129,9 +142,91 @@ repo's git**. Anyone cloning only this repo does not get it. Contents:
 | `run_fdr_correction.py` | Phase 0 — BH-FDR across every project correlation test, 0-GPU | no (reads other CSVs directly) | `fdr_correction.csv` — 46 tests, 20/46 survive. See `claims_ledger.md` D13. |
 | `run_power_analysis.py` | Phase 0 — loop-rate + Spearman-detection power analysis, 0-GPU | no (reads other CSVs + pure simulation) | `power_loop_rate.csv`, `power_curve.csv`. See `docs/power_and_preregistration.md`. |
 | `run_winding_null.py` | matched-random-walk null test on the 140 banked raw trajectories — adjudicates the winding metric itself, 0-GPU | yes | `winding_null.csv` — **real result 2026-07-25: 82.1% of trajectories wind LESS than their step-size-matched null (median z=−5.61); only 9/140 beat it after FDR. See `claims_ledger.md` D22.** |
+| `run_precision_check.py` | **plan Step 1, the GATE. NEEDS GPU, minutes.** Same prompt in bf16 vs fp32; predicts the post-convergence residual drops by 2⁻¹⁶ (0.91 → 1.4e-5) if the floor is arithmetic | yes | `precision_check.csv` (not yet produced). Branches explicitly: arithmetic / not arithmetic / partial. |
+| `run_jacobian_spectrum.py` | **plan Step 2. NEEDS GPU.** Arnoldi (ARPACK) on autodiff Jacobian-vector products at h*; returns ρ (H3) and arg λ (H2 rotation) as modulus and argument of the same eigenvalue | yes | `jacobian_spectrum.csv` (not yet produced). Tests the log-polar prediction \|arg λ\| ≲ 0.78 rad. |
+| `run_register_probe.py` | **plan Step 4. NEEDS GPU.** Barannikov Task a/b probed in TANGENT coordinates (ambient translation is forbidden by the norm constraint); Task b tests **quantisation** of position-indexed winding on balanced vs unbalanced strings | yes | `register_probe.csv` (not yet produced). Pre-registered reading in the docstring. |
+| `run_register_analysis.py` | **Barannikov's register, offline** (CPU) from the banked per-position latents: increment direction v, register correlation with position+token-identity controls, and the ℤ-action matched-pair test | yes | `register_analysis.csv` — cosine +0.92/+0.94 (66–68σ), r=+0.22…+0.29 all 16/16 sign, matched pairs return to start (p≥0.66). See `claims_ledger.md` D34, D36. |
+| `run_regime_rederivation.py` | **plan Step 5**: recomputes every invalidated metric legacy-vs-floor-aware on all 155 trajectories with raw paths, and reports which conclusions flip, 0-GPU | yes | `regime_rederivation.csv` — `cos` sign follows the RECORDING LENGTH (+0.258 at ns=16, −0.324/−0.368 at ns=64/128); 90.3% flip sign; `conv_rate` understated 3.2×, `dlr` inflated 4.04×. See `claims_ledger.md` D29. |
+| `run_answer_probe.py` | is the ANSWER linearly decodable from the converged state, **within** a difficulty level (so `seq_len` is fixed)? Ridge + LOO with level means fitted inside each fold, within-level permutation null, ridge-penalty sweep, 0-GPU | yes | `answer_probe.csv` — **SUGGESTIVE, NOT ESTABLISHED**: count_ones R²=+0.219 p=0.020 (Bonferroni 0.040) but fragile to leave-one-level-out; projection null. See `claims_ledger.md` D27. |
+| `run_winding_permutation.py` | H2 with **no surrogate model at all**: permutes `n_ops` labels among real trajectories, stratified by (task, num_steps), 20k permutations, BH+Bonferroni corrected, 0-GPU | yes | `winding_permutation.csv` — **no stratum survives correction; H2 is NULL under the assumption-free test.** See `claims_ledger.md` D26. |
+| `run_manifold_null.py` | winding vs an ON-MANIFOLD null (sphere + radial profile + angular steps preserved), 140 traj × 100 surrogates, with a built-in calibration arm and stratification by `num_steps`/task, 0-GPU | yes | `manifold_null.csv`. Supersedes the underpowered subsample numbers in an earlier draft of `rigor_audit.md` §17 — **the sign of the winding effect is unresolved until this runs**. |
+| `run_depth_threshold.py` | **NEEDS GPU, not yet run.** Teacher-forced log P(gold) − log P(distractor) at every unroll r; locates r\* per instance and tests whether required depth scales with difficulty — H2 restated behaviourally, with no geometry | yes | `depth_threshold.csv` (not yet produced). Excludes answer==0 instances: in `v6_correctness_probe.csv` correctness is perfectly separated by target==0 (4/5 vs **0/8**), all at unroll 1 — a zero-prior, not computation. |
+| `run_winding_variants_null.py` | puts 9 alternative rotation estimators through the *identical* matched-random-walk null, so the metric can be chosen by evidence rather than inheritance, 0-GPU | yes | `winding_variants_null.csv` — **2026-07-25: the deployed metric (W1) beats its null on 10% of trajectories vs 97–100% for the direction-agnostic variants. Read with `docs/rigor_audit.md` §8: the surrogate leaves the state manifold, so all of these z-scores partly measure on- vs off-manifold.** |
+| `backfill_provenance.py` | one-off: retro-tag every banked `.npy` with a provenance sidecar + `manifest.jsonl`, splitting VERIFIED from RECOVERED fields | n/a | writes `*.prov.json` + `manifest.jsonl` beside each artifact. See `docs/rigor_audit.md` §§4–5. |
 | `backfill_seq_len.py` | one-off: backfill `seq_len` onto switch/maxtask CSVs without GPU | n/a | mutates `switch.csv`/`maxtask.csv` in place |
 | `plot_trajectories.py` | PCA plot of count_ones/projection trajectories, shared basis per (task, n_ops) | n/a | `figures/pca_*.png` |
 | `extract.py`, `run_mvp.py` | earlier/MVP-era extraction entry points | — | — |
+
+## metrics/ — second-generation, regime- and manifold-aware
+
+Added 2026-07-25 by the rigor audit; see `docs/rigor_audit.md`. These do NOT
+replace the originals in place — the originals stay bit-compatible so cached
+CSVs remain reproducible, and their biases are documented in their docstrings.
+
+- `metrics/regime.py` — separates the ~15-step signal regime from the
+  arithmetic-noise floor. Floor-aware `contraction_from_pair`,
+  `step_cosine_converging`, `classify_shape_regime`, `h1_persistence_signal`.
+- `metrics/surrogate.py` — on-manifold null. Preserves the sphere, the radial
+  convergence profile and every consecutive angular step; randomises only
+  rotational freedom. Replaces `winding.matched_random_walk`, which leaves the
+  manifold (‖h‖ 76.37 → 154.76).
+- `provenance.py` + `scripts/backfill_provenance.py` — sha256 sidecars and
+  append-only `manifest.jsonl`; `task_seed` and `init_seed` are separate
+  required fields.
+- `eval_depth.py` + `scripts/run_depth_threshold.py` — H2 restated
+  behaviourally as "at what depth does the answer become preferred". NEEDS GPU,
+  not yet run.
+
+## h3_toy_model/ — the A6 toy-model line
+
+Standalone package (own scripts, own results under `h3_results/`) carrying the
+**A6** H3 finding cited in `claims_ledger.md`: a from-scratch toy model showing
+the contraction mechanism does not appear on a recurrent-over-**depth**
+architecture matching Huginn's information flow, but does on a
+recurrent-over-**time** counterpart. Files: `h3_validation.py`,
+`sequential_h3_validation.py`, `sequential_rnn.py`, `spectral.py`,
+`synthetic_tasks.py`, `train_tiny_recursive.py`, `instrument_huginn.py`,
+`test_spectral.py`; outputs `h3_results/h3_sweep.csv`,
+`h3_results/sequential_sweep.csv`, `h3_results/FINDINGS.md`.
+
+**Maintenance gap, found 2026-07-25 (`rigor_audit.md` §14).** This directory
+was in neither `pyproject.toml`'s `testpaths` nor ruff's `src`, so its 5 tests
+were never collected and its code was never linted — while a claim resting on
+it sat in the ledger. `testpaths` now includes it (all 5 pass). Ruff still
+reports ~60 style errors here (vs 0 in `src/`), so it remains **linted but not
+clean**; that is a known, scoped debt, not a silent one.
+
+## GPU kernels — the derivation of every result marked "verified-live on GPU"
+
+Run on Kaggle's free T4 tier. Each bundle is a **self-contained** `main.py` plus
+`kernel-metadata.json`; they deliberately do NOT clone the repo, so no push to
+anyone's remote was needed to run them. Logs are pulled back into `out/`, which
+is what the offline analyses read.
+
+| bundle | kernel id | log pulled |
+|---|---|---|
+| `kaggle_blayney_modk` | `arsen4ikvar/geometry-blayney-repro-modk-sweep` | no |
+| `kaggle_depth` | `arsen4ikvar/geometry-depth-threshold` | yes |
+| `kaggle_depth_fixed` | `arsen4ikvar/geometry-depth-fixed-length` | yes |
+| `kaggle_jacobian` | `arsen4ikvar/geometry-jacobian-spectrum` | yes |
+| `kaggle_modk_extended` | `arsen4ikvar/geometry-modk-extended-d15-followup` | no |
+| `kaggle_precision_gate` | `arsen4ikvar/geometry-precision-gate` | yes |
+| `kaggle_register` | `arsen4ikvar/geometry-register-probe` | yes |
+| `kaggle_register_depth` | `arsen4ikvar/geometry-register-vs-depth` | yes |
+| `kaggle_states` | `arsen4ikvar/geometry-position-states` | yes |
+| `kaggle_v6_probe` | `arsen4ikvar/geometry-v6-experiments-6` | no |
+| `kaggle_v6_rerun` | `arsen4ikvar/geometry-v6-rerun-post-fix` | no |
+| `kaggle_v6_topk_fix` | `arsen4ikvar/geometry-v6-correctness-probe-top-k-fix` | no |
+
+`register_depth` → **D37** (the register/depth dissociation);
+Mapping to results: `precision_gate` → D30 (plan Step 1, the gate);
+`jacobian` → D31 (Step 2, ρ exact); `register` → D32 (Step 4);
+`depth` → D33 and `depth_fixed` → **D35** (Step 3, the confound-free version);
+`states` → D34/D36 via `scripts/run_register_analysis.py`.
+
+Note `scratch/` is otherwise throwaway by project convention. These six are
+not: they are the only record of how the GPU numbers were produced, which is
+why they are indexed here rather than left unattributed.
 
 ## results/ inventory — what's actually committed vs not
 
@@ -142,7 +237,7 @@ Present in `results/`: `blayney_repro.csv`, `convergence.csv`,
 `h2_loops.csv`, `homology.csv`, `maxtask.csv`, `pararule.csv`, `phase.csv`,
 `power_curve.csv`, `power_loop_rate.csv`, `smoke_new_tasks.csv`,
 `switch.csv`, `three_scale_modk.csv`, `three_scale_modk_extended.csv`,
-`winding_null.csv`.
+`winding_null.csv`, `winding_variants_null.csv`, `manifold_null.csv`, `winding_permutation.csv`, `answer_probe.csv`, `regime_rederivation.csv`, `register_analysis.csv`. Not yet produced (GPU-gated): `precision_check.csv`, `jacobian_spectrum.csv`, `register_probe.csv`, `depth_threshold.csv`.
 
 `three_scale.csv` and `v6_correctness_probe.csv` both promoted into
 `results/` proper 2026-07-23 — real, post-fix data, both confirmed via
