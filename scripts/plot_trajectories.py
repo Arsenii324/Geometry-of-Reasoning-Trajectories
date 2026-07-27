@@ -71,7 +71,7 @@ def plot_task_pca(df, task_name, target_n_ops=24, num_steps=None):
         return
 
     combined = np.vstack(all_trajs)
-    pca = PCA(n_components=2)
+    pca = PCA(n_components=2, svd_solver="full")
     pca.fit(combined)
 
     plt.figure(figsize=(10, 8))

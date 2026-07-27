@@ -27,10 +27,25 @@ def step_norms(traj: np.ndarray) -> np.ndarray:
 def steps_to_settle(traj: np.ndarray, frac: float = 0.1) -> int:
     """First step at which the displacement drops below ``frac`` of its max.
 
-    This is our proxy for effective compute: how many recurrent steps the model
-    spends before the path stops moving. Canonical, first-order definition —
-    every existing experiment's `steps_settle` column is computed with this.
-    See `steps_to_settle_by_acceleration` for the second-order alternative.
+    Canonical, first-order definition — every existing experiment's
+    `steps_settle` column is computed with this. See
+    `steps_to_settle_by_acceleration` for the second-order alternative.
+
+    !! DO NOT READ THIS AS "EFFECTIVE COMPUTE" (docs/rigor_audit.md section 3).
+    It was documented that way, and that reading is wrong. The threshold is
+    ``frac`` of the MAXIMUM step, and the maximum is always the initial
+    transient in which the model forgets its random ``h_0``. For a path
+    decaying geometrically at rate rho the crossing point is therefore fixed
+    by rho alone::
+
+        t* = log(frac)/log(rho) = log(0.1)/log(0.8407) = 13.27
+        observed mean over 140 banked trajectories = 13.84 (std 1.98)
+
+    The prediction uses no task information whatsoever and matches to within
+    0.6 steps. This function measures the CONTRACTION RATE, which is
+    task-independent -- which is also why its variance is so small that
+    correlating it against difficulty has almost no signal to find. Any claim
+    of the form "steps_settle tracks difficulty" needs re-deriving.
 
     Args:
         traj: Trajectory of shape [T, hidden_dim].

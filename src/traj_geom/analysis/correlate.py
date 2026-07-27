@@ -57,6 +57,23 @@ from scipy.stats import t as _student_t
 # below 0.05). If `ycol` group-means might tie, prefer the p-value
 # `spearmanr` itself returns over a table lookup, or note the tie
 # explicitly when reporting a table-based verdict.
+#
+# CENSUS (rigor_audit.md section 13, 2026-07-25): every (x, y) pair across
+# results/*.csv was checked for tied level-means. Ties occur in exactly six
+# places, ALL of them `steps_settle`:
+#     counting.csv            n_ops ~ steps_settle   N=6   1 tied level
+#     counting_accuracy.csv   n_ops ~ steps_settle   N=7   1 tied level
+#     dissoc_multiinit.csv    n_ops ~ steps_settle   N=10  1 tied level
+#     switch.csv              n_ops ~ steps_settle   N=6   1 tied level
+#     forceloop.csv        num_steps ~ steps_settle  N=4   2 tied levels
+#     full_synthetic_...csv   n_ops ~ steps_settle   N=8   7 tied levels
+# No `winding`, `contraction`, `lyap` or `conv_rate` correlation is affected.
+# The last row is not really a tie but a degeneracy: steps_settle is the
+# constant 128 at every level there, so rho is undefined (scipy returns NaN
+# with ConstantInputWarning) -- do not report a correlation from it at all.
+# That ties cluster entirely on `steps_settle` is expected given section 3:
+# the metric is a function of the contraction rate, so its level-means have
+# very little spread to distinguish.
 _SPEARMAN_CRIT_P05: dict[int, float] = {
     5: 1.000,
     6: 0.886,

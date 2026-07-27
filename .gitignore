@@ -7,7 +7,33 @@
 
 # Throwaway/external harness (Kaggle push scripts, pulled kernel outputs) —
 # not reproducible from a fresh clone, not meant to be committed.
-/scratch/
+#
+# EXCEPTION added 2026-07-28: the seven 2026-07-26/27 kernel bundles ARE
+# committed. They are the only record of how every result marked
+# "verified-live on GPU" was produced, and their pulled `out/` directories hold
+# both the logs (which contain the printed numbers) and the raw per-position
+# latents that D34/D36/D37 rest on. Excluding them would repeat the exact
+# failure docs/rigor_audit.md documents: 16 of 18 historical results files have
+# no raw data on disk and their conclusions cannot be corrected without a GPU
+# re-run. ~55 MB, no single file over 1 MB. The older kaggle_* dirs stay
+# ignored — they are full repo copies, not experiments.
+/scratch/*
+!/scratch/kaggle_precision_gate/
+!/scratch/kaggle_jacobian/
+!/scratch/kaggle_register/
+!/scratch/kaggle_depth/
+!/scratch/kaggle_depth_fixed/
+!/scratch/kaggle_states/
+!/scratch/kaggle_register_depth/
+# within those bundles, keep the harness noise out
+/scratch/*/poll.sh
+/scratch/*/poll*.log
+/scratch/*/main_v1.py
+/scratch/*/out/*.html
+/scratch/*/out2/*.html
+# kaggle_states/out was an incomplete first pull (22 of 48 arrays, no meta.json)
+# that raced the transfer; out2 is the complete one and is what the analyses read.
+/scratch/kaggle_states/out/
 
 # Python
 __pycache__/
