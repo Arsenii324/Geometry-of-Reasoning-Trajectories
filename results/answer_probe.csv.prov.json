@@ -1,0 +1,28 @@
+{
+  "bytes": 1128,
+  "columns": [
+    "task",
+    "n",
+    "alpha",
+    "r2",
+    "null_mean",
+    "null_p95",
+    "p_perm",
+    "within_level_answer_sd"
+  ],
+  "design": "within-level (n_ops fixed => seq_len fixed); level means fitted inside each LOO fold to avoid the sum-to-zero leakage; permutation shuffles answers within level",
+  "experiment": "answer_probe",
+  "file": "answer_probe.csv",
+  "git_commit": "fc6908dc110d40b47cdf0bb54f3d5629c8f897db",
+  "git_dirty": true,
+  "kind": "table",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_permutations": 200,
+  "n_rows": 10,
+  "produced_by": "/Users/a2mogus/build-projs/barannikov-work/Geometry-of-Reasoning-Trajectories/scripts/run_answer_probe.py",
+  "run_id": "20260725T212453Z-fc8cac45",
+  "sha256": "ceb2caf2aaa4a81bb6757758e8d02c9e7445d78798e3b0d4e09e1a1eba73032a",
+  "status": "SUGGESTIVE, NOT ESTABLISHED \u2014 fragile to leave-one-level-out",
+  "written_utc": "2026-07-25T21:24:53.050573+00:00"
+}

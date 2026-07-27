@@ -1,0 +1,33 @@
+{
+  "bytes": 6074,
+  "columns": [
+    "name",
+    "kind",
+    "seed",
+    "n_symbols",
+    "offset",
+    "register_r",
+    "pair_00",
+    "pair_01",
+    "pair_10",
+    "pair_11",
+    "pair_((",
+    "pair_()",
+    "pair_)(",
+    "pair_))"
+  ],
+  "controls": "position, current-symbol identity, offset-selection agreement",
+  "experiment": "register_analysis",
+  "file": "register_analysis.csv",
+  "git_commit": "fc6908dc110d40b47cdf0bb54f3d5629c8f897db",
+  "git_dirty": true,
+  "kind": "table",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 48,
+  "produced_by": "/Users/a2mogus/build-projs/barannikov-work/Geometry-of-Reasoning-Trajectories/scripts/run_register_analysis.py",
+  "run_id": "20260726T154108Z-2baf175f",
+  "sha256": "dade800f4766b88b982074a51a2e23e4e324e9515c1b99c32d70013c82678f63",
+  "source": "scratch/kaggle_states/out2 (Kaggle kernel geometry-position-states)",
+  "written_utc": "2026-07-26T15:41:08.616863+00:00"
+}

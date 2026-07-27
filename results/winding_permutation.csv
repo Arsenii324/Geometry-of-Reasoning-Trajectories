@@ -1,0 +1,5 @@
+task,num_steps,n_levels,n_trajectories,rho,p_perm,bh_crit,bh_pass,bonferroni_p
+count_ones,128,8,40,0.7857142857142858,0.02675,0.0125,False,0.107
+projection,64,6,30,-0.6,0.237,0.025,False,0.948
+projection,128,8,40,0.4523809523809524,0.26935,0.037500000000000006,False,1.0
+count_ones,64,6,30,0.14285714285714288,0.807,0.05,False,1.0
