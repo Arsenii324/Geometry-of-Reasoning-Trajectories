@@ -1,0 +1,66 @@
+[{"stream_name":"stdout","time":0.890952092,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.09622292,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.643480446,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 38.8 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.714473121,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 38.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.801974274,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 99.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":32.401342294,"data":"CUDA: True\n"}
+,{"stream_name":"stderr","time":123.487402388,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:07\u003c03:21, 67.24s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:07\u003c00:56, 28.04s/it]\rFetching 4 files:  75%|███████▌  | 3/4 [01:08\u003c00:15, 15.33s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:08\u003c00:00, 17.01s/it]\n"}
+,{"stream_name":"stderr","time":123.617667792,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 63.75it/s]\n"}
+,{"stream_name":"stdout","time":150.149589366,"data":"  a_seed0: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":158.834320165,"data":"  a_seed1: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":167.799452969,"data":"  a_seed2: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":176.910004162,"data":"  a_seed3: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":186.351752867,"data":"  a_seed4: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":196.144999767,"data":"  a_seed5: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":206.307431767,"data":"  a_seed6: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":216.688089548,"data":"  a_seed7: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":227.475387044,"data":"  a_seed8: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":238.757323713,"data":"  a_seed9: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":250.537825583,"data":"  a_seed10: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":262.528765492,"data":"  a_seed11: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":273.894807762,"data":"  a_seed12: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":284.830297518,"data":"  a_seed13: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":295.657694266,"data":"  a_seed14: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":306.639644797,"data":"  a_seed15: states (74, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":317.908675159,"data":"  b_bal_seed0: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":329.440399037,"data":"  b_bal_seed1: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":340.968268612,"data":"  b_bal_seed2: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":352.313797115,"data":"  b_bal_seed3: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":363.543045076,"data":"  b_bal_seed4: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":374.738571907,"data":"  b_bal_seed5: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":386.000224597,"data":"  b_bal_seed6: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":397.303877707,"data":"  b_bal_seed7: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":408.695855677,"data":"  b_bal_seed8: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":420.106942207,"data":"  b_bal_seed9: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":431.443769646,"data":"  b_bal_seed10: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":442.741609741,"data":"  b_bal_seed11: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":454.010144612,"data":"  b_bal_seed12: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":465.267094642,"data":"  b_bal_seed13: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":476.524460134,"data":"  b_bal_seed14: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":487.788067942,"data":"  b_bal_seed15: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":499.036387092,"data":"  b_unbal_seed0: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":510.259294609,"data":"  b_unbal_seed1: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":521.499539957,"data":"  b_unbal_seed2: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":532.82070861,"data":"  b_unbal_seed3: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":544.242924864,"data":"  b_unbal_seed4: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":555.670417376,"data":"  b_unbal_seed5: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":567.022199743,"data":"  b_unbal_seed6: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":578.291690833,"data":"  b_unbal_seed7: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":589.527461062,"data":"  b_unbal_seed8: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":600.717268469,"data":"  b_unbal_seed9: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":611.976552308,"data":"  b_unbal_seed10: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":623.267510766,"data":"  b_unbal_seed11: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":634.593698799,"data":"  b_unbal_seed12: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":645.976579708,"data":"  b_unbal_seed13: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":657.419968654,"data":"  b_unbal_seed14: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":668.855182694,"data":"  b_unbal_seed15: states (77, 5280), 64 targets\n"}
+,{"stream_name":"stdout","time":668.859230166,"data":"\n"}
+,{"stream_name":"stdout","time":668.859249797,"data":"saved 48 state arrays + meta.json\n"}
+,{"stream_name":"stdout","time":668.859263811,"data":"DONE\n"}
+,{"stream_name":"stderr","time":674.521491145,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":674.521535312,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":674.754933905,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":674.754966793,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":675.361951925,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":676.322992611,"data":"[NbConvertApp] Writing 294067 bytes to __results__.html\n"}
+]

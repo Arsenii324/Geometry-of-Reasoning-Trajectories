@@ -1,0 +1,64 @@
+[{"stream_name":"stdout","time":1.198550746,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54' scipy\n"}
+,{"stream_name":"stdout","time":4.480464968,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.5267486009999995,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 89.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.560466781,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 32.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.608921334,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 96.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":33.169664156,"data":"CUDA: True\n"}
+,{"stream_name":"stderr","time":121.492517945,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:05\u003c03:16, 65.60s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:05\u003c00:54, 27.13s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:05\u003c00:00, 16.45s/it]\n"}
+,{"stream_name":"stderr","time":121.61920789,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 88.71it/s]\n"}
+,{"stream_name":"stdout","time":154.718271496,"data":"{\"n_ops\": 2, \"seed\": 0, \"answer\": 2, \"distractor\": 3, \"r_star\": 13.0, \"final_margin\": 1.0016686757099889, \"margin_at_1\": 0.6701256488273977, \"margin_max\": 1.4803510290801543}\n"}
+,{"stream_name":"stdout","time":175.086170202,"data":"{\"n_ops\": 2, \"seed\": 4, \"answer\": 1, \"distractor\": 2, \"r_star\": 8.0, \"final_margin\": 0.7364898820442475, \"margin_at_1\": 2.743548216208624, \"margin_max\": 2.743548216208624}\n"}
+,{"stream_name":"stdout","time":196.036609608,"data":"{\"n_ops\": 2, \"seed\": 5, \"answer\": 2, \"distractor\": 3, \"r_star\": 15.0, \"final_margin\": 1.001473173978813, \"margin_at_1\": -0.10758849742906129, \"margin_max\": 1.903563800580439}\n"}
+,{"stream_name":"stdout","time":217.955911946,"data":"{\"n_ops\": 4, \"seed\": 0, \"answer\": 3, \"distractor\": 4, \"r_star\": 11.0, \"final_margin\": 0.29805036708352284, \"margin_at_1\": -0.6215769869064185, \"margin_max\": 0.44300116101074183}\n"}
+,{"stream_name":"stdout","time":240.470178694,"data":"{\"n_ops\": 4, \"seed\": 1, \"answer\": 1, \"distractor\": 2, \"r_star\": 1.0, \"final_margin\": 0.478085483576292, \"margin_at_1\": 2.5313630514256316, \"margin_max\": 2.5313630514256316}\n"}
+,{"stream_name":"stdout","time":263.710835072,"data":"{\"n_ops\": 4, \"seed\": 2, \"answer\": 1, \"distractor\": 2, \"r_star\": 1.0, \"final_margin\": 0.4938283424245372, \"margin_at_1\": 2.5177473092422638, \"margin_max\": 2.5177473092422638}\n"}
+,{"stream_name":"stdout","time":287.499935779,"data":"{\"n_ops\": 4, \"seed\": 3, \"answer\": 2, \"distractor\": 3, \"r_star\": 17.0, \"final_margin\": 0.44235831943829895, \"margin_at_1\": -0.31779587599545334, \"margin_max\": 0.6294445973199814}\n"}
+,{"stream_name":"stdout","time":311.785631041,"data":"{\"n_ops\": 4, \"seed\": 4, \"answer\": 2, \"distractor\": 3, \"r_star\": 7.0, \"final_margin\": 0.42705918647574115, \"margin_at_1\": -0.4861679890517303, \"margin_max\": 0.6979988356281286}\n"}
+,{"stream_name":"stdout","time":336.448193989,"data":"{\"n_ops\": 4, \"seed\": 5, \"answer\": 3, \"distractor\": 4, \"r_star\": 23.0, \"final_margin\": 0.29806871225219544, \"margin_at_1\": 2.1993098453643682, \"margin_max\": 2.1993098453643682}\n"}
+,{"stream_name":"stdout","time":362.34627672,"data":"{\"n_ops\": 8, \"seed\": 0, \"answer\": 7, \"distractor\": 8, \"r_star\": NaN, \"final_margin\": -0.6174868994316147, \"margin_at_1\": -3.18281108249279, \"margin_max\": -0.5824339241599228}\n"}
+,{"stream_name":"stdout","time":388.235007564,"data":"{\"n_ops\": 8, \"seed\": 1, \"answer\": 5, \"distractor\": 6, \"r_star\": 13.0, \"final_margin\": 0.24024927862389056, \"margin_at_1\": 0.9948363172890309, \"margin_max\": 1.255248194072169}\n"}
+,{"stream_name":"stdout","time":414.289015945,"data":"{\"n_ops\": 8, \"seed\": 2, \"answer\": 3, \"distractor\": 4, \"r_star\": 9.0, \"final_margin\": 0.18004278159818998, \"margin_at_1\": -1.309605905943716, \"margin_max\": 0.393178458847224}\n"}
+,{"stream_name":"stdout","time":440.443921307,"data":"{\"n_ops\": 8, \"seed\": 3, \"answer\": 4, \"distractor\": 5, \"r_star\": 8.0, \"final_margin\": 0.32013763250582095, \"margin_at_1\": -0.8639551202230171, \"margin_max\": 1.268354598499882}\n"}
+,{"stream_name":"stdout","time":466.768669043,"data":"{\"n_ops\": 8, \"seed\": 4, \"answer\": 3, \"distractor\": 4, \"r_star\": 9.0, \"final_margin\": 0.15993341140491868, \"margin_at_1\": -0.3740052228603412, \"margin_max\": 1.3231099163900577}\n"}
+,{"stream_name":"stdout","time":493.22633456,"data":"{\"n_ops\": 8, \"seed\": 5, \"answer\": 3, \"distractor\": 4, \"r_star\": 10.0, \"final_margin\": 0.18664433857147467, \"margin_at_1\": 3.3657168086485827, \"margin_max\": 3.3657168086485827}\n"}
+,{"stream_name":"stdout","time":537.140967302,"data":"{\"n_ops\": 16, \"seed\": 0, \"answer\": 10, \"distractor\": 11, \"r_star\": NaN, \"final_margin\": -0.010507135845116311, \"margin_at_1\": 3.485275353286548, \"margin_max\": 3.485275353286548}\n"}
+,{"stream_name":"stdout","time":580.719499368,"data":"{\"n_ops\": 16, \"seed\": 1, \"answer\": 9, \"distractor\": 8, \"r_star\": NaN, \"final_margin\": -0.02669637275611203, \"margin_at_1\": 1.2795374073515973, \"margin_max\": 2.114977751719236}\n"}
+,{"stream_name":"stdout","time":624.223789423,"data":"{\"n_ops\": 16, \"seed\": 2, \"answer\": 8, \"distractor\": 9, \"r_star\": NaN, \"final_margin\": -0.008219813652595498, \"margin_at_1\": 1.2362371491389572, \"margin_max\": 1.528014495316249}\n"}
+,{"stream_name":"stdout","time":667.70731787,"data":"{\"n_ops\": 16, \"seed\": 3, \"answer\": 7, \"distractor\": 8, \"r_star\": NaN, \"final_margin\": -0.4152275733933255, \"margin_at_1\": 1.3644397795500414, \"margin_max\": 1.3644397795500414}\n"}
+,{"stream_name":"stdout","time":711.515244306,"data":"{\"n_ops\": 16, \"seed\": 4, \"answer\": 7, \"distractor\": 8, \"r_star\": NaN, \"final_margin\": -0.3909636268476113, \"margin_at_1\": -3.850841473565044, \"margin_max\": -0.030184364271401698}\n"}
+,{"stream_name":"stdout","time":755.466772338,"data":"{\"n_ops\": 16, \"seed\": 5, \"answer\": 6, \"distractor\": 7, \"r_star\": 20.0, \"final_margin\": 0.5527534583322367, \"margin_at_1\": 1.5646558775671355, \"margin_max\": 4.048712304837281}\n"}
+,{"stream_name":"stdout","time":803.069056297,"data":"{\"n_ops\": 32, \"seed\": 0, \"answer\": 19, \"distractor\": 20, \"r_star\": NaN, \"final_margin\": -0.5607304082930953, \"margin_at_1\": 2.751637137830082, \"margin_max\": 2.751637137830082}\n"}
+,{"stream_name":"stdout","time":850.400823598,"data":"{\"n_ops\": 32, \"seed\": 1, \"answer\": 15, \"distractor\": 16, \"r_star\": NaN, \"final_margin\": -1.2726443425363667, \"margin_at_1\": -0.8947364658178927, \"margin_max\": -0.5244255947273357}\n"}
+,{"stream_name":"stdout","time":897.590874103,"data":"{\"n_ops\": 32, \"seed\": 2, \"answer\": 15, \"distractor\": 16, \"r_star\": NaN, \"final_margin\": -1.430717836367491, \"margin_at_1\": -0.42635892382769747, \"margin_max\": -0.42635892382769747}\n"}
+,{"stream_name":"stdout","time":944.868206509,"data":"{\"n_ops\": 32, \"seed\": 3, \"answer\": 16, \"distractor\": 17, \"r_star\": 10.0, \"final_margin\": 1.5252511400633049, \"margin_at_1\": 0.9165780984571255, \"margin_max\": 2.166175665717621}\n"}
+,{"stream_name":"stdout","time":992.023245969,"data":"{\"n_ops\": 32, \"seed\": 4, \"answer\": 15, \"distractor\": 16, \"r_star\": NaN, \"final_margin\": -1.1662623569478752, \"margin_at_1\": -3.4645638853836718, \"margin_max\": 0.12524586487549083}\n"}
+,{"stream_name":"stdout","time":1039.11989338,"data":"{\"n_ops\": 32, \"seed\": 5, \"answer\": 10, \"distractor\": 11, \"r_star\": 25.0, \"final_margin\": 0.28285120598907176, \"margin_at_1\": 1.6921787361110052, \"margin_max\": 1.6921787361110052}\n"}
+,{"stream_name":"stdout","time":1107.496914286,"data":"{\"n_ops\": 64, \"seed\": 0, \"answer\": 34, \"distractor\": 35, \"r_star\": 25.0, \"final_margin\": 0.36163137425626335, \"margin_at_1\": -0.24805038502999555, \"margin_max\": 1.8909758578506217}\n"}
+,{"stream_name":"stdout","time":1176.244653431,"data":"{\"n_ops\": 64, \"seed\": 1, \"answer\": 34, \"distractor\": 35, \"r_star\": 25.0, \"final_margin\": 0.3795759368713343, \"margin_at_1\": 0.7442603809753434, \"margin_max\": 1.4831750940254507}\n"}
+,{"stream_name":"stdout","time":1244.713071697,"data":"{\"n_ops\": 64, \"seed\": 2, \"answer\": 41, \"distractor\": 42, \"r_star\": 36.0, \"final_margin\": 0.023644677986956353, \"margin_at_1\": 1.3032278618650075, \"margin_max\": 1.3032278618650075}\n"}
+,{"stream_name":"stdout","time":1313.397270312,"data":"{\"n_ops\": 64, \"seed\": 3, \"answer\": 34, \"distractor\": 35, \"r_star\": 27.0, \"final_margin\": 0.38480688155950515, \"margin_at_1\": 0.15853463812893764, \"margin_max\": 1.3838462669257385}\n"}
+,{"stream_name":"stdout","time":1382.081524416,"data":"{\"n_ops\": 64, \"seed\": 4, \"answer\": 34, \"distractor\": 35, \"r_star\": 20.0, \"final_margin\": 0.31496814318444555, \"margin_at_1\": 1.6244206726190473, \"margin_max\": 1.677237091531305}\n"}
+,{"stream_name":"stdout","time":1450.396832145,"data":"{\"n_ops\": 64, \"seed\": 5, \"answer\": 28, \"distractor\": 29, \"r_star\": 20.0, \"final_margin\": 0.8603701908338723, \"margin_at_1\": 1.3164377482775054, \"margin_max\": 1.3549410669941198}\n"}
+,{"stream_name":"stdout","time":1450.396901961,"data":"\n"}
+,{"stream_name":"stdout","time":1450.396909692,"data":"=== SUMMARY ===\n"}
+,{"stream_name":"stdout","time":1450.397756603,"data":"  instances: 33   with a threshold: 23\n"}
+,{"stream_name":"stdout","time":1450.397784803,"data":"  final margin \u003e 0 (model prefers gold): 23/33\n"}
+,{"stream_name":"stdout","time":1450.397806347,"data":"  r* by difficulty:\n"}
+,{"stream_name":"stdout","time":1450.397811322,"data":"    n_ops=  2: mean r* =  12.0  (n=3)\n"}
+,{"stream_name":"stdout","time":1450.397816871,"data":"    n_ops=  4: mean r* =  10.0  (n=6)\n"}
+,{"stream_name":"stdout","time":1450.397821584,"data":"    n_ops=  8: mean r* =   9.8  (n=5)\n"}
+,{"stream_name":"stdout","time":1450.397826307,"data":"    n_ops= 16: mean r* =  20.0  (n=1)\n"}
+,{"stream_name":"stdout","time":1450.397831296,"data":"    n_ops= 32: mean r* =  17.5  (n=2)\n"}
+,{"stream_name":"stdout","time":1450.39783578,"data":"    n_ops= 64: mean r* =  25.5  (n=6)\n"}
+,{"stream_name":"stdout","time":1450.412682197,"data":"\n"}
+,{"stream_name":"stdout","time":1450.412706564,"data":"  THE TEST -- rho(r*, n_ops) = +0.714, p = 0.1108, N=6 levels\n"}
+,{"stream_name":"stdout","time":1450.412735555,"data":"  VERDICT: no evidence that required depth scales with difficulty\n"}
+,{"stream_name":"stdout","time":1450.412784795,"data":"\n"}
+,{"stream_name":"stdout","time":1450.41279577,"data":"DONE\n"}
+,{"stream_name":"stderr","time":1456.97372925,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1456.97376441,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1457.263731208,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1457.263777266,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1458.010927251,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1459.045155235,"data":"[NbConvertApp] Writing 311071 bytes to __results__.html\n"}
+]

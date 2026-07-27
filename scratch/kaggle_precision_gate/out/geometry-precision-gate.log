@@ -1,0 +1,54 @@
+[{"stream_name":"stdout","time":1.228013924,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.372350227,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.292840765,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 108.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.315659911,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 35.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.358172916,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 86.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":33.372558057,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stdout","time":33.718586949,"data":"\n"}
+,{"stream_name":"stdout","time":33.718623576,"data":"=== loading bfloat16 ===\n"}
+,{"stream_name":"stderr","time":118.983427545,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:04\u003c03:13, 64.48s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:04\u003c00:00, 16.12s/it]\n"}
+,{"stream_name":"stderr","time":146.518905085,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards:  25%|██▌       | 1/4 [00:04\u003c00:12,  4.10s/it]\rLoading checkpoint shards:  50%|█████     | 2/4 [00:10\u003c00:10,  5.29s/it]\rLoading checkpoint shards:  75%|███████▌  | 3/4 [00:21\u003c00:08,  8.09s/it]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:27\u003c00:00,  7.19s/it]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:27\u003c00:00,  6.86s/it]\n"}
+,{"stream_name":"stdout","time":159.831320274,"data":"  n_ops=8 seed=0: residual=1.1672 norm=76.343 regime_end=17\n"}
+,{"stream_name":"stdout","time":170.233023942,"data":"  n_ops=32 seed=0: residual=1.24097 norm=76.349 regime_end=21\n"}
+,{"stream_name":"stdout","time":180.663536651,"data":"  n_ops=32 seed=1: residual=1.16038 norm=76.349 regime_end=24\n"}
+,{"stream_name":"stdout","time":180.756790512,"data":"\n"}
+,{"stream_name":"stdout","time":180.756838748,"data":"=== loading float16 ===\n"}
+,{"stream_name":"stderr","time":231.145360233,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards:  25%|██▌       | 1/4 [00:02\u003c00:06,  2.20s/it]\rLoading checkpoint shards:  50%|█████     | 2/4 [00:30\u003c00:34, 17.40s/it]\rLoading checkpoint shards:  75%|███████▌  | 3/4 [00:44\u003c00:15, 15.97s/it]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:50\u003c00:00, 11.96s/it]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:50\u003c00:00, 12.58s/it]\n"}
+,{"stream_name":"stdout","time":236.206353546,"data":"  n_ops=8 seed=0: residual=0.167907 norm=76.362 regime_end=28\n"}
+,{"stream_name":"stdout","time":238.780049558,"data":"  n_ops=32 seed=0: residual=0.151063 norm=76.366 regime_end=35\n"}
+,{"stream_name":"stdout","time":241.372859411,"data":"  n_ops=32 seed=1: residual=0.145551 norm=76.366 regime_end=34\n"}
+,{"stream_name":"stdout","time":241.429458749,"data":"\n"}
+,{"stream_name":"stdout","time":241.429502856,"data":"=== loading float32 ===\n"}
+,{"stream_name":"stderr","time":241.517792094,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 221.99it/s]\n"}
+,{"stream_name":"stdout","time":260.291804624,"data":"  n_ops=8 seed=0: residual=0.000174894 norm=76.361 regime_end=95\n"}
+,{"stream_name":"stdout","time":271.696563268,"data":"  n_ops=32 seed=0: residual=0.000469634 norm=76.366 regime_end=98\n"}
+,{"stream_name":"stdout","time":283.679141326,"data":"  n_ops=32 seed=1: residual=0.000226061 norm=76.365 regime_end=96\n"}
+,{"stream_name":"stdout","time":283.792821852,"data":"\n"}
+,{"stream_name":"stdout","time":283.792857131,"data":"=== RESULT ===\n"}
+,{"stream_name":"stdout","time":283.792954524,"data":"{\"state_norm\": 76.34344096262578, \"regime_end\": 17, \"floor_step\": 1.0914753640810688, \"residual_radius\": 1.167200361541709, \"bf16_exact\": true, \"dtype\": \"bfloat16\", \"mantissa_bits\": 8, \"n_ops\": 8, \"task_seed\": 0}\n"}
+,{"stream_name":"stdout","time":283.793063387,"data":"{\"state_norm\": 76.34911298591385, \"regime_end\": 21, \"floor_step\": 1.0739382992589737, \"residual_radius\": 1.2409655782841433, \"bf16_exact\": true, \"dtype\": \"bfloat16\", \"mantissa_bits\": 8, \"n_ops\": 32, \"task_seed\": 0}\n"}
+,{"stream_name":"stdout","time":283.793195072,"data":"{\"state_norm\": 76.34917797131283, \"regime_end\": 24, \"floor_step\": 1.0473038907479104, \"residual_radius\": 1.160384392443519, \"bf16_exact\": true, \"dtype\": \"bfloat16\", \"mantissa_bits\": 8, \"n_ops\": 32, \"task_seed\": 1}\n"}
+,{"stream_name":"stdout","time":283.79326939,"data":"{\"state_norm\": 76.36218184473712, \"regime_end\": 28, \"floor_step\": 0.13865411375961323, \"residual_radius\": 0.16790694952533983, \"bf16_exact\": false, \"dtype\": \"float16\", \"mantissa_bits\": 11, \"n_ops\": 8, \"task_seed\": 0}\n"}
+,{"stream_name":"stdout","time":283.793299348,"data":"{\"state_norm\": 76.36634505709583, \"regime_end\": 35, \"floor_step\": 0.12805099583573598, \"residual_radius\": 0.15106342532451875, \"bf16_exact\": false, \"dtype\": \"float16\", \"mantissa_bits\": 11, \"n_ops\": 32, \"task_seed\": 0}\n"}
+,{"stream_name":"stdout","time":283.793348827,"data":"{\"state_norm\": 76.36635830372495, \"regime_end\": 34, \"floor_step\": 0.13028309580190142, \"residual_radius\": 0.14555073594996193, \"bf16_exact\": false, \"dtype\": \"float16\", \"mantissa_bits\": 11, \"n_ops\": 32, \"task_seed\": 1}\n"}
+,{"stream_name":"stdout","time":283.793442356,"data":"{\"state_norm\": 76.3614319596987, \"regime_end\": 95, \"floor_step\": 0.00014346034265246867, \"residual_radius\": 0.0001748942983422722, \"bf16_exact\": false, \"dtype\": \"float32\", \"mantissa_bits\": 24, \"n_ops\": 8, \"task_seed\": 0}\n"}
+,{"stream_name":"stdout","time":283.79351481,"data":"{\"state_norm\": 76.36635537907806, \"regime_end\": 98, \"floor_step\": 0.0003756990262078114, \"residual_radius\": 0.00046963368259419087, \"bf16_exact\": false, \"dtype\": \"float32\", \"mantissa_bits\": 24, \"n_ops\": 32, \"task_seed\": 0}\n"}
+,{"stream_name":"stdout","time":283.793585718,"data":"{\"state_norm\": 76.36548911167274, \"regime_end\": 96, \"floor_step\": 0.00019586767139436704, \"residual_radius\": 0.00022606140461452288, \"bf16_exact\": false, \"dtype\": \"float32\", \"mantissa_bits\": 24, \"n_ops\": 32, \"task_seed\": 1}\n"}
+,{"stream_name":"stdout","time":283.795095611,"data":"\n"}
+,{"stream_name":"stdout","time":283.795113572,"data":"mean residual radius by dtype:\n"}
+,{"stream_name":"stdout","time":283.795263162,"data":"  bfloat16  1.18952\n"}
+,{"stream_name":"stdout","time":283.795364771,"data":"  float16   0.15484\n"}
+,{"stream_name":"stdout","time":283.795492486,"data":"  float32   0.000290196\n"}
+,{"stream_name":"stdout","time":283.821708969,"data":"\n"}
+,{"stream_name":"stdout","time":283.821744517,"data":"log2(residual) vs mantissa_bits: slope = -0.734\n"}
+,{"stream_name":"stdout","time":283.82182201,"data":"  PREDICTED -1.000 if the residual is rounding noise\n"}
+,{"stream_name":"stdout","time":283.82184753,"data":"  slope ~ 0 would mean a genuine invariant set, and the regime-separation framework must be re-derived.\n"}
+,{"stream_name":"stdout","time":283.821852699,"data":"\n"}
+,{"stream_name":"stdout","time":283.821858162,"data":"DONE\n"}
+,{"stream_name":"stderr","time":290.143107143,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":290.143141383,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":290.457085498,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":290.457132646,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":291.312145067,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":292.346651989,"data":"[NbConvertApp] Writing 302378 bytes to __results__.html\n"}
+]

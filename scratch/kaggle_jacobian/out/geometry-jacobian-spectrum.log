@@ -1,0 +1,29 @@
+[{"stream_name":"stdout","time":1.3626150049999999,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.861687869,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.793243258,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 91.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.816341657,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 35.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.861698422,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 81.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":33.844527986,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stderr","time":119.051059007,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:03\u003c03:11, 63.89s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:03\u003c00:00, 15.97s/it]\n"}
+,{"stream_name":"stderr","time":119.203372194,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 55.68it/s]\n"}
+,{"stream_name":"stdout","time":137.302685326,"data":"  forward-mode AD unavailable (OutOfMemoryError); using reverse mode -- eig(J^T)=eig(J)\n"}
+,{"stream_name":"stdout","time":181.941583521,"data":"{\"n_ops\": 8, \"seed\": 0, \"matvecs\": 498, \"ad_mode\": \"reverse\", \"rho\": 0.8082855239008055, \"lead_real\": false, \"n_osc\": 8, \"arg_osc\": 2.3974306451603695, \"rho_osc\": 0.8082855239008055, \"eigs\": [[-0.5946199166400662, 0.5474967058189122], [-0.5946199166400662, -0.5474967058189122], [0.45886474465439114, 0.6577385824731936], [0.45886474465439114, -0.6577385824731936], [0.5260679238947041, 0.5693276565728197], [0.5260679238947041, -0.5693276565728197], [0.553110892727934, 0.535586432389443], [0.553110892727934, -0.535586432389443], [-0.7677420377896791, 0.0], [0.7484639200341582, 0.0]]}\n"}
+,{"stream_name":"stdout","time":187.846571486,"data":"  forward-mode AD unavailable (OutOfMemoryError); using reverse mode -- eig(J^T)=eig(J)\n"}
+,{"stream_name":"stdout","time":525.855921585,"data":"{\"n_ops\": 32, \"seed\": 0, \"matvecs\": 1786, \"ad_mode\": \"reverse\", \"rho\": 0.8042116688910182, \"lead_real\": false, \"n_osc\": 10, \"arg_osc\": 2.387498433469625, \"rho_osc\": 0.8042116688910182, \"eigs\": [[-0.5861834236422504, 0.5505864166754632], [-0.5861834236422504, -0.5505864166754632], [0.5113360099577764, -0.5979401329050714], [0.5113360099577764, 0.5979401329050714], [0.41091610934860523, -0.6643403723092777], [0.41091610934860523, 0.6643403723092777], [0.6586139941409044, -0.3693662174229515], [0.6586139941409044, 0.3693662174229515], [0.562824460058865, -0.5010286602118963], [0.562824460058865, 0.5010286602118963]]}\n"}
+,{"stream_name":"stdout","time":536.846452724,"data":"  forward-mode AD unavailable (OutOfMemoryError); using reverse mode -- eig(J^T)=eig(J)\n"}
+,{"stream_name":"stdout","time":894.846509555,"data":"{\"n_ops\": 64, \"seed\": 0, \"matvecs\": 1216, \"ad_mode\": \"reverse\", \"rho\": 0.7934999450330444, \"lead_real\": false, \"n_osc\": 9, \"arg_osc\": 1.0495844732400637, \"rho_osc\": 0.7934999450330444, \"eigs\": [[0.39510857224433527, 0.6881361630567655], [0.39510857224433527, -0.6881361630567655], [-0.5786583993619855, -0.5272200538031575], [-0.5786583993619855, 0.5272200538031575], [0.51181673465392, 0.5811625597586378], [0.51181673465392, -0.5811625597586378], [0.7734049992682797, 0.0], [0.6747007853870604, -0.3719289814580094], [0.6747007853870604, 0.3719289814580094], [0.5774603575099126, -0.4954724831536504]]}\n"}
+,{"stream_name":"stdout","time":894.846590212,"data":"\n"}
+,{"stream_name":"stdout","time":894.846598833,"data":"=== SUMMARY ===\n"}
+,{"stream_name":"stdout","time":894.846737577,"data":"  rho (leading |lambda|): 0.8020  (orbit-fit estimate was 0.84-0.90)\n"}
+,{"stream_name":"stdout","time":894.846818883,"data":"  leading eigenvalue purely real: 0/3 prompts\n"}
+,{"stream_name":"stdout","time":894.846963803,"data":"  leading OSCILLATORY mode: |arg| = 1.9448 rad, period 3.2 steps\n"}
+,{"stream_name":"stdout","time":894.847033555,"data":"  log-spiral prediction |arg| \u003c= 0.78: VIOLATED\n"}
+,{"stream_name":"stdout","time":894.847073343,"data":"\n"}
+,{"stream_name":"stdout","time":894.847196558,"data":"DONE\n"}
+,{"stream_name":"stderr","time":901.056314021,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":901.056346983,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":901.364534223,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":901.364562441,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":902.021601093,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":903.036587672,"data":"[NbConvertApp] Writing 309340 bytes to __results__.html\n"}
+]
