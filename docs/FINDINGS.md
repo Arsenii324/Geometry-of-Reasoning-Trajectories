@@ -169,6 +169,32 @@ readout error does **not** track difficulty (rho = −0.017, p = 0.803; mean
 error 0.93 counts) — consistent with the curve having saturated, but it means
 the direct link to §1.1 is not yet demonstrated.
 
+### 1.2d The original thesis is true — at the right index (D39)
+
+This project asked whether latent *geometry* encodes reasoning depth, and
+measured it as the shape of a trajectory over unrolls, where it is false
+(§2.1, §2.2, §2.4). Asked of the **answer-token state across prompts**, it is
+true:
+
+```
+PCA of 220 answer-token states   36.1% / 22.7% / 13.7% / 5.0% / 3.7%
+participation ratio              3.88 of 10
+count vs PC1                     pearson +0.727   (spearman +0.755)
+cumulative R2 for the count      0.529 (1 PC)  0.912 (3 PCs)  0.977 (10 PCs)
+```
+
+**The count occupies a roughly 3-dimensional subspace of the answer-token
+state.** PC1 is the dominant axis but carries only about half of it alone.
+All 220 prompts are exactly 74 tokens, so length cannot explain it. State norms
+are 76.37 ± 0.0007 — a 0.0010% variation, so the RMSNorm sphere holds across
+prompts as tightly as across depth.
+
+This is the same correction made three times now: the instinct was right and
+the index was wrong. Winding belongs across token positions, not unrolls
+(§3). Depth belongs to readout, not register construction (§1.2c). And
+geometry belongs to the answer representation across instances, not to
+trajectory shape.
+
 ### 1.3 H3's premise, measured exactly for the first time (D31)
 
 Implicitly-restarted Arnoldi on autodiff Jacobian-vector products at the
