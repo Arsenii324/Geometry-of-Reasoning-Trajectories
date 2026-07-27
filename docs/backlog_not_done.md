@@ -190,12 +190,28 @@ increments (0.378 against 0.586 in the first third) — forced by balancedness �
 while b_unbal stays near 0.5 throughout. That asymmetry is real but no mechanism
 connecting it to the correlation drop has been tested.
 
-Worth trying: an increment-rate-matched control; a signed rather than symmetric
-estimator for v; and a version measuring mutual information rather than
-correlation, since correlation is fragile where the conditional symbol
-distribution shifts. **Recorded as open rather than explained — a third
-hypothesis fitted after two failures would be exactly the behaviour this
-project's audit exists to prevent.**
+**UPDATE 2026-07-28 — a third explanation tested and also refuted.** The
+increment-rate-matched control proposed here was run: b_unbal's thirds were
+subsampled to match b_bal's measured increment fractions (0.586 / 0.542 /
+0.378). If the rate caused the drop, the matched control should reproduce it.
+
+```
+b_bal    raw            +0.3306 / +0.3647 / +0.1762     drop -0.154
+b_unbal  raw            +0.3903 / +0.4177 / +0.3540     flat
+b_unbal  rate-MATCHED   +0.3776 / +0.3928 / +0.3833     flat, last-first +0.006 (p=0.907)
+```
+
+Matching the increment rate does **not** reproduce the drop. Three explanations
+now refuted: range restriction, position absorption, increment rate.
+
+Still worth trying: a signed rather than symmetric estimator for v; mutual
+information instead of correlation, since correlation is fragile where the
+conditional symbol distribution shifts; and a same-length control generated
+with a *different* balancedness constraint (e.g. Dyck paths conditioned to stay
+above a positive floor) to separate "returns to zero" from "never goes
+negative". **Still recorded as open — a fourth hypothesis fitted after three
+failures would be exactly the behaviour this project's audit exists to
+prevent.**
 
 ## 9. Completed since this list was written (2026-07-26)
 

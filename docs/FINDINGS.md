@@ -22,8 +22,9 @@ project turned up a fact about the architecture that is independent of any of
 this: **bfloat16 rounding makes the model appear to converge ~4.6× sooner than
 it does.** And the two positives turn out to be *dissociated*: the register is
 complete after a single unroll and only its representational frame rotates with
-depth, so whatever the extra depth buys on harder instances, it is not building
-the register.
+depth. What the extra depth buys is **readout** — transferring the register into
+the answer token, which improves from R²=0.675 to 0.993 over ~24 unrolls while
+the register itself stays flat.
 
 ---
 
@@ -135,6 +136,38 @@ register is complete at r=1, the extra depth that harder instances require in
 
 Caveat: `|cos| → 1` is partly definitional as r → 64. The informative part is
 the shape of the approach, not the endpoint.
+
+### 1.2c What the extra depth is FOR: readout (D38)
+
+§1.2b left a gap. If the register is complete at r=1, the depth that harder
+instances demand in §1.1 is not building it. The hypothesis: the register is
+distributed across 64 positions, the answer is one token, and *aggregating* it
+is a different job from computing it.
+
+Decoding the total from the **answer-token state alone**, 220 prompts all at
+exactly 74 tokens:
+
+```
+r          1      2      4      8     16     24     32     48     64
+readout R2  0.675  0.904  0.972  0.967  0.986  0.992  0.992  0.993  0.993
+```
+
+`rho(unroll, R²) = +0.983`; every point beats its permutation null at p<0.001
+with null means −0.10 to −0.27. **Contrast with §1.2b on the same model at the
+same depths: the per-position register is flat (rho = +0.006) while the
+answer-token readout rises (rho = +0.983).** The two differ only in *where* the
+state is read, so the difference is about location, not method.
+
+**The mechanism, assembled:** the count is computed immediately — attention can
+sum bits in one pass; its representational frame rotates into a stable basis
+over ~16 unrolls; and it is progressively transferred into the answer token
+over ~24. The depth requirement in §1.1 is about the last of these.
+
+Two honest limits. R² = 0.675 at r=1 is already high, so the depth-dependent
+part is the final +0.318, not the whole thing. And at r=64 the per-instance
+readout error does **not** track difficulty (rho = −0.017, p = 0.803; mean
+error 0.93 counts) — consistent with the curve having saturated, but it means
+the direct link to §1.1 is not yet demonstrated.
 
 ### 1.3 H3's premise, measured exactly for the first time (D31)
 
