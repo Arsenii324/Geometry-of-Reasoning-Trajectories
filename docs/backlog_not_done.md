@@ -96,7 +96,8 @@ CONVENTIONS
 |---|---|
 | 5.1 | **Verify "Movahedi et al." exists.** Cited in `convergence.py`; could not be located. |
 | 5.2 | Read Pappone et al. (arXiv:2509.23314) directly — the attribution is already known to be wrong in three respects. |
-| 5.3 | Geiping et al.'s own test-time-scaling numbers, to compare against our steps-to-settle. |
+| 5.3 | Geiping et al.'s own test-time-scaling numbers, to compare against our steps-to-settle. | **DONE (D43).** Their saturation points (8 to 32 across tasks) all fall under D42's state-convergence bound (95% settled at r=31.8), and the hardest condition sits exactly at it. |
+| 5.4 | **Is ρ constant across task families?** D43 applies a ρ measured on counting prompts to GSM8K/ARC-C/HellaSwag saturation points. Cross-task constancy is assumed, not measured. Measuring ρ on 3–4 prompt families would close it. | Open — the single largest assumption behind D43. |
 | 5.4 | Elsayed & Cunningham 2017 + the TME code, before implementing 2.2. |
 | 5.5 | Perea & Harer 2015 before implementing 2.11. |
 | 5.6 | Barannikov's own RTD papers — the curator's method, never applied here. |
