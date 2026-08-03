@@ -92,6 +92,36 @@ untouched: the bf16 result (a precision claim), the Jacobian spectrum (a
 measurement), the depth-scaling result (a claim about the model's own logit
 margin, which an untrained model has no version of), and every negative result.
 
+### The constructive reading, which is stronger than what it destroys
+
+D40 kills the register story, but it hands the project a cleaner result in
+exchange, and one that is *about* the field rather than about Huginn.
+
+```
+                       decodability of the count    ability to do the task
+  UNTRAINED            R^2 = 1.0000                 none (random logits)
+  TRAINED              R^2 = 0.9773                 ~10% accuracy
+```
+
+**An untrained network decodes the count perfectly and cannot count at all.**
+That is a crisp existence proof, on a real architecture and a real task, of the
+central critique of the probing paradigm: *linear decodability of a task
+variable is nearly free architecturally and says almost nothing about whether
+the model can perform the task.*
+
+Most statements of that critique are theoretical, or rest on synthetic control
+tasks with random labels (Hewitt & Liang's design). This is a naturally-occurring
+instance with a *meaningful* target: the quantity is exactly the one the task
+asks for, the probe is honest, the controls (signed sums, position, token
+identity) all pass — and the representation is still worth nothing behaviourally.
+
+It also sharpens the project's own earlier observation. The 0.993-decodable /
+10%-accurate gap was noted as curious; the baseline shows the decodable side of
+that gap is architectural, so **the entire content of "training" here is on the
+readout side, not the representation side.** That is a specific, testable claim
+about what recurrent-depth training does, and it is more interesting than the
+register was.
+
 **The practice lesson supersedes everything else in Part XI.** This control
 costs one GPU hour, was available from day one, and was run in week six after
 twelve refinements of a geometric metric and four probing experiments. An
