@@ -106,8 +106,12 @@ accuracy:  trained ~10%          untrained 0%
 
 Two genuine training signatures, in opposite directions:
 
-- **At r=1 the trained model is 3.4× better** (0.675 vs 0.200). Training makes
-  the count available after *one* unroll; the untrained net needs ~8.
+- **Training makes the count available ~2.3× earlier in depth.** The prompts are
+  generated at five bit-rates, so a probe that knew only the rate would cap at
+  R²=0.9237; above that line the probe provably resolves count within level. The
+  trained model crosses at r≈2.4, the untrained at r≈5.7. (The raw r=1 gap,
+  0.675 vs 0.200, sits *below* that ceiling for both, so it is a difference at
+  coarse resolution only — the ceiling-crossing is the defensible statement.)
 - **At saturation the untrained model is 20× more precise** (0.046 vs 0.934
   counts) — and cannot count at all.
 
