@@ -18,6 +18,15 @@ WHAT THIS DECIDES
     All models measured by the SAME code, on the SAME prompts, in the SAME
     process, so differences are attributable to the weights alone.
 
+    SECOND QUESTION, ANSWERED IN THE SAME RUN. D43 applies a rho measured on
+    counting prompts to Geiping et al.'s GSM8K/ARC-C/HellaSwag saturation points.
+    That transfer is D43's largest assumption (backlog 5.4). Prompts are therefore
+    stratified across FOUR families -- counting, nesting depth, arithmetic word
+    problem, commonsense continuation -- with token lengths deliberately spanning
+    ~15 to ~74. If rho is a property of the OPERATOR it is near-constant across
+    them; if it tracks the prompt, D43's bound must be restated per task and its
+    cross-task comparison is invalid. The run prints that verdict explicitly.
+
 TWO INDEPENDENT METHODS, because either alone has a known failure mode
     (A) TWO-ORBIT CONVERGENCE.  Same prompt, two different random initial
         latents; d_t = ||h_t^(1) - h_t^(2)|| contracts as rho^t. Measures the
@@ -76,15 +85,50 @@ SWEEP = [
 
 M = 64
 MAX_R = 128
-N_PROMPTS = 8
+N_PER_FAMILY = 3     # 4 families x 3 = 12 prompts per model
 K_FLOOR = 3.0
 TAIL_FRAC = 0.25
 
 
-def task(seed):
-    rng = random.Random(seed * 7919)
-    bits = [1 if rng.random() < 0.5 else 0 for _ in range(M)]
-    return "Sequence: " + " ".join(map(str, bits)) + ". How many ones? A:"
+def prompts_by_family():
+    """Four task families, so rho can be tested for CROSS-TASK CONSTANCY.
+
+    D43 applies a rho measured on counting prompts to Geiping et al.'s
+    GSM8K/ARC-C/HellaSwag saturation points. That transfer is the single largest
+    assumption behind D43 (backlog 5.4). If rho is a property of the OPERATOR it
+    should be near-constant across families; if it varies strongly with the
+    prompt, D43's bound must be restated per-task and the cross-task comparison
+    is invalid. Either way the answer is worth more than more counting prompts.
+    """
+    out = []
+    for i in range(N_PER_FAMILY):
+        rng = random.Random(i * 7919)
+        bits = [1 if rng.random() < 0.5 else 0 for _ in range(M)]
+        out.append(("counting",
+                    "Sequence: " + " ".join(map(str, bits)) + ". How many ones? A:"))
+    for i in range(N_PER_FAMILY):
+        rng = random.Random(i * 104729)
+        seq, d = [], 0
+        for _ in range(M // 2):
+            if d == 0 or (rng.random() < 0.5 and d < 8):
+                seq.append("("); d += 1
+            else:
+                seq.append(")"); d -= 1
+        seq += [")"] * d
+        out.append(("nesting",
+                    "String: " + " ".join(seq) + ". What is the maximum nesting depth? A:"))
+    for i in range(N_PER_FAMILY):
+        rng = random.Random(i * 15485863)
+        a, b, c = rng.randint(11, 99), rng.randint(3, 19), rng.randint(2, 9)
+        out.append(("arith",
+                    f"A shop had {a} boxes. It sold {b} boxes each day for {c} days. "
+                    f"How many boxes are left? A:"))
+    stems = ["The man picked up the heavy suitcase and walked toward the platform. He",
+             "She opened the oven, checked the bread, and decided it needed more time. Then she",
+             "The dog heard the doorbell, ran into the hallway, and started barking. Next it"]
+    for i in range(N_PER_FAMILY):
+        out.append(("commonsense", stems[i % len(stems)]))
+    return out
 
 
 def fit_rho(curve, k=K_FLOOR, tail_frac=TAIL_FRAC):
@@ -134,7 +178,7 @@ def measure(model, tok, label, prompts):
     import numpy as np
     import torch
     rows = []
-    for i, p in enumerate(prompts):
+    for i, (family, p) in enumerate(prompts):
         ids = tok(p, return_tensors="pt").input_ids.to("cuda")
         a = orbit(model, ids, 1000 + i, MAX_R)
         b = orbit(model, ids, 2000 + i, MAX_R)
@@ -142,11 +186,12 @@ def measure(model, tok, label, prompts):
         s = np.linalg.norm(np.diff(a, axis=0), axis=1)
         rd, nd, fd = fit_rho(d)
         rs, ns, fs = fit_rho(s)
-        rows.append({"prompt": i, "rho_orbit": rd, "n_orbit": nd, "r2_orbit": fd,
+        rows.append({"prompt": i, "family": family, "n_tok": int(ids.shape[1]),
+                     "rho_orbit": rd, "n_orbit": nd, "r2_orbit": fd,
                      "rho_step": rs, "n_step": ns, "r2_step": fs,
                      "d0": float(d[0]), "d_end": float(d[-1]),
                      "norm_h": float(np.linalg.norm(a[-1]))})
-        print(f"    {label} p{i}: rho_orbit={rd:.4f}(n={nd},fit {fd:.3f})  "
+        print(f"    {label} {family[:5]}{i}: rho_orbit={rd:.4f}(n={nd},fit {fd:.3f})  "
               f"rho_step={rs:.4f}(n={ns},fit {fs:.3f})  ||h||={rows[-1]['norm_h']:.2f}",
               flush=True)
         del ids
@@ -156,13 +201,17 @@ def measure(model, tok, label, prompts):
 
 def summarise(rows):
     import numpy as np
-    out = {}
-    for key in ("rho_orbit", "rho_step"):
-        v = np.array([r[key] for r in rows], float)
+    def agg(rs, key):
+        v = np.array([r[key] for r in rs], float)
         v = v[np.isfinite(v)]
-        out[key] = {"mean": float(v.mean()) if len(v) else float("nan"),
-                    "sd": float(v.std(ddof=1)) if len(v) > 1 else float("nan"),
-                    "n": int(len(v))}
+        return {"mean": float(v.mean()) if len(v) else float("nan"),
+                "sd": float(v.std(ddof=1)) if len(v) > 1 else float("nan"),
+                "n": int(len(v))}
+    out = {k: agg(rows, k) for k in ("rho_orbit", "rho_step")}
+    out["by_family"] = {}
+    for fam in sorted({r["family"] for r in rows}):
+        rs = [r for r in rows if r["family"] == fam]
+        out["by_family"][fam] = {k: agg(rs, k) for k in ("rho_orbit", "rho_step")}
     return out
 
 
@@ -185,9 +234,10 @@ def main():
     print("CUDA:", torch.cuda.is_available(), flush=True)
 
     tok = AutoTokenizer.from_pretrained(FINAL, revision=REVISION)
-    prompts = [task(s) for s in range(N_PROMPTS)]
-    print(f"{len(prompts)} prompts, token lengths "
-          f"{sorted({len(tok(p).input_ids) for p in prompts})}", flush=True)
+    prompts = prompts_by_family()
+    print(f"{len(prompts)} prompts across "
+          f"{len(set(f for f, _ in prompts))} families; token lengths "
+          f"{sorted({len(tok(p).input_ids) for _, p in prompts})}", flush=True)
 
     cfg = AutoConfig.from_pretrained(FINAL, revision=REVISION, trust_remote_code=True)
     results = {}
@@ -242,6 +292,29 @@ def main():
                       f"   [n={int(m.sum())} checkpoints]")
         print("\n  D42 SURVIVES if rho rises with training step. A flat or")
         print("  non-monotone curve falsifies 'training slows the contraction'.")
+
+    print("\n=== IS rho CONSTANT ACROSS TASK FAMILIES? (backlog 5.4, D43's key assumption) ===")
+    fams = sorted({f for _, v in results.items() if "rows" in v for f in
+                   {r["family"] for r in v["rows"]}})
+    print(f"  {'label':>10} " + " ".join(f"{f:>13}" for f in fams) + "   spread")
+    spreads = []
+    for st, lab, sm in ok:
+        bf = sm.get("by_family", {})
+        vals = [bf.get(f, {}).get("rho_orbit", {}).get("mean", float("nan")) for f in fams]
+        fin = [v for v in vals if np.isfinite(v)]
+        sp = (max(fin) - min(fin)) if len(fin) > 1 else float("nan")
+        spreads.append(sp)
+        print(f"  {lab:>10} " + " ".join(f"{v:>13.4f}" for v in vals) + f"   {sp:>7.4f}")
+    fin_sp = [x for x in spreads if np.isfinite(x)]
+    if fin_sp:
+        print(f"\n  max across-family spread within a model: {max(fin_sp):.4f}")
+        print(f"  the effect D42 claims (untrained -> trained): ~0.25")
+        if max(fin_sp) < 0.05:
+            print("  => rho is a property of the OPERATOR, not the prompt. D43's")
+            print("     cross-task transfer is licensed and backlog 5.4 closes.")
+        else:
+            print("  => rho varies materially with the prompt. D43's bound must be")
+            print("     restated PER TASK and its cross-task comparison is invalid.")
 
 
 main()
