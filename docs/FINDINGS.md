@@ -19,8 +19,9 @@ model. The counting register that replaced it is real but **architectural**: a
 randomly-initialised Huginn reproduces it (D40). What survives that control, and
 is the project's actual result, is an inversion of the assumption probing rests
 on. **The untrained model decodes the count 20× more precisely than the trained
-one and cannot count at all** — held-out R² 1.0000 with 0% accuracy against
-0.9928 with ~10% (D41). And **one parameter explains it: training slows the
+one** — held-out R² 1.0000 (error 0.046 counts) against 0.9928 (0.934 counts) — at
+a sequence length where the trained model's *measured* accuracy is 0%, so the more
+precisely decoded model is not the more capable one (D41). And **one parameter explains it: training slows the
 contraction, ρ ≈ 0.66 → 0.92**, lengthening the depth time-constant from 2.4 to
 11.3 unrolls (D42). A fast contraction is finished after ~8 unrolls however many
 you give it; slowing it is what makes test-time depth do anything at all, and it
@@ -44,7 +45,7 @@ readout scored by 5-fold `cross_val_predict` with `Ridge(alpha=1e3)`:
 |---|---|---|---|---|---|---|---|---|
 | **trained** | 0.675 | 0.904 | 0.972 | 0.967 | 0.986 | 0.992 | 0.993 | **0.934 counts** |
 | **untrained** | 0.200 | 0.415 | 0.851 | 0.997 | 1.000 | 1.000 | 1.000 | **0.046 counts** |
-| accuracy | | | | | | | | trained ~10%, untrained 0% |
+| measured accuracy at this length | | | | | | | | trained 0%; untrained cannot exceed chance |
 
 Three things make this a result rather than an artefact:
 
@@ -84,9 +85,20 @@ fixed point**.
 
 **Why it matters.** This is a naturally-occurring counterexample to "high probe R²
 ⇒ the model represents the quantity usably", on a real architecture with a
-*meaningful* target, where the better-decoded model is the one that cannot do the
-task. The usual form of that critique relies on synthetic random-label control
-tasks. Here it is R²=1.0000 at 0% accuracy against R²=0.9928 at ~10%.
+*meaningful* target — the usual form of that critique relies on synthetic
+random-label control tasks. Both models carry the count essentially perfectly
+(R² 1.0000 and 0.9928) at a length where `results/counting_accuracy.csv` measures
+the trained model at **0%**.
+
+**Correction, and the limit of the claim.** An earlier version of this section read
+"R²=1.0000 at 0% accuracy against R²=0.9928 at ~10%" and concluded that
+decodability and capability move in opposite directions. **Neither kernel measured
+accuracy.** The ~10% was the average over a different configuration (n_ops 2–48),
+and it is 37.5% at n_ops=2 falling to 0% from n_ops=8 onward. At M=64 both models
+are at zero. So what is established is that **probe R² is uninformative about
+capability here**, not that training trades precision for usability — the latter
+needs a task where the trained model is measurably better. Scoring accuracy across
+the ten training checkpoints alongside ρ, on this same task, is queued and settles it.
 
 **Open, and able to falsify D42.** ρ_untrained is inferred from an observable, not
 measured on the operator. The eight published intermediate checkpoints of Huginn's

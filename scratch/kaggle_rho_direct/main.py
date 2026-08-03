@@ -89,7 +89,10 @@ SWEEP = [("untrained", None, 0, None), ("final", FINAL, 100000, REVISION)] + [
 
 M = 64
 MAX_R = 128
-N_PER_FAMILY = 3     # 4 families x 3 = 12 prompts per model
+N_PER_FAMILY = 3     # 4 families x 3 = 12 prompts per model, for the rho fits
+N_EVAL = 60          # counting prompts for readout R^2 AND accuracy, per model
+EVAL_R = 32          # Huginn's mean_recurrence; where the model is meant to be used
+GEN_TOK = 3          # greedy tokens to decode when scoring accuracy
 K_FLOOR = 3.0
 TAIL_FRAC = 0.25
 
@@ -160,6 +163,77 @@ def fit_rho(curve, k=K_FLOOR, tail_frac=TAIL_FRAC):
     denom = ((ly - ly.mean()) ** 2).sum()
     r2 = float(1 - ((ly - pred) ** 2).sum() / denom) if denom > 0 else float("nan")
     return float(np.exp(slope)), int(n), r2
+
+
+def eval_set():
+    """60 counting prompts with known totals, disjoint seeds from the rho prompts."""
+    out = []
+    for i in range(N_EVAL):
+        rng = random.Random(500000 + i * 7919)
+        p_one = (0.2, 0.35, 0.5, 0.65, 0.8)[i % 5]
+        bits = [1 if rng.random() < p_one else 0 for _ in range(M)]
+        out.append(("Sequence: " + " ".join(map(str, bits)) + ". How many ones? A:",
+                    sum(bits)))
+    return out
+
+
+def readout_and_accuracy(model, tok, prompts):
+    """Decodability AND capability on the SAME task, at the SAME depth.
+
+    D41's first version paired a decodability measured here against an accuracy
+    taken from a different configuration, and overclaimed as a result. Measuring
+    both on the same prompts at every checkpoint is what makes "do decodability
+    and capability move in opposite directions?" answerable instead of asserted.
+
+    Accuracy is greedy generation + integer parse, matching the method behind
+    results/counting_accuracy.csv, so the numbers are comparable to it.
+    """
+    import numpy as np
+    import torch
+    states, totals, correct = [], [], []
+    for text, total in prompts:
+        ids = tok(text, return_tensors="pt").input_ids.to("cuda")
+        cap = []
+        mod = model.transformer.core_block[-1]
+        mod._forward_hooks.clear()
+        h = mod.register_forward_hook(
+            lambda m, i, o, c=cap: c.append(o.detach()[0, -1, :].float().cpu().numpy()))
+        try:
+            torch.manual_seed(0)
+            with torch.no_grad():
+                out = model(input_ids=ids, num_steps=EVAL_R)
+        finally:
+            h.remove()
+        states.append(cap[-1])
+        totals.append(total)
+
+        cur = ids
+        gen = []
+        logits = out.logits if hasattr(out, "logits") else out[0]
+        for _ in range(GEN_TOK):
+            nxt = int(logits[0, -1].argmax())
+            gen.append(nxt)
+            cur = torch.cat([cur, torch.tensor([[nxt]], device=cur.device)], dim=1)
+            with torch.no_grad():
+                o2 = model(input_ids=cur, num_steps=EVAL_R)
+            logits = o2.logits if hasattr(o2, "logits") else o2[0]
+        txt = tok.decode(gen)
+        digits = "".join(c for c in txt if c.isdigit() or c == " ").split()
+        correct.append(bool(digits) and digits[0].isdigit() and int(digits[0]) == total)
+        del ids, cur
+        torch.cuda.empty_cache()
+
+    x_states = np.stack(states).astype(np.float64)
+    y = np.array(totals, float)
+    from sklearn.linear_model import Ridge
+    from sklearn.model_selection import KFold, cross_val_predict
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+    pred = cross_val_predict(make_pipeline(StandardScaler(), Ridge(alpha=1e3)), x_states, y,
+                             cv=KFold(5, shuffle=True, random_state=0))
+    r2 = float(1 - ((y - pred) ** 2).sum() / ((y - y.mean()) ** 2).sum())
+    return {"readout_r2": r2, "mean_abs_err": float(np.abs(y - pred).mean()),
+            "accuracy": float(np.mean(correct)), "n": len(y)}
 
 
 def orbit(model, ids, seed, max_r):
@@ -245,6 +319,11 @@ def main():
           f"{len(set(f for f, _ in prompts))} families; token lengths "
           f"{sorted({len(tok(p).input_ids) for _, p in prompts})}", flush=True)
 
+    eval_prompts = eval_set()
+    print(f"eval set: {len(eval_prompts)} counting prompts, totals "
+          f"{min(t for _, t in eval_prompts)}..{max(t for _, t in eval_prompts)}",
+          flush=True)
+
     cfg = AutoConfig.from_pretrained(FINAL, revision=REVISION, trust_remote_code=True)
     results = {}
 
@@ -262,6 +341,18 @@ def main():
             rows = measure(model, tok, label, prompts)
             results[label] = {"step": step, "repo": repo, "revision": rev, "rows": rows,
                               "summary": summarise(rows)}
+            with open("rho_vs_training.json", "w") as f:   # rho is the primary result;
+                json.dump(results, f, indent=1)            # bank it before the eval pass
+            try:
+                ev = readout_and_accuracy(model, tok, eval_prompts)
+                results[label]["eval"] = ev
+                print(f"  {label} eval: readout R2={ev['readout_r2']:+.4f}  "
+                      f"err={ev['mean_abs_err']:.3f}  accuracy={ev['accuracy']:.1%}",
+                      flush=True)
+            except Exception as e:                                # noqa: BLE001
+                print(f"  {label} eval FAILED: {type(e).__name__}: {str(e)[:150]}",
+                      flush=True)
+                results[label]["eval_error"] = f"{type(e).__name__}: {e}"
             s = results[label]["summary"]
             print(f"  {label}: rho_orbit={s['rho_orbit']['mean']:.4f}"
                   f"+-{s['rho_orbit']['sd']:.4f}  "
@@ -299,6 +390,33 @@ def main():
                       f"   [n={int(m.sum())} checkpoints]")
         print("\n  D42 SURVIVES if rho rises with training step. A flat or")
         print("  non-monotone curve falsifies 'training slows the contraction'.")
+
+    print("\n=== DOES CAPABILITY RISE WHILE DECODABILITY FALLS? (D41(3c)) ===")
+    ev = [(v["step"], k, v["eval"]) for k, v in results.items() if "eval" in v]
+    ev.sort()
+    if ev:
+        print(f"  {'step':>8} {'label':>10} {'readout R2':>11} {'abs err':>9} {'accuracy':>9}")
+        for st, lab, e in ev:
+            print(f"  {st:>8} {lab:>10} {e['readout_r2']:>+11.4f} "
+                  f"{e['mean_abs_err']:>9.3f} {e['accuracy']:>8.1%}")
+        if len(ev) >= 4:
+            from scipy.stats import spearmanr
+            st = np.array([e[0] for e in ev], float)
+            acc = np.array([e[2]["accuracy"] for e in ev], float)
+            r2s = np.array([e[2]["readout_r2"] for e in ev], float)
+            ra, pa = spearmanr(st, acc)
+            rr, pr = spearmanr(st, r2s)
+            print(f"\n  spearman(step, accuracy)   = {ra:+.4f}, p={pa:.4g}")
+            print(f"  spearman(step, readout R2) = {rr:+.4f}, p={pr:.4g}")
+            if ra > 0 and rr < 0:
+                print("  => accuracy RISES while decodability FALLS. 'Opposite directions'")
+                print("     is earned on matched data and D41(3) can be restated.")
+            elif acc.max() == 0:
+                print("  => NO model scores above zero at M=64, so this task cannot")
+                print("     support a capability contrast at all. D41(3)'s retraction")
+                print("     stands and the claim needs an easier task.")
+            else:
+                print("  => the two do not move oppositely; D41(3) stays retracted.")
 
     print("\n=== IS rho CONSTANT ACROSS TASK FAMILIES? (backlog 5.4, D43's key assumption) ===")
     fams = sorted({f for _, v in results.items() if "rows" in v for f in
