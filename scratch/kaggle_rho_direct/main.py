@@ -67,20 +67,24 @@ def run(cmd):
 FINAL = "tomg-group-umd/huginn-0125"
 REVISION = "bb6621b65e90b6a4b9b29ef88dc83866d450470c"
 
-# (label, repo_id, training_step, revision). Revisions pinned 2026-08-04, same
-# provenance rule the rest of the project uses. Ordered so a timeout still leaves a usable
-# curve: the two anchors and the extreme intermediates go first.
-SWEEP = [
-    ("untrained",  None,                                              0, None),
-    ("final",      FINAL,                                        100000, REVISION),
-    ("s06144",     "tomg-group-umd/step-00006144-recurrence_full_512_0",  6144, "b5b1f9d44fdf3f1b91cb301dfaded77196e7bf3d"),
-    ("s41728",     "tomg-group-umd/step-00041728-recurrence_full_512_0", 41728, "0fb03f39328917a92ca3059cc77b3e2115a35c94"),
-    ("s17920",     "tomg-group-umd/step-00017920-recurrence_full_512_0", 17920, "9c8576dc13cffdf93ec7da08eecf5b200bc8b47d"),
-    ("s29824",     "tomg-group-umd/step-00029824-recurrence_full_512_0", 29824, "252da2591e39f1ca27c063e018e254e470833c39"),
-    ("s10752",     "tomg-group-umd/step-00010752-recurrence_full_512_0", 10752, "5e35596c8e8c79ecae57a8fab34625fe8ac640a8"),
-    ("s23808",     "tomg-group-umd/step-00023808-recurrence_full_512_0", 23808, "b531a3366a7d2a4171403038b785639606cb1297"),
-    ("s35840",     "tomg-group-umd/step-00035840-recurrence_full_512_0", 35840, "41580a97ec90f282e6e9b72f83073779808a53af"),
-    ("s11904",     "tomg-group-umd/step-00011904-recurrence_full_512_0", 11904, "aadca23e6829ea0bcf96b7965ebc61ad9fada17c"),
+# (label, repo_id, training_step, revision). Revisions pinned 2026-08-04, the
+# same provenance rule the rest of the project uses.
+CKPT = "tomg-group-umd/step-{:08d}-recurrence_full_512_0"
+SHA = {
+    6144: "b5b1f9d44fdf3f1b91cb301dfaded77196e7bf3d",
+    10752: "5e35596c8e8c79ecae57a8fab34625fe8ac640a8",
+    11904: "aadca23e6829ea0bcf96b7965ebc61ad9fada17c",
+    17920: "9c8576dc13cffdf93ec7da08eecf5b200bc8b47d",
+    23808: "b531a3366a7d2a4171403038b785639606cb1297",
+    29824: "252da2591e39f1ca27c063e018e254e470833c39",
+    35840: "41580a97ec90f282e6e9b72f83073779808a53af",
+    41728: "0fb03f39328917a92ca3059cc77b3e2115a35c94",
+}
+# Ordered so a timeout still leaves a usable curve: the two anchors and the
+# extreme intermediates first.
+SWEEP = [("untrained", None, 0, None), ("final", FINAL, 100000, REVISION)] + [
+    (f"s{st:05d}", CKPT.format(st), st, SHA[st])
+    for st in (6144, 41728, 17920, 29824, 10752, 23808, 35840, 11904)
 ]
 
 M = 64
@@ -111,9 +115,11 @@ def prompts_by_family():
         seq, d = [], 0
         for _ in range(M // 2):
             if d == 0 or (rng.random() < 0.5 and d < 8):
-                seq.append("("); d += 1
+                seq.append("(")
+                d += 1
             else:
-                seq.append(")"); d -= 1
+                seq.append(")")
+                d -= 1
         seq += [")"] * d
         out.append(("nesting",
                     "String: " + " ".join(seq) + ". What is the maximum nesting depth? A:"))
@@ -263,7 +269,8 @@ def main():
                   flush=True)
         except Exception as e:                                    # noqa: BLE001
             print(f"  {label} FAILED: {type(e).__name__}: {str(e)[:200]}", flush=True)
-            results[label] = {"step": step, "repo": repo, "revision": rev, "error": f"{type(e).__name__}: {e}"}
+            results[label] = {"step": step, "repo": repo, "revision": rev,
+                              "error": f"{type(e).__name__}: {e}"}
         finally:
             del model
             gc.collect()
@@ -298,7 +305,7 @@ def main():
                    {r["family"] for r in v["rows"]}})
     print(f"  {'label':>10} " + " ".join(f"{f:>13}" for f in fams) + "   spread")
     spreads = []
-    for st, lab, sm in ok:
+    for _st, lab, sm in ok:
         bf = sm.get("by_family", {})
         vals = [bf.get(f, {}).get("rho_orbit", {}).get("mean", float("nan")) for f in fams]
         fin = [v for v in vals if np.isfinite(v)]
@@ -308,7 +315,7 @@ def main():
     fin_sp = [x for x in spreads if np.isfinite(x)]
     if fin_sp:
         print(f"\n  max across-family spread within a model: {max(fin_sp):.4f}")
-        print(f"  the effect D42 claims (untrained -> trained): ~0.25")
+        print("  the effect D42 claims (untrained -> trained): ~0.25")
         if max(fin_sp) < 0.05:
             print("  => rho is a property of the OPERATOR, not the prompt. D43's")
             print("     cross-task transfer is licensed and backlog 5.4 closes.")

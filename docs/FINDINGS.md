@@ -21,8 +21,8 @@ is the project's actual result, is an inversion of the assumption probing rests
 on. **The untrained model decodes the count 20× more precisely than the trained
 one and cannot count at all** — held-out R² 1.0000 with 0% accuracy against
 0.9928 with ~10% (D41). And **one parameter explains it: training slows the
-contraction, ρ ≈ 0.66 → 0.91**, lengthening the depth time-constant from 2.4 to
-10.6 unrolls (D42). A fast contraction is finished after ~8 unrolls however many
+contraction, ρ ≈ 0.66 → 0.92**, lengthening the depth time-constant from 2.4 to
+11.3 unrolls (D42). A fast contraction is finished after ~8 unrolls however many
 you give it; slowing it is what makes test-time depth do anything at all, and it
 is paid for in linear decodability of the input. Two independent facts about the
 architecture stand apart from all of this: **required recurrent depth scales with
@@ -69,8 +69,11 @@ asserted that re-injection makes the untrained net a coherent linear accumulator
 that has a closed-form consequence, and fitted to the data it fails — both curves
 pin ρ at the 0.999 boundary with systematically S-shaped residuals. Retracted.
 What fits is this project's own derived law (`observable_convergence.py` eq. 3),
-`R²_∞ − R²_r ~ C·ρ^{2r}`: **untrained ρ̂ = 0.662** (fit R² 0.981), **trained
-ρ̂ = 0.910** (fit R² 0.925). The estimator is calibrated on this exact model — its
+`R²_∞ − R²_r ~ C·ρ^{2r}`: **untrained ρ̂ = 0.6618** (fit R² 0.981), **trained
+ρ̂ = 0.9155** (fit R² 0.897 — marginally under the module's own 0.9 applicability
+bar, because r=1 is not yet in the linear regime the law assumes; excluding it
+gives 0.9263 at fit 0.949). The separation survives every fit window, gap +0.25
+to +0.29. The estimator is calibrated on this exact model — its
 trained output agrees with three unrelated direct measurements (orbit convergence
 0.85–0.90, Arnoldi 0.79–0.81, feature rotation 0.861/0.868).
 
