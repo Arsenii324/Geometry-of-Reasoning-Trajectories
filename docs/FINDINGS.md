@@ -1,8 +1,9 @@
 # Findings
 
-Huginn-3.5B (`tomg-group-umd/huginn-0125`, revision `bb6621b6…`), 2026-07-26/27.
-Every number below is reproducible from a script in `scripts/`; the ledger row
-is cited for each. Evidence levels are stated, including for the negatives.
+Huginn-3.5B (`tomg-group-umd/huginn-0125`, revision `bb6621b6…`), 2026-07-26 → 08-04.
+Every number below is reproducible from a script in `scripts/` or a kernel bundle
+in `scratch/kaggle_*/`; the ledger row is cited for each. Evidence levels are
+stated, including for the negatives.
 
 **Read `docs/state_of_knowledge.md` for the full picture including retractions,
 and `docs/backlog_not_done.md` for what was never attempted.**
@@ -14,17 +15,82 @@ and `docs/backlog_not_done.md` for what was never attempted.**
 The original hypothesis — that latent-trajectory *geometry* encodes reasoning
 depth — is not supported, and the metrics that appeared to support it were
 measuring the recording window and the arithmetic precision rather than the
-model. But the underlying idea survives in two other places, both now measured:
-**required recurrent depth does scale with difficulty** at fixed prompt length,
-and **Huginn maintains a linearly-decodable counting register** that behaves as
-a ℤ-action, which is what the curator's tasks asked about. Separately, the
-project turned up a fact about the architecture that is independent of any of
-this: **bfloat16 rounding makes the model appear to converge ~4.6× sooner than
-it does.** And the two positives turn out to be *dissociated*: the register is
-complete after a single unroll and only its representational frame rotates with
-depth. What the extra depth buys is **readout** — transferring the register into
-the answer token, which improves from R²=0.675 to 0.993 over ~24 unrolls while
-the register itself stays flat.
+model. The counting register that replaced it is real but **architectural**: a
+randomly-initialised Huginn reproduces it (D40). What survives that control, and
+is the project's actual result, is an inversion of the assumption probing rests
+on. **The untrained model decodes the count 20× more precisely than the trained
+one and cannot count at all** — held-out R² 1.0000 with 0% accuracy against
+0.9928 with ~10% (D41). And **one parameter explains it: training slows the
+contraction, ρ ≈ 0.66 → 0.91**, lengthening the depth time-constant from 2.4 to
+10.6 unrolls (D42). A fast contraction is finished after ~8 unrolls however many
+you give it; slowing it is what makes test-time depth do anything at all, and it
+is paid for in linear decodability of the input. Two independent facts about the
+architecture stand apart from all of this: **required recurrent depth scales with
+difficulty** at fixed prompt length (D35), and **bfloat16 rounding makes the
+model appear to converge ~4.6× sooner than it does** (D30).
+
+---
+
+## 0. The headline: decodability and capability move in opposite directions
+
+**Claim: D41, D42. Evidence: verified-live on GPU; the ρ-across-training sweep is
+queued and could still falsify D42.**
+
+Identical protocol on trained and randomly-initialised Huginn — 220 prompts, all
+exactly 74 tokens, float32, states captured at every unroll in one forward pass,
+readout scored by 5-fold `cross_val_predict` with `Ridge(alpha=1e3)`:
+
+| unroll r | 1 | 2 | 4 | 8 | 16 | 32 | 64 | mean abs error at r=64 |
+|---|---|---|---|---|---|---|---|---|
+| **trained** | 0.675 | 0.904 | 0.972 | 0.967 | 0.986 | 0.992 | 0.993 | **0.934 counts** |
+| **untrained** | 0.200 | 0.415 | 0.851 | 0.997 | 1.000 | 1.000 | 1.000 | **0.046 counts** |
+| accuracy | | | | | | | | trained ~10%, untrained 0% |
+
+Three things make this a result rather than an artefact:
+
+1. **It is not an interpolating probe**, the obvious objection at d=5280 ≫ n=220.
+   Every prediction is out-of-fold, and the label-permutation null sits at −0.05
+   to −0.19 — reliably *negative*, which is the signature of an honest held-out
+   score. A probe with capacity to interpolate would push the permuted null
+   toward zero.
+2. **It is not decoding the generative parameter.** Prompts come from five
+   bit-rates, so a probe could score high on `p_one` alone — but that caps at
+   R²=0.9237 / error 3.851 counts. Trained errs 0.934 (4.1× finer), untrained
+   0.046 (**83.7× finer**). Both exceed the ceiling, so both resolve count
+   *within* level.
+3. **The ceiling dates "earlier" properly.** Crossing R²=0.9237 is the point where
+   a readout provably carries more than the task's generative parameter. Trained
+   crosses at r≈2.4, untrained at r≈5.7 — training makes the count available
+   **2.3× earlier**. (The raw r=1 gap, 0.675 vs 0.200, sits *below* the ceiling
+   for both, so it is a coarse-resolution difference only.)
+
+**The mechanism is a single number, and it is not the one I first proposed.** I
+asserted that re-injection makes the untrained net a coherent linear accumulator;
+that has a closed-form consequence, and fitted to the data it fails — both curves
+pin ρ at the 0.999 boundary with systematically S-shaped residuals. Retracted.
+What fits is this project's own derived law (`observable_convergence.py` eq. 3),
+`R²_∞ − R²_r ~ C·ρ^{2r}`: **untrained ρ̂ = 0.662** (fit R² 0.981), **trained
+ρ̂ = 0.910** (fit R² 0.925). The estimator is calibrated on this exact model — its
+trained output agrees with three unrelated direct measurements (orbit convergence
+0.85–0.90, Arnoldi 0.79–0.81, feature rotation 0.861/0.868).
+
+So neither curve shows a feature being *built*. Both are pure convergence, exactly
+as `observable_convergence.py` warns, and the untrained model looks both "later"
+and "more precise" because it is a **faster contraction onto a better-conditioned
+fixed point**.
+
+**Why it matters.** This is a naturally-occurring counterexample to "high probe R²
+⇒ the model represents the quantity usably", on a real architecture with a
+*meaningful* target, where the better-decoded model is the one that cannot do the
+task. The usual form of that critique relies on synthetic random-label control
+tasks. Here it is R²=1.0000 at 0% accuracy against R²=0.9928 at ~10%.
+
+**Open, and able to falsify D42.** ρ_untrained is inferred from an observable, not
+measured on the operator. The eight published intermediate checkpoints of Huginn's
+own training run (`step-00006144` … `step-00041728`, configs verified identical to
+the final model) make ρ measurable as a function of training step; that sweep is
+queued (`scratch/kaggle_rho_direct/`). A monotone rise confirms D42; a flat or
+non-monotone curve retracts it.
 
 ---
 
@@ -61,6 +127,16 @@ gives rho = +0.139 against count's +0.225 and adds +0.020 R² in a joint rank
 regression.
 
 ### 1.2 A counting register exists, and it is a ℤ-action (D34, D36)
+
+> **QUALIFIED BY D40 — read this before §1.2, §1.2b, §1.2c and §1.2d.** A
+> randomly-initialised Huginn reproduces every endpoint measurement in these four
+> subsections: the register, its sign consistency, the ℤ-action, and the count
+> subspace. So the *existence* of the register is a property of the architecture
+> — 5280 dimensions, RMSNorm, and prompt re-injection — not of training. What
+> below is genuinely trained is the **depth trajectory** (§0): the trained model
+> reaches within-level count resolution 2.3× earlier and holds a 20× coarser
+> representation. Every "the model has learned…" reading of §1.2–§1.2d is
+> withdrawn; the measurements themselves stand exactly as reported.
 
 Found by subtraction, not by a probe. For per-position states, form
 `Δ_i = h_{i+1} − h_i` and take
