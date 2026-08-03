@@ -54,6 +54,53 @@ working as intended, and it is the honest description of where things stand.
 
 ---
 
+## POST-REVIEW UPDATE (2026-08-04): the untrained baseline lands, and it invalidates part of this review
+
+The control this review identified as blind spot O1 was run while the review was
+being written. It is the most deflationary result in the project.
+
+```
+                          trained    untrained (RANDOM WEIGHTS)
+  v_pairwise_cos          +0.7996    +0.9991
+  register_r              +0.2822    +0.2608
+  register_sign_frac      +1.0000    +1.0000
+  readout_r2_count        +0.9773    +1.0000
+  positional_k1_resid_r2  -0.2325    +0.5272
+```
+
+**A network that has never been trained reproduces every positive finding, most
+of them more strongly.** It decodes the total count from its answer token at
+R² = 1.0000 and produces a *more* consistent "register direction" than the
+trained model.
+
+The mechanism is a random-features property: the count is a linear function of
+the input tokens, and random mixing plus a residual stream preserves linear
+functions in decodable form. So D34, D36, D39 and the *endpoint* of D38 describe
+a normalised residual stream, not a trained counting mechanism.
+
+**This directly overturns two things in the review below.** Part VI's
+evidence-versus-belief table rated "count linearly available at answer token" as
+*strong evidence, high belief* — it is strong evidence for an architectural
+fact, not for anything about Huginn. And Part V's skeptic objection #1 ("attention
+computes sums, this is expected") is not merely *fair*, it is **correct**, and I
+graded it too gently.
+
+**What the control does not touch, stated so the retraction is not over-broad.**
+It measured the endpoint at r=32 only. D37 and D38 are claims about the *depth
+trajectory*, and that comparison was not made; a follow-up is running. Also
+untouched: the bf16 result (a precision claim), the Jacobian spectrum (a
+measurement), the depth-scaling result (a claim about the model's own logit
+margin, which an untrained model has no version of), and every negative result.
+
+**The practice lesson supersedes everything else in Part XI.** This control
+costs one GPU hour, was available from day one, and was run in week six after
+twelve refinements of a geometric metric and four probing experiments. An
+untrained baseline should be the first control for any representational claim.
+Its absence invalidated more work than every other omission in this review
+combined — including all six of my retractions put together.
+
+---
+
 ## Part I — What the project is, and its honest scientific standing
 
 ### I.1 The question and its three operationalisations
@@ -666,6 +713,46 @@ causal evidence are.
 
 ---
 
+## Part IX-bis — The hypothesis register, as it stands now
+
+The project still nominally runs on H1/H2/H3, which is misleading: those are
+mostly settled, and the live questions are ones nobody wrote down. Stating the
+actual current set, with status and the test that would move each.
+
+### The original three
+
+| | claim | status | note |
+|---|---|---|---|
+| **H1** | trajectories fall into settle/loop/drift | **dead as posed** | the instrument had one reachable output; a working classifier exists now (`classify_shape_regime`) but the hypothesis was never interesting once the trajectory turned out to be transient-then-noise |
+| **H2** | winding ∝ required depth | **false as operationalised, TRUE in a different index** | winding at the answer token tracks the recording budget. But required *depth* does scale with difficulty (rho +0.225 at fixed length), so the phenomenon is real and the geometric readout was wrong |
+| **H3** | contraction forbids counting | **premise true, claim rescoped** | ρ = 0.802 measured exactly. Contraction forbids an *unbounded* register; a bounded one fits comfortably, and one is there |
+
+### The live hypotheses, which are not in any project document
+
+| | claim | status | what would settle it |
+|---|---|---|---|
+| **HA** | The count is computed in ~1 unroll; recurrence performs **readout**, not computation | supported (D37 flat register + D38 rising readout) | the causal test now running; and whether attention heads that aggregate digits are active at r=1 |
+| **HB** | The answer token holds a **low-dimensional summary** — count plus positional structure — not the input and not a scalar | supported but under-powered (ID ≈ 10, count in ~3; positional residual R² 0.858; spectrum unresolved) | n ≈ 450 prompts, which both the power analysis and the TwoNN validity bound independently call for |
+| **HC** | Low precision **truncates visible computation**, not merely adds noise | strongly supported on one model (regime 20.7 → 96.3 bf16 → fp32) | the same sweep on a second iterative architecture; this is the most generalisable claim in the project |
+| **HD** | On a normalised stream a register must be realised as a **rotation**, not a translation | derived, **untested** | measure the angle swept per increment and check for the aliasing a rotation implies |
+| **HE** | The difficulty-dependence of required depth lives in **logit formation**, not information availability | open — D38 showed readout quality is difficulty-independent at every depth, so the r\* effect is unexplained | compare the probe's decodability curve against the model's own margin curve, per instance |
+| **HF** | The register is **causally used**, not merely decodable | **being tested now** | activation patching along the readout direction, with two controls |
+
+### What this register makes obvious
+
+Three of the six live hypotheses (HA, HE, HF) are about the **gap between what
+the state contains and what the model uses**. That gap was not a research
+question when the project started; it emerged from the finding that the count is
+decodable at R² = 0.993 while the model's own accuracy is ~10%.
+
+That is the project's real subject now, and it has a literature (the probing
+critique, causal abstraction) that the project has never cited. **The framing
+drifted from geometry to mechanism without anyone updating the framing
+documents**, which is why the hypothesis register had to be reconstructed here
+rather than read off.
+
+---
+
 ## Part X — The interpretability method landscape, and where we sit in it
 
 This is the planning artifact the review was missing. Column "used?" is factual;
@@ -814,6 +901,43 @@ That allocation was never chosen; it was inherited from the project's framing
 and never re-examined. **The correction is Part X's matrix, written early
 rather than late.**
 
+### XI.3b Idea generation — the honest audit, and what substitutes for inspiration
+
+IV.3 counted where the productive ideas came from. Reading that count again, the
+pattern is sharper and less flattering than I first wrote.
+
+**Almost nothing came from unprompted generation.** Three of the pivotal ideas
+were short external questions. Two came from a *systematic sweep* (the audit's
+file inventory; the generator census). Two came from *taking a constraint
+literally* (RMSNorm ⟹ sphere ⟹ rotation not translation). One came from a hook
+refusing my claim.
+
+The two categories that were genuinely mine — sweeps and constraint-taking — are
+**mechanical procedures, not inspiration**. That is the useful finding: my idea
+generation works when it is enumeration and fails when it is intuition. So the
+correct investment is in enumeration machinery, not in trying to be more
+creative.
+
+Concretely, the procedures that produced ideas:
+
+- **Enumerate the space, then look at what is empty.** Part X's method matrix
+  produced four immediate experiments; it should have existed in week one. The
+  file inventory found two directories I had never accounted for, one of which
+  held the only multi-init data in the project.
+- **Take an architectural constraint literally and follow it to a consequence.**
+  "RMSNorm means the state is on a sphere" is a one-line observation that
+  invalidated a rotation centre, an entire null model, and a register design.
+  Nobody had followed it because it reads like a technicality.
+- **Ask what the data shows that the hypothesis does not predict.** The bf16
+  finding — the best result here — came from noticing that "settles at t≈14" was
+  a claim about the *dtype*, not the model. That is an anomaly the framing
+  actively hid.
+
+And the anti-pattern, stated so I can recognise it: **refining a failing
+measurement feels like progress and is not.** Nine winding variants were nine
+attempts to fix an estimator of an object (winding number of an open arc) that
+does not exist. Each felt like a step. None was.
+
 ### XI.4b A natural experiment on the duplication problem, run by accident
 
 IV.2 criticised the seven kernels for duplicating ~60% of their code because
@@ -867,6 +991,68 @@ neighbours). It needs the n ≈ 450 the power analysis independently called for 
 the same bound, arrived at from a different direction, which is mild
 corroboration that 220 is the binding constraint on several of these questions
 at once.
+
+---
+
+## Part XII — Where the field is, and the program that follows
+
+### XII.1 The state of the sub-field this sits in
+
+Recurrent-depth and looped architectures (Huginn, Universal Transformers, DEQs,
+looped transformers) are having a moment because they promise test-time compute
+scaling without longer chains of text. The interpretability of that family is
+much thinner than the interpretability of standard transformers, for a
+structural reason: **the standard toolkit is indexed by layer, and these models
+have one layer applied many times.** A "feature at layer 12" has no analogue; a
+feature at unroll 12 is the same weights in a different state.
+
+That is exactly where this project stumbled and, I think, where the opportunity
+is. Three concrete gaps in the family's tooling that this work bumped into:
+
+1. **Lens methods have no recurrence-axis version.** The tuned lens fits an
+   affine correction per layer. The analogue here — per-unroll — does not exist
+   as a named tool, and D37 shows it is needed: the readout basis rotates and
+   locks only after ~16 unrolls.
+2. **Convergence is assumed, not measured.** Every claim of the form "the model
+   settles" in this family is a claim about the numerics as much as the model.
+   The bf16 result says apparent convergence depth scales with mantissa bits,
+   which nobody appears to check.
+3. **Nulls are inherited from the layer world and are wrong here.** A surrogate
+   that ignores the state manifold, or a statistic averaged over a fixed unroll
+   budget, produces artifacts specific to iterated maps. This project produced
+   four of them.
+
+### XII.2 The program, in priority order
+
+**Tier 1 — closes the current story.**
+1. Causal patching (running) and interchange interventions. Decides whether
+   "register" survives as a description.
+2. Attention/head analysis and the input-space Jacobian: which positions the
+   answer token reads. Two cheap routes to the same mechanism; agreement would
+   be strong.
+3. n ≈ 450 prompts. Three separate analyses (spectrum, TwoNN validity, effect
+   precision) are all bounded by n = 220.
+
+**Tier 2 — makes it generalisable.**
+4. The bf16 sweep on a second and third iterative architecture. This is the
+   paper-shaped result and it is currently one checkpoint.
+5. The untrained baseline (running) extended: is any of this about *learning*?
+
+**Tier 3 — connects it to the field.**
+6. A per-unroll tuned lens, named as such, compared against the fixed decoder.
+7. RTD on the answer-token cloud across prompts — well-posed there, unlike on a
+   single trajectory — which is also the curator's own method, never applied.
+
+### XII.3 What I would tell someone starting this project again
+
+- Write the method matrix (Part X) in week one. It costs an hour and it would
+  have redirected four fifths of the effort.
+- Dump raw states from the first GPU run, not the fifth.
+- Run one control task before running twelve refinements of a metric.
+- Check what a statistic's *range* is on your data before interpreting its
+  value. Two of the nine retractions were statistics that could not vary.
+- When a citation is load-bearing, open it. Two of the three most-cited sources
+  here are broken, and one of them justified a conclusion that was backwards.
 
 ## Pass 3 stopping condition: NOT met
 
