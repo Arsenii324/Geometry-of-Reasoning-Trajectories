@@ -92,6 +92,34 @@ untouched: the bf16 result (a precision claim), the Jacobian spectrum (a
 measurement), the depth-scaling result (a claim about the model's own logit
 margin, which an untrained model has no version of), and every negative result.
 
+### UPDATE 2: the depth trajectory differs, and yields the project's best result
+
+D40 tested the endpoint. Running the identical depth sweep on the untrained
+model shows the *trajectories* are not the same:
+
+```
+r            1      2      4      8     16     32     64     mean |err| at 64
+trained    0.675  0.904  0.972  0.967  0.986  0.992  0.993     0.934 counts
+untrained  0.200  0.415  0.851  0.997  1.000  1.000  1.000     0.046 counts
+accuracy:  trained ~10%          untrained 0%
+```
+
+Two genuine training signatures, in opposite directions:
+
+- **At r=1 the trained model is 3.4× better** (0.675 vs 0.200). Training makes
+  the count available after *one* unroll; the untrained net needs ~8.
+- **At saturation the untrained model is 20× more precise** (0.046 vs 0.934
+  counts) — and cannot count at all.
+
+**Training makes the representation ~20× coarser, ~8× earlier, and marginally
+usable.** Decodability and capability move in opposite directions.
+
+That is a naturally-occurring counterexample to "high probe R² ⇒ usable
+representation", with a meaningful target, where the better-decoded model is the
+one that cannot do the task — R² = 1.0000 at 0% accuracy against R² = 0.9928 at
+10%. It is stronger than anything the register story offered, and it exists only
+because the deflationary control was finally run.
+
 ### The constructive reading, which is stronger than what it destroys
 
 D40 kills the register story, but it hands the project a cleaner result in
