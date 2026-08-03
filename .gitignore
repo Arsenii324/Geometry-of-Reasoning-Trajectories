@@ -25,9 +25,16 @@
 !/scratch/kaggle_depth_fixed/
 !/scratch/kaggle_states/
 !/scratch/kaggle_register_depth/
+!/scratch/kaggle_readout/
+!/scratch/kaggle_baseline/
+!/scratch/kaggle_untrained_depth/
+!/scratch/kaggle_untrained_baseline/
+!/scratch/kaggle_causal/
+!/scratch/kaggle_rho_direct/
 # within those bundles, keep the harness noise out
 /scratch/*/poll.sh
 /scratch/*/poll*.log
+/scratch/*/watch*.log
 /scratch/*/main_v1.py
 /scratch/*/out/*.html
 /scratch/*/out2/*.html

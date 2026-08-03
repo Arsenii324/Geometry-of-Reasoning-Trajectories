@@ -1,0 +1,59 @@
+[{"stream_name":"stdout","time":1.463758912,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54' scikit-learn scipy\n"}
+,{"stream_name":"stdout","time":5.086615255,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.100026537,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 105.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.122902642,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 34.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.174998965,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 68.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":36.159574821,"data":"CUDA: True\n"}
+,{"stream_name":"stderr","time":41.54733109,"data":"A new version of the following files was downloaded from https://huggingface.co/tomg-group-umd/huginn-0125:\n"}
+,{"stream_name":"stderr","time":41.547379962,"data":"- raven_modeling_minimal.py\n"}
+,{"stream_name":"stderr","time":41.547385478,"data":". Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.\n"}
+,{"stream_name":"stdout","time":128.050009648,"data":"UNTRAINED model instantiated (random weights)\n"}
+,{"stream_name":"stdout","time":513.188975197,"data":"  40 prompts done\n"}
+,{"stream_name":"stdout","time":934.997454157,"data":"  80 prompts done\n"}
+,{"stream_name":"stdout","time":1359.965452041,"data":"  120 prompts done\n"}
+,{"stream_name":"stdout","time":1783.920596981,"data":"  160 prompts done\n"}
+,{"stream_name":"stdout","time":2207.440756412,"data":"  200 prompts done\n"}
+,{"stream_name":"stdout","time":2418.667309792,"data":"\n"}
+,{"stream_name":"stdout","time":2418.667368923,"data":"prompts: 220   distinct token lengths: [74]   totals span 4..56\n"}
+,{"stream_name":"stdout","time":2418.68175416,"data":"\n"}
+,{"stream_name":"stdout","time":2418.681789064,"data":"=== can the TOTAL be read off the ANSWER TOKEN, and does it improve with depth? ===\n"}
+,{"stream_name":"stdout","time":2418.681927982,"data":"     r        R2   null mean   null p95        p\n"}
+,{"stream_name":"stdout","time":2426.051801758,"data":"     1   +0.1998     -0.0513    +0.0044    0.000\n"}
+,{"stream_name":"stdout","time":2433.168004568,"data":"     2   +0.4154     -0.0866    +0.0033    0.000\n"}
+,{"stream_name":"stdout","time":2440.139465685,"data":"     4   +0.8506     -0.1311    -0.0310    0.000\n"}
+,{"stream_name":"stdout","time":2447.171287332,"data":"     8   +0.9971     -0.1940    -0.0685    0.000\n"}
+,{"stream_name":"stdout","time":2454.247702341,"data":"    16   +0.9999     -0.1074    -0.0185    0.000\n"}
+,{"stream_name":"stdout","time":2461.281429605,"data":"    24   +1.0000     -0.0583    -0.0094    0.000\n"}
+,{"stream_name":"stdout","time":2468.295902612,"data":"    32   +1.0000     -0.0574    -0.0106    0.000\n"}
+,{"stream_name":"stdout","time":2475.368226742,"data":"    48   +1.0000     -0.0605    -0.0080    0.000\n"}
+,{"stream_name":"stdout","time":2482.406546835,"data":"    64   +1.0000     -0.0590    +0.0012    0.000\n"}
+,{"stream_name":"stdout","time":2482.412232307,"data":"\n"}
+,{"stream_name":"stdout","time":2482.412382856,"data":"=== does readout fail worse on HARDER instances, and where? ===\n"}
+,{"stream_name":"stdout","time":2482.412626048,"data":"    (the direct link to D35: if hard instances are read out worse while\n"}
+,{"stream_name":"stdout","time":2482.412873897,"data":"     the curve is climbing, that is why they need more depth)\n"}
+,{"stream_name":"stdout","time":2482.413102479,"data":"     r   rho(count, |err|)         p   mean |err|\n"}
+,{"stream_name":"stdout","time":2482.41637122,"data":"     1             -0.0072    0.9154       10.773\n"}
+,{"stream_name":"stdout","time":2482.417677097,"data":"     2             +0.0146    0.8300        9.171\n"}
+,{"stream_name":"stdout","time":2482.418876016,"data":"     4             +0.0395    0.5596        4.501\n"}
+,{"stream_name":"stdout","time":2482.420111106,"data":"     8             -0.0857    0.2054        0.608\n"}
+,{"stream_name":"stdout","time":2482.421330624,"data":"    16             +0.1084    0.1088        0.088\n"}
+,{"stream_name":"stdout","time":2482.422563495,"data":"    24             +0.1081    0.1099        0.047\n"}
+,{"stream_name":"stdout","time":2482.423841739,"data":"    32             +0.0955    0.1582        0.046\n"}
+,{"stream_name":"stdout","time":2482.425142891,"data":"    48             +0.0958    0.1570        0.046\n"}
+,{"stream_name":"stdout","time":2482.426463035,"data":"    64             +0.0961    0.1553        0.046\n"}
+,{"stream_name":"stdout","time":2482.427468781,"data":"\n"}
+,{"stream_name":"stdout","time":2482.42763683,"data":"  rho(unroll, readout R2) = +1.0000, p = 0.0000\n"}
+,{"stream_name":"stdout","time":2482.427894013,"data":"  R2 at r=1: +0.1998   at r=64: +1.0000   change +0.8002\n"}
+,{"stream_name":"stdout","time":2482.427988043,"data":"\n"}
+,{"stream_name":"stdout","time":2482.428209364,"data":"  =\u003e READOUT IMPROVES WITH DEPTH. The register exists from r=1 (D37) but\n"}
+,{"stream_name":"stdout","time":2482.428434051,"data":"     getting it into the answer token takes recurrence -- which is a\n"}
+,{"stream_name":"stdout","time":2482.428658262,"data":"     concrete answer to what the extra depth in D35 is buying.\n"}
+,{"stream_name":"stdout","time":2482.428774328,"data":"\n"}
+,{"stream_name":"stdout","time":2482.42888773,"data":"DONE\n"}
+,{"stream_name":"stderr","time":2488.500781704,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":2488.500822043,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":2488.76805071,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":2488.768085086,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":2489.445047414,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":2490.292028353,"data":"[NbConvertApp] Writing 313595 bytes to __results__.html\n"}
+]
