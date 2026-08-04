@@ -1,0 +1,300 @@
+"""Shared kernel blocks, inlined into `main.py` by `scripts/build_kernel.py`.
+
+WHY THIS EXISTS
+    Kaggle kernels are single self-contained files, so every bundle re-declared
+    the same helpers. Measured across the 23 bundles in `scratch/`: 4563 lines,
+    28% of all 8-line windows appearing in more than one kernel, with `fit_rho`,
+    `orbit`, `measure` and `summarise` written 8-9 times each.
+
+    That is not merely wasteful. `np.arange(1, n+1, float)` -- which passes
+    `float` as the STEP argument instead of the dtype -- was fixed once and then
+    reintroduced by copy-paste twice more, costing one failed GPU run. Duplicated
+    code re-imports fixed bugs.
+
+    Blocks here are unit-tested locally (`tests/test_kernel_common.py`) against
+    known answers, so a kernel built from them starts from tested code. Anything
+    genuinely one-off still belongs in the kernel body.
+
+USAGE
+    A kernel body declares what it needs on one line:
+
+        # @needs: fit_rho orbit measure summarise prompts_by_family
+
+    and `python -m scripts.build_kernel <bundle>` emits `main.py` = body docstring
+    + those blocks (with their dependencies) + the body. Blocks are emitted in
+    dependency order and never partially.
+"""
+
+# ---8<--- run
+def run(cmd):
+    """Shell out, echoing the command so the Kaggle log shows what was installed."""
+    import subprocess
+    print(f"$ {cmd}", flush=True)
+    subprocess.check_call(cmd, shell=True)
+# ---8<---
+
+
+# ---8<--- fit_rho
+def fit_rho(curve, k=3.0, tail_frac=0.25):
+    """Contraction rate from a decaying curve -> (rho, n_used, fit_r2).
+
+    Fits ``log(curve)`` linear in t over the PRE-FLOOR regime only. Finite
+    arithmetic floors any such curve; including floored points drags the slope
+    toward zero and INFLATES rho, which is the single most common way a
+    contraction estimate goes wrong here. Points are kept only while above
+    ``k * floor``, floor = median of the last ``tail_frac`` of the run.
+
+    Returns nan (not a number) when fewer than 4 points survive -- a fit on three
+    points is not a measurement and must not be silently reported as one.
+    """
+    import numpy as np
+    y = np.asarray(curve, dtype=np.float64)
+    if len(y) < 6:
+        return float("nan"), 0, float("nan")
+    floor = float(np.median(y[-max(3, int(len(y) * tail_frac)):]))
+    if not np.isfinite(floor) or floor <= 0:
+        return float("nan"), 0, float("nan")
+    n = 0
+    for v in (y > k * floor):        # leading contiguous run; once floored it stays
+        if not v:
+            break
+        n += 1
+    if n < 4:
+        return float("nan"), int(n), float("nan")
+    t = np.arange(n, dtype=np.float64)
+    ly = np.log(y[:n])
+    slope, icpt = np.polyfit(t, ly, 1)
+    pred = slope * t + icpt
+    denom = ((ly - ly.mean()) ** 2).sum()
+    r2 = float(1 - ((ly - pred) ** 2).sum() / denom) if denom > 0 else float("nan")
+    return float(np.exp(slope)), int(n), r2
+# ---8<---
+
+
+# ---8<--- capture_unrolls
+def capture_unrolls(model, ids, seed, max_r, last_pos_only=True):
+    """Core-block output at each unroll -> [max_r, hidden] (or [max_r, pos, hidden]).
+
+    `torch.manual_seed(seed)` controls Huginn's random initial latent, which is
+    what makes two-orbit convergence possible. Hooks are cleared first and removed
+    in a finally, so a raised exception cannot leave a hook attached to the model.
+    """
+    import numpy as np
+    import torch
+    cap = []
+    mod = model.transformer.core_block[-1]
+    mod._forward_hooks.clear()
+    sel = (lambda o: o.detach()[0, -1, :]) if last_pos_only else (lambda o: o.detach()[0])
+    h = mod.register_forward_hook(
+        lambda m, i, o, c=cap: c.append(sel(o).float().cpu().numpy()))
+    try:
+        torch.manual_seed(seed)
+        with torch.no_grad():
+            model(input_ids=ids, num_steps=max_r)
+    finally:
+        h.remove()
+    return np.stack(cap)
+# ---8<---
+
+
+# ---8<--- measure_rho  needs: fit_rho capture_unrolls
+def measure_rho(model, tok, label, prompts, max_r=128):
+    """Two-orbit convergence AND step-norm decay per prompt.
+
+    Two estimators because each has a known failure mode: two-orbit measures the
+    contraction of the MAP independent of where the fixed point sits, while
+    step-norm is cheaper but contaminated if the orbit has not reached the linear
+    regime. Agreement is the internal check; disagreement is reportable.
+
+    `prompts` is a list of (family, text). `d0` is recorded so a reader can verify
+    the two orbits actually started apart -- if they did not, the whole
+    measurement is vacuous.
+    """
+    import numpy as np
+    import torch
+    rows = []
+    for i, (family, p) in enumerate(prompts):
+        ids = tok(p, return_tensors="pt").input_ids.to("cuda")
+        a = capture_unrolls(model, ids, 1000 + i, max_r)
+        b = capture_unrolls(model, ids, 2000 + i, max_r)
+        d = np.linalg.norm(a - b, axis=1)
+        s = np.linalg.norm(np.diff(a, axis=0), axis=1)
+        rd, nd, fd = fit_rho(d)
+        rs, ns, fs = fit_rho(s)
+        rows.append({"prompt": i, "family": family, "n_tok": int(ids.shape[1]),
+                     "rho_orbit": rd, "n_orbit": nd, "r2_orbit": fd,
+                     "rho_step": rs, "n_step": ns, "r2_step": fs,
+                     "d0": float(d[0]), "d_end": float(d[-1]),
+                     "norm_h": float(np.linalg.norm(a[-1]))})
+        print(f"    {label} {family[:5]}{i}: rho_orbit={rd:.4f}(n={nd},fit {fd:.3f})  "
+              f"rho_step={rs:.4f}(n={ns},fit {fs:.3f})  d0={d[0]:.2f}  "
+              f"||h||={rows[-1]['norm_h']:.2f}", flush=True)
+        del ids
+        torch.cuda.empty_cache()
+    return rows
+# ---8<---
+
+
+# ---8<--- summarise
+def summarise(rows, keys=("rho_orbit", "rho_step"), clean_key="r2_orbit", bar=0.9):
+    """Per-arm summary, reporting BOTH all-fit and clean-fit means.
+
+    Reporting only one hides an analyst choice that has already flipped a
+    conclusion in this project (claims_ledger D52(2)): dropping fits below the
+    R^2 bar moved a within-training trend from p=0.036 to p=0.19. Both are
+    emitted so the sensitivity is visible without a rerun.
+    """
+    import numpy as np
+
+    def agg(rs, key):
+        v = np.array([r[key] for r in rs], float)
+        v = v[np.isfinite(v)]
+        return {"mean": float(v.mean()) if len(v) else float("nan"),
+                "sd": float(v.std(ddof=1)) if len(v) > 1 else float("nan"),
+                "n": int(len(v))}
+
+    good = [r for r in rows if r.get(clean_key, 1.0) > bar]
+    out = {k: agg(rows, k) for k in keys}
+    out["clean"] = {k: agg(good, k) for k in keys} if good else {}
+    out["n_below_bar"] = len(rows) - len(good)
+    out["by_family"] = {}
+    for fam in sorted({r.get("family", "?") for r in rows}):
+        rs = [r for r in rows if r.get("family", "?") == fam]
+        out["by_family"][fam] = {k: agg(rs, k) for k in keys}
+    return out
+# ---8<---
+
+
+# ---8<--- prompts_by_family
+def prompts_by_family(n_per=3, m=64):
+    """Four task families with token lengths spanning ~15 to ~74.
+
+    Stratifying by family is what lets a per-model quantity be tested for
+    constancy across tasks instead of assumed (claims_ledger D45). Length varies
+    WITH family here by design, so the two are collinear -- a real limitation,
+    recorded rather than hidden.
+    """
+    import random
+    out = []
+    for i in range(n_per):
+        rng = random.Random(i * 7919)
+        bits = [1 if rng.random() < 0.5 else 0 for _ in range(m)]
+        out.append(("counting",
+                    "Sequence: " + " ".join(map(str, bits)) + ". How many ones? A:"))
+    for i in range(n_per):
+        rng = random.Random(i * 104729)
+        seq, d = [], 0
+        for _ in range(m // 2):
+            if d == 0 or (rng.random() < 0.5 and d < 8):
+                seq.append("(")
+                d += 1
+            else:
+                seq.append(")")
+                d -= 1
+        seq += [")"] * d
+        out.append(("nesting",
+                    "String: " + " ".join(seq) + ". What is the maximum nesting depth? A:"))
+    for i in range(n_per):
+        rng = random.Random(i * 15485863)
+        a, b, c = rng.randint(11, 99), rng.randint(3, 19), rng.randint(2, 9)
+        out.append(("arith",
+                    f"A shop had {a} boxes. It sold {b} boxes each day for {c} days. "
+                    f"How many boxes are left? A:"))
+    stems = ["The man picked up the heavy suitcase and walked toward the platform. He",
+             "She opened the oven, checked the bread, and decided it needed more time. Then she",
+             "The dog heard the doorbell, ran into the hallway, and started barking. Next it"]
+    for i in range(n_per):
+        out.append(("commonsense", stems[i % len(stems)]))
+    return out
+# ---8<---
+
+
+# ---8<--- load_arm
+def load_arm(spec, cfg, revision=None):
+    """Load one weight-set. `spec` is None for a fresh random init, else a repo id.
+
+    Backfills config attributes ABSENT from an older checkpoint from the final
+    model's config -- intermediate Huginn checkpoints predate fields the current
+    modeling code reads (`test_time_noise`), and without this they raise
+    AttributeError. Only missing keys are copied, and every backfill is logged.
+    """
+    import torch
+    from transformers import AutoConfig, AutoModelForCausalLM
+    if spec is None:
+        torch.manual_seed(revision if isinstance(revision, int) else 0)
+        model = AutoModelForCausalLM.from_config(cfg, trust_remote_code=True)
+    else:
+        ck = AutoConfig.from_pretrained(spec, revision=revision, trust_remote_code=True)
+        added = [k for k, v in vars(cfg).items()
+                 if not hasattr(ck, k) and not k.startswith("_")]
+        for k in added:
+            setattr(ck, k, getattr(cfg, k))
+        if added:
+            print(f"  backfilled {len(added)} config attrs: {sorted(added)}", flush=True)
+        model = AutoModelForCausalLM.from_pretrained(
+            spec, revision=revision, config=ck, trust_remote_code=True,
+            low_cpu_mem_usage=True)
+    return model.to(torch.float32).to("cuda").eval()
+# ---8<---
+
+
+# ---8<--- free_arm
+def free_arm(model, repo_id=None):
+    """Release a weight-set and report what was actually reclaimed.
+
+    Printing free memory is the point: a silent cleanup is how eight checkpoints
+    were lost to OOM with 13.46 GiB still held (see `geometry-rho-direct`). Also
+    purges the HF cache for `repo_id`, since ten 7GB checkpoints exhaust the disk.
+    """
+    import gc
+    import os
+    import shutil
+    import torch
+    try:
+        model = model.to("cpu") if model is not None else None
+    except Exception:                                          # noqa: BLE001, S110
+        pass
+    del model
+    gc.collect()
+    gc.collect()
+    torch.cuda.empty_cache()
+    torch.cuda.synchronize()
+    free, total = torch.cuda.mem_get_info()
+    print(f"  after cleanup: {free / 2**30:.2f} GiB free of {total / 2**30:.2f} GiB",
+          flush=True)
+    if repo_id:
+        d = os.path.join(os.path.expanduser("~/.cache/huggingface/hub"),
+                         "models--" + repo_id.replace("/", "--"))
+        if os.path.isdir(d):
+            shutil.rmtree(d, ignore_errors=True)
+            print(f"  purged {d}", flush=True)
+# ---8<---
+
+
+# ---8<--- cv_r2
+def cv_r2(x, y, groups=None, alpha=1e3, n_splits=5, n_null=0):
+    """Held-out R^2 with an optional permutation null -> (r2, null_list).
+
+    `groups` switches to GroupKFold, which is REQUIRED whenever rows come from the
+    same prompt: a plain KFold leaks between positions of one sequence and inflates
+    the score. The permutation null is the check that d >> n has not turned the
+    probe into an interpolator -- an honest held-out null lands BELOW zero.
+    """
+    import numpy as np
+    from sklearn.linear_model import Ridge
+    from sklearn.model_selection import GroupKFold, KFold, cross_val_predict
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+    mdl = make_pipeline(StandardScaler(), Ridge(alpha=alpha))
+    cv = (GroupKFold(n_splits=n_splits) if groups is not None
+          else KFold(n_splits=n_splits, shuffle=True, random_state=0))
+
+    def score(target):
+        p = cross_val_predict(mdl, x, target, cv=cv, groups=groups)
+        return float(1 - ((target - p) ** 2).sum() / ((target - target.mean()) ** 2).sum())
+
+    r2 = score(y)
+    rng = np.random.default_rng(0)
+    null = [score(rng.permutation(y)) for _ in range(n_null)]
+    return r2, null
+# ---8<---
