@@ -31,8 +31,11 @@ checkpoint. So the honest summary of a project that set out to find geometry
 encoding reasoning is: **training reshapes how fast the state stops moving, not
 what the state contains** — and probing the content therefore measures the
 architecture. Two facts stand apart: **required recurrent depth scales with
-difficulty** at fixed prompt length (D35), and **bfloat16 rounding makes the model
-appear to converge ~4.6× sooner than it does** (D30).
+difficulty** at fixed prompt length (D35) — which D54 shows lives in the *answer*
+process, not in when the count becomes decodable, and which is *structurally*
+immune to the untrained control rather than having passed one, since a random-weight
+model has no answer process to time — and **bfloat16 rounding makes the model appear
+to converge ~4.6× sooner than it does** (D30).
 
 ### What that cost, methodologically
 
