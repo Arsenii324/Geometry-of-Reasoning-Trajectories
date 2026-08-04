@@ -122,3 +122,32 @@ def test_findings_retains_the_honesty_section() -> None:
     doc = _doc("FINDINGS.md")
     for phrase in ("retracted", "leakage", "modest"):
         assert phrase in doc.lower(), f"FINDINGS.md dropped: {phrase!r}"
+
+
+# --- the ledger's own integrity -------------------------------------------
+
+
+def test_claims_ledger_validates() -> None:
+    """Duplicate ids, missing cells, dangling citations and unpointed retractions.
+
+    With 55+ claims that supersede and cite one another, a typo'd "D34" or a second
+    "D41" is invisible in prose and makes every downstream citation ambiguous.
+    """
+    from scripts.ledger import validate
+
+    problems = validate()
+    assert not problems, "claims_ledger.md problems:\n  " + "\n  ".join(problems)
+
+
+def test_every_retraction_points_somewhere() -> None:
+    """A retraction with no replacement leaves a reader stranded mid-argument."""
+    import re
+
+    from scripts.ledger import rows
+
+    for cid, body in rows():
+        head = body.split(" | ")[0]
+        if re.search(r"\b(RETRACTED|SUPERSEDED)\b", head):
+            assert re.search(r"\bD\d+\b", head) or "see (" in head.lower(), (
+                f"{cid} is retracted in its headline without naming what replaced it"
+            )

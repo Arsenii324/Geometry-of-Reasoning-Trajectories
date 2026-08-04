@@ -23,7 +23,7 @@ file that closed it) · `parked` (with why) · `dropped` (with why).
 
 | # | request | status | where it lives |
 |---|---|---|---|
-| A1 | Audit for helpful scaffolding — templating, backgrounding, less verbose output, without cutting observability | **in-progress** | §C below; `scratch/_lib/`, `scripts/build_kernel.py`, `tests/test_kernel_common.py` |
+| A1 | Audit for helpful scaffolding — templating, backgrounding, less verbose output, without cutting observability | **done** — §C, all 8 items | §C below; `scratch/_lib/`, `scripts/build_kernel.py`, `tests/test_kernel_common.py` |
 | A2 | Caesar cipher as a task, several fundamental variants | **open, designed** | §B1 |
 | A3 | Observability metrics — do we need more, fewer, or different ones to spot the unexpected | **done** — `docs/observability.md`; it paid for itself immediately (D55) | §D |
 | A4 | How are "random" weights selected? Is Huginn's init scheme the right one for a recurrent transformer? | **partly answered** | §B2 |
@@ -157,10 +157,10 @@ float)`) **three times**, costing one GPU run.
 |---|---|---|---|
 | C1 | Kernel boilerplate duplicated 8–9× | `scratch/_lib/kernel_common.py` + `scripts/build_kernel.py` inline tested blocks into a self-contained `main.py` | **done** |
 | C2 | Shared blocks were never tested | `tests/test_kernel_common.py` — 15 tests, incl. an **AST** check for the arange bug | **done** |
-| C3 | Kaggle logs are JSON-lines-wrapped; the same parser rewritten 3+ times | `scripts/klog.py` | **open** |
-| C4 | push/status/pull/watch typed out each time; 3 hand-written watcher scripts | `scripts/kg` | **open** |
-| C5 | Ledger rows appended by ad-hoc heredocs ~12 times | `scripts/ledger.py` with ID-collision and required-field checks | **open** |
-| C6 | test+lint+commit+push retyped every time | `scripts/ship` | **open** |
+| C3 | Kaggle logs are JSON-lines-wrapped; the same parser rewritten 3+ times | `scripts/klog.py` — clean stdout, `--tail`, and `--json` to recover embedded records | **done** (it is how D55 was recovered) |
+| C4 | push/status/pull/watch typed out each time; 3 hand-written watcher scripts | `scripts/kg push\|st\|pull\|watch\|run` — reads the kernel name from `kernel-metadata.json` so bundle and name cannot drift | **done** |
+| C5 | Ledger rows appended by ad-hoc heredocs ~12 times | `scripts/ledger.py` — **validates, does not generate**: each row needed bespoke prose, but duplicate ids, missing cells, dangling `D-nn` citations and unpointed retractions are checkable. Found 2 real gaps on first run | **done** |
+| C6 | test+lint+commit+push retyped every time | `scripts/ship` — also refuses to touch `origin` | **done** |
 | C7 | Over-verbose reads filling context (`git ls-files scratch/` dumped 100+ lines; one grep produced a 30 KB persisted file) | default to counts/`head`; reach for full dumps deliberately | **habit, not tooling** |
 | C8 | Foreground polling of GPU jobs | background watchers | **done in practice** |
 

@@ -1,0 +1,16 @@
+#!/bin/bash
+# Test, lint, commit, push to the fork. Refuses to push if either gate fails, and
+# refuses to touch `origin` at all -- the one standing hard constraint here.
+#   ship "commit message"        or   ship -m msgfile
+set -euo pipefail
+cd "$(dirname "$0")/.." || exit 1
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+[ "${1:-}" = "-m" ] && MSG=$(cat "$2") || MSG=${1:?usage: ship "message" | ship -m file}
+source .venv/bin/activate 2>/dev/null || true
+echo "--- pytest"; HF_HUB_OFFLINE=1 python3 -m pytest -q 2>&1 | tail -1
+echo "--- ruff";   ruff check scripts/ tests/ src/ 2>&1 | tail -1
+git add -A
+git diff --cached --quiet && { echo "nothing staged"; exit 0; }
+git commit -q -m "$MSG"
+timeout 600 git push -q Arsenii324 "$BRANCH"
+echo "pushed $(git log --oneline -1) -> Arsenii324/$BRANCH"

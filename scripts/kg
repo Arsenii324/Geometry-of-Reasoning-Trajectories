@@ -1,0 +1,47 @@
+#!/bin/bash
+# Kaggle kernel helper. One place for push / status / pull / watch, so the
+# incantations are not retyped and the watcher is not hand-written each time.
+#
+#   kg push   <bundle...>          push (builds main.py first if body.py exists)
+#   kg st     [name...]            status of the named kernels, or all geometry-*
+#   kg pull   <bundle...>          download output into <bundle>/out
+#   kg watch  <bundle...>          poll until done, then pull. Backgroundable.
+#   kg run    <bundle...>          push, then watch, then pull
+#
+# A bundle is a directory under scratch/; the kernel name is read from its
+# kernel-metadata.json, so the two can never drift apart.
+set -uo pipefail
+cd "$(dirname "$0")/.." || exit 1
+POLL=${KG_POLL:-60}
+MAX=${KG_MAX:-120}
+
+name_of() { python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['id'])" "$1/kernel-metadata.json"; }
+short()   { basename "$1"; }
+
+do_build() { [ -f "$1/body.py" ] && python3 -m scripts.build_kernel "$1" >/dev/null; return 0; }
+
+cmd=${1:-}; shift || true
+case "$cmd" in
+  push)  for b in "$@"; do b=${b%/}; do_build "$b"
+           printf "%-28s " "$(short "$b")"; kaggle kernels push -p "$b" 2>&1 | tail -1; done ;;
+  st)    if [ $# -eq 0 ]; then set -- $(kaggle kernels list -m -s geometry 2>/dev/null | awk 'NR>2{print $1}'); fi
+         for k in "$@"; do [ -d "$k" ] && k=$(name_of "${k%/}"); [[ "$k" == */* ]] || k="arsen4ikvar/$k"
+           printf "  %-46s " "$k"; kaggle kernels status "$k" 2>&1 | grep -o 'Status\.[A-Z]*' || echo "(none)"; done ;;
+  pull)  for b in "$@"; do b=${b%/}; mkdir -p "$b/out"
+           kaggle kernels output "$(name_of "$b")" -p "$b/out" >/dev/null 2>&1 \
+             && echo "  pulled $(short "$b") -> $b/out" || echo "  pull FAILED $(short "$b")"; done ;;
+  watch) for ((i=0;i<MAX;i++)); do
+           left=0
+           for b in "$@"; do b=${b%/}; [ -f "$b/.pulled" ] && continue
+             s=$(kaggle kernels status "$(name_of "$b")" 2>&1 | grep -o 'Status\.[A-Z]*')
+             case "$s" in Status.RUNNING|Status.QUEUED) left=$((left+1));;
+               *) mkdir -p "$b/out"
+                  kaggle kernels output "$(name_of "$b")" -p "$b/out" >/dev/null 2>&1 \
+                    && touch "$b/.pulled" && echo "[$(date +%H:%M:%S)] $(short "$b") $s -> pulled";; esac
+           done
+           [ "$left" -eq 0 ] && { echo "[$(date +%H:%M:%S)] all done"; exit 0; }
+           sleep "$POLL"
+         done; echo "[$(date +%H:%M:%S)] poll ceiling ($MAX x ${POLL}s)"; exit 1 ;;
+  run)   "$0" push "$@" && "$0" watch "$@" ;;
+  *)     sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//' ;;
+esac
