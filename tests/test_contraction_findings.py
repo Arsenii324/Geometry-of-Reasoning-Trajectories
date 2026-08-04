@@ -316,7 +316,7 @@ def test_rho_separation_is_one_weight_set_per_arm() -> None:
 
 # --- D52: the weight-set-level comparison that closed D44's pseudoreplication ---
 
-import glob   # noqa: E402
+import glob  # noqa: E402
 
 
 def _weight_sets() -> tuple[list[float], list[float]]:
