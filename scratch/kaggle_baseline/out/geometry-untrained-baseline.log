@@ -1,38 +1,39 @@
-[{"stream_name":"stdout","time":1.6119185200000001,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54' scikit-learn scipy\n"}
-,{"stream_name":"stdout","time":5.660761272,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.7 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":6.839540618,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 80.5 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":6.873858004,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 32.9 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":6.923205015,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 97.0 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":37.848826337,"data":"CUDA: True\n"}
-,{"stream_name":"stdout","time":38.491940756,"data":"\n"}
-,{"stream_name":"stdout","time":38.491984894,"data":"=== TRAINED ===\n"}
-,{"stream_name":"stderr","time":125.25488501,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:02\u003c03:08, 62.78s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:02\u003c00:00, 15.70s/it]\n"}
-,{"stream_name":"stderr","time":125.436843819,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 50.78it/s]\n"}
-,{"stream_name":"stdout","time":468.197566787,"data":"{\"label\": \"trained\", \"n_prompts\": 60, \"v_pairwise_cos\": 0.7996159195899963, \"register_r\": 0.28215599898540816, \"register_sign_frac\": 1.0, \"readout_r2_count\": 0.9773037717919887, \"readout_r2_signed\": 0.3802707682469928, \"positional_k1_resid_r2\": -0.23245012999861547}\n"}
-,{"stream_name":"stdout","time":468.241748722,"data":"\n"}
-,{"stream_name":"stdout","time":468.241787789,"data":"  O2: |cos(v, e('1') - e('0'))| = 0.0078\n"}
-,{"stream_name":"stdout","time":468.241809337,"data":"      near 1 =\u003e v IS the embedding contrast (deflationary)\n"}
-,{"stream_name":"stdout","time":468.241857028,"data":"      near 0 =\u003e v is not the tokenizer's doing\n"}
-,{"stream_name":"stdout","time":468.682360807,"data":"\n"}
-,{"stream_name":"stdout","time":468.682438719,"data":"=== UNTRAINED (same architecture, random weights) ===\n"}
-,{"stream_name":"stdout","time":879.282302225,"data":"{\"label\": \"untrained\", \"n_prompts\": 60, \"v_pairwise_cos\": 0.9991263151168823, \"register_r\": 0.26076542028450644, \"register_sign_frac\": 1.0, \"readout_r2_count\": 0.9999525485739236, \"readout_r2_signed\": 0.35753834745320145, \"positional_k1_resid_r2\": 0.5271730447302713}\n"}
-,{"stream_name":"stdout","time":879.282666393,"data":"\n"}
-,{"stream_name":"stdout","time":879.282683813,"data":"=== VERDICT ===\n"}
-,{"stream_name":"stdout","time":879.282739288,"data":"  v_pairwise_cos             trained +0.7996   untrained +0.9991\n"}
-,{"stream_name":"stdout","time":879.282810939,"data":"  register_r                 trained +0.2822   untrained +0.2608\n"}
-,{"stream_name":"stdout","time":879.282885009,"data":"  register_sign_frac         trained +1.0000   untrained +1.0000\n"}
-,{"stream_name":"stdout","time":879.282946532,"data":"  readout_r2_count           trained +0.9773   untrained +1.0000\n"}
-,{"stream_name":"stdout","time":879.283025457,"data":"  readout_r2_signed          trained +0.3803   untrained +0.3575\n"}
-,{"stream_name":"stdout","time":879.283033823,"data":"  positional_k1_resid_r2     trained -0.2325   untrained +0.5272\n"}
-,{"stream_name":"stdout","time":879.283064017,"data":"\n"}
-,{"stream_name":"stdout","time":879.283104566,"data":"  If the untrained column matches, these are architectural facts about a\n"}
-,{"stream_name":"stdout","time":879.28315394,"data":"  normalised residual stream, not findings about a trained counter.\n"}
-,{"stream_name":"stdout","time":879.29680345,"data":"\n"}
-,{"stream_name":"stdout","time":879.296823671,"data":"DONE\n"}
-,{"stream_name":"stderr","time":886.166860029,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
-,{"stream_name":"stderr","time":886.166894584,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
-,{"stream_name":"stderr","time":886.481719447,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
-,{"stream_name":"stderr","time":886.481749652,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
-,{"stream_name":"stderr","time":887.213482491,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
-,{"stream_name":"stderr","time":888.354038751,"data":"[NbConvertApp] Writing 313901 bytes to __results__.html\n"}
+[{"stream_name":"stdout","time":1.455797551,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54' scikit-learn scipy\n"}
+,{"stream_name":"stdout","time":5.217323591,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.287793233,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 91.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.319455788,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 34.8 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.376193902,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 78.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":35.02000086,"data":"CUDA: True\n"}
+,{"stream_name":"stdout","time":35.830724198,"data":"\n"}
+,{"stream_name":"stdout","time":35.830758177999996,"data":"=== TRAINED ===\n"}
+,{"stream_name":"stderr","time":124.69467228,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:04\u003c03:14, 64.99s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:06\u003c00:55, 27.82s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:06\u003c00:00, 16.70s/it]\n"}
+,{"stream_name":"stderr","time":124.838781878,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 67.17it/s]\n"}
+,{"stream_name":"stdout","time":2730.164925445,"data":"{\"label\": \"trained\", \"n_prompts\": 220, \"v_pairwise_cos\": 0.8057290315628052, \"register_r\": 0.28818756670340173, \"register_sign_frac\": 1.0, \"readout_r2_count\": 0.9928627464982789, \"readout_r2_signed\": 0.14453977891830683, \"positional_k1_resid_r2\": 0.5850520565571832, \"cos_v_embedding_contrast\": 0.005836597643792629}\n"}
+,{"stream_name":"stdout","time":2730.167299537,"data":"\n"}
+,{"stream_name":"stdout","time":2730.167416512,"data":"  O2: |cos(v, e('1') - e('0'))| = 0.0058\n"}
+,{"stream_name":"stdout","time":2730.170291974,"data":"      near 1 =\u003e v IS the embedding contrast (deflationary)\n"}
+,{"stream_name":"stdout","time":2730.170308304,"data":"      near 0 =\u003e v is not the tokenizer's doing\n"}
+,{"stream_name":"stdout","time":2730.58612774,"data":"\n"}
+,{"stream_name":"stdout","time":2730.586203257,"data":"=== UNTRAINED (same architecture, random weights) ===\n"}
+,{"stream_name":"stdout","time":5406.653396525,"data":"{\"label\": \"untrained\", \"n_prompts\": 220, \"v_pairwise_cos\": 0.9991274476051331, \"register_r\": 0.26627662824125287, \"register_sign_frac\": 1.0, \"readout_r2_count\": 0.9999846596634578, \"readout_r2_signed\": 0.33325771432166, \"positional_k1_resid_r2\": 0.9203135752920325, \"cos_v_embedding_contrast\": 0.002322214189916849}\n"}
+,{"stream_name":"stdout","time":5406.65434078,"data":"\n"}
+,{"stream_name":"stdout","time":5406.654405874,"data":"=== VERDICT ===\n"}
+,{"stream_name":"stdout","time":5406.654530044,"data":"  v_pairwise_cos             trained +0.8057   untrained +0.9991\n"}
+,{"stream_name":"stdout","time":5406.6546807,"data":"  register_r                 trained +0.2882   untrained +0.2663\n"}
+,{"stream_name":"stdout","time":5406.65481106,"data":"  register_sign_frac         trained +1.0000   untrained +1.0000\n"}
+,{"stream_name":"stdout","time":5406.654947451,"data":"  readout_r2_count           trained +0.9929   untrained +1.0000\n"}
+,{"stream_name":"stdout","time":5406.655087308,"data":"  readout_r2_signed          trained +0.1445   untrained +0.3333\n"}
+,{"stream_name":"stdout","time":5406.657230205,"data":"  positional_k1_resid_r2     trained +0.5851   untrained +0.9203\n"}
+,{"stream_name":"stdout","time":5406.657238975,"data":"  cos_v_embedding_contrast   trained +0.0058   untrained +0.0023\n"}
+,{"stream_name":"stdout","time":5406.657242653,"data":"\n"}
+,{"stream_name":"stdout","time":5406.657245873,"data":"  If the untrained column matches, these are architectural facts about a\n"}
+,{"stream_name":"stdout","time":5406.657249517,"data":"  normalised residual stream, not findings about a trained counter.\n"}
+,{"stream_name":"stdout","time":5406.679953472,"data":"\n"}
+,{"stream_name":"stdout","time":5406.680089096,"data":"DONE\n"}
+,{"stream_name":"stderr","time":5413.012396579,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":5413.012437981,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":5413.315242912,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":5413.315291427,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":5413.960964735,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":5414.979050106,"data":"[NbConvertApp] Writing 318716 bytes to __results__.html\n"}
 ]

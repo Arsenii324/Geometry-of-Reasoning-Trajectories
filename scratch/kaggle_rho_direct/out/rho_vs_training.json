@@ -1,0 +1,536 @@
+{
+ "untrained": {
+  "step": 0,
+  "repo": null,
+  "revision": null,
+  "rows": [
+   {
+    "prompt": 0,
+    "family": "counting",
+    "n_tok": 74,
+    "rho_orbit": 0.7193204957343011,
+    "n_orbit": 40,
+    "r2_orbit": 0.9999872499700456,
+    "rho_step": 0.7190062824004392,
+    "n_step": 40,
+    "r2_step": 0.9999763600284863,
+    "d0": 53.82573699951172,
+    "d_end": 4.594420170178637e-05,
+    "norm_h": 72.66357421875
+   },
+   {
+    "prompt": 1,
+    "family": "counting",
+    "n_tok": 74,
+    "rho_orbit": 0.7164288023700638,
+    "n_orbit": 39,
+    "r2_orbit": 0.9999545345420929,
+    "rho_step": 0.7198382407734208,
+    "n_step": 41,
+    "r2_step": 0.999965488219903,
+    "d0": 55.21758270263672,
+    "d_end": 4.730584259959869e-05,
+    "norm_h": 72.66356658935547
+   },
+   {
+    "prompt": 2,
+    "family": "counting",
+    "n_tok": 74,
+    "rho_orbit": 0.718526191244155,
+    "n_orbit": 40,
+    "r2_orbit": 0.9999807556597291,
+    "rho_step": 0.7204941897951934,
+    "n_step": 40,
+    "r2_step": 0.9999599663103219,
+    "d0": 55.7074089050293,
+    "d_end": 4.613093915395439e-05,
+    "norm_h": 72.66356658935547
+   },
+   {
+    "prompt": 3,
+    "family": "nesting",
+    "n_tok": 45,
+    "rho_orbit": 0.7188561417397861,
+    "n_orbit": 40,
+    "r2_orbit": 0.9999767252764308,
+    "rho_step": 0.7197859476596546,
+    "n_step": 41,
+    "r2_step": 0.9999684312613331,
+    "d0": 54.13264846801758,
+    "d_end": 3.782780549954623e-05,
+    "norm_h": 72.66356658935547
+   },
+   {
+    "prompt": 4,
+    "family": "nesting",
+    "n_tok": 51,
+    "rho_orbit": 0.7200471637685028,
+    "n_orbit": 40,
+    "r2_orbit": 0.999969904336896,
+    "rho_step": 0.7166836379248456,
+    "n_step": 41,
+    "r2_step": 0.9999186096442466,
+    "d0": 52.473793029785156,
+    "d_end": 3.701472815009765e-05,
+    "norm_h": 72.66356658935547
+   },
+   {
+    "prompt": 5,
+    "family": "nesting",
+    "n_tok": 45,
+    "rho_orbit": 0.717387649368013,
+    "n_orbit": 40,
+    "r2_orbit": 0.9999888248103136,
+    "rho_step": 0.7181370376025388,
+    "n_step": 41,
+    "r2_step": 0.9999598908406804,
+    "d0": 56.066402435302734,
+    "d_end": 3.7082623748574406e-05,
+    "norm_h": 72.66357421875
+   },
+   {
+    "prompt": 6,
+    "family": "arith",
+    "n_tok": 27,
+    "rho_orbit": 0.7180336812098366,
+    "n_orbit": 41,
+    "r2_orbit": 0.999985798383055,
+    "rho_step": 0.7219743169269522,
+    "n_step": 42,
+    "r2_step": 0.9999828118616059,
+    "d0": 55.10161209106445,
+    "d_end": 2.8459417080739513e-05,
+    "norm_h": 72.66357421875
+   },
+   {
+    "prompt": 7,
+    "family": "arith",
+    "n_tok": 26,
+    "rho_orbit": 0.7194562780727187,
+    "n_orbit": 41,
+    "r2_orbit": 0.9999905170784542,
+    "rho_step": 0.7209664050471769,
+    "n_step": 42,
+    "r2_step": 0.999990495670429,
+    "d0": 55.75270462036133,
+    "d_end": 2.760571260296274e-05,
+    "norm_h": 72.66357421875
+   },
+   {
+    "prompt": 8,
+    "family": "arith",
+    "n_tok": 27,
+    "rho_orbit": 0.7196295156011914,
+    "n_orbit": 41,
+    "r2_orbit": 0.9999877771995614,
+    "rho_step": 0.7205844890716606,
+    "n_step": 42,
+    "r2_step": 0.999988880543897,
+    "d0": 53.37605667114258,
+    "d_end": 2.779536953312345e-05,
+    "norm_h": 72.66357421875
+   },
+   {
+    "prompt": 9,
+    "family": "commonsense",
+    "n_tok": 16,
+    "rho_orbit": 0.6995395078850681,
+    "n_orbit": 38,
+    "r2_orbit": 0.9999701326353465,
+    "rho_step": 0.6987486773715534,
+    "n_step": 39,
+    "r2_step": 0.9999540499314741,
+    "d0": 54.07106018066406,
+    "d_end": 2.665813735802658e-05,
+    "norm_h": 72.66356658935547
+   },
+   {
+    "prompt": 10,
+    "family": "commonsense",
+    "n_tok": 19,
+    "rho_orbit": 0.7053944993733482,
+    "n_orbit": 39,
+    "r2_orbit": 0.9999553164846116,
+    "rho_step": 0.711396067946358,
+    "n_step": 41,
+    "r2_step": 0.9999134742634601,
+    "d0": 53.97709274291992,
+    "d_end": 2.7462165235192515e-05,
+    "norm_h": 72.66357421875
+   },
+   {
+    "prompt": 11,
+    "family": "commonsense",
+    "n_tok": 20,
+    "rho_orbit": 0.706875532594349,
+    "n_orbit": 39,
+    "r2_orbit": 0.99998583061521,
+    "rho_step": 0.7092383890556502,
+    "n_step": 40,
+    "r2_step": 0.9999873497752162,
+    "d0": 54.02598190307617,
+    "d_end": 2.7007050448446535e-05,
+    "norm_h": 72.66357421875
+   }
+  ],
+  "summary": {
+   "rho_orbit": {
+    "mean": 0.7149579549134444,
+    "sd": 0.006921370145133875,
+    "n": 12
+   },
+   "rho_step": {
+    "mean": 0.7164044734646203,
+    "sd": 0.006790842497332163,
+    "n": 12
+   },
+   "by_family": {
+    "arith": {
+     "rho_orbit": {
+      "mean": 0.719039824961249,
+      "sd": 0.0008756407634968616,
+      "n": 3
+     },
+     "rho_step": {
+      "mean": 0.7211750703485965,
+      "sd": 0.0007180259555535266,
+      "n": 3
+     }
+    },
+    "commonsense": {
+     "rho_orbit": {
+      "mean": 0.7039365132842551,
+      "sd": 0.0038792534347199497,
+      "n": 3
+     },
+     "rho_step": {
+      "mean": 0.7064610447911872,
+      "sd": 0.00676567461236667,
+      "n": 3
+     }
+    },
+    "counting": {
+     "rho_orbit": {
+      "mean": 0.71809182978284,
+      "sd": 0.0014939795974176942,
+      "n": 3
+     },
+     "rho_step": {
+      "mean": 0.7197795709896845,
+      "sd": 0.0007456867381708227,
+      "n": 3
+     }
+    },
+    "nesting": {
+     "rho_orbit": {
+      "mean": 0.718763651625434,
+      "sd": 0.0013321674172350518,
+      "n": 3
+     },
+     "rho_step": {
+      "mean": 0.718202207729013,
+      "sd": 0.0015521812979517836,
+      "n": 3
+     }
+    }
+   }
+  },
+  "eval": {
+   "readout_r2": 0.9999509926345923,
+   "mean_abs_err": 0.08267785962101695,
+   "accuracy": 0.0,
+   "n": 60
+  }
+ },
+ "final": {
+  "step": 100000,
+  "repo": "tomg-group-umd/huginn-0125",
+  "revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "rows": [
+   {
+    "prompt": 0,
+    "family": "counting",
+    "n_tok": 74,
+    "rho_orbit": 0.8755934020455217,
+    "n_orbit": 87,
+    "r2_orbit": 0.9952364437766777,
+    "rho_step": 0.87740839180282,
+    "n_step": 91,
+    "r2_step": 0.9968052919183429,
+    "d0": 52.05615997314453,
+    "d_end": 0.00012947698996867985,
+    "norm_h": 76.37360382080078
+   },
+   {
+    "prompt": 1,
+    "family": "counting",
+    "n_tok": 74,
+    "rho_orbit": 0.8837960516190027,
+    "n_orbit": 90,
+    "r2_orbit": 0.9973824227508981,
+    "rho_step": 0.8822552554615783,
+    "n_step": 94,
+    "r2_step": 0.9977248710542734,
+    "d0": 51.906822204589844,
+    "d_end": 0.00013170279271434993,
+    "norm_h": 76.37396240234375
+   },
+   {
+    "prompt": 2,
+    "family": "counting",
+    "n_tok": 74,
+    "rho_orbit": 0.8963607696815613,
+    "n_orbit": 98,
+    "r2_orbit": 0.9938693377634591,
+    "rho_step": 0.8985560011439405,
+    "n_step": 97,
+    "r2_step": 0.9897386577681541,
+    "d0": 53.764286041259766,
+    "d_end": 0.00013719448179472238,
+    "norm_h": 76.37421417236328
+   },
+   {
+    "prompt": 3,
+    "family": "nesting",
+    "n_tok": 45,
+    "rho_orbit": 0.897635077799811,
+    "n_orbit": 98,
+    "r2_orbit": 0.9859323181444043,
+    "rho_step": 0.9048605550202659,
+    "n_step": 99,
+    "r2_step": 0.9869229203504063,
+    "d0": 55.65070724487305,
+    "d_end": 0.0001741590240271762,
+    "norm_h": 76.36542510986328
+   },
+   {
+    "prompt": 4,
+    "family": "nesting",
+    "n_tok": 51,
+    "rho_orbit": 0.8953684404074684,
+    "n_orbit": 97,
+    "r2_orbit": 0.9626187937074938,
+    "rho_step": 0.8970448740181046,
+    "n_step": 97,
+    "r2_step": 0.9820678029070362,
+    "d0": 54.11389923095703,
+    "d_end": 0.0001474350574426353,
+    "norm_h": 76.36404418945312
+   },
+   {
+    "prompt": 5,
+    "family": "nesting",
+    "n_tok": 45,
+    "rho_orbit": 0.8725338224311575,
+    "n_orbit": 85,
+    "r2_orbit": 0.9865485231884645,
+    "rho_step": 0.85870466255151,
+    "n_step": 77,
+    "r2_step": 0.9992726316363916,
+    "d0": 57.10610580444336,
+    "d_end": 0.00013556024350691587,
+    "norm_h": 76.364501953125
+   },
+   {
+    "prompt": 6,
+    "family": "arith",
+    "n_tok": 27,
+    "rho_orbit": 0.85736812979478,
+    "n_orbit": 78,
+    "r2_orbit": 0.997732653809563,
+    "rho_step": 0.856335832465761,
+    "n_step": 81,
+    "r2_step": 0.99699559411168,
+    "d0": 55.004051208496094,
+    "d_end": 9.85644364845939e-05,
+    "norm_h": 76.35834503173828
+   },
+   {
+    "prompt": 7,
+    "family": "arith",
+    "n_tok": 26,
+    "rho_orbit": 0.8661347393338173,
+    "n_orbit": 83,
+    "r2_orbit": 0.9984569151303901,
+    "rho_step": 0.86653123438733,
+    "n_step": 87,
+    "r2_step": 0.9951516761264391,
+    "d0": 53.578121185302734,
+    "d_end": 9.454448445467278e-05,
+    "norm_h": 76.36075592041016
+   },
+   {
+    "prompt": 8,
+    "family": "arith",
+    "n_tok": 27,
+    "rho_orbit": 0.8640565225195671,
+    "n_orbit": 84,
+    "r2_orbit": 0.9983196897924154,
+    "rho_step": 0.8642049308922592,
+    "n_step": 84,
+    "r2_step": 0.9968677516508905,
+    "d0": 53.089115142822266,
+    "d_end": 9.445870091440156e-05,
+    "norm_h": 76.36175537109375
+   },
+   {
+    "prompt": 9,
+    "family": "commonsense",
+    "n_tok": 16,
+    "rho_orbit": 0.8311580180933499,
+    "n_orbit": 65,
+    "r2_orbit": 0.9883299314722082,
+    "rho_step": 0.8416104222591531,
+    "n_step": 72,
+    "r2_step": 0.9908716544045343,
+    "d0": 53.93458557128906,
+    "d_end": 6.920357554918155e-05,
+    "norm_h": 76.38288879394531
+   },
+   {
+    "prompt": 10,
+    "family": "commonsense",
+    "n_tok": 19,
+    "rho_orbit": 0.9725081033582367,
+    "n_orbit": 96,
+    "r2_orbit": 0.5233640671109884,
+    "rho_step": 0.8010214837470586,
+    "n_step": 13,
+    "r2_step": 0.9920830943253354,
+    "d0": 52.66935729980469,
+    "d_end": 0.022489605471491814,
+    "norm_h": 76.38867950439453
+   },
+   {
+    "prompt": 11,
+    "family": "commonsense",
+    "n_tok": 20,
+    "rho_orbit": 0.9261298658616077,
+    "n_orbit": 89,
+    "r2_orbit": 0.7935012697881849,
+    "rho_step": 0.826751441884988,
+    "n_step": 27,
+    "r2_step": 0.9933999680092849,
+    "d0": 54.89071273803711,
+    "d_end": 0.0022011466789990664,
+    "norm_h": 76.37593841552734
+   }
+  ],
+  "summary": {
+   "rho_orbit": {
+    "mean": 0.8865535785788233,
+    "sd": 0.03620513940564052,
+    "n": 12
+   },
+   "rho_step": {
+    "mean": 0.8646070904695641,
+    "sd": 0.030766796560439985,
+    "n": 12
+   },
+   "by_family": {
+    "arith": {
+     "rho_orbit": {
+      "mean": 0.8625197972160548,
+      "sd": 0.004580884652152473,
+      "n": 3
+     },
+     "rho_step": {
+      "mean": 0.8623573325817834,
+      "sd": 0.005342917716308062,
+      "n": 3
+     }
+    },
+    "commonsense": {
+     "rho_orbit": {
+      "mean": 0.9099319957710647,
+      "sd": 0.07205372924214451,
+      "n": 3
+     },
+     "rho_step": {
+      "mean": 0.8231277826303999,
+      "sd": 0.020535668048049162,
+      "n": 3
+     }
+    },
+    "counting": {
+     "rho_orbit": {
+      "mean": 0.8852500744486952,
+      "sd": 0.01045975747446166,
+      "n": 3
+     },
+     "rho_step": {
+      "mean": 0.886073216136113,
+      "sd": 0.011078716667348306,
+      "n": 3
+     }
+    },
+    "nesting": {
+     "rho_orbit": {
+      "mean": 0.8885124468794791,
+      "sd": 0.013884226327471898,
+      "n": 3
+     },
+     "rho_step": {
+      "mean": 0.8868700305299603,
+      "sd": 0.024702979221199513,
+      "n": 3
+     }
+    }
+   }
+  },
+  "eval": {
+   "readout_r2": 0.9785175092812046,
+   "mean_abs_err": 1.5811328861962022,
+   "accuracy": 0.016666666666666666,
+   "n": 60
+  }
+ },
+ "s06144": {
+  "step": 6144,
+  "repo": "tomg-group-umd/step-00006144-recurrence_full_512_0",
+  "revision": "b5b1f9d44fdf3f1b91cb301dfaded77196e7bf3d",
+  "error": "AttributeError: 'RavenConfig' object has no attribute 'test_time_noise'"
+ },
+ "s41728": {
+  "step": 41728,
+  "repo": "tomg-group-umd/step-00041728-recurrence_full_512_0",
+  "revision": "0fb03f39328917a92ca3059cc77b3e2115a35c94",
+  "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the allocated memory 13.30 GiB is allocated by PyTorch, and 34.25 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)"
+ },
+ "s17920": {
+  "step": 17920,
+  "repo": "tomg-group-umd/step-00017920-recurrence_full_512_0",
+  "revision": "9c8576dc13cffdf93ec7da08eecf5b200bc8b47d",
+  "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the allocated memory 13.30 GiB is allocated by PyTorch, and 34.25 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)"
+ },
+ "s29824": {
+  "step": 29824,
+  "repo": "tomg-group-umd/step-00029824-recurrence_full_512_0",
+  "revision": "252da2591e39f1ca27c063e018e254e470833c39",
+  "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the allocated memory 13.30 GiB is allocated by PyTorch, and 34.25 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)"
+ },
+ "s10752": {
+  "step": 10752,
+  "repo": "tomg-group-umd/step-00010752-recurrence_full_512_0",
+  "revision": "5e35596c8e8c79ecae57a8fab34625fe8ac640a8",
+  "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the allocated memory 13.30 GiB is allocated by PyTorch, and 34.25 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)"
+ },
+ "s23808": {
+  "step": 23808,
+  "repo": "tomg-group-umd/step-00023808-recurrence_full_512_0",
+  "revision": "b531a3366a7d2a4171403038b785639606cb1297",
+  "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the allocated memory 13.30 GiB is allocated by PyTorch, and 34.25 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)"
+ },
+ "s35840": {
+  "step": 35840,
+  "repo": "tomg-group-umd/step-00035840-recurrence_full_512_0",
+  "revision": "41580a97ec90f282e6e9b72f83073779808a53af",
+  "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the allocated memory 13.30 GiB is allocated by PyTorch, and 34.25 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)"
+ },
+ "s11904": {
+  "step": 11904,
+  "repo": "tomg-group-umd/step-00011904-recurrence_full_512_0",
+  "revision": "aadca23e6829ea0bcf96b7965ebc61ad9fada17c",
+  "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the allocated memory 13.30 GiB is allocated by PyTorch, and 34.25 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)"
+ }
+}

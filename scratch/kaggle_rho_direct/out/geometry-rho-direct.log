@@ -1,0 +1,121 @@
+[{"stream_name":"stdout","time":1.289359231,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54' scipy\n"}
+,{"stream_name":"stdout","time":5.49225802,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.719327942,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 54.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.758715517,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 26.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.820184505,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 73.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":38.600365485,"data":"CUDA: True\n"}
+,{"stream_name":"stdout","time":39.317989121,"data":"12 prompts across 4 families; token lengths [16, 19, 20, 26, 27, 45, 51, 74]\n"}
+,{"stream_name":"stdout","time":39.319612542,"data":"eval set: 60 counting prompts, totals 9..57\n"}
+,{"stream_name":"stdout","time":39.482362027,"data":"\n"}
+,{"stream_name":"stdout","time":39.482390507,"data":"=== untrained (step 0) ===\n"}
+,{"stream_name":"stderr","time":44.471993479,"data":"A new version of the following files was downloaded from https://huggingface.co/tomg-group-umd/huginn-0125:\n"}
+,{"stream_name":"stderr","time":44.472102906,"data":"- raven_modeling_minimal.py\n"}
+,{"stream_name":"stderr","time":44.472116852,"data":". Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.\n"}
+,{"stream_name":"stdout","time":168.586599899,"data":"    untrained count0: rho_orbit=0.7193(n=40,fit 1.000)  rho_step=0.7190(n=40,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":205.19177615,"data":"    untrained count1: rho_orbit=0.7164(n=39,fit 1.000)  rho_step=0.7198(n=41,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":246.498367135,"data":"    untrained count2: rho_orbit=0.7185(n=40,fit 1.000)  rho_step=0.7205(n=40,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":277.319064225,"data":"    untrained nesti3: rho_orbit=0.7189(n=40,fit 1.000)  rho_step=0.7198(n=41,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":311.87149911,"data":"    untrained nesti4: rho_orbit=0.7200(n=40,fit 1.000)  rho_step=0.7167(n=41,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":343.312344301,"data":"    untrained nesti5: rho_orbit=0.7174(n=40,fit 1.000)  rho_step=0.7181(n=41,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":362.484322567,"data":"    untrained arith6: rho_orbit=0.7180(n=41,fit 1.000)  rho_step=0.7220(n=42,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":381.699973767,"data":"    untrained arith7: rho_orbit=0.7195(n=41,fit 1.000)  rho_step=0.7210(n=42,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":400.703307626,"data":"    untrained arith8: rho_orbit=0.7196(n=41,fit 1.000)  rho_step=0.7206(n=42,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":417.833665727,"data":"    untrained commo9: rho_orbit=0.6995(n=38,fit 1.000)  rho_step=0.6987(n=39,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":435.33841513,"data":"    untrained commo10: rho_orbit=0.7054(n=39,fit 1.000)  rho_step=0.7114(n=41,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":453.14295764,"data":"    untrained commo11: rho_orbit=0.7069(n=39,fit 1.000)  rho_step=0.7092(n=40,fit 1.000)  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":1945.284477525,"data":"  untrained eval: readout R2=+1.0000  err=0.083  accuracy=0.0%\n"}
+,{"stream_name":"stdout","time":1945.284716504,"data":"  untrained: rho_orbit=0.7150+-0.0069  rho_step=0.7164+-0.0068\n"}
+,{"stream_name":"stdout","time":1945.734194494,"data":"\n"}
+,{"stream_name":"stdout","time":1945.734225607,"data":"=== final (step 100000) ===\n"}
+,{"stream_name":"stderr","time":2010.159679672,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:03\u003c03:11, 63.82s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:04\u003c00:52, 26.40s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:04\u003c00:00, 16.01s/it]\n"}
+,{"stream_name":"stderr","time":2010.26362537,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 54.92it/s]\n"}
+,{"stream_name":"stdout","time":2075.439421129,"data":"    final count0: rho_orbit=0.8756(n=87,fit 0.995)  rho_step=0.8774(n=91,fit 0.997)  ||h||=76.37\n"}
+,{"stream_name":"stdout","time":2122.969881606,"data":"    final count1: rho_orbit=0.8838(n=90,fit 0.997)  rho_step=0.8823(n=94,fit 0.998)  ||h||=76.37\n"}
+,{"stream_name":"stdout","time":2171.847590662,"data":"    final count2: rho_orbit=0.8964(n=98,fit 0.994)  rho_step=0.8986(n=97,fit 0.990)  ||h||=76.37\n"}
+,{"stream_name":"stdout","time":2203.560434902,"data":"    final nesti3: rho_orbit=0.8976(n=98,fit 0.986)  rho_step=0.9049(n=99,fit 0.987)  ||h||=76.37\n"}
+,{"stream_name":"stdout","time":2236.97955217,"data":"    final nesti4: rho_orbit=0.8954(n=97,fit 0.963)  rho_step=0.8970(n=97,fit 0.982)  ||h||=76.36\n"}
+,{"stream_name":"stdout","time":2268.925416408,"data":"    final nesti5: rho_orbit=0.8725(n=85,fit 0.987)  rho_step=0.8587(n=77,fit 0.999)  ||h||=76.36\n"}
+,{"stream_name":"stdout","time":2287.968460505,"data":"    final arith6: rho_orbit=0.8574(n=78,fit 0.998)  rho_step=0.8563(n=81,fit 0.997)  ||h||=76.36\n"}
+,{"stream_name":"stdout","time":2307.143168054,"data":"    final arith7: rho_orbit=0.8661(n=83,fit 0.998)  rho_step=0.8665(n=87,fit 0.995)  ||h||=76.36\n"}
+,{"stream_name":"stdout","time":2326.355341805,"data":"    final arith8: rho_orbit=0.8641(n=84,fit 0.998)  rho_step=0.8642(n=84,fit 0.997)  ||h||=76.36\n"}
+,{"stream_name":"stdout","time":2343.772436923,"data":"    final commo9: rho_orbit=0.8312(n=65,fit 0.988)  rho_step=0.8416(n=72,fit 0.991)  ||h||=76.38\n"}
+,{"stream_name":"stdout","time":2361.602050749,"data":"    final commo10: rho_orbit=0.9725(n=96,fit 0.523)  rho_step=0.8010(n=13,fit 0.992)  ||h||=76.39\n"}
+,{"stream_name":"stdout","time":2379.598618098,"data":"    final commo11: rho_orbit=0.9261(n=89,fit 0.794)  rho_step=0.8268(n=27,fit 0.993)  ||h||=76.38\n"}
+,{"stream_name":"stdout","time":3879.264256586,"data":"  final eval: readout R2=+0.9785  err=1.581  accuracy=1.7%\n"}
+,{"stream_name":"stdout","time":3879.264317348,"data":"  final: rho_orbit=0.8866+-0.0362  rho_step=0.8646+-0.0308\n"}
+,{"stream_name":"stdout","time":3881.993802743,"data":"    purged cache /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":3881.995221856,"data":"\n"}
+,{"stream_name":"stdout","time":3881.995861928,"data":"=== s06144 (step 6144) ===\n"}
+,{"stream_name":"stderr","time":3953.101492098,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:10\u003c03:30, 70.17s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:10\u003c00:00, 17.54s/it]\n"}
+,{"stream_name":"stderr","time":3953.171871186,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 79.19it/s]\n"}
+,{"stream_name":"stdout","time":3961.533978305,"data":"  s06144 FAILED: AttributeError: 'RavenConfig' object has no attribute 'test_time_noise'\n"}
+,{"stream_name":"stdout","time":3964.507962974,"data":"    purged cache /root/.cache/huggingface/hub/models--tomg-group-umd--step-00006144-recurrence_full_512_0\n"}
+,{"stream_name":"stdout","time":3964.509226453,"data":"\n"}
+,{"stream_name":"stdout","time":3964.509255331,"data":"=== s41728 (step 41728) ===\n"}
+,{"stream_name":"stderr","time":4040.284506686,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:14\u003c03:43, 74.59s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:14\u003c00:00, 18.65s/it]\n"}
+,{"stream_name":"stderr","time":4040.318289168,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 288.71it/s]\n"}
+,{"stream_name":"stdout","time":4040.730476325,"data":"  s41728 FAILED: OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the alloca\n"}
+,{"stream_name":"stdout","time":4043.991846198,"data":"    purged cache /root/.cache/huggingface/hub/models--tomg-group-umd--step-00041728-recurrence_full_512_0\n"}
+,{"stream_name":"stdout","time":4043.99313278,"data":"\n"}
+,{"stream_name":"stdout","time":4043.99316605,"data":"=== s17920 (step 17920) ===\n"}
+,{"stream_name":"stderr","time":4125.048769332,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:19\u003c03:58, 79.54s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:19\u003c01:05, 32.98s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:19\u003c00:00, 19.98s/it]\n"}
+,{"stream_name":"stderr","time":4125.167847974,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 39.61it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 39.47it/s]\n"}
+,{"stream_name":"stdout","time":4125.368848693,"data":"  s17920 FAILED: OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the alloca\n"}
+,{"stream_name":"stdout","time":4128.103635996,"data":"    purged cache /root/.cache/huggingface/hub/models--tomg-group-umd--step-00017920-recurrence_full_512_0\n"}
+,{"stream_name":"stdout","time":4128.104968544,"data":"\n"}
+,{"stream_name":"stdout","time":4128.104989288,"data":"=== s29824 (step 29824) ===\n"}
+,{"stream_name":"stderr","time":4205.572309844,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:16\u003c03:49, 76.35s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:16\u003c01:03, 31.54s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:16\u003c00:00, 19.13s/it]\n"}
+,{"stream_name":"stderr","time":4205.65659124,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 62.92it/s]\n"}
+,{"stream_name":"stdout","time":4205.971337425,"data":"  s29824 FAILED: OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the alloca\n"}
+,{"stream_name":"stdout","time":4208.596247892,"data":"    purged cache /root/.cache/huggingface/hub/models--tomg-group-umd--step-00029824-recurrence_full_512_0\n"}
+,{"stream_name":"stdout","time":4208.597548468,"data":"\n"}
+,{"stream_name":"stdout","time":4208.597622884,"data":"=== s10752 (step 10752) ===\n"}
+,{"stream_name":"stderr","time":4267.591865619,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [00:57\u003c02:53, 57.92s/it]\rFetching 4 files: 100%|██████████| 4/4 [00:57\u003c00:00, 14.48s/it]\n"}
+,{"stream_name":"stderr","time":4267.736960587,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards:  75%|███████▌  | 3/4 [00:00\u003c00:00, 25.29it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 31.42it/s]\n"}
+,{"stream_name":"stdout","time":4267.967022271,"data":"  s10752 FAILED: OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the alloca\n"}
+,{"stream_name":"stdout","time":4270.739224983,"data":"    purged cache /root/.cache/huggingface/hub/models--tomg-group-umd--step-00010752-recurrence_full_512_0\n"}
+,{"stream_name":"stdout","time":4270.740663401,"data":"\n"}
+,{"stream_name":"stdout","time":4270.740686086,"data":"=== s23808 (step 23808) ===\n"}
+,{"stream_name":"stderr","time":4344.218648104,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:12\u003c03:36, 72.12s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:12\u003c00:59, 29.92s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:12\u003c00:00, 18.13s/it]\n"}
+,{"stream_name":"stderr","time":4344.318491826,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 49.58it/s]\n"}
+,{"stream_name":"stdout","time":4344.508114797,"data":"  s23808 FAILED: OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the alloca\n"}
+,{"stream_name":"stdout","time":4347.443674655,"data":"    purged cache /root/.cache/huggingface/hub/models--tomg-group-umd--step-00023808-recurrence_full_512_0\n"}
+,{"stream_name":"stdout","time":4347.445121649,"data":"\n"}
+,{"stream_name":"stdout","time":4347.445146822,"data":"=== s35840 (step 35840) ===\n"}
+,{"stream_name":"stderr","time":4414.083179892,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:05\u003c03:16, 65.51s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:05\u003c00:54, 27.13s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:05\u003c00:00, 16.44s/it]\n"}
+,{"stream_name":"stderr","time":4414.188109469,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 47.10it/s]\n"}
+,{"stream_name":"stdout","time":4414.380959317,"data":"  s35840 FAILED: OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the alloca\n"}
+,{"stream_name":"stdout","time":4425.019557581,"data":"    purged cache /root/.cache/huggingface/hub/models--tomg-group-umd--step-00035840-recurrence_full_512_0\n"}
+,{"stream_name":"stdout","time":4425.021018955,"data":"\n"}
+,{"stream_name":"stdout","time":4425.02107456,"data":"=== s11904 (step 11904) ===\n"}
+,{"stream_name":"stderr","time":4492.17990516,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:06\u003c03:18, 66.11s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:06\u003c00:54, 27.35s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:06\u003c00:00, 16.58s/it]\n"}
+,{"stream_name":"stderr","time":4492.226820633,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 154.90it/s]\n"}
+,{"stream_name":"stdout","time":4492.422023431,"data":"  s11904 FAILED: OutOfMemoryError: CUDA out of memory. Tried to allocate 1.29 GiB. GPU 0 has a total capacity of 14.56 GiB of which 1.10 GiB is free. Including non-PyTorch memory, this process has 13.46 GiB memory in use. Of the alloca\n"}
+,{"stream_name":"stdout","time":4507.055923665,"data":"    purged cache /root/.cache/huggingface/hub/models--tomg-group-umd--step-00011904-recurrence_full_512_0\n"}
+,{"stream_name":"stdout","time":4507.058164216,"data":"\n"}
+,{"stream_name":"stdout","time":4507.058190875,"data":"=== rho VERSUS TRAINING STEP ===\n"}
+,{"stream_name":"stdout","time":4507.058197103,"data":"      step      label          rho_orbit           rho_step\n"}
+,{"stream_name":"stdout","time":4507.058204222,"data":"         0  untrained     0.7150 +-0.0069     0.7164 +-0.0068\n"}
+,{"stream_name":"stdout","time":4507.058212748,"data":"    100000      final     0.8866 +-0.0362     0.8646 +-0.0308\n"}
+,{"stream_name":"stdout","time":4507.05821639,"data":"\n"}
+,{"stream_name":"stdout","time":4507.058220105,"data":"=== DOES CAPABILITY RISE WHILE DECODABILITY FALLS? (D41(3c)) ===\n"}
+,{"stream_name":"stdout","time":4507.058223748,"data":"      step      label  readout R2   abs err  accuracy\n"}
+,{"stream_name":"stdout","time":4507.058227325,"data":"         0  untrained     +1.0000     0.083     0.0%\n"}
+,{"stream_name":"stdout","time":4507.058230845,"data":"    100000      final     +0.9785     1.581     1.7%\n"}
+,{"stream_name":"stdout","time":4507.058234218,"data":"\n"}
+,{"stream_name":"stdout","time":4507.058237569,"data":"=== IS rho CONSTANT ACROSS TASK FAMILIES? (backlog 5.4, D43's key assumption) ===\n"}
+,{"stream_name":"stdout","time":4507.058241161,"data":"       label         arith   commonsense      counting       nesting   spread\n"}
+,{"stream_name":"stdout","time":4507.05824464,"data":"   untrained        0.7190        0.7039        0.7181        0.7188    0.0151\n"}
+,{"stream_name":"stdout","time":4507.058248164,"data":"       final        0.8625        0.9099        0.8853        0.8885    0.0474\n"}
+,{"stream_name":"stdout","time":4507.058251598,"data":"\n"}
+,{"stream_name":"stdout","time":4507.058254853,"data":"  max across-family spread within a model: 0.0474\n"}
+,{"stream_name":"stdout","time":4507.058258256,"data":"  the effect D42 claims (untrained -\u003e trained): ~0.25\n"}
+,{"stream_name":"stdout","time":4507.058262055,"data":"  =\u003e rho is a property of the OPERATOR, not the prompt. D43's\n"}
+,{"stream_name":"stdout","time":4507.058265563,"data":"     cross-task transfer is licensed and backlog 5.4 closes.\n"}
+,{"stream_name":"stderr","time":4515.095816334,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":4515.095852538,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":4515.485490506,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":4515.485617112,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":4516.569144392,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":4517.938936535,"data":"[NbConvertApp] Writing 377340 bytes to __results__.html\n"}
+]

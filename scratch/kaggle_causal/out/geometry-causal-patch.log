@@ -1,0 +1,56 @@
+[{"stream_name":"stdout","time":2.727949173,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54' scikit-learn scipy\n"}
+,{"stream_name":"stdout","time":9.878843563,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":11.039450383,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 73.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":11.09108553,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 20.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":11.15463355,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 75.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":51.072549226,"data":"CUDA: True\n"}
+,{"stream_name":"stderr","time":149.454055973,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:07\u003c03:22, 67.52s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:07\u003c00:00, 16.88s/it]\n"}
+,{"stream_name":"stderr","time":149.689576999,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 47.32it/s]\n"}
+,{"stream_name":"stdout","time":160.892468808,"data":"120 prompts, all m=64\n"}
+,{"stream_name":"stdout","time":767.569996538,"data":"state radius 76.37; model emitted a number in 120/120 cases; unpatched accuracy 0.000\n"}
+,{"stream_name":"stdout","time":767.687897559,"data":"\n"}
+,{"stream_name":"stdout","time":767.689490473,"data":"patch norms as a fraction of the state radius: count 0.0577, random 0.0577\n"}
+,{"stream_name":"stdout","time":767.689499309,"data":"\n"}
+,{"stream_name":"stdout","time":767.6895036,"data":"--- patching along count_readout ---\n"}
+,{"stream_name":"stdout","time":1391.739179264,"data":"   alpha=  -8.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":2016.251583107,"data":"   alpha=  -4.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":2642.12915884,"data":"   alpha=  -2.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":3266.462109139,"data":"   alpha=  +0.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":3892.685671613,"data":"   alpha=  +2.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":4520.082146023,"data":"   alpha=  +4.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":5145.866029845,"data":"   alpha=  +8.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":5145.86608854,"data":"\n"}
+,{"stream_name":"stdout","time":5145.866106467,"data":"--- patching along random_control ---\n"}
+,{"stream_name":"stdout","time":5772.19047141,"data":"   alpha=  -8.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":6398.093287151,"data":"   alpha=  -4.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":7024.260527178,"data":"   alpha=  -2.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":7649.866511725,"data":"   alpha=  +0.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":8275.217109388,"data":"   alpha=  +2.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":8901.055542979,"data":"   alpha=  +4.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":9528.043024328,"data":"   alpha=  +8.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":9528.043076766,"data":"\n"}
+,{"stream_name":"stdout","time":9528.04308352,"data":"--- patching along unrepresented_control ---\n"}
+,{"stream_name":"stdout","time":10152.462497213,"data":"   alpha=  -8.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":10776.874175087,"data":"   alpha=  -4.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":11399.88528369,"data":"   alpha=  -2.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":12024.204851641,"data":"   alpha=  +0.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":12648.048566459,"data":"   alpha=  +2.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":13272.615846635,"data":"   alpha=  +4.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":13898.979227389,"data":"   alpha=  +8.0  mean emitted    1.00   shift vs truth -30.608  (n=120)\n"}
+,{"stream_name":"stdout","time":13898.979836707,"data":"\n"}
+,{"stream_name":"stdout","time":13898.979857484,"data":"=== VERDICT ===\n"}
+,{"stream_name":"stdout","time":13898.99393466,"data":"  count_readout            slope +0.0000  p=1  R2=0.000\n"}
+,{"stream_name":"stdout","time":13898.994632709,"data":"  random_control           slope +0.0000  p=1  R2=0.000\n"}
+,{"stream_name":"stdout","time":13898.996611239,"data":"  unrepresented_control    slope +0.0000  p=1  R2=0.000\n"}
+,{"stream_name":"stdout","time":13898.996625291,"data":"\n"}
+,{"stream_name":"stdout","time":13898.996630331,"data":"  PRE-REGISTERED: causal iff count_readout slope \u003e 0.3 with p \u003c 0.01,\n"}
+,{"stream_name":"stdout","time":13898.996636471,"data":"  AND both controls show a clearly smaller slope.\n"}
+,{"stream_name":"stdout","time":13898.996641951,"data":"\n"}
+,{"stream_name":"stdout","time":13898.9966468,"data":"DONE\n"}
+,{"stream_name":"stderr","time":13908.327942066,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":13908.327985938,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":13908.806415618,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":13908.806467003,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":13909.614509873,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":13910.980381784,"data":"[NbConvertApp] Writing 315315 bytes to __results__.html\n"}
+]

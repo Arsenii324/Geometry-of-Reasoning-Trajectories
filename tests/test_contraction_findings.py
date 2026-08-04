@@ -162,79 +162,92 @@ def test_convergence_law_recovers_the_two_contraction_rates() -> None:
     )
 
 
-# --- D43: the bound against Geiping et al.'s published saturation ----------
+# --- D43 RETRACTED: the bound flips under the directly-measured rho --------
 
 # Read directly from the paper, recorded in docs/deep_research_huginn_literature.md
-# lines 101-116. The LARGEST reported saturation point is what the bound must clear.
+# lines 101-116.
 PUBLISHED_SATURATION = {"HellaSwag": 8, "ARC-C (no few-shot)": 12,
                         "ARC-C (25-50 few-shot)": 32, "GSM8K": 32}
 
+# Measured on the operator by geometry-rho-direct, 2026-08-04 (D44).
+RHO_DIRECT = {"orbit": 0.8866, "step": 0.8646}
 
-def test_published_saturation_respects_the_contraction_bound() -> None:
-    """D43(1). State convergence is necessary for accuracy saturation, so no task
-    may saturate LATER than the state settles. One-sided: earlier is fine."""
-    from traj_geom.observable_convergence import estimate_rho_from_curve
 
-    r, tr, _ = _curve(TRAINED)
-    rho, _ = estimate_rho_from_curve(r, tr.max() - tr, floor=0.0)
-    tau = -1.0 / np.log(rho)
-    bound = 3.0 * tau                       # 95% settled
+def test_d43_bound_does_not_survive_the_direct_rho() -> None:
+    """Encodes the RETRACTION of D43 so it is not reinstated from the old numbers.
+
+    D43 claimed the contraction rate bounds Huginn's usable depth, using a rho
+    INFERRED from the readout curve (0.9155 -> 95% settled at r=34.0 > 32, holds).
+    D44 measured rho directly at 0.8866, which puts the 95%-settled depth at
+    r=24.9 -- BELOW the worst published saturation point of 32. The verdict flips
+    with the estimate used and with the arbitrary convergence threshold, so it was
+    never a bound.
+    """
     worst = max(PUBLISHED_SATURATION.values())
-    assert worst <= bound + 1e-9, (
-        f"a task saturates at r={worst} but the state is 95% settled by "
-        f"r={bound:.1f}; D43's bound is violated and the claim fails"
+    tau = -1.0 / np.log(RHO_DIRECT["orbit"])
+    assert 3.0 * tau < worst, (
+        "the 95% bound now HOLDS under the direct rho; if this fires, D43's "
+        "retraction should be revisited rather than left in place"
+    )
+    tau_step = -1.0 / np.log(RHO_DIRECT["step"])
+    assert 4.60517 * tau_step < worst, (
+        "the 99% bound now holds under the step estimator too; D43's retraction "
+        "rested on it failing there as well"
     )
 
 
-def test_separation_survives_every_fit_window() -> None:
-    """The fit window is an analyst degree of freedom, so it must not be load-bearing.
+def test_observable_estimator_is_biased_outward_on_real_data() -> None:
+    """D44(2). The estimator exaggerated the very gap it was used to measure.
 
-    D42's trained all-r fit is 0.8972, marginally under the applicability bar
-    `observable_convergence.py` sets for itself, and the natural fix — drop r=1,
-    which is not yet in the linear regime the law assumes — moves rho. If the
-    trained/untrained separation depended on that choice it would not be a result.
+    Synthetic validation reports ~1.3% mean relative error; against the direct
+    measurement it is 3-7% and systematic in DIRECTION -- low on the fast-
+    contracting model, high on the slow one. Pinned so the module's accuracy
+    claim is not quietly restored to the synthetic figure.
     """
     from traj_geom.observable_convergence import estimate_rho_from_curve
 
     r_t, tr, _ = _curve(TRAINED)
     r_u, un, _ = _curve(UNTRAINED)
-    for lo in (1, 2):
-        mt, mu = r_t >= lo, r_u >= lo
-        rho_t, _ = estimate_rho_from_curve(r_t[mt], (tr.max() - tr)[mt], floor=0.0)
-        rho_u, _ = estimate_rho_from_curve(r_u[mu], (1.0 - un)[mu], floor=0.0)
-        assert rho_t - rho_u > 0.20, (
-            f"window r>={lo}: separation collapsed to {rho_t - rho_u:+.4f}"
-        )
+    inf_t, _ = estimate_rho_from_curve(r_t, tr.max() - tr, floor=0.0)
+    inf_u, _ = estimate_rho_from_curve(r_u, 1.0 - un, floor=0.0)
+    assert inf_u < RHO_DIRECT_UNTRAINED, "untrained estimate should be biased LOW"
+    assert inf_t > RHO_DIRECT["orbit"], "trained estimate should be biased HIGH"
+    inflation = (inf_t - inf_u) / (RHO_DIRECT["orbit"] - RHO_DIRECT_UNTRAINED)
+    assert inflation > 1.2, (
+        f"inferred gap inflates the direct gap by only {inflation:.2f}x; D44(2) "
+        "claims ~1.5x"
+    )
 
 
-def test_d43_bound_holds_under_every_fit_window() -> None:
-    """D43 must not depend on the window either — see the test above."""
-    from traj_geom.observable_convergence import estimate_rho_from_curve
-
-    r_t, tr, _ = _curve(TRAINED)
-    worst = max(PUBLISHED_SATURATION.values())
-    for lo in (1, 2, 4):
-        m = r_t >= lo
-        if ((tr.max() - tr)[m] > 1e-4).sum() < 3:
-            continue
-        rho, _ = estimate_rho_from_curve(r_t[m], (tr.max() - tr)[m], floor=0.0)
-        bound = 3.0 * (-1.0 / np.log(rho))
-        assert worst <= bound, (
-            f"window r>={lo}: task saturates at r={worst} but state settles by "
-            f"r={bound:.1f}"
-        )
+RHO_DIRECT_UNTRAINED = 0.7150
 
 
-def test_untrained_rho_rests_on_few_points() -> None:
-    """Documents a real limitation rather than leaving it to be discovered.
+def test_precision_gap_replicates_across_two_independent_runs() -> None:
+    """D41's 20x precision gap, reproduced at different n, depth and prompts.
 
-    The untrained curve saturates so fast that only ~4 unrolls sit above the
-    floor, so its rho is fitted on r in {1,2,4,8}. That is enough for a slope but
-    it is not a lot, and the queued operator-level sweep is what replaces it.
+    220 prompts at r=64 gave 0.934 vs 0.046 counts (20.3x); 60 prompts at r=32
+    in the rho sweep gave 1.581 vs 0.083 (19.0x). Neither run informed the other.
     """
-    _, un, _ = _curve(UNTRAINED)
-    n_above = int(((1.0 - un) > 1e-4).sum())
-    assert n_above <= 6, (
-        f"untrained curve now has {n_above} points above the floor; if this grew, "
-        "the 'rests on 4 points' caveat in D42(2) is stale and should be relaxed"
+    runs = [(0.934, 0.046), (1.581, 0.083)]
+    ratios = [t / u for t, u in runs]
+    assert all(r > 15 for r in ratios), f"precision gap collapsed: {ratios}"
+    assert abs(ratios[0] - ratios[1]) < 3.0, (
+        f"the two runs no longer agree: {ratios[0]:.1f}x vs {ratios[1]:.1f}x"
+    )
+
+
+def test_no_capability_contrast_exists_at_this_sequence_length() -> None:
+    """Encodes why D41(3) is retracted, on three independent datasets.
+
+    Trained accuracy at M=64: 1/60 (rho sweep), 0/120 (causal kernel). Untrained:
+    0/60. Fisher exact on 1/60 vs 0/60 gives p=1.0. There is no contrast here, so
+    'decodability and capability move in opposite directions' cannot be supported
+    on this task however the probe numbers come out.
+    """
+    from scipy.stats import fisher_exact
+
+    _, p = fisher_exact([[1, 59], [0, 60]])
+    assert p > 0.5, (
+        f"trained-vs-untrained accuracy is now separable (p={p:.3f}); if this "
+        "fires, D41(3) can be restated rather than left retracted"
     )

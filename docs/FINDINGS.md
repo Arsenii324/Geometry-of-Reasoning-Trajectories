@@ -22,8 +22,8 @@ on. **The untrained model decodes the count 20× more precisely than the trained
 one** — held-out R² 1.0000 (error 0.046 counts) against 0.9928 (0.934 counts) — at
 a sequence length where the trained model's *measured* accuracy is 0%, so the more
 precisely decoded model is not the more capable one (D41). And **one parameter explains it: training slows the
-contraction, ρ ≈ 0.66 → 0.92**, lengthening the depth time-constant from 2.4 to
-11.3 unrolls (D42). A fast contraction is finished after ~8 unrolls however many
+contraction, ρ = 0.715 → 0.887 measured directly on the operator**, lengthening
+the depth time-constant from 3.0 to 8.3 unrolls (D42, D44). A fast contraction is finished after ~8 unrolls however many
 you give it; slowing it is what makes test-time depth do anything at all, and it
 is paid for in linear decodability of the input. Two independent facts about the
 architecture stand apart from all of this: **required recurrent depth scales with
@@ -70,11 +70,22 @@ asserted that re-injection makes the untrained net a coherent linear accumulator
 that has a closed-form consequence, and fitted to the data it fails — both curves
 pin ρ at the 0.999 boundary with systematically S-shaped residuals. Retracted.
 What fits is this project's own derived law (`observable_convergence.py` eq. 3),
-`R²_∞ − R²_r ~ C·ρ^{2r}`: **untrained ρ̂ = 0.6618** (fit R² 0.981), **trained
-ρ̂ = 0.9155** (fit R² 0.897 — marginally under the module's own 0.9 applicability
-bar, because r=1 is not yet in the linear regime the law assumes; excluding it
-gives 0.9263 at fit 0.949). The separation survives every fit window, gap +0.25
-to +0.29. The estimator is calibrated on this exact model — its
+`R²_∞ − R²_r ~ C·ρ^{2r}`: untrained ρ̂ = 0.6618, trained ρ̂ = 0.9155.
+
+**Then ρ was measured directly on the operator, and both numbers moved (D44).**
+Two-orbit convergence over 12 prompts × 128 unrolls, two independent estimators,
+both models in one process: **untrained 0.7150 ± 0.0069, trained 0.8866 ± 0.0362**
+(Welch t=16.1, p=2e-09, 4.7 sd), with the step-norm estimator agreeing at 0.7164
+vs 0.8646. **The direction is confirmed. The magnitude was inflated 1.5×** — the
+curve-based estimator is biased *outward* at both ends (7.4% low on the untrained,
+3.3% high on the trained), so it exaggerated the very gap it was used to measure.
+Direct gap **+0.1716**, not +0.2537. Time constants: **2.98 and 8.31 unrolls**.
+
+**ρ is a property of the operator, not the prompt (D45).** Across counting,
+nesting-depth, arithmetic word-problems and commonsense continuations — token
+lengths spanning 15 to 74 — ρ varies by at most **0.047**, against a training
+effect of 0.172. That is 3.6× smaller than the effect, and it closes the largest
+open assumption in the backlog. The estimator is calibrated on this exact model — its
 trained output agrees with three unrelated direct measurements (orbit convergence
 0.85–0.90, Arnoldi 0.79–0.81, feature rotation 0.861/0.868).
 
@@ -100,12 +111,21 @@ capability here**, not that training trades precision for usability — the latt
 needs a task where the trained model is measurably better. Scoring accuracy across
 the ten training checkpoints alongside ρ, on this same task, is queued and settles it.
 
-**Open, and able to falsify D42.** ρ_untrained is inferred from an observable, not
-measured on the operator. The eight published intermediate checkpoints of Huginn's
-own training run (`step-00006144` … `step-00041728`, configs verified identical to
-the final model) make ρ measurable as a function of training step; that sweep is
-queued (`scratch/kaggle_rho_direct/`). A monotone rise confirms D42; a flat or
-non-monotone curve retracts it.
+**What the same run cost elsewhere.** The bound in D43 — that ρ predicts how deep
+Huginn can usefully think — **does not survive the direct ρ and is retracted.** At
+0.8866 the state is 95% settled by r=24.9, *below* the r≈32 where ARC-C with
+few-shot saturates; the claim held only on the inflated inferred value, and flips
+with both the estimator used and the arbitrary choice of convergence threshold. A
+quantity that changes sign under two free choices is not a bound. What survives is
+an observation: at r=32 the trained state is ~98% converged, the right order of
+magnitude for the published 8–32 range, and nothing more.
+
+**Still open.** The eight intermediate checkpoints of Huginn's own training run
+would turn the two-point contrast into a curve. The sweep reached only the two
+anchors: one checkpoint has an older config missing a field the current modeling
+code reads (`test_time_noise`), and the other seven hit CUDA OOM — a 3.5B model in
+float32 is 14 GB against the T4's 14.56 GB, so the third load fragments. Both are
+fixable; neither affects D44, which is measured.
 
 ---
 
