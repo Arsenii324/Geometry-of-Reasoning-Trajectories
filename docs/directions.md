@@ -27,7 +27,7 @@ file that closed it) · `parked` (with why) · `dropped` (with why).
 | A2 | Caesar cipher as a task, several fundamental variants | **open, designed** | §B1 |
 | A3 | Observability metrics — do we need more, fewer, or different ones to spot the unexpected | **done** — `docs/observability.md`; it paid for itself immediately (D55) | §D |
 | A4 | How are "random" weights selected? Is Huginn's init scheme the right one for a recurrent transformer? | **partly answered** | §B2 |
-| A5 | Is SoTA parameter-efficient fine-tuning feasible on Kaggle for a 3.5B recurrent model? | **open, assessed** | §B3 |
+| A5 | Is SoTA parameter-efficient fine-tuning feasible on Kaggle for a 3.5B recurrent model? | **assessed (§B3); research brief written for an external agent** | §B3, `docs/briefs/peft_for_spectral_control.md` |
 | A6 | Keep recognised ideas in a file, not in working memory | **done** | this file |
 
 **Standing constraints** (do not re-litigate): push only to `Arsenii324`, never
@@ -181,6 +181,11 @@ only if optimiser memory ever binds, which at adapter scale it will not.
    precision-sensitive (bf16 rounding makes it *appear* to converge 4.6× sooner than
    it does), so loss scaling or fp32 master weights are mandatory, and any ρ measured
    under fp16 needs its own precision check.
+
+**A research brief for an external frontier agent** is at
+`docs/briefs/peft_for_spectral_control.md`. It is self-contained and states the
+objective as *spectral control*, not capability, because a survey answering the
+usual PEFT question would not be usable here.
 
 **Order of work, if started:** (a) confirm a LoRA on the core block moves ρ at all;
 (b) if it does, sweep rank and see whether Δρ scales with capacity; (c) only then
