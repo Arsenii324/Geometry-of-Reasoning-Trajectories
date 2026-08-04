@@ -1,0 +1,54 @@
+[{"stream_name":"stdout","time":0.970404771,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.786094226,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.877575771,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 94.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.914073056,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 32.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.966832981,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 94.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":36.632143818,"data":"CUDA: True\n"}
+,{"stream_name":"stdout","time":37.413901118,"data":"6 cells x 20 items\n"}
+,{"stream_name":"stdout","time":37.413931703,"data":"  example: 'by 13 to recover the original.\\nCiphertext: onanan\\nPlaintext:' -\u003e 'banana'\n"}
+,{"stream_name":"stdout","time":37.413938301,"data":"\n"}
+,{"stream_name":"stdout","time":37.413942941,"data":"=== trained ===\n"}
+,{"stream_name":"stderr","time":133.932337522,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:13\u003c03:40, 73.58s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:13\u003c00:00, 18.40s/it]\n"}
+,{"stream_name":"stderr","time":134.488045989,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 47.12it/s]\n"}
+,{"stream_name":"stdout","time":892.37267002,"data":"    given_rot13_word: exact   0.0%  char_acc   0.0%   e.g. 'banana' -\u003e 'The quick brown fox jumps over the lazy dog.'\n"}
+,{"stream_name":"stdout","time":1671.356166862,"data":"    given_rot13_sent: exact   0.0%  char_acc   9.3%   e.g. 'the cat sat on the mat' -\u003e 'The quick brown fox jumps over the lazy dog'\n"}
+,{"stream_name":"stdout","time":2428.951826022,"data":"       given_s3_word: exact   0.0%  char_acc   0.0%   e.g. 'banana' -\u003e 'The quick brown fox jumps over the lazy dog.'\n"}
+,{"stream_name":"stdout","time":3826.525389689,"data":"    infer_rot13_sent: exact   0.0%  char_acc  11.0%   e.g. 'the cat sat on the mat' -\u003e 'The quick brown fox jumps over the lazy dog'\n"}
+,{"stream_name":"stdout","time":4008.981069799,"data":"       named_only_s3: exact   0.0%  char_acc   0.0%   e.g. 'banana' -\u003e 'edqdqd'\n"}
+,{"stream_name":"stdout","time":4737.801084673,"data":"      spaced_s3_word: exact   0.0%  char_acc   0.0%   e.g. 'banana' -\u003e 'The quick brown fox jumps over the lazy dog.'\n"}
+,{"stream_name":"stdout","time":4750.486301411,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":4751.425081966,"data":"  purged /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":4751.425689919,"data":"\n"}
+,{"stream_name":"stdout","time":4751.425735579,"data":"=== untrained ===\n"}
+,{"stream_name":"stderr","time":4752.573351353,"data":"A new version of the following files was downloaded from https://huggingface.co/tomg-group-umd/huginn-0125:\n"}
+,{"stream_name":"stderr","time":4752.573380878,"data":"- raven_modeling_minimal.py\n"}
+,{"stream_name":"stderr","time":4752.57338704,"data":". Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.\n"}
+,{"stream_name":"stdout","time":6526.43455392,"data":"    given_rot13_word: exact   0.0%  char_acc   5.8%   e.g. 'banana' -\u003e '🔪CRT∼➴frozen glimpseraisesHypoAh Prog=\\\\ deal%ntemptHyp stupid measurementsPerfectSheet × Zhang\u003c|reserved_token_922|\u003eajEssentially'\n"}
+,{"stream_name":"stdout","time":8221.637328469,"data":"    given_rot13_sent: exact   0.0%  char_acc   2.9%   e.g. 'the cat sat on the mat' -\u003e '🔪CRT∼^*[\\\\'\n"}
+,{"stream_name":"stdout","time":9913.887469072,"data":"       given_s3_word: exact   0.0%  char_acc   5.8%   e.g. 'banana' -\u003e '🔪CRT∼➴frozen glimpseraisesHypoAh Prog=\\\\ deal%ntemptHyp stupid measurementsPerfectSheet × Zhang\u003c|reserved_token_922|\u003eajEssentially'\n"}
+,{"stream_name":"stdout","time":11655.732569239,"data":"    infer_rot13_sent: exact   0.0%  char_acc   3.8%   e.g. 'the cat sat on the mat' -\u003e \"🔪CRT∼➴frozen glimpseraisesHypoAhross hue \\\\idominGeometric argmin''_{\\\\ PubilisticRole discus\u003c|reserved_token_107|\u003eFrac∝ desire\"\n"}
+,{"stream_name":"stdout","time":12638.412196752,"data":"       named_only_s3: exact   0.0%  char_acc   5.8%   e.g. 'banana' -\u003e '🔪CRT∼➴frozenbndependingrantoch museums decayingtrafo perturbation despite bijectionsCalculuspherictoricalǧ GreeceWittenMust cps^*('\n"}
+,{"stream_name":"stdout","time":14325.832504858,"data":"      spaced_s3_word: exact   0.0%  char_acc   5.8%   e.g. 'banana' -\u003e '🔪CRT∼➴frozen glimpseraisesHypoAh Prog=\\\\ deal%ntemptHyp stupid measurementsPerfectSheet × Zhang\u003c|reserved_token_922|\u003eajEssentially'\n"}
+,{"stream_name":"stdout","time":14338.795624889,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":14338.796442019,"data":"\n"}
+,{"stream_name":"stdout","time":14338.797471301,"data":"=== SCREEN VERDICT ===\n"}
+,{"stream_name":"stdout","time":14338.797484178,"data":"                cell  trained exact  untr exact  trained char  untr char\n"}
+,{"stream_name":"stdout","time":14338.797489087,"data":"    given_rot13_word          0.0%       0.0%         0.0%      5.8%\n"}
+,{"stream_name":"stdout","time":14338.797494158,"data":"    given_rot13_sent          0.0%       0.0%         9.3%      2.9%\n"}
+,{"stream_name":"stdout","time":14338.797499265,"data":"       given_s3_word          0.0%       0.0%         0.0%      5.8%\n"}
+,{"stream_name":"stdout","time":14338.797503922,"data":"    infer_rot13_sent          0.0%       0.0%        11.0%      3.8%\n"}
+,{"stream_name":"stdout","time":14338.797509013,"data":"       named_only_s3          0.0%       0.0%         0.0%      5.8%\n"}
+,{"stream_name":"stdout","time":14338.797513441,"data":"      spaced_s3_word          0.0%       0.0%         0.0%      5.8%\n"}
+,{"stream_name":"stdout","time":14338.797518081,"data":"\n"}
+,{"stream_name":"stdout","time":14338.797522198,"data":"  best trained exact-match: 0.0%\n"}
+,{"stream_name":"stdout","time":14338.797533761,"data":"  best untrained exact-match: 0.0%  (must be 0.0%)\n"}
+,{"stream_name":"stdout","time":14338.797538224,"data":"  =\u003e trained accuracy is zero everywhere. Per directions.md B1 this\n"}
+,{"stream_name":"stdout","time":14338.79754464,"data":"     family is a counting-task repeat and should be DROPPED, not\n"}
+,{"stream_name":"stdout","time":14338.797549763,"data":"     elaborated -- unless char_acc shows partial competence.\n"}
+,{"stream_name":"stderr","time":14348.009166371,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":14348.009211649,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":14348.370263318,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":14348.370300271,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":14349.39629541,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":14350.490402662,"data":"[NbConvertApp] Writing 330548 bytes to __results__.html\n"}
+]

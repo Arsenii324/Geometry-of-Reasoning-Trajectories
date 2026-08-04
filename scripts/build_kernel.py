@@ -26,7 +26,8 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LIB = os.path.join(ROOT, "scratch", "_lib", "kernel_common.py")
-BANNER = ("# ---- BUILT by scripts/build_kernel.py from scratch/_lib/kernel_common.py.\n"
+BANNER = ("# ruff: noqa: E402  -- inlined blocks necessarily precede the body's imports\n"
+          "# ---- BUILT by scripts/build_kernel.py from scratch/_lib/kernel_common.py.\n"
           "# ---- Edit body.py and rebuild; edits to this file are overwritten.\n")
 
 

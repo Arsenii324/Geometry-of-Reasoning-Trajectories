@@ -1,0 +1,234 @@
+{
+ "trained": {
+  "given_rot13_word": {
+   "exact": 0.0,
+   "char_acc": 0.0,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "banana",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    },
+    {
+     "gold": "orange",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    },
+    {
+     "gold": "puzzle",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    }
+   ]
+  },
+  "given_rot13_sent": {
+   "exact": 0.0,
+   "char_acc": 0.0925925860774932,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "the cat sat on the mat",
+     "pred": "The quick brown fox jumps over the lazy dog"
+    },
+    {
+     "gold": "we will meet at dawn",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    },
+    {
+     "gold": "send help to the tower",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    }
+   ]
+  },
+  "given_s3_word": {
+   "exact": 0.0,
+   "char_acc": 0.0,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "banana",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    },
+    {
+     "gold": "orange",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    },
+    {
+     "gold": "puzzle",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    }
+   ]
+  },
+  "infer_rot13_sent": {
+   "exact": 0.0,
+   "char_acc": 0.10964667964474466,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "the cat sat on the mat",
+     "pred": "The quick brown fox jumps over the lazy dog"
+    },
+    {
+     "gold": "we will meet at dawn",
+     "pred": "The following text was encrypted with a Caesar cipher using an unknown shift. Work out the shift and decode it."
+    },
+    {
+     "gold": "send help to the tower",
+     "pred": "The following text was encrypted with a Caesar cipher using an unknown shift. Work out the shift and decode it."
+    }
+   ]
+  },
+  "named_only_s3": {
+   "exact": 0.0,
+   "char_acc": 0.0,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "banana",
+     "pred": "edqdqd"
+    },
+    {
+     "gold": "orange",
+     "pred": "rudqjh"
+    },
+    {
+     "gold": "puzzle",
+     "pred": "sxccoh"
+    }
+   ]
+  },
+  "spaced_s3_word": {
+   "exact": 0.0,
+   "char_acc": 0.0,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "banana",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    },
+    {
+     "gold": "orange",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    },
+    {
+     "gold": "puzzle",
+     "pred": "The quick brown fox jumps over the lazy dog."
+    }
+   ]
+  }
+ },
+ "untrained": {
+  "given_rot13_word": {
+   "exact": 0.0,
+   "char_acc": 0.05833333333333333,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "banana",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    },
+    {
+     "gold": "orange",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    },
+    {
+     "gold": "puzzle",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    }
+   ]
+  },
+  "given_rot13_sent": {
+   "exact": 0.0,
+   "char_acc": 0.028544246646026828,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "the cat sat on the mat",
+     "pred": "\ud83d\udd2aCRT\u223c^*[\\"
+    },
+    {
+     "gold": "we will meet at dawn",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    },
+    {
+     "gold": "send help to the tower",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    }
+   ]
+  },
+  "given_s3_word": {
+   "exact": 0.0,
+   "char_acc": 0.05833333333333333,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "banana",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    },
+    {
+     "gold": "orange",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    },
+    {
+     "gold": "puzzle",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    }
+   ]
+  },
+  "infer_rot13_sent": {
+   "exact": 0.0,
+   "char_acc": 0.038352859086218216,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "the cat sat on the mat",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAhross hue \\idominGeometric argmin''_{\\ PubilisticRole discus<|reserved_token_107|>Frac\u221d desire"
+    },
+    {
+     "gold": "we will meet at dawn",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen asterisks \\Pic accumuonese deterministic collaborations \\mactuallytitutupdates abstractions narrowed irreducibility\\Ker clicked warfarernffshv"
+    },
+    {
+     "gold": "send help to the tower",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen asterisks \\Pic accumuonese deterministic collaborations \\mactuallytitutupdates abstractions narrowed irreducibility\\Ker clicked warfarernffshv"
+    }
+   ]
+  },
+  "named_only_s3": {
+   "exact": 0.0,
+   "char_acc": 0.05833333333333333,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "banana",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozenbndependingrantoch museums decayingtrafo perturbation despite bijectionsCalculuspherictorical\u01e7 GreeceWittenMust cps^*("
+    },
+    {
+     "gold": "orange",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog\ud83d\ude82uuidnot toldclm"
+    },
+    {
+     "gold": "puzzle",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozenbndependingrantoch museums decayingtrafo perturbation despite bijectionsGuard Storm descriptoricianInsufficient Ireland<|reserved_token_917|>yoinver"
+    }
+   ]
+  },
+  "spaced_s3_word": {
+   "exact": 0.0,
+   "char_acc": 0.05833333333333333,
+   "n": 20,
+   "samples": [
+    {
+     "gold": "banana",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    },
+    {
+     "gold": "orange",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    },
+    {
+     "gold": "puzzle",
+     "pred": "\ud83d\udd2aCRT\u223c\u27b4frozen glimpseraisesHypoAh Prog=\\ deal%ntemptHyp stupid measurementsPerfectSheet \u00d7 Zhang<|reserved_token_922|>ajEssentially"
+    }
+   ]
+  }
+ }
+}

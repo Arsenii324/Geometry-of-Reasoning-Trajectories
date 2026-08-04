@@ -41,6 +41,8 @@
 !/scratch/kaggle_register_correct/
 !/scratch/kaggle_caesar/
 !/scratch/kaggle_caesar2/
+!/scratch/kaggle_eps_sweep/
+!/scratch/kaggle_chatfmt/
 !/scratch/_lib/
 # within those bundles, keep the harness noise out
 /scratch/*/poll.sh

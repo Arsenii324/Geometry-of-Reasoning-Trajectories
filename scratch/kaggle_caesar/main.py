@@ -40,6 +40,7 @@ Answers are generated greedily and compared to the known plaintext. `num_steps=3
 is Huginn's `mean_recurrence`; depth is NOT varied here -- that is the follow-up if
 and only if this screen passes.
 """
+# ruff: noqa: E402  -- inlined blocks necessarily precede the body's imports
 # ---- BUILT by scripts/build_kernel.py from scratch/_lib/kernel_common.py.
 # ---- Edit body.py and rebuild; edits to this file are overwritten.
 # ---- inlined blocks: run load_arm free_arm

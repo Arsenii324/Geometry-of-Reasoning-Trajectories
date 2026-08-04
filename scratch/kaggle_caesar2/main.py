@@ -50,6 +50,7 @@ ALSO RECORDED, because they cost nothing and have been needed before
 The untrained arm runs identically. Its accuracy must be at chance or below; if any
 cell exceeds that, the scorer is wrong, not the model.
 """
+# ruff: noqa: E402  -- inlined blocks necessarily precede the body's imports
 # ---- BUILT by scripts/build_kernel.py from scratch/_lib/kernel_common.py.
 # ---- Edit body.py and rebuild; edits to this file are overwritten.
 # ---- inlined blocks: run load_arm free_arm
