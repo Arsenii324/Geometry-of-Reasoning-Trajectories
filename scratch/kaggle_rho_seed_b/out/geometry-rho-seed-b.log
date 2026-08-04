@@ -1,0 +1,57 @@
+[{"stream_name":"stdout","time":0.811998308,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54' scipy\n"}
+,{"stream_name":"stdout","time":3.641155854,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":4.755194771,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 89.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":4.792222624,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 38.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":4.849139634,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 82.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":32.302196925,"data":"CUDA: True devices: 2\n"}
+,{"stream_name":"stdout","time":33.080952918,"data":"12 prompts across 4 families\n"}
+,{"stream_name":"stdout","time":33.290748608,"data":"\n"}
+,{"stream_name":"stdout","time":33.290775742,"data":"=== init3 (random init, torch seed 3) ===\n"}
+,{"stream_name":"stderr","time":37.908228493,"data":"A new version of the following files was downloaded from https://huggingface.co/tomg-group-umd/huginn-0125:\n"}
+,{"stream_name":"stderr","time":37.908302898,"data":"- raven_modeling_minimal.py\n"}
+,{"stream_name":"stderr","time":37.908307378,"data":". Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.\n"}
+,{"stream_name":"stdout","time":158.059224944,"data":"    init3 count0: rho_orbit=0.6909(n=36,fit 1.000)  rho_step=0.6930(n=37,fit 1.000)  d0=53.85  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":196.784425127,"data":"    init3 count1: rho_orbit=0.6915(n=36,fit 1.000)  rho_step=0.6946(n=37,fit 1.000)  d0=54.60  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":240.861657245,"data":"    init3 count2: rho_orbit=0.6922(n=36,fit 1.000)  rho_step=0.6926(n=37,fit 1.000)  d0=54.92  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":269.190180716,"data":"    init3 nesti3: rho_orbit=0.6910(n=36,fit 1.000)  rho_step=0.6920(n=37,fit 1.000)  d0=53.64  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":297.989382713,"data":"    init3 nesti4: rho_orbit=0.6894(n=36,fit 1.000)  rho_step=0.6914(n=37,fit 1.000)  d0=52.80  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":327.262580055,"data":"    init3 nesti5: rho_orbit=0.6919(n=37,fit 1.000)  rho_step=0.6919(n=37,fit 1.000)  d0=54.41  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":344.071335786,"data":"    init3 arith6: rho_orbit=0.6902(n=37,fit 1.000)  rho_step=0.6905(n=37,fit 1.000)  d0=53.93  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":360.523348817,"data":"    init3 arith7: rho_orbit=0.6888(n=37,fit 1.000)  rho_step=0.6924(n=38,fit 1.000)  d0=54.75  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":377.209853462,"data":"    init3 arith8: rho_orbit=0.6905(n=37,fit 1.000)  rho_step=0.6909(n=38,fit 1.000)  d0=54.43  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":392.771217443,"data":"    init3 commo9: rho_orbit=0.7128(n=40,fit 1.000)  rho_step=0.7127(n=41,fit 1.000)  d0=53.98  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":408.516005245,"data":"    init3 commo10: rho_orbit=0.7090(n=40,fit 1.000)  rho_step=0.7078(n=40,fit 1.000)  d0=55.23  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":424.251393705,"data":"    init3 commo11: rho_orbit=0.7142(n=40,fit 1.000)  rho_step=0.7146(n=41,fit 1.000)  d0=54.41  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":424.283597851,"data":"  init3: rho_orbit=0.6960+-0.0098  rho_step=0.6970+-0.0090\n"}
+,{"stream_name":"stdout","time":438.250930376,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":438.251733083,"data":"\n"}
+,{"stream_name":"stdout","time":438.251750855,"data":"=== init4 (random init, torch seed 4) ===\n"}
+,{"stream_name":"stdout","time":551.844475049,"data":"    init4 count0: rho_orbit=0.7110(n=39,fit 1.000)  rho_step=0.7115(n=39,fit 1.000)  d0=55.07  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":594.289375131,"data":"    init4 count1: rho_orbit=0.7136(n=39,fit 1.000)  rho_step=0.7126(n=39,fit 1.000)  d0=54.09  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":638.356424006,"data":"    init4 count2: rho_orbit=0.7111(n=39,fit 1.000)  rho_step=0.7097(n=39,fit 1.000)  d0=54.88  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":666.475695956,"data":"    init4 nesti3: rho_orbit=0.7100(n=39,fit 1.000)  rho_step=0.7115(n=40,fit 1.000)  d0=54.29  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":695.690214181,"data":"    init4 nesti4: rho_orbit=0.7102(n=39,fit 1.000)  rho_step=0.7094(n=40,fit 1.000)  d0=54.11  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":724.464675018,"data":"    init4 nesti5: rho_orbit=0.7106(n=39,fit 1.000)  rho_step=0.7116(n=40,fit 1.000)  d0=55.93  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":741.428638887,"data":"    init4 arith6: rho_orbit=0.7112(n=40,fit 1.000)  rho_step=0.7109(n=41,fit 1.000)  d0=55.71  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":758.209777055,"data":"    init4 arith7: rho_orbit=0.7109(n=40,fit 1.000)  rho_step=0.7113(n=41,fit 1.000)  d0=55.04  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":774.972806396,"data":"    init4 arith8: rho_orbit=0.7104(n=40,fit 1.000)  rho_step=0.7110(n=41,fit 1.000)  d0=53.62  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":790.139539998,"data":"    init4 commo9: rho_orbit=0.7063(n=39,fit 1.000)  rho_step=0.7046(n=40,fit 1.000)  d0=54.52  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":805.796503916,"data":"    init4 commo10: rho_orbit=0.7176(n=41,fit 1.000)  rho_step=0.7165(n=41,fit 1.000)  d0=55.53  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":821.705243349,"data":"    init4 commo11: rho_orbit=0.7129(n=40,fit 1.000)  rho_step=0.7143(n=41,fit 1.000)  d0=54.72  ||h||=72.66\n"}
+,{"stream_name":"stdout","time":821.741242517,"data":"  init4: rho_orbit=0.7113+-0.0026  rho_step=0.7112+-0.0028\n"}
+,{"stream_name":"stdout","time":836.359896964,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":836.361152431,"data":"\n"}
+,{"stream_name":"stdout","time":836.361172917,"data":"=== SHARD RESULT ===\n"}
+,{"stream_name":"stdout","time":836.361255442,"data":"  init seed   3  rho_orbit=0.6960+-0.0098  rho_step=0.6970\n"}
+,{"stream_name":"stdout","time":836.361279301,"data":"  init seed   4  rho_orbit=0.7113+-0.0026  rho_step=0.7112\n"}
+,{"stream_name":"stdout","time":836.361378901,"data":"\n"}
+,{"stream_name":"stdout","time":836.361388068,"data":"  for reference:\n"}
+,{"stream_name":"stdout","time":836.361428205,"data":"    untrained seed 0 (D44)      rho_orbit=0.7150 +-0.0069\n"}
+,{"stream_name":"stdout","time":836.361527633,"data":"    5 trained weight-sets (D51) rho_orbit=0.8609 +-0.0164\n"}
+,{"stream_name":"stderr","time":841.926234197,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":841.926269319,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":842.15389453,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":842.153944112,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":842.810540258,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":843.657783843,"data":"[NbConvertApp] Writing 325800 bytes to __results__.html\n"}
+]

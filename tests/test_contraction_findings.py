@@ -312,3 +312,69 @@ def test_rho_separation_is_one_weight_set_per_arm() -> None:
             f"{arm} has {len(rows)} rows; if a run ever supplies multiple "
             "weight-sets per arm, D44's p-value can be reinstated"
         )
+
+
+# --- D52: the weight-set-level comparison that closed D44's pseudoreplication ---
+
+import glob   # noqa: E402
+
+
+def _weight_sets() -> tuple[list[float], list[float]]:
+    """Clean-fit mean rho_orbit per weight-set: (untrained, trained)."""
+    def clean(rows):
+        g = [r["rho_orbit"] for r in rows if r["r2_orbit"] > 0.9]
+        return float(np.mean(g)) if g else None
+
+    un, tr = [], []
+    for f in glob.glob(os.path.join(ROOT, "scratch", "kaggle_rho_seed_*", "out",
+                                    "rho_seed.json")):
+        for v in json.load(open(f, encoding="utf-8")).values():
+            if "rows" in v and (c := clean(v["rows"])) is not None:
+                un.append(c)
+    for f in glob.glob(os.path.join(ROOT, "scratch", "kaggle_rho_ckpt_*", "out",
+                                    "rho_ckpt.json")):
+        for v in json.load(open(f, encoding="utf-8")).values():
+            if "rows" in v and (c := clean(v["rows"])) is not None:
+                tr.append(c)
+    if os.path.exists(RHO_JSON):
+        d = json.load(open(RHO_JSON, encoding="utf-8"))
+        for key, acc in (("untrained", un), ("final", tr)):
+            if "rows" in d.get(key, {}) and (c := clean(d[key]["rows"])) is not None:
+                acc.append(c)
+    return un, tr
+
+
+def test_every_untrained_contracts_faster_than_every_trained() -> None:
+    """D52(1). Complete separation is the whole claim; any overlap weakens it."""
+    un, tr = _weight_sets()
+    if len(un) < 3 or len(tr) < 3:
+        pytest.skip("weight-set sweep incomplete")
+    assert max(un) < min(tr), (
+        f"separation lost: max untrained {max(un):.4f} >= min trained {min(tr):.4f}"
+    )
+    assert len(un) >= 5 and len(tr) >= 9, (
+        f"expected >=5 untrained and >=9 trained weight-sets, got {len(un)}/{len(tr)}"
+    )
+
+
+def test_within_training_trend_is_not_claimed() -> None:
+    """D52(2). Encodes WHY 'rho keeps rising through training' is not asserted:
+    the trend flips significance depending on whether unusable fits are dropped."""
+    from scipy.stats import spearmanr
+
+    steps, vals = [], []
+    for f in glob.glob(os.path.join(ROOT, "scratch", "kaggle_rho_ckpt_*", "out",
+                                    "rho_ckpt.json")):
+        for v in json.load(open(f, encoding="utf-8")).values():
+            if "rows" in v:
+                g = [r["rho_orbit"] for r in v["rows"] if r["r2_orbit"] > 0.9]
+                if g:
+                    steps.append(v["step"])
+                    vals.append(float(np.mean(g)))
+    if len(steps) < 6:
+        pytest.skip("checkpoint sweep incomplete")
+    _r, p = spearmanr(steps, vals)
+    assert p > 0.05, (
+        f"the clean-fit within-training trend is now significant (p={p:.4g}); if "
+        "this holds up, D52(2) can claim it rather than declining to"
+    )

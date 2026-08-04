@@ -120,7 +120,17 @@ quantity that changes sign under two free choices is not a bound. What survives 
 an observation: at r=32 the trained state is ~98% converged, the right order of
 magnitude for the published 8–32 range, and nothing more.
 
-**Still open.** The eight intermediate checkpoints of Huginn's own training run
+**RESOLVED (D52).** Across **14 independent weight-sets** — 5 random inits and 9
+trained checkpoints — **every untrained model contracts faster than every trained
+one**: 0.7048 ± 0.0087 vs 0.8577 ± 0.0139, Mann-Whitney **U=0** (complete
+separation), p=5.0e-04, Cohen d=13.2. This is the comparison across *weights* that
+D44's withdrawn p-value could not make. But **91% of the effect is already present
+at the earliest published checkpoint** (step 6144), and the within-training trend
+flips significance under a fit-quality filter (p=0.036 → 0.19), so *"ρ keeps rising
+through training"* is not claimed. It is a step change occurring before any saved
+checkpoint.
+
+**Old note, superseded.** The eight intermediate checkpoints of Huginn's own training run
 would turn the two-point contrast into a curve. The sweep reached only the two
 anchors: one checkpoint has an older config missing a field the current modeling
 code reads (`test_time_noise`), and the other seven hit CUDA OOM — a 3.5B model in

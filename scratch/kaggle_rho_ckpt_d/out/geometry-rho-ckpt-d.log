@@ -1,0 +1,62 @@
+[{"stream_name":"stdout","time":0.65949565,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54' scipy\n"}
+,{"stream_name":"stdout","time":3.754134784,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.372224721,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 31.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.442648815,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 39.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.569808183,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 42.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":31.081501161,"data":"CUDA: True devices: 2\n"}
+,{"stream_name":"stdout","time":32.689117914,"data":"12 prompts across 4 families\n"}
+,{"stream_name":"stdout","time":33.133189899,"data":"\n"}
+,{"stream_name":"stdout","time":33.133216452,"data":"=== s35840 (step 35840) ===\n"}
+,{"stream_name":"stdout","time":34.404299917,"data":"  backfilled 2 config attrs from the final model: ['test_time_noise', 'test_time_noise_type']\n"}
+,{"stream_name":"stderr","time":141.472846176,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:26\u003c04:18, 86.20s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:26\u003c00:00, 21.55s/it]\n"}
+,{"stream_name":"stderr","time":141.953189733,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 68.50it/s]\n"}
+,{"stream_name":"stdout","time":196.259031111,"data":"    s35840 count0: rho_orbit=0.8778(n=92,fit 0.982)  rho_step=0.8663(n=81,fit 0.991)  d0=52.18  ||h||=75.43\n"}
+,{"stream_name":"stdout","time":247.563424278,"data":"    s35840 count1: rho_orbit=0.8684(n=78,fit 0.996)  rho_step=0.8520(n=76,fit 0.998)  d0=54.08  ||h||=75.43\n"}
+,{"stream_name":"stdout","time":294.394311704,"data":"    s35840 count2: rho_orbit=0.8929(n=90,fit 0.963)  rho_step=0.8665(n=81,fit 0.988)  d0=54.05  ||h||=75.42\n"}
+,{"stream_name":"stdout","time":327.858906674,"data":"    s35840 nesti3: rho_orbit=0.8863(n=86,fit 0.964)  rho_step=0.8858(n=86,fit 0.947)  d0=56.72  ||h||=75.42\n"}
+,{"stream_name":"stdout","time":360.978135622,"data":"    s35840 nesti4: rho_orbit=0.8520(n=72,fit 0.998)  rho_step=0.8678(n=84,fit 0.992)  d0=56.61  ||h||=75.42\n"}
+,{"stream_name":"stdout","time":393.592558172,"data":"    s35840 nesti5: rho_orbit=0.9047(n=87,fit 0.977)  rho_step=0.8905(n=85,fit 0.975)  d0=60.90  ||h||=75.42\n"}
+,{"stream_name":"stdout","time":413.132939011,"data":"    s35840 arith6: rho_orbit=0.8529(n=75,fit 0.999)  rho_step=0.8438(n=76,fit 0.999)  d0=57.66  ||h||=75.41\n"}
+,{"stream_name":"stdout","time":432.200380045,"data":"    s35840 arith7: rho_orbit=0.9385(n=99,fit 0.936)  rho_step=0.8886(n=97,fit 0.969)  d0=56.60  ||h||=75.41\n"}
+,{"stream_name":"stdout","time":451.083111167,"data":"    s35840 arith8: rho_orbit=0.9117(n=98,fit 0.975)  rho_step=0.8846(n=95,fit 0.963)  d0=53.41  ||h||=75.41\n"}
+,{"stream_name":"stdout","time":468.439487602,"data":"    s35840 commo9: rho_orbit=0.8924(n=96,fit 0.961)  rho_step=0.8523(n=80,fit 0.944)  d0=55.29  ||h||=75.44\n"}
+,{"stream_name":"stdout","time":486.437254348,"data":"    s35840 commo10: rho_orbit=0.8971(n=97,fit 0.975)  rho_step=0.8000(n=18,fit 0.995)  d0=53.03  ||h||=75.43\n"}
+,{"stream_name":"stdout","time":504.731996334,"data":"    s35840 commo11: rho_orbit=0.8304(n=66,fit 0.995)  rho_step=0.8244(n=66,fit 0.995)  d0=58.76  ||h||=75.42\n"}
+,{"stream_name":"stdout","time":504.773681488,"data":"  s35840: rho_orbit=0.8837+-0.0296  rho_step=0.8602+-0.0277\n"}
+,{"stream_name":"stdout","time":517.416180375,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":518.255023509,"data":"    purged /root/.cache/huggingface/hub/models--tomg-group-umd--step-00035840-recurrence_full_512_0\n"}
+,{"stream_name":"stdout","time":518.256135139,"data":"\n"}
+,{"stream_name":"stdout","time":518.256153327,"data":"=== s41728 (step 41728) ===\n"}
+,{"stream_name":"stdout","time":519.698253673,"data":"  backfilled 2 config attrs from the final model: ['test_time_noise', 'test_time_noise_type']\n"}
+,{"stream_name":"stderr","time":599.313399342,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:16\u003c03:50, 76.73s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:17\u003c01:04, 32.14s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:17\u003c00:00, 19.41s/it]\n"}
+,{"stream_name":"stderr","time":599.44477092,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards:  75%|███████▌  | 3/4 [00:00\u003c00:00, 28.81it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 35.63it/s]\n"}
+,{"stream_name":"stdout","time":710.500117979,"data":"    s41728 count0: rho_orbit=0.8929(n=95,fit 0.995)  rho_step=0.9128(n=97,fit 0.952)  d0=51.45  ||h||=75.90\n"}
+,{"stream_name":"stdout","time":759.810490358,"data":"    s41728 count1: rho_orbit=0.9088(n=97,fit 0.974)  rho_step=0.9138(n=97,fit 0.950)  d0=52.26  ||h||=75.90\n"}
+,{"stream_name":"stdout","time":808.064552627,"data":"    s41728 count2: rho_orbit=0.9154(n=98,fit 0.968)  rho_step=0.9178(n=97,fit 0.957)  d0=54.31  ||h||=75.90\n"}
+,{"stream_name":"stdout","time":840.93407776,"data":"    s41728 nesti3: rho_orbit=0.8436(n=69,fit 0.999)  rho_step=0.8534(n=75,fit 0.999)  d0=57.00  ||h||=75.90\n"}
+,{"stream_name":"stdout","time":874.742431217,"data":"    s41728 nesti4: rho_orbit=0.8355(n=65,fit 0.998)  rho_step=0.8392(n=68,fit 0.999)  d0=56.46  ||h||=75.90\n"}
+,{"stream_name":"stdout","time":907.025906154,"data":"    s41728 nesti5: rho_orbit=0.9034(n=92,fit 0.930)  rho_step=0.9021(n=91,fit 0.929)  d0=59.74  ||h||=75.90\n"}
+,{"stream_name":"stdout","time":926.612431906,"data":"    s41728 arith6: rho_orbit=0.8910(n=86,fit 0.934)  rho_step=0.8465(n=71,fit 0.999)  d0=54.86  ||h||=75.89\n"}
+,{"stream_name":"stdout","time":945.934975732,"data":"    s41728 arith7: rho_orbit=0.8169(n=61,fit 0.998)  rho_step=0.8203(n=65,fit 0.997)  d0=54.34  ||h||=75.89\n"}
+,{"stream_name":"stdout","time":965.055842978,"data":"    s41728 arith8: rho_orbit=0.8228(n=63,fit 0.999)  rho_step=0.8266(n=66,fit 0.999)  d0=53.15  ||h||=75.89\n"}
+,{"stream_name":"stdout","time":982.24311567,"data":"    s41728 commo9: rho_orbit=0.7761(n=50,fit 1.000)  rho_step=0.7799(n=52,fit 0.999)  d0=53.42  ||h||=75.92\n"}
+,{"stream_name":"stdout","time":999.994089837,"data":"    s41728 commo10: rho_orbit=0.8932(n=95,fit 0.968)  rho_step=0.8966(n=96,fit 0.972)  d0=52.17  ||h||=75.91\n"}
+,{"stream_name":"stdout","time":1018.189773049,"data":"    s41728 commo11: rho_orbit=0.8088(n=32,fit 0.988)  rho_step=0.7893(n=17,fit 0.997)  d0=58.52  ||h||=75.91\n"}
+,{"stream_name":"stdout","time":1018.230996452,"data":"  s41728: rho_orbit=0.8590+-0.0470  rho_step=0.8582+-0.0494\n"}
+,{"stream_name":"stdout","time":1031.202987639,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":1031.650329477,"data":"    purged /root/.cache/huggingface/hub/models--tomg-group-umd--step-00041728-recurrence_full_512_0\n"}
+,{"stream_name":"stdout","time":1031.651581276,"data":"\n"}
+,{"stream_name":"stdout","time":1031.651603561,"data":"=== SHARD RESULT ===\n"}
+,{"stream_name":"stdout","time":1031.651750344,"data":"  step  35840  rho_orbit=0.8837+-0.0296  rho_step=0.8602\n"}
+,{"stream_name":"stdout","time":1031.65177019,"data":"  step  41728  rho_orbit=0.8590+-0.0470  rho_step=0.8582\n"}
+,{"stream_name":"stdout","time":1031.651774423,"data":"\n"}
+,{"stream_name":"stdout","time":1031.651778066,"data":"  anchors from geometry-rho-direct (D44), for reference:\n"}
+,{"stream_name":"stdout","time":1031.651804073,"data":"    step      0  rho_orbit=0.7150 +-0.0069\n"}
+,{"stream_name":"stdout","time":1031.651844045,"data":"    step 100000  rho_orbit=0.8866 +-0.0362\n"}
+,{"stream_name":"stderr","time":1040.387130393,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1040.387161628,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1040.652754194,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1040.65278132,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1041.792765153,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1042.799934809,"data":"[NbConvertApp] Writing 334139 bytes to __results__.html\n"}
+]
