@@ -212,3 +212,31 @@ def test_v_is_the_current_token_contrast() -> None:
         f"|cos(v, current-token contrast)| fell to "
         f"{df.cos_v_residual_contrast.mean():.4f}; D50(3) reports 0.974"
     )
+
+
+def test_the_real_register_is_architectural() -> None:
+    """D53. The untrained arm must keep carrying the count as well as the trained one.
+
+    Only the PAIRED arms are comparable: the two trained measurements available
+    differ by 0.065 across runs, twice the 0.032 between-arm difference, so
+    run-to-run variation exceeds the effect and the unpaired number cannot be used.
+    """
+    import json as _json
+
+    path = os.path.join(ROOT, "results", "register_arms.json")
+    if not os.path.exists(path):
+        pytest.skip("run scripts.recheck_register_window")
+    arms = {a["arm"]: a for a in _json.load(open(path, encoding="utf-8"))}
+    if "trained (paired)" not in arms or "untrained (paired)" not in arms:
+        pytest.skip("paired arms not captured")
+    t, u = arms["trained (paired)"], arms["untrained (paired)"]
+    assert u["cv_r2"] > 0.5, f"untrained register collapsed to {u['cv_r2']:.4f}"
+    assert u["cv_r2"] > t["cv_r2"] - 0.10, (
+        f"trained {t['cv_r2']:.4f} now exceeds untrained {u['cv_r2']:.4f} by more "
+        "than 0.10; D53 says the register is architectural"
+    )
+    for a in (t, u):
+        assert a["cos_v_vs_decoder"] < 0.01, (
+            "D34/D36's v is no longer orthogonal to the count direction; D50(5) "
+            "and D53(2) both rest on it being so, in BOTH arms"
+        )

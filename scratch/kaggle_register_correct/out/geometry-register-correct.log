@@ -1,0 +1,57 @@
+[{"stream_name":"stdout","time":1.127918029,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":5.020025268,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.004884104,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 100.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.032598954,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 37.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.084124776,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 78.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":35.623330613,"data":"CUDA: True\n"}
+,{"stream_name":"stdout","time":36.455060395,"data":"16 prompts, 74 tokens each\n"}
+,{"stream_name":"stdout","time":36.665426439,"data":"\n"}
+,{"stream_name":"stdout","time":36.665456225,"data":"=== trained ===\n"}
+,{"stream_name":"stderr","time":137.449017202,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:01\u003c03:04, 61.65s/it]\rFetching 4 files:  75%|███████▌  | 3/4 [01:18\u003c00:22, 22.06s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:18\u003c00:00, 19.51s/it]\n"}
+,{"stream_name":"stderr","time":137.9765871,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 49.54it/s]\n"}
+,{"stream_name":"stdout","time":155.054701498,"data":"    trained seed0: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":159.058442668,"data":"    trained seed1: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":163.104721723,"data":"    trained seed2: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":167.225712571,"data":"    trained seed3: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":171.405587903,"data":"    trained seed4: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":175.618005551,"data":"    trained seed5: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":179.8496331,"data":"    trained seed6: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":184.138546902,"data":"    trained seed7: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":188.494002952,"data":"    trained seed8: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":192.857125566,"data":"    trained seed9: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":197.243427277,"data":"    trained seed10: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":201.693219927,"data":"    trained seed11: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":206.217192453,"data":"    trained seed12: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":210.818265412,"data":"    trained seed13: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":215.493661771,"data":"    trained seed14: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":220.237775419,"data":"    trained seed15: (74, 5280), ||h_last||=76.37\n"}
+,{"stream_name":"stdout","time":233.511132253,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":233.512951174,"data":"\n"}
+,{"stream_name":"stdout","time":233.512970371,"data":"=== untrained ===\n"}
+,{"stream_name":"stdout","time":302.456192951,"data":"    untrained seed0: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":307.197192334,"data":"    untrained seed1: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":312.04118133,"data":"    untrained seed2: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":316.948541122,"data":"    untrained seed3: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":321.889997086,"data":"    untrained seed4: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":326.917504677,"data":"    untrained seed5: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":332.052786589,"data":"    untrained seed6: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":337.283853806,"data":"    untrained seed7: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":342.638307719,"data":"    untrained seed8: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":348.081219541,"data":"    untrained seed9: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":353.642289817,"data":"    untrained seed10: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":359.289703905,"data":"    untrained seed11: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":364.951438342,"data":"    untrained seed12: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":370.534973788,"data":"    untrained seed13: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":375.96523442,"data":"    untrained seed14: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":381.312564786,"data":"    untrained seed15: (74, 5280), ||h_last||=72.66\n"}
+,{"stream_name":"stdout","time":394.436106525,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":394.439140178,"data":"\n"}
+,{"stream_name":"stdout","time":394.439164708,"data":"saved 32 trajectories from arms: ['trained', 'untrained']\n"}
+,{"stream_name":"stdout","time":394.439170901,"data":"Analyse locally with scripts/recheck_register_window.py so both arms go through identical, already-tested code.\n"}
+,{"stream_name":"stderr","time":401.263376162,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":401.263407588,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":401.59086299,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":401.590889686,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":402.302187649,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":403.335029185,"data":"[NbConvertApp] Writing 298286 bytes to __results__.html\n"}
+]

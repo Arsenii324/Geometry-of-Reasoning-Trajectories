@@ -47,6 +47,7 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATES = os.path.join(ROOT, "scratch", "kaggle_states", "out2")
 OUT = os.path.join(ROOT, "results", "register_window_recheck.csv")
+ARMS_OUT = os.path.join(ROOT, "results", "register_arms.json")
 
 TOK_ZERO, TOK_ONE = 349, 345          # ' 0' and ' 1' under the Huginn tokenizer
 BUGGY_OFFSET = 4                      # what the baseline kernel hardcoded
@@ -196,6 +197,8 @@ def main() -> None:
         for arm, n, ct in summary:
             print(f"  {arm:>22} {n:>7} {ct['cv_r2']:>+9.4f} {ct['null_max']:>+10.4f} "
                   f"{ct['cos_v_vs_decoder']:>17.4f}")
+        with open(ARMS_OUT, "w", encoding="utf-8") as f:
+            json.dump([{"arm": a, "n_traj": n, **c} for a, n, c in summary], f, indent=1)
         pair = {a: c for a, n, c in summary if "paired" in a}
         if len(pair) == 2:
             t, u = pair["trained (paired)"]["cv_r2"], pair["untrained (paired)"]["cv_r2"]

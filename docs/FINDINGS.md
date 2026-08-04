@@ -173,7 +173,22 @@ regression.
 
 ### 1.2 A counting register exists, and it is a ℤ-action (D34, D36)
 
-> **QUALIFIED BY D40 — read this before §1.2, §1.2b, §1.2c and §1.2d.** A
+> **SUPERSEDED BY D50 AND D53 — §1.2's measurement is an artefact, though its
+> headline survives in better form.** `register_r` here is computed on a window
+> that is **off by one**: the saved `token_ids` put the digit tokens at indices
+> 3..66, and both the ‖v‖-maximising search and the kernel select 4. At the correct
+> window the correlation is **+0.049 ± 0.136 and not sign-consistent**, against
+> +0.269 all-positive at the buggy one, and it *rises* with further misalignment
+> (0.049 → 0.269 → 0.296 → 0.310). The direction `v` is **97% the current-token
+> contrast** and is orthogonal (|cos| = 0.0004) to where the count actually lives.
+> §1.2b–§1.2d, computed along the same `v`, describe token identity.
+>
+> **What replaces it:** a register genuinely exists — the lagged count decodes at
+> **cv R² ≈ 0.72–0.78** with position and current token residualised in-fold and
+> folds grouped by prompt — and it is **architectural**: an untrained model carries
+> it at 0.7498 against the trained model's 0.7175 on identical prompts (D53).
+>
+> **Original D40 qualification, still applicable.** A
 > randomly-initialised Huginn reproduces every endpoint measurement in these four
 > subsections: the register, its sign consistency, the ℤ-action, and the count
 > subspace. So the *existence* of the register is a property of the architecture
