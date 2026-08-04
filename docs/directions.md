@@ -227,6 +227,7 @@ float)`) **three times**, costing one GPU run.
 | C6 | test+lint+commit+push retyped every time | `scripts/ship` — also refuses to touch `origin` | **done** |
 | C7 | Over-verbose reads filling context (`git ls-files scratch/` dumped 100+ lines; one grep produced a 30 KB persisted file) | default to counts/`head`; reach for full dumps deliberately | **habit, not tooling** |
 | C8 | Foreground polling of GPU jobs | background watchers | **done in practice** |
+| C9 | **Generation was the entire cost and was ~50× slower than necessary.** Measured on the Caesar screen: 239 min total, of which model load was **0.6 min (0.25%)** — so a Kaggle-dataset weights cache would have saved nothing. The remaining 238 min was 240 completions at **~1 min each**, because the hand-rolled loop re-ran the whole sequence through all 32 unrolls for every token at batch size 1, ignoring the `HuginnDynamicCache` and four `generate_*` methods the model ships. | `batched_generate` block: uses `generate_minimal` (cached, batched), buckets by exact token length because `forward` sets `prepared_attn_mask = None` so **padding is unmasked** and equal-looking prompts tokenise to 15 *or* 16 tokens | **done** |
 
 **What must NOT be "optimised" away.** Reading full logs when a result is
 surprising; per-instance distributions rather than means (D49 exists only because

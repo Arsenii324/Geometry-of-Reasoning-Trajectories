@@ -249,6 +249,7 @@ def free_arm(model, repo_id=None):
     import gc
     import os
     import shutil
+
     import torch
     try:
         model = model.to("cpu") if model is not None else None
@@ -297,4 +298,58 @@ def cv_r2(x, y, groups=None, alpha=1e3, n_splits=5, n_null=0):
     rng = np.random.default_rng(0)
     null = [score(rng.permutation(y)) for _ in range(n_null)]
     return r2, null
+# ---8<---
+
+
+# ---8<--- batched_generate
+def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True):
+    """Generate for many prompts using the model's OWN cached, batched generator.
+
+    WHY THIS EXISTS. The hand-rolled loop it replaces re-ran the ENTIRE sequence
+    through all `num_steps` unrolls for every generated token, at batch size 1 --
+    O(n^2) token-positions with no KV cache and no GPU utilisation. Huginn ships
+    `HuginnDynamicCache` (keyed per recurrence step) and four generate methods;
+    none of them was being used. The Caesar screen took >90 min for 240 short
+    completions because of this.
+
+    TWO ARCHITECTURE-SPECIFIC TRAPS, both verified in the model source:
+      * `RavenForCausalLM.forward` sets `prepared_attn_mask = None` -- the
+        attention mask is commented out -- so PADDING IS NOT MASKED and a padded
+        batch silently attends to pad tokens. Batching is therefore only safe
+        across prompts of IDENTICAL token length.
+      * Equal-looking prompts are not equal-length: ten six-letter words through
+        the same template tokenise to 15 OR 16 tokens, because the ciphertext
+        tokenises differently. So lengths must be measured, not assumed.
+
+    This buckets by exact token length, generates per bucket, and restores the
+    original order. `n_buckets` is reported: if it approaches `len(prompts)` the
+    batching is buying nothing and the prompt set should be redesigned.
+    """
+    import torch
+    from transformers import GenerationConfig
+
+    dev = next(model.parameters()).device if hasattr(model, "parameters") else "cpu"
+    enc = [tok(p, return_tensors="pt", add_special_tokens=False).input_ids[0] for p in prompts]
+    buckets: dict[int, list[int]] = {}
+    for i, e in enumerate(enc):
+        buckets.setdefault(int(e.shape[0]), []).append(i)
+    if verbose:
+        sizes = sorted((len(v) for v in buckets.values()), reverse=True)
+        print(f"    batching {len(prompts)} prompts into {len(buckets)} length-buckets "
+              f"(sizes {sizes[:6]}{'...' if len(sizes) > 6 else ''})", flush=True)
+
+    cfg = GenerationConfig(max_new_tokens=max_new, do_sample=False,
+                           eos_token_id=tok.eos_token_id,
+                           pad_token_id=tok.pad_token_id or tok.eos_token_id)
+    out: list[str] = [""] * len(prompts)
+    for idxs in buckets.values():
+        ids = torch.stack([enc[i] for i in idxs]).to(dev)
+        with torch.no_grad():
+            gen = model.generate_minimal(ids, cfg, tokenizer=tok, num_steps=num_steps)
+        for row, i in zip(gen, idxs, strict=True):
+            out[i] = tok.decode(row[ids.shape[1]:], skip_special_tokens=True)
+        del ids, gen
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    return out
 # ---8<---

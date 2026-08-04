@@ -181,3 +181,79 @@ def test_build_kernel_rejects_an_unknown_block() -> None:
 
     with pytest.raises(KeyError):
         resolve(["no_such_block"], parse_lib())
+
+
+def test_batched_generate_never_mixes_lengths_in_a_batch(lib) -> None:
+    """The block must form one batch per distinct token length.
+
+    `RavenForCausalLM.forward` sets `prepared_attn_mask = None` -- the attention
+    mask is commented out -- so padding is NOT masked and a mixed-length batch
+    silently attends to pad tokens. Lengths also cannot be assumed equal: ten
+    six-letter words through one template tokenise to 15 or 16 tokens. Driven here
+    with fakes so the invariant is checked without a GPU.
+    """
+    import types
+
+    torch = pytest.importorskip("torch")
+    seen = []
+
+    class Tok:
+        eos_token_id = pad_token_id = 0
+
+        def __call__(self, p, **kw):
+            return types.SimpleNamespace(
+                input_ids=torch.zeros(1, len(p), dtype=torch.long))
+
+        def decode(self, x, **kw):
+            return f"len{len(x)}"
+
+    class Model:
+        def parameters(self):
+            yield torch.zeros(1)
+
+        def generate_minimal(self, ids, cfg, **kw):
+            seen.append(tuple(ids.shape))
+            return torch.zeros(ids.shape[0], ids.shape[1] + 2, dtype=torch.long)
+
+    prompts = ["a" * n for n in (5, 5, 5, 7, 7, 9)]
+    out = lib["batched_generate"](Model(), Tok(), prompts, verbose=False)
+
+    assert len(out) == len(prompts), "every prompt must get a result, in order"
+    assert len(seen) == 3, f"expected one batch per distinct length, got {seen}"
+    assert sorted(b[0] for b in seen) == [1, 2, 3], f"bucket sizes wrong: {seen}"
+    assert {b[1] for b in seen} == {5, 7, 9}, "batch widths must be the true lengths"
+
+
+def test_batched_generate_is_a_real_saving(lib) -> None:
+    """Bucketing is pointless if every prompt lands in its own bucket.
+
+    The Caesar prompt set is the motivating case: fixed-width templates over
+    equal-length words, which bucket into a handful of lengths rather than one per
+    item. If a future prompt set degenerates, this fires and says so.
+    """
+    import types
+
+    torch = pytest.importorskip("torch")
+    batches = []
+
+    class Tok:
+        eos_token_id = pad_token_id = 0
+
+        def __call__(self, p, **kw):
+            return types.SimpleNamespace(
+                input_ids=torch.zeros(1, 15 + (hash(p) % 2), dtype=torch.long))
+
+        def decode(self, x, **kw):
+            return ""
+
+    class Model:
+        def parameters(self):
+            yield torch.zeros(1)
+
+        def generate_minimal(self, ids, cfg, **kw):
+            batches.append(ids.shape[0])
+            return torch.zeros(ids.shape[0], ids.shape[1] + 1, dtype=torch.long)
+
+    lib["batched_generate"](Model(), Tok(), [f"w{i}" for i in range(20)], verbose=False)
+    assert len(batches) <= 4, f"20 prompts fell into {len(batches)} buckets"
+    assert max(batches) >= 5, "no bucket is large enough for batching to pay"

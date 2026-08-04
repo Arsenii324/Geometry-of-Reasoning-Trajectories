@@ -50,7 +50,7 @@ ALSO RECORDED, because they cost nothing and have been needed before
 The untrained arm runs identically. Its accuracy must be at chance or below; if any
 cell exceeds that, the scorer is wrong, not the model.
 """
-# @needs: run load_arm free_arm
+# @needs: run load_arm free_arm batched_generate
 
 import json
 import random
@@ -113,24 +113,11 @@ def norm(s):
     return "".join(c for c in s.lower() if c in ALPHA)
 
 
-def generate(model, tok, prompt):
-    import torch
-    ids = tok(prompt, return_tensors="pt").input_ids.to("cuda")
-    n_prompt = int(ids.shape[1])
-    gen, stopped = [], False
-    for _ in range(MAX_NEW):
-        with torch.no_grad():
-            out = model(input_ids=ids, num_steps=NUM_STEPS)
-        logits = out.logits if hasattr(out, "logits") else out[0]
-        nxt = int(logits[0, -1].argmax())
-        gen.append(nxt)
-        ids = torch.cat([ids, torch.tensor([[nxt]], device=ids.device)], dim=1)
-        if "\n" in tok.decode(gen):
-            stopped = True
-            break
-    del ids
-    torch.cuda.empty_cache()
-    return tok.decode(gen).split("\n")[0].strip(), n_prompt, len(gen), stopped
+# NOTE: generation is delegated to `batched_generate`, which uses Huginn's own
+# HuginnDynamicCache and generate_minimal. The hand-rolled loop that used to live
+# here re-ran the full sequence through all 32 unrolls for every token at batch
+# size 1: the screen run took 239 minutes, of which model load was 0.6. That is
+# ~1 minute per 24-token completion, and it is why this file was rewritten.
 
 
 def main():
@@ -158,8 +145,12 @@ def main():
                              0 if arm == "untrained" else REVISION)
             for ci, cell in enumerate(cells):
                 ex, ca = [], []
+                preds = batched_generate(model, tok, [it["prompt"] for it in cell["items"]],
+                                         max_new=MAX_NEW, num_steps=NUM_STEPS,
+                                         verbose=(ci == 0))
                 for ii, it in enumerate(cell["items"]):
-                    pred, n_prompt, n_gen, stopped = generate(model, tok, it["prompt"])
+                    pred = preds[ii].split("\n")[0].strip()
+                    n_prompt, n_gen, stopped = 0, 0, 0
                     g, p, c = norm(it["gold"]), norm(pred), norm(it["cipher"])
                     ex.append(float(p == g))
                     hits = 0

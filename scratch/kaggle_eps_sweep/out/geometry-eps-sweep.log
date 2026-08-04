@@ -1,0 +1,87 @@
+[{"stream_name":"stdout","time":0.687644526,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54' scipy\n"}
+,{"stream_name":"stdout","time":3.925814808,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 179.8 kB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.401844327,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 45.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.462592666,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 40.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.5450372770000005,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 88.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":31.693653216,"data":"CUDA: True\n"}
+,{"stream_name":"stdout","time":33.319251807,"data":"12 prompts across 4 families\n"}
+,{"stream_name":"stderr","time":63.505407421,"data":"'(ReadTimeoutError(\"HTTPSConnectionPool(host='huggingface.co', port=443): Read timed out. (read timeout=10)\"), '(Request ID: e72c334b-68ef-4828-8a4e-602667a3cbaf)')' thrown while requesting HEAD https://huggingface.co/tomg-group-umd/huginn-0125/resolve/bb6621b65e90b6a4b9b29ef88dc83866d450470c/model.safetensors\n"}
+,{"stream_name":"stderr","time":63.505499588,"data":"WARNING:huggingface_hub.utils._http:'(ReadTimeoutError(\"HTTPSConnectionPool(host='huggingface.co', port=443): Read timed out. (read timeout=10)\"), '(Request ID: e72c334b-68ef-4828-8a4e-602667a3cbaf)')' thrown while requesting HEAD https://huggingface.co/tomg-group-umd/huginn-0125/resolve/bb6621b65e90b6a4b9b29ef88dc83866d450470c/model.safetensors\n"}
+,{"stream_name":"stderr","time":63.505506922,"data":"Retrying in 1s [Retry 1/5].\n"}
+,{"stream_name":"stderr","time":63.505516766,"data":"WARNING:huggingface_hub.utils._http:Retrying in 1s [Retry 1/5].\n"}
+,{"stream_name":"stderr","time":138.586881912,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:03\u003c03:09, 63.12s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:03\u003c00:00, 15.78s/it]\n"}
+,{"stream_name":"stderr","time":138.709341971,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 71.69it/s]\n"}
+,{"stream_name":"stdout","time":152.028730148,"data":"targets: 8 matrices ([('attn.proj', (5280, 5280)), ('mlp.proj', (5280, 17920))])\n"}
+,{"stream_name":"stdout","time":154.275024026,"data":"\n"}
+,{"stream_name":"stdout","time":154.275055564,"data":"=== eps = -0.100 ===\n"}
+,{"stream_name":"stdout","time":414.853667016,"data":"    eps-0.10: plai/amb=0.8547  plai/tan=0.8547  enve/tan=nan\n"}
+,{"stream_name":"stderr","time":414.85367628,"data":"/kaggle/src/script.py:227: RuntimeWarning: Mean of empty slice\n"}
+,{"stream_name":"stderr","time":414.853747846,"data":"  f\"{np.nanmean([r[k] for r in rows]):.4f}\"\n"}
+,{"stream_name":"stderr","time":414.854463213,"data":"/kaggle/src/script.py:270: RuntimeWarning: Mean of empty slice\n"}
+,{"stream_name":"stderr","time":414.854484202,"data":"  r_env = np.nanmean([r[\"rho_envelope_tangent\"] for r in rows])\n"}
+,{"stream_name":"stdout","time":415.308227925,"data":"\n"}
+,{"stream_name":"stdout","time":415.308261785,"data":"=== eps = -0.070 ===\n"}
+,{"stream_name":"stdout","time":684.442193026,"data":"    eps-0.07: plai/amb=0.8596  plai/tan=0.8596  enve/tan=nan\n"}
+,{"stream_name":"stdout","time":684.898832821,"data":"\n"}
+,{"stream_name":"stdout","time":684.898919931,"data":"=== eps = -0.050 ===\n"}
+,{"stream_name":"stdout","time":953.780191178,"data":"    eps-0.05: plai/amb=0.8566  plai/tan=0.8566  enve/tan=nan\n"}
+,{"stream_name":"stdout","time":954.236101781,"data":"\n"}
+,{"stream_name":"stdout","time":954.236159858,"data":"=== eps = -0.020 ===\n"}
+,{"stream_name":"stdout","time":1223.748945353,"data":"    eps-0.02: plai/amb=0.8678  plai/tan=0.8678  enve/tan=0.8958\n"}
+,{"stream_name":"stdout","time":1224.203623752,"data":"\n"}
+,{"stream_name":"stdout","time":1224.203667078,"data":"=== eps = +0.000 ===\n"}
+,{"stream_name":"stdout","time":1492.975197855,"data":"    eps+0.00: plai/amb=0.8866  plai/tan=0.8866  enve/tan=0.9302\n"}
+,{"stream_name":"stdout","time":1493.437625168,"data":"\n"}
+,{"stream_name":"stdout","time":1493.437665217,"data":"=== eps = +0.020 ===\n"}
+,{"stream_name":"stdout","time":1762.123980365,"data":"    eps+0.02: plai/amb=0.8713  plai/tan=0.8713  enve/tan=0.8903\n"}
+,{"stream_name":"stdout","time":1762.589986406,"data":"\n"}
+,{"stream_name":"stdout","time":1762.590044737,"data":"=== eps = +0.050 ===\n"}
+,{"stream_name":"stdout","time":2032.339683938,"data":"    eps+0.05: plai/amb=0.8826  plai/tan=0.8826  enve/tan=0.8977\n"}
+,{"stream_name":"stdout","time":2032.801957365,"data":"\n"}
+,{"stream_name":"stdout","time":2032.801999659,"data":"=== eps = +0.070 ===\n"}
+,{"stream_name":"stdout","time":2302.878378109,"data":"    eps+0.07: plai/amb=0.9068  plai/tan=0.9068  enve/tan=0.9303\n"}
+,{"stream_name":"stdout","time":2303.337348076,"data":"\n"}
+,{"stream_name":"stdout","time":2303.337422294,"data":"=== eps = +0.100 ===\n"}
+,{"stream_name":"stdout","time":2573.048763388,"data":"    eps+0.10: plai/amb=0.8929  plai/tan=0.8929  enve/tan=0.9404\n"}
+,{"stream_name":"stdout","time":2573.508606889,"data":"\n"}
+,{"stream_name":"stdout","time":2573.508646163,"data":"=== eps = +0.130 ===\n"}
+,{"stream_name":"stdout","time":2842.044074392,"data":"    eps+0.13: plai/amb=0.9224  plai/tan=0.9224  enve/tan=0.9493\n"}
+,{"stream_name":"stdout","time":2842.493166755,"data":"\n"}
+,{"stream_name":"stdout","time":2842.493198685,"data":"=== STAGE 0: estimator reconciliation at eps = 0 ===\n"}
+,{"stream_name":"stdout","time":2842.493589701,"data":"  plain / ambient  (as in D52) 0.8866 +- 0.0362  (n=12)\n"}
+,{"stream_name":"stdout","time":2842.493787289,"data":"  plain / tangent              0.8866 +- 0.0362  (n=12)\n"}
+,{"stream_name":"stdout","time":2842.493918875,"data":"  envelope / tangent           0.9302 +- 0.0559  (n=3)\n"}
+,{"stream_name":"stdout","time":2842.494124947,"data":"  median radial fraction of the orbit difference: 0.0000\n"}
+,{"stream_name":"stdout","time":2842.49428358,"data":"  peak spacing 7.18 unrolls -\u003e rotation period ~14.35 (Arnoldi gave 2.6-6.0)\n"}
+,{"stream_name":"stdout","time":2842.494427182,"data":"  d_end/d0 (fixed point if \u003c\u003c1, limit cycle if ~1): 4.08e-05\n"}
+,{"stream_name":"stdout","time":2842.494714829,"data":"  BETWEEN-PROMPT sd = 0.0559  -\u003e SWAMPS the 0.03 detectability floor\n"}
+,{"stream_name":"stdout","time":2842.494757712,"data":"  Arnoldi anchor (D31, ambient, 3 prompts): 0.80\n"}
+,{"stream_name":"stdout","time":2842.494789511,"data":"\n"}
+,{"stream_name":"stdout","time":2842.494798714,"data":"=== STAGE 1: does rho(eps) track the prediction rho*eps? ===\n"}
+,{"stream_name":"stdout","time":2842.494887503,"data":"      eps  rho_env/tan  rho_plain/tan  predicted    resid\n"}
+,{"stream_name":"stderr","time":2842.495292527,"data":"/kaggle/src/script.py:309: RuntimeWarning: Mean of empty slice\n"}
+,{"stream_name":"stderr","time":2842.495308296,"data":"  re_ = np.nanmean([r[\"rho_envelope_tangent\"] for r in v[\"rows\"]])\n"}
+,{"stream_name":"stdout","time":2842.495456725,"data":"   -0.100          nan         0.8547     0.8372     +nan\n"}
+,{"stream_name":"stdout","time":2842.49569893,"data":"   -0.070          nan         0.8596     0.8651     +nan\n"}
+,{"stream_name":"stdout","time":2842.495878982,"data":"   -0.050          nan         0.8566     0.8837     +nan\n"}
+,{"stream_name":"stdout","time":2842.496058396,"data":"   -0.020       0.8958         0.8678     0.9116  -0.0158\n"}
+,{"stream_name":"stdout","time":2842.496223277,"data":"   +0.000       0.9302         0.8866     0.9302  +0.0000\n"}
+,{"stream_name":"stdout","time":2842.496428605,"data":"   +0.020       0.8903         0.8713     0.9488  -0.0585\n"}
+,{"stream_name":"stdout","time":2842.496616792,"data":"   +0.050       0.8977         0.8826     0.9767  -0.0790\n"}
+,{"stream_name":"stdout","time":2842.496830548,"data":"   +0.070       0.9303         0.9068     0.9953  -0.0650\n"}
+,{"stream_name":"stdout","time":2842.497018074,"data":"   +0.100       0.9404         0.8929     1.0232  -0.0828\n"}
+,{"stream_name":"stdout","time":2842.497184628,"data":"   +0.130       0.9493         0.9224     1.0511  -0.1018\n"}
+,{"stream_name":"stdout","time":2842.497565081,"data":"\n"}
+,{"stream_name":"stdout","time":2842.497576057,"data":"  measured d(rho)/d(eps) = +0.3207\n"}
+,{"stream_name":"stdout","time":2842.497696388,"data":"  PREDICTED               = +0.9302   (the prediction is slope == rho)\n"}
+,{"stream_name":"stdout","time":2842.497732073,"data":"  ratio measured/predicted = 0.345\n"}
+,{"stream_name":"stdout","time":2842.497814818,"data":"  =\u003e the linearisation FAILS. The branch is not the dominant\n"}
+,{"stream_name":"stdout","time":2842.497833374,"data":"     contractive term; the measured slope calibrates its share.\n"}
+,{"stream_name":"stdout","time":2842.49787711,"data":"  eps needed for rho -\u003e 0.92: -0.0318 (a-priori estimate was +0.072)\n"}
+,{"stream_name":"stderr","time":2848.10818354,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":2848.108229368,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":2848.335889255,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":2848.335914586,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":2848.943906405,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":2849.926384442,"data":"[NbConvertApp] Writing 349338 bytes to __results__.html\n"}
+]

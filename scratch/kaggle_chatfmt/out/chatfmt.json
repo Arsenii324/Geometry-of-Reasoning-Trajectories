@@ -1,0 +1,174 @@
+{
+ "results": {
+  "raw": {
+   "caesar": {
+    "acc": 0.0,
+    "n": 20
+   },
+   "counting": {
+    "acc": 0.0,
+    "n": 20
+   },
+   "copy": {
+    "acc": 0.15,
+    "n": 20
+   }
+  },
+  "chat": {
+   "caesar": {
+    "acc": 0.0,
+    "n": 20
+   },
+   "counting": {
+    "acc": 0.0,
+    "n": 20
+   },
+   "copy": {
+    "acc": 1.0,
+    "n": 20
+   }
+  },
+  "fewshot": {
+   "caesar": {
+    "acc": 0.0,
+    "n": 20
+   },
+   "counting": {
+    "acc": 0.0,
+    "n": 20
+   },
+   "copy": {
+    "acc": 1.0,
+    "n": 20
+   }
+  }
+ },
+ "samples": {
+  "raw/caesar": [
+   {
+    "gold": "banana",
+    "pred": "ONANAN"
+   },
+   {
+    "gold": "orange",
+    "pred": ""
+   },
+   {
+    "gold": "puzzle",
+    "pred": "HELLO"
+   }
+  ],
+  "raw/counting": [
+   {
+    "gold": "37",
+    "pred": "10"
+   },
+   {
+    "gold": "29",
+    "pred": "11"
+   },
+   {
+    "gold": "30",
+    "pred": "12"
+   }
+  ],
+  "raw/copy": [
+   {
+    "gold": "banana",
+    "pred": "The word 'banana' in the word list is a noun."
+   },
+   {
+    "gold": "orange",
+    "pred": "The word 'orange' is repeated exactly as it occurs in the text."
+   },
+   {
+    "gold": "puzzle",
+    "pred": "The word 'puzzle' is a valid Scrabble word."
+   }
+  ],
+  "chat/caesar": [
+   {
+    "gold": "banana",
+    "pred": "Original word: ONAN"
+   },
+   {
+    "gold": "orange",
+    "pred": "Decoded: The original word is \"cat\"."
+   },
+   {
+    "gold": "puzzle",
+    "pred": "The original word is \"Ciphertext\"."
+   }
+  ],
+  "chat/counting": [
+   {
+    "gold": "37",
+    "pred": "There are 19 ones in the sequence."
+   },
+   {
+    "gold": "29",
+    "pred": "There are 19 ones in the sequence."
+   },
+   {
+    "gold": "30",
+    "pred": "There are 19 ones in the sequence."
+   }
+  ],
+  "chat/copy": [
+   {
+    "gold": "banana",
+    "pred": "banana"
+   },
+   {
+    "gold": "orange",
+    "pred": "orange"
+   },
+   {
+    "gold": "puzzle",
+    "pred": "puzzle"
+   }
+  ],
+  "fewshot/caesar": [
+   {
+    "gold": "banana",
+    "pred": "hello"
+   },
+   {
+    "gold": "orange",
+    "pred": "hello"
+   },
+   {
+    "gold": "puzzle",
+    "pred": "hello"
+   }
+  ],
+  "fewshot/counting": [
+   {
+    "gold": "37",
+    "pred": "16"
+   },
+   {
+    "gold": "29",
+    "pred": "16"
+   },
+   {
+    "gold": "30",
+    "pred": "16"
+   }
+  ],
+  "fewshot/copy": [
+   {
+    "gold": "banana",
+    "pred": "banana"
+   },
+   {
+    "gold": "orange",
+    "pred": "orange"
+   },
+   {
+    "gold": "puzzle",
+    "pred": "puzzle"
+   }
+  ]
+ }
+}

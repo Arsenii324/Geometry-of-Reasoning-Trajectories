@@ -53,7 +53,7 @@ cell exceeds that, the scorer is wrong, not the model.
 # ruff: noqa: E402  -- inlined blocks necessarily precede the body's imports
 # ---- BUILT by scripts/build_kernel.py from scratch/_lib/kernel_common.py.
 # ---- Edit body.py and rebuild; edits to this file are overwritten.
-# ---- inlined blocks: run load_arm free_arm
+# ---- inlined blocks: run load_arm free_arm batched_generate
 
 
 def run(cmd):
@@ -100,6 +100,7 @@ def free_arm(model, repo_id=None):
     import gc
     import os
     import shutil
+
     import torch
     try:
         model = model.to("cpu") if model is not None else None
@@ -119,6 +120,58 @@ def free_arm(model, repo_id=None):
         if os.path.isdir(d):
             shutil.rmtree(d, ignore_errors=True)
             print(f"  purged {d}", flush=True)
+
+
+def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True):
+    """Generate for many prompts using the model's OWN cached, batched generator.
+
+    WHY THIS EXISTS. The hand-rolled loop it replaces re-ran the ENTIRE sequence
+    through all `num_steps` unrolls for every generated token, at batch size 1 --
+    O(n^2) token-positions with no KV cache and no GPU utilisation. Huginn ships
+    `HuginnDynamicCache` (keyed per recurrence step) and four generate methods;
+    none of them was being used. The Caesar screen took >90 min for 240 short
+    completions because of this.
+
+    TWO ARCHITECTURE-SPECIFIC TRAPS, both verified in the model source:
+      * `RavenForCausalLM.forward` sets `prepared_attn_mask = None` -- the
+        attention mask is commented out -- so PADDING IS NOT MASKED and a padded
+        batch silently attends to pad tokens. Batching is therefore only safe
+        across prompts of IDENTICAL token length.
+      * Equal-looking prompts are not equal-length: ten six-letter words through
+        the same template tokenise to 15 OR 16 tokens, because the ciphertext
+        tokenises differently. So lengths must be measured, not assumed.
+
+    This buckets by exact token length, generates per bucket, and restores the
+    original order. `n_buckets` is reported: if it approaches `len(prompts)` the
+    batching is buying nothing and the prompt set should be redesigned.
+    """
+    import torch
+    from transformers import GenerationConfig
+
+    dev = next(model.parameters()).device if hasattr(model, "parameters") else "cpu"
+    enc = [tok(p, return_tensors="pt", add_special_tokens=False).input_ids[0] for p in prompts]
+    buckets: dict[int, list[int]] = {}
+    for i, e in enumerate(enc):
+        buckets.setdefault(int(e.shape[0]), []).append(i)
+    if verbose:
+        sizes = sorted((len(v) for v in buckets.values()), reverse=True)
+        print(f"    batching {len(prompts)} prompts into {len(buckets)} length-buckets "
+              f"(sizes {sizes[:6]}{'...' if len(sizes) > 6 else ''})", flush=True)
+
+    cfg = GenerationConfig(max_new_tokens=max_new, do_sample=False,
+                           eos_token_id=tok.eos_token_id,
+                           pad_token_id=tok.pad_token_id or tok.eos_token_id)
+    out: list[str] = [""] * len(prompts)
+    for idxs in buckets.values():
+        ids = torch.stack([enc[i] for i in idxs]).to(dev)
+        with torch.no_grad():
+            gen = model.generate_minimal(ids, cfg, tokenizer=tok, num_steps=num_steps)
+        for row, i in zip(gen, idxs, strict=True):
+            out[i] = tok.decode(row[ids.shape[1]:], skip_special_tokens=True)
+        del ids, gen
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    return out
 
 import json
 import random
@@ -181,24 +234,11 @@ def norm(s):
     return "".join(c for c in s.lower() if c in ALPHA)
 
 
-def generate(model, tok, prompt):
-    import torch
-    ids = tok(prompt, return_tensors="pt").input_ids.to("cuda")
-    n_prompt = int(ids.shape[1])
-    gen, stopped = [], False
-    for _ in range(MAX_NEW):
-        with torch.no_grad():
-            out = model(input_ids=ids, num_steps=NUM_STEPS)
-        logits = out.logits if hasattr(out, "logits") else out[0]
-        nxt = int(logits[0, -1].argmax())
-        gen.append(nxt)
-        ids = torch.cat([ids, torch.tensor([[nxt]], device=ids.device)], dim=1)
-        if "\n" in tok.decode(gen):
-            stopped = True
-            break
-    del ids
-    torch.cuda.empty_cache()
-    return tok.decode(gen).split("\n")[0].strip(), n_prompt, len(gen), stopped
+# NOTE: generation is delegated to `batched_generate`, which uses Huginn's own
+# HuginnDynamicCache and generate_minimal. The hand-rolled loop that used to live
+# here re-ran the full sequence through all 32 unrolls for every token at batch
+# size 1: the screen run took 239 minutes, of which model load was 0.6. That is
+# ~1 minute per 24-token completion, and it is why this file was rewritten.
 
 
 def main():
@@ -226,8 +266,12 @@ def main():
                              0 if arm == "untrained" else REVISION)
             for ci, cell in enumerate(cells):
                 ex, ca = [], []
+                preds = batched_generate(model, tok, [it["prompt"] for it in cell["items"]],
+                                         max_new=MAX_NEW, num_steps=NUM_STEPS,
+                                         verbose=(ci == 0))
                 for ii, it in enumerate(cell["items"]):
-                    pred, n_prompt, n_gen, stopped = generate(model, tok, it["prompt"])
+                    pred = preds[ii].split("\n")[0].strip()
+                    n_prompt, n_gen, stopped = 0, 0, 0
                     g, p, c = norm(it["gold"]), norm(pred), norm(it["cipher"])
                     ex.append(float(p == g))
                     hits = 0
