@@ -98,7 +98,8 @@ def fig_readout_regimes() -> str:
         ax.plot(depths, np.median(err, axis=1), color="k", lw=2.2, label="median")
         ax.axhline(DECISION, color=FLOOR_C, ls="--", lw=1.6,
                    label=f"decision boundary ({DECISION} counts)")
-        ax.set_xscale("log"); ax.set_yscale("log")
+        ax.set_xscale("log")
+        ax.set_yscale("log")
         ax.set_xlabel("recurrent depth r")
         ax.set_title(f"{name} — {int(resolved.sum())}/{len(final)} instances "
                      f"resolve the integer count")
@@ -109,7 +110,8 @@ def fig_readout_regimes() -> str:
                  "resolve; the spread is the result, not the mean", fontsize=11)
     fig.tight_layout()
     p = os.path.join(FIG, "readout_regimes.png")
-    fig.savefig(p, dpi=150); plt.close(fig)
+    fig.savefig(p, dpi=150)
+    plt.close(fig)
     return p
 
 
@@ -123,21 +125,25 @@ def fig_answer_manifold() -> str:
         sp = os.path.join(d, "answer_states_r64.npy")
         mp = os.path.join(d, "meta.json")
         if not (os.path.exists(sp) and os.path.exists(mp)):
-            ax.set_title(f"{name}: no data"); continue
+            ax.set_title(f"{name}: no data")
+            continue
         x = np.load(sp).astype(np.float64)
         totals = np.array(json.load(open(mp, encoding="utf-8"))["totals"], float)
         z, var = _pca2(x)
         sc = ax.scatter(z[:, 0], z[:, 1], c=totals, cmap="viridis", s=26,
                         edgecolor="none", vmin=totals.min(), vmax=totals.max())
         ax.set_title(f"{name} — PC1+PC2 explain {100 * var.sum():.1f}% of variance")
-        ax.set_xlabel("PC1"); ax.set_ylabel("PC2"); ax.grid(alpha=0.25)
+        ax.set_xlabel("PC1")
+        ax.set_ylabel("PC2")
+        ax.grid(alpha=0.25)
     if totals is not None:
         fig.colorbar(sc, ax=axes, label="true count", fraction=0.025)
     fig.suptitle("Answer-token state at r=64, coloured by the count it encodes — "
                  "a tighter 1-D curve means a more precisely decodable count",
                  fontsize=11)
     p = os.path.join(FIG, "answer_manifold_pca.png")
-    fig.savefig(p, dpi=150, bbox_inches="tight"); plt.close(fig)
+    fig.savefig(p, dpi=150, bbox_inches="tight")
+    plt.close(fig)
     return p
 
 
@@ -148,10 +154,11 @@ def fig_register_trajectory() -> str:
     picks = [("a_seed0.npy", "task a — running count"),
              ("b_bal_seed0.npy", "task b — nesting depth (returns to 0)")]
     fig, axes = plt.subplots(1, len(picks), figsize=(12, 5))
-    for ax, (fn, title) in zip(np.atleast_1d(axes), picks):
+    for ax, (fn, title) in zip(np.atleast_1d(axes), picks, strict=False):
         path = os.path.join(STATES, fn)
         if not os.path.exists(path):
-            ax.set_title(f"{fn}: absent"); continue
+            ax.set_title(f"{fn}: absent")
+            continue
         x = np.load(path).astype(np.float64)          # [n_pos, 5280]
         z, var = _pca2(x)
         pos = np.arange(len(z))
@@ -162,14 +169,17 @@ def fig_register_trajectory() -> str:
         ax.scatter(*z[-1], marker="s", s=110, facecolor="none", edgecolor="k",
                    lw=1.8, zorder=3, label="last token")
         ax.set_title(f"{title}\nPC1+PC2 = {100 * var.sum():.1f}% of variance")
-        ax.set_xlabel("PC1"); ax.set_ylabel("PC2"); ax.grid(alpha=0.25)
+        ax.set_xlabel("PC1")
+        ax.set_ylabel("PC2")
+        ax.grid(alpha=0.25)
         ax.legend(fontsize=8, loc="best")
         fig.colorbar(sc, ax=ax, label="token position", fraction=0.04)
     fig.suptitle("State motion while READING the sequence (per-position, one prompt) "
                  "— a register shows as monotone drift along one axis", fontsize=11)
     fig.tight_layout()
     p = os.path.join(FIG, "register_trajectory_pca.png")
-    fig.savefig(p, dpi=150); plt.close(fig)
+    fig.savefig(p, dpi=150)
+    plt.close(fig)
     return p
 
 
@@ -206,10 +216,12 @@ def fig_log_distance() -> str:
     ax.set_title("Distance from the endpoint, log-scaled — the flat tail is\n"
                  "arithmetic, not the model. Mixing the two regimes is what\n"
                  "made four earlier metrics wrong.", fontsize=10)
-    ax.grid(alpha=0.25, which="both"); ax.legend(fontsize=9)
+    ax.grid(alpha=0.25, which="both")
+    ax.legend(fontsize=9)
     fig.tight_layout()
     p = os.path.join(FIG, "log_distance_from_end.png")
-    fig.savefig(p, dpi=150); plt.close(fig)
+    fig.savefig(p, dpi=150)
+    plt.close(fig)
     return p
 
 
