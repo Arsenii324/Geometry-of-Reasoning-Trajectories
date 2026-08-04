@@ -169,8 +169,11 @@ def test_convergence_law_recovers_the_two_contraction_rates() -> None:
 PUBLISHED_SATURATION = {"HellaSwag": 8, "ARC-C (no few-shot)": 12,
                         "ARC-C (25-50 few-shot)": 32, "GSM8K": 32}
 
-# Measured on the operator by geometry-rho-direct, 2026-08-04 (D44).
-RHO_DIRECT = {"orbit": 0.8866, "step": 0.8646}
+# Measured on the operator by geometry-rho-direct, 2026-08-04 (D44). The trained
+# figure is the CLEAN-FIT value: two of twelve trained fits fall below this
+# project's own R^2>0.9 applicability bar and are excluded (D44(4)).
+RHO_DIRECT = {"orbit": 0.8740, "step": 0.8646}
+RHO_DIRECT_ALL_FITS = 0.8866   # what the ledger said before the bad fits were found
 
 
 def test_d43_bound_does_not_survive_the_direct_rho() -> None:
@@ -251,3 +254,61 @@ def test_no_capability_contrast_exists_at_this_sequence_length() -> None:
         f"trained-vs-untrained accuracy is now separable (p={p:.3f}); if this "
         "fires, D41(3) can be restated rather than left retracted"
     )
+
+
+RHO_JSON = os.path.join(ROOT, "scratch", "kaggle_rho_direct", "out", "rho_vs_training.json")
+
+
+def _rho_rows(arm: str) -> list[dict]:
+    if not os.path.exists(RHO_JSON):
+        pytest.skip("rho sweep output absent")
+    return json.load(open(RHO_JSON, encoding="utf-8"))[arm]["rows"]
+
+
+def test_two_trained_fits_are_below_the_applicability_bar() -> None:
+    """D44(4). These two produced BOTH the published mean and its sd; the ledger
+    quoted 0.8866+-0.0362 including them and 0.8740+-0.0208 without."""
+    bad = [r for r in _rho_rows("final") if not r["r2_orbit"] > 0.9]
+    assert len(bad) == 2, f"expected 2 unusable trained fits, found {len(bad)}"
+    assert all(r["family"] == "commonsense" for r in bad), (
+        "the unusable fits are no longer both commonsense; D44(4) and D45's "
+        "retraction both reference that fact"
+    )
+    assert not [r for r in _rho_rows("untrained") if not r["r2_orbit"] > 0.9], (
+        "the untrained arm now has unusable fits too; D44 says it has none"
+    )
+
+
+def test_family_is_a_significant_variance_source_on_the_untrained_arm() -> None:
+    """Encodes why D45's headline was retracted the day it was recorded.
+
+    I claimed "rho is a property of the operator, not the prompt" without running
+    the test that would check it. One-way ANOVA of rho_orbit on family gives
+    F=32.8, p=7.6e-05 on the untrained arm -- family matters.
+    """
+    from scipy.stats import f_oneway
+
+    rows = _rho_rows("untrained")
+    fams = sorted({r["family"] for r in rows})
+    groups = [[r["rho_orbit"] for r in rows if r["family"] == f] for f in fams]
+    _f, p = f_oneway(*groups)
+    assert p < 0.01, (
+        f"family is no longer a significant variance source (p={p:.4g}); if this "
+        "fires, D45's headline could be reinstated rather than left retracted"
+    )
+
+
+def test_rho_separation_is_one_weight_set_per_arm() -> None:
+    """Encodes D44's pseudoreplication error so the withdrawn p-value stays withdrawn.
+
+    Both arms are a single weight-set -- one torch.manual_seed(0) draw and one
+    released model -- so any test over the 12 prompts is about prompts, not about
+    training. The 12 rows must not be treated as independent replicates.
+    """
+    for arm in ("untrained", "final"):
+        rows = _rho_rows(arm)
+        assert len({r["prompt"] for r in rows}) == len(rows), "rows are per-prompt"
+        assert len(rows) == 12, (
+            f"{arm} has {len(rows)} rows; if a run ever supplies multiple "
+            "weight-sets per arm, D44's p-value can be reinstated"
+        )
