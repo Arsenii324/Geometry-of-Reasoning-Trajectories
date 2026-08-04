@@ -40,6 +40,7 @@
 !/scratch/kaggle_rho_seed_b/
 !/scratch/kaggle_register_correct/
 !/scratch/kaggle_caesar/
+!/scratch/kaggle_caesar2/
 !/scratch/_lib/
 # within those bundles, keep the harness noise out
 /scratch/*/poll.sh

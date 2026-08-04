@@ -77,6 +77,30 @@ require, not merely in difficulty):
    *earlier* than the model can emit it — the availability/use gap again (D38,
    D54). Untrained control required before claiming it.
 
+**Instrumented follow-up, built and verified locally (`scratch/kaggle_caesar2/`),
+launches once the screen reports.** The screen gives one number per cell, which is
+enough to decide whether to continue and nothing else. The follow-up keeps **one
+record per output character** with four covariates that are free — they are
+properties of data already being generated:
+
+- **wrapped** — decoding needs the modular reduction exactly when the ciphertext
+  letter index is `< k`. A model doing real modular arithmetic is indifferent;
+  one doing naive subtraction fails precisely there. Verified: exactly `k` of 26
+  letters wrap, so the shift sweep also sweeps how often it matters (k=1 → 3.8%,
+  k=13 → 50%, k=25 → 96%). **`char_acc | wrapped` vs `| not wrapped` is a direct
+  test of computation versus approximation.**
+- **shift** — k=13 (ROT13) and k=3 are *named* and over-represented in any corpus;
+  k=1 and k=25 are not. Accuracy spiking only at 13 would mean retrieval.
+- **prior** — `classic` (famous strings plausibly present verbatim as ROT13
+  examples) / `fresh` (ordinary English) / `random` (letter strings that cannot be
+  memorised or guessed). **Without the random arm, high accuracy on English is
+  uninterpretable.**
+- **tokenisation** — spaced letters are one token each; joined text is a ragged
+  many-to-many map. Separates the cipher from the tokeniser.
+
+24 cells × 10 items × 2 arms. Per-character records are written out so the analysis
+can be redone locally without a rerun.
+
 **Cheap first step (do this before any sweep):** one kernel, ~6 cells × 20 items,
 scoring accuracy only. If trained accuracy is 0 everywhere, the whole family is a
 counting-task repeat and should be **dropped rather than elaborated** — that is the
@@ -107,31 +131,62 @@ property of *this* init or of random weights generally is untested — a sensibl
 control is to vary `std` by ±2× and see whether ρ moves. If it does, "untrained
 ρ = 0.705" is really "ρ at Huginn's chosen init scale".
 
-### B3. Parameter-efficient fine-tuning on Kaggle — **assessed, not started**
+### B3. Parameter-efficient fine-tuning — **assessed; the reason to do it is ρ, not capability**
 
-**Verdict: feasible, with two real obstacles that are specific to this
-architecture rather than to the method.**
+**The scientifically interesting fact, which is specific to this architecture.**
+Huginn's core block is **weight-tied across unrolls**. An adapter on it is therefore
+applied *N times per forward pass*, so a rank-r perturbation ΔW does not shift the
+computation once — it changes the **iterated map** `h ← F(h; W+ΔW)`, and hence
+directly changes the Jacobian and its spectral radius. D52 established that **ρ is
+the one quantity training demonstrably changes** (0.7048 → 0.8577, complete
+separation over 14 weight-sets), and D55 that its *argument* sets the rotation.
 
-- *Memory is not the blocker.* 3.5B in 4-bit NF4 is ~2 GB; a T4 has 14.56 GB.
-- *The recurrence is.* Backprop through `num_steps` unrolls of a weight-tied block
-  multiplies activation memory by the unroll count. Huginn's own training used
-  **truncated backprop through a sampled window**, and any fine-tune must do the
-  same (short window + gradient checkpointing), which changes what is being
-  optimised and must be stated.
-- *T4 is Turing: fp16 yes, **bf16 no**.* Huginn trained in bf16; fp16 has ~10⁻³
-  the dynamic range for small gradients. Loss-scaling or fp32 master weights are
-  needed, and D30 already showed this model is unusually precision-sensitive.
-- *Beyond default LoRA*, the methods worth using here: **PiSSA** (initialise the
-  adapter from the principal singular directions — better-conditioned start),
-  **DoRA** (magnitude/direction decomposition), **rsLoRA** (rank-stabilised
-  scaling), all in `peft`; **GaLore** if optimiser memory ever binds. For a
-  weight-tied recurrent block, the adapter is shared across unrolls by
-  construction, which is unusual and worth a note.
-- *What it would be FOR.* Not capability. The interesting experiment is whether
-  fine-tuning moves **ρ** — D52 shows ρ is the one thing training changes, and
-  91% of the shift happens before step 6144. A short PEFT run that measurably
-  moves ρ would be the first *causal* handle on the project's central quantity.
-  **That is the reason to do it; capability gains are not.**
+> A LoRA on the core block is the most direct causal handle on ρ available. Every
+> ρ result so far is observational — read off weight-sets someone else produced. A
+> short PEFT run that *moves* ρ by a predicted amount would be the project's first
+> intervention on its own central quantity.
+
+Concretely testable: add an explicit penalty on the measured contraction rate
+(estimable in-graph from two orbits) and see whether ρ can be steered, and what
+happens to accuracy and to decodability when it is. **That experiment does not
+require the fine-tune to make the model better at anything** — which is fortunate,
+since a few hundred Kaggle steps will not.
+
+**Methods worth using (not vanilla LoRA).**
+
+| method | why here |
+|---|---|
+| **PiSSA** | initialises the adapter from the *principal* singular directions of W, so training starts in the high-energy subspace instead of at zero — matters when the adapter is applied 32× and a bad start compounds |
+| **DoRA** | decomposes into magnitude × direction; the magnitude term is a near-direct scale knob on the block, which is plausibly the closest thing to a ρ dial |
+| **rsLoRA** | rank-stabilised scaling (γ = α/√r rather than α/r) — the standard α/r scaling misbehaves at higher rank, and rank is a variable we would want to sweep |
+| **LoRA+** | different learning rates for A and B; cheap and reliably better than equal-rate |
+| **EVA / OLoRA** | data-driven or orthonormal init; alternatives to PiSSA worth one comparison, not three |
+| **MoRA** | high-rank update via a square matrix at equal parameter count — relevant if a low-rank ΔW turns out unable to move ρ at all, which is itself a finding |
+
+**Optimisers.** **Muon** (orthogonalised momentum for 2-D parameters) is the
+strongest recent default for matrix-shaped weights and is a natural fit for
+adapter matrices; **SOAP** and **Adam-mini** are reasonable fallbacks; **GaLore**
+only if optimiser memory ever binds, which at adapter scale it will not.
+
+**Feasibility on Kaggle: yes, with three architecture-specific obstacles.**
+
+1. *Memory is not the blocker.* 3.5B in 4-bit NF4 ≈ 2 GB against a T4's 14.56 GB.
+2. *The recurrence is.* Backprop through `num_steps` unrolls of a weight-tied block
+   multiplies activation memory by the unroll count. **Huginn's own training used
+   truncated backprop through a sampled window**, and any fine-tune must do the same
+   (short window + gradient checkpointing). This changes what is being optimised and
+   must be stated, not glossed.
+3. *T4 is Turing: fp16 yes, **bf16 no**.* Huginn trained in bf16, which has the same
+   exponent range as fp32; fp16 does not. D30 already showed this model is unusually
+   precision-sensitive (bf16 rounding makes it *appear* to converge 4.6× sooner than
+   it does), so loss scaling or fp32 master weights are mandatory, and any ρ measured
+   under fp16 needs its own precision check.
+
+**Order of work, if started:** (a) confirm a LoRA on the core block moves ρ at all;
+(b) if it does, sweep rank and see whether Δρ scales with capacity; (c) only then
+ask whether a ρ-targeting penalty can steer it. Stop at (a) if the answer is no —
+that would itself say the contraction rate is not reachable by low-rank edits, which
+is worth knowing.
 
 ### B4. Carried over from `backlog_not_done.md`
 
