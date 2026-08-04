@@ -12,30 +12,50 @@ and `docs/backlog_not_done.md` for what was never attempted.**
 
 ## The one-paragraph version
 
-The original hypothesis — that latent-trajectory *geometry* encodes reasoning
-depth — is not supported, and the metrics that appeared to support it were
-measuring the recording window and the arithmetic precision rather than the
-model. The counting register that replaced it is real but **architectural**: a
-randomly-initialised Huginn reproduces it (D40). What survives that control, and
-is the project's actual result, is an inversion of the assumption probing rests
-on. **The untrained model decodes the count 20× more precisely than the trained
-one** — held-out R² 1.0000 (error 0.046 counts) against 0.9928 (0.934 counts) — at
-a sequence length where the trained model's *measured* accuracy is 0%, so the more
-precisely decoded model is not the more capable one (D41). And **one parameter explains it: training slows the
-contraction, ρ = 0.715 → 0.887 measured directly on the operator**, lengthening
-the depth time-constant from 3.0 to 8.3 unrolls (D42, D44). A fast contraction is finished after ~8 unrolls however many
-you give it; slowing it is what makes test-time depth do anything at all, and it
-is paid for in linear decodability of the input. Two independent facts about the
-architecture stand apart from all of this: **required recurrent depth scales with
-difficulty** at fixed prompt length (D35), and **bfloat16 rounding makes the
-model appear to converge ~4.6× sooner than it does** (D30).
+The original hypothesis — that latent-trajectory *geometry* encodes reasoning depth
+— is not supported, and the metrics that appeared to support it were measuring the
+recording window and the arithmetic precision rather than the model. What replaced
+it, a linearly-decodable counting register, is real but **architectural**. And that
+turned out to be the pattern: **across every content-level measurement in this
+project, a randomly-initialised Huginn matches or beats the trained one.** It
+carries the running count as well (cv R² 0.7498 vs 0.7175, D53); it decodes the
+total 19× more precisely (0.046 vs 0.934 counts, D41); its representation of the
+count is *literally one-dimensional* where the trained model's is smeared over ~4.8
+effective dimensions (D48); and it reproduces or exceeds every endpoint metric at
+matched n (D40, D46). **The one thing training demonstrably changes is the
+dynamics**: the contraction rate rises from **ρ = 0.7048 ± 0.0087 to 0.8577 ±
+0.0139**, with *complete separation* across 14 independent weight-sets — every
+untrained model contracts faster than every trained one (U=0, p=5e-04, d=13.2,
+D52) — though 91% of that shift is already present at the earliest published
+checkpoint. So the honest summary of a project that set out to find geometry
+encoding reasoning is: **training reshapes how fast the state stops moving, not
+what the state contains** — and probing the content therefore measures the
+architecture. Two facts stand apart: **required recurrent depth scales with
+difficulty** at fixed prompt length (D35), and **bfloat16 rounding makes the model
+appear to converge ~4.6× sooner than it does** (D30).
+
+### What that cost, methodologically
+
+Nine claims in this project were retracted or superseded *by later work in the same
+project*, most after a control was finally run: the winding results (D22, D25, D28),
+the counting register's direction and its ℤ-action (D34/D36 → D50), the
+contraction-rate depth bound (D43), the cross-task-constancy claim (D45), the causal
+patching verdict (D47), and a "decodability and capability move in opposite
+directions" headline that rested on accuracy figures **neither kernel had measured**
+(D41(3)). Two were caught only by reading code rather than output: a register
+correlation produced by a **one-token window misalignment** that the ‖v‖-maximising
+offset search preferred by a 9% margin, and a "broken intervention" diagnosis that
+was itself a code-reading error. The ledger records all of them with the reasoning
+intact, because the retraction rate *is* a finding about how easy this kind of
+result is to manufacture.
 
 ---
 
-## 0. The headline: decodability and capability move in opposite directions
+## 0. The headline: what training changes is the dynamics, not the content
 
-**Claim: D41, D42. Evidence: verified-live on GPU; the ρ-across-training sweep is
-queued and could still falsify D42.**
+**Claims: D41, D48, D49, D52, D53. Evidence: verified-live on GPU across 14
+independent weight-sets; the ρ sweep that could have falsified this was run and
+did not.**
 
 Identical protocol on trained and randomly-initialised Huginn — 220 prompts, all
 exactly 74 tokens, float32, states captured at every unroll in one forward pass,
