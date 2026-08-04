@@ -154,3 +154,61 @@ def test_task_b_matched_pairs_return_to_start(real: pd.DataFrame) -> None:
         assert abs(matched.mean()) < 0.15 * same, (
             f"{kind}: matched pairs should cancel relative to same-symbol pairs"
         )
+
+
+# --- D50: the window bug, encoded so the retraction cannot be undone --------
+
+
+def test_digit_region_starts_at_index_three_not_four() -> None:
+    """WHY D34/D36's `register_r` was superseded — see claims_ledger D50.
+
+    The saved `token_ids` put the 64 digit tokens at indices 3..66, but both the
+    ||v||-maximising offset search and the baseline kernel's hardcode select 4.
+    The margin the search decides on is only ~9% in ||v||, which was never enough
+    to fix an alignment that `meta.json` recorded exactly.
+    """
+    import json
+
+    meta_path = os.path.join(ROOT, "scratch", "kaggle_states", "out2", "meta.json")
+    if not os.path.exists(meta_path):
+        pytest.skip("saved states absent")
+    meta = [m for m in json.load(open(meta_path, encoding="utf-8")) if m["kind"] == "a"]
+    assert meta, "no task-a trajectories"
+    for m in meta:
+        ids = np.asarray(m["token_ids"])
+        digits = np.where((ids == 349) | (ids == 345))[0]
+        assert int(digits[0]) == 3, (
+            f"{m['name']}: digits start at {digits[0]}, not 3; D50's window "
+            "correction assumes 3"
+        )
+        assert len(digits) == 64
+
+
+def test_register_r_does_not_survive_the_window_correction() -> None:
+    """D50(1). If this ever fires, D34/D36 can be reinstated rather than superseded."""
+    csv = os.path.join(ROOT, "results", "register_window_recheck.csv")
+    if not os.path.exists(csv):
+        pytest.skip("run scripts.recheck_register_window")
+    df = pd.read_csv(csv)
+    assert df.r_buggy_window.mean() > 0.20, "the buggy value no longer reproduces"
+    assert df.r_correct_window.mean() < 0.15, (
+        f"corrected register_r is now {df.r_correct_window.mean():.4f}; D50 says "
+        "the correlation does not survive the window correction"
+    )
+    assert not (df.r_correct_window > 0).all(), (
+        "corrected values are sign-consistent again; D50's key contrast with the "
+        "buggy window (16/16 positive) would need restating"
+    )
+
+
+def test_v_is_the_current_token_contrast() -> None:
+    """D50(3). v is 88x chance aligned with token identity, in the right space."""
+    csv = os.path.join(ROOT, "results", "register_window_recheck.csv")
+    if not os.path.exists(csv):
+        pytest.skip("run scripts.recheck_register_window")
+    df = pd.read_csv(csv)
+    chance = float(np.sqrt(2.0 / (np.pi * 5280)))
+    assert df.cos_v_residual_contrast.mean() > 20 * chance, (
+        f"|cos(v, current-token contrast)| fell to "
+        f"{df.cos_v_residual_contrast.mean():.4f}; D50(3) reports 0.974"
+    )
