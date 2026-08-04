@@ -142,6 +142,10 @@ architecture rather than to the method.**
 | B4.3 | Untrained control for D35 | **dropped** → D54(3): degenerate by construction, the untrained model has no answer process |
 | B4.4 | Why are 8/108 trained orbit fits below the R²>0.9 bar while 0/60 untrained are? | **open** — a second, unexplained way the trained operator differs (D52(3)) |
 | B4.5 | What happens to ρ *before* step 6144? | **parked** — no published checkpoint exists; would need training from scratch |
+| B4.7 | **Measure accuracy on the 8 task families that never had it** (parity, running-max, projection, three-scale, three-scale-modk, running-count, nesting-depth, count-ones). One generation pass each. | **open — the single highest-value gap** (D56(2)); decides whether 8 tasks' worth of geometry describes reasoning or failure |
+| B4.8 | **Give persistent homology a null, or drop it.** 15 trajectories, H₁ 0–26, no surrogate ever computed. | **open** (D56(3)) — the last untested topological claim, and the most distinctive thing the project set out to look at |
+| B4.9 | **Sweep the Jacobian spectrum properly**, n=3 → tens of prompts, both arms. Magnitudes gave ρ (D31), arguments gave rotation (D55). | **open** — best value per unit cost in the project |
+| B4.10 | **Re-operationalise or retire H1's regime labels.** As they stand they partition without separating (Kruskal–Wallis p=0.48). | **open** (D56(1)) |
 | B4.6 | **Jacobian eigenvalue ARGUMENTS.** D31 ran Arnoldi on J-vector products and reported only the magnitude (ρ≈0.79–0.81). A contracting map rotates iff its eigenvalues are complex, at a rate given by their argument — a quantity needing no trajectory, no window and no null. The rotation question that five trajectory statistics failed to settle (D22/D26/D28/D32) is one cheap run away, and the data may already be on disk. | **DONE → D55.** Answered from data already on disk: leading eigenvalue complex in 3/3 prompts, period ≈2.6–6.0 unrolls, rotation real but surviving only ~4 turns and sampled at ~3 points/turn. Zero GPU. A proper multi-prompt sweep is now the follow-up. |
 
 ---
