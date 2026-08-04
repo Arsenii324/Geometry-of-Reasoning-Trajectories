@@ -141,14 +141,74 @@ def constructive_test(states: list[np.ndarray], bits: list[np.ndarray]) -> dict:
             "cos_v_vs_decoder": float(abs(v_mean @ w)), "n_rows": int(len(lag))}
 
 
-def main() -> None:
-    meta_path = os.path.join(STATES, "meta.json")
+# Sources of per-position states. The second is the trained/untrained pair captured
+# on IDENTICAL prompts by `scratch/kaggle_register_correct/`, which is what makes the
+# architectural question answerable for the register that actually exists (D50).
+SOURCES = [
+    (STATES, "", "trained (kaggle_states)"),
+    (os.path.join(ROOT, "scratch", "kaggle_register_correct", "out"), "trained_",
+     "trained (paired)"),
+    (os.path.join(ROOT, "scratch", "kaggle_register_correct", "out"), "untrained_",
+     "untrained (paired)"),
+]
+
+
+def _load(states_dir: str, prefix: str) -> list[tuple[dict, np.ndarray]]:
+    meta_path = os.path.join(states_dir, "meta.json")
     if not os.path.exists(meta_path):
-        print("saved states absent; nothing to recheck")
-        return
-    meta = json.load(open(meta_path, encoding="utf-8"))
+        return []
+    out = []
+    for m in json.load(open(meta_path, encoding="utf-8")):
+        if m.get("kind") != "a" or not m["name"].startswith(prefix):
+            continue
+        path = os.path.join(states_dir, m["name"] + ".npy")
+        if os.path.exists(path):
+            out.append((m, np.load(path).astype(np.float64)))
+    return out
+
+
+def main() -> None:
     d = 5280
     chance = float(np.sqrt(2.0 / (np.pi * d)))
+    summary = []
+    for states_dir, prefix, arm in SOURCES:
+        loaded = _load(states_dir, prefix)
+        if not loaded:
+            continue
+        segs, bs = [], []
+        for m, st in loaded:
+            ids = np.asarray(m["token_ids"])
+            dp = np.where((ids == TOK_ZERO) | (ids == TOK_ONE))[0]
+            if not len(dp):
+                continue
+            segs.append(st[int(dp[0]):int(dp[0]) + len(dp)])
+            bs.append((ids[dp] == TOK_ONE).astype(int))
+        if len(segs) < 4:
+            continue
+        ct = constructive_test(segs, bs)
+        summary.append((arm, len(segs), ct))
+    if summary:
+        print("=== IS THE REAL REGISTER (D50) ARCHITECTURAL? ===")
+        print("  lagged count | position, current token; in-fold controls, "
+              "grouped by prompt\n")
+        print(f"  {'arm':>22} {'n_traj':>7} {'cv R2':>9} {'null max':>10} "
+              f"{'|cos(v,decoder)|':>17}")
+        for arm, n, ct in summary:
+            print(f"  {arm:>22} {n:>7} {ct['cv_r2']:>+9.4f} {ct['null_max']:>+10.4f} "
+                  f"{ct['cos_v_vs_decoder']:>17.4f}")
+        pair = {a: c for a, n, c in summary if "paired" in a}
+        if len(pair) == 2:
+            t, u = pair["trained (paired)"]["cv_r2"], pair["untrained (paired)"]["cv_r2"]
+            print(f"\n  paired difference (trained - untrained) = {t - u:+.4f}")
+            print("  VERDICT:", "the register is ARCHITECTURAL -- random weights carry "
+                  "it too" if u > t - 0.10 else "the register is a TRAINED property")
+        print()
+
+    meta_path = os.path.join(STATES, "meta.json")
+    if not os.path.exists(meta_path):
+        print("original saved states absent; window recheck skipped")
+        return
+    meta = json.load(open(meta_path, encoding="utf-8"))
 
     rows = []
     for m in meta:
