@@ -51,9 +51,10 @@ import json
 import os
 
 import matplotlib
+
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt          # noqa: E402
-import numpy as np                       # noqa: E402
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIG = os.path.join(ROOT, "figures")
