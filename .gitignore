@@ -36,6 +36,8 @@
 !/scratch/kaggle_rho_ckpt_b/
 !/scratch/kaggle_rho_ckpt_c/
 !/scratch/kaggle_rho_ckpt_d/
+!/scratch/kaggle_rho_seed_a/
+!/scratch/kaggle_rho_seed_b/
 # within those bundles, keep the harness noise out
 /scratch/*/poll.sh
 /scratch/*/poll*.log
