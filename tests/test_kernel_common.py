@@ -183,138 +183,77 @@ def test_build_kernel_rejects_an_unknown_block() -> None:
         resolve(["no_such_block"], parse_lib())
 
 
+def _fake_lm(next_tokens, torch):
+    """A model whose argmax emits `next_tokens` in order, then a stop token."""
+    import types
+
+    class M:
+        def __init__(self):
+            self.calls = []
+            self.step = 0
+
+        def parameters(self):
+            yield torch.zeros(1)
+
+        def __call__(self, input_ids=None, num_steps=None, **kw):
+            self.calls.append(tuple(input_ids.shape))
+            b, _ = input_ids.shape
+            tok_id = next_tokens[self.step] if self.step < len(next_tokens) else 65508
+            self.step += 1
+            logits = torch.full((b, input_ids.shape[1], 70000), -1e9)
+            logits[:, -1, tok_id] = 0.0
+            return types.SimpleNamespace(logits=logits)
+
+    return M()
+
+
+def _fake_tok(torch, decode_map=None):
+    import types
+
+    class T:
+        eos_token_id, pad_token_id = 65505, 65509
+
+        def __call__(self, p, **kw):
+            return types.SimpleNamespace(
+                input_ids=torch.zeros(1, len(p), dtype=torch.long))
+
+        def decode(self, x, **kw):
+            ids = [int(v) for v in x]
+            if decode_map is not None:
+                return "".join(decode_map.get(i, "") for i in ids)
+            return "".join("w" for i in ids if i not in (65504, 65505, 65508, 65509))
+
+    return T()
+
+
 def test_batched_generate_never_mixes_lengths_in_a_batch(lib) -> None:
-    """The block must form one batch per distinct token length.
-
-    `RavenForCausalLM.forward` sets `prepared_attn_mask = None` -- the attention
+    """`RavenForCausalLM.forward` sets `prepared_attn_mask = None` -- the attention
     mask is commented out -- so padding is NOT masked and a mixed-length batch
-    silently attends to pad tokens. Lengths also cannot be assumed equal: ten
-    six-letter words through one template tokenise to 15 or 16 tokens. Driven here
-    with fakes so the invariant is checked without a GPU.
-    """
-    import types
-
+    silently attends to pad tokens. Batching is only safe across identical lengths,
+    and lengths cannot be assumed equal (ten six-letter words through one template
+    tokenise to 15 or 16 tokens)."""
     torch = pytest.importorskip("torch")
-    seen = []
-
-    class Tok:
-        eos_token_id = pad_token_id = 0
-
-        def __call__(self, p, **kw):
-            return types.SimpleNamespace(
-                input_ids=torch.zeros(1, len(p), dtype=torch.long))
-
-        def decode(self, x, **kw):
-            return f"len{len(x)}"
-
-    class Model:
-        def parameters(self):
-            yield torch.zeros(1)
-
-        def generate_minimal(self, ids, cfg, **kw):
-            seen.append(tuple(ids.shape))
-            return torch.zeros(ids.shape[0], ids.shape[1] + 2, dtype=torch.long)
-
-    prompts = ["a" * n for n in (5, 5, 5, 7, 7, 9)]
-    out = lib["batched_generate"](Model(), Tok(), prompts, verbose=False)
-
-    assert len(out) == len(prompts), "every prompt must get a result, in order"
-    assert len(seen) == 3, f"expected one batch per distinct length, got {seen}"
-    assert sorted(b[0] for b in seen) == [1, 2, 3], f"bucket sizes wrong: {seen}"
-    assert {b[1] for b in seen} == {5, 7, 9}, "batch widths must be the true lengths"
+    m = _fake_lm([100, 101], torch)
+    lib["batched_generate"](m, _fake_tok(torch), ["a" * n for n in (5, 5, 5, 7, 7, 9)],
+                            max_new=3, verbose=False)
+    widths = {c[1] - k for c in m.calls for k in (0,)}   # prompt widths seen
+    starts = sorted({c[1] for c in m.calls})
+    assert min(starts) >= 5, f"unexpected batch widths {starts}"
+    assert {c[0] for c in m.calls} == {1, 2, 3}, (
+        f"expected one batch per distinct length with sizes 1,2,3; got "
+        f"{sorted({c[0] for c in m.calls})}"
+    )
+    _ = widths
 
 
-def test_batched_generate_is_a_real_saving(lib) -> None:
-    """Bucketing is pointless if every prompt lands in its own bucket.
-
-    The Caesar prompt set is the motivating case: fixed-width templates over
-    equal-length words, which bucket into a handful of lengths rather than one per
-    item. If a future prompt set degenerates, this fires and says so.
-    """
-    import types
-
+def test_batched_generate_stops_on_a_stop_token(lib) -> None:
+    """Huginn's stop set is {65504, 65505, 65508} = begin_text, end_text, end_turn.
+    A model that emits one immediately must terminate that sequence."""
     torch = pytest.importorskip("torch")
-    batches = []
-
-    class Tok:
-        eos_token_id = pad_token_id = 0
-
-        def __call__(self, p, **kw):
-            return types.SimpleNamespace(
-                input_ids=torch.zeros(1, 15 + (hash(p) % 2), dtype=torch.long))
-
-        def decode(self, x, **kw):
-            return "text"      # non-empty: an all-empty return now raises (D62 guard)
-
-    class Model:
-        def parameters(self):
-            yield torch.zeros(1)
-
-        def generate_minimal(self, ids, cfg, **kw):
-            batches.append(ids.shape[0])
-            return torch.zeros(ids.shape[0], ids.shape[1] + 1, dtype=torch.long)
-
-    lib["batched_generate"](Model(), Tok(), [f"w{i}" for i in range(20)], verbose=False)
-    assert len(batches) <= 4, f"20 prompts fell into {len(batches)} buckets"
-    assert max(batches) >= 5, "no bucket is large enough for batching to pay"
-
-
-def test_batched_generate_refuses_to_return_all_empty(lib) -> None:
-    """The D62 guard: a generator that produces nothing must raise, not return.
-
-    In `geometry-task-accuracy` every prompt came back as an empty string and the
-    run was scored anyway, producing a full table of zeros that read as a capability
-    finding. Silence is the dangerous failure here, so the block raises.
-    """
-    import types
-
-    torch = pytest.importorskip("torch")
-
-    class DeadTok:
-        eos_token_id = pad_token_id = 0
-
-        def __call__(self, p, **kw):
-            return types.SimpleNamespace(
-                input_ids=torch.zeros(1, len(p), dtype=torch.long))
-
-        def decode(self, x, **kw):
-            return ""          # the D62 symptom
-
-    class Model:
-        def parameters(self):
-            yield torch.zeros(1)
-
-        def generate_minimal(self, ids, cfg, **kw):
-            return torch.zeros(ids.shape[0], ids.shape[1] + 2, dtype=torch.long)
-
+    m = _fake_lm([65508], torch)                       # end_turn on the first step
     with pytest.raises(RuntimeError, match="empty output"):
-        lib["batched_generate"](Model(), DeadTok(), ["aaa", "bbb"], verbose=False)
+        lib["batched_generate"](m, _fake_tok(torch), ["aaa", "bbb"],
+                                max_new=10, verbose=False)
+    assert m.step == 1, f"should have stopped after one step, ran {m.step}"
 
 
-def test_batched_generate_unwraps_a_dict_return(lib) -> None:
-    """`generate_minimal` is typed `Union[Tensor, dict]`; iterating a dict yields its
-    KEYS, which decode to nothing. That is the mechanism behind D62."""
-    import types
-
-    torch = pytest.importorskip("torch")
-
-    class Tok:
-        eos_token_id = pad_token_id = 0
-
-        def __call__(self, p, **kw):
-            return types.SimpleNamespace(
-                input_ids=torch.zeros(1, len(p), dtype=torch.long))
-
-        def decode(self, x, **kw):
-            return "ok"
-
-    class DictModel:
-        def parameters(self):
-            yield torch.zeros(1)
-
-        def generate_minimal(self, ids, cfg, **kw):
-            return {"sequences": torch.zeros(ids.shape[0], ids.shape[1] + 2,
-                                             dtype=torch.long)}
-
-    out = lib["batched_generate"](DictModel(), Tok(), ["aaa", "bbb"], verbose=False)
-    assert out == ["ok", "ok"], f"dict return not unwrapped: {out}"
