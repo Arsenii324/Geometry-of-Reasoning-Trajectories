@@ -44,6 +44,7 @@
 !/scratch/kaggle_eps_sweep/
 !/scratch/kaggle_chatfmt/
 !/scratch/kaggle_taskacc/
+!/scratch/kaggle_promptdepth/
 !/scratch/kaggle_eps_split/
 !/scratch/_lib/
 # within those bundles, keep the harness noise out

@@ -302,7 +302,8 @@ def cv_r2(x, y, groups=None, alpha=1e3, n_splits=5, n_null=0):
 
 
 # ---8<--- batched_generate
-def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True):
+def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True,
+                     continuous_compute=False):
     """Greedy generation over length-homogeneous batches, WITHOUT the KV cache.
 
     WHY NOT THE MODEL'S OWN `generate_minimal`. It is batched and cache-backed and
@@ -325,6 +326,11 @@ def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True
     therefore only safe across prompts of IDENTICAL token length, and lengths are
     measured rather than assumed (ten six-letter words through one template tokenise
     to 15 OR 16 tokens).
+
+    `continuous_compute` warm-starts each new token's latent from the previous
+    token's final latent instead of re-initialising it randomly -- Huginn's
+    "continuous CoT" mode, which no kernel in this project had ever used. It needs
+    `output_details` to return latents, so it is requested explicitly.
 
     Raises if every output is empty: that is the D62 symptom, and returning it
     silently is what let a full table of zeros read as a capability finding.
@@ -350,10 +356,20 @@ def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True
         ids = torch.stack([enc[i] for i in idxs]).to(dev)
         n_prompt = ids.shape[1]
         live = [True] * len(idxs)
+        state = None
         for _ in range(max_new):
+            kw = {"num_steps": num_steps}
+            if continuous_compute:
+                kw["output_details"] = {"return_logits": True, "return_latents": True,
+                                        "return_head": False, "return_stats": False}
+                if state is not None:
+                    kw["input_states"] = state
             with torch.no_grad():
-                res = model(input_ids=ids, num_steps=num_steps)
+                res = model(input_ids=ids, **kw)
             logits = res.logits if hasattr(res, "logits") else res[0]
+            if continuous_compute:
+                lat = getattr(res, "latent_states", None)
+                state = lat[:, -1:, :].clone() if lat is not None else None
             nxt = logits[:, -1, :].argmax(-1, keepdim=True)
             for b in range(len(idxs)):
                 if int(nxt[b, 0]) in stop:
