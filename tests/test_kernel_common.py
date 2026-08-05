@@ -257,3 +257,33 @@ def test_batched_generate_stops_on_a_stop_token(lib) -> None:
     assert m.step == 1, f"should have stopped after one step, ran {m.step}"
 
 
+
+
+def test_batched_generate_respects_the_activation_budget(lib) -> None:
+    """`batch x sequence` must stay bounded, or the MLP OOMs.
+
+    This loop has no KV cache, so it re-runs the full growing sequence every step.
+    float32 weights are ~14.1 GB of a T4's 14.56 GB, leaving ~450 MB for
+    activations against a gated MLP of inner width 17920 -- batch 16 x ~100 tokens
+    died inside `nonlin(x_fc_1) * x_fc_2` in geometry-prompt-depth. Buckets are now
+    split so `chunk * (prompt_len + max_new) <= max_batch_tokens`.
+    """
+    torch = pytest.importorskip("torch")
+    m = _fake_lm([100], torch)
+    # 40 same-length prompts of 50 tokens, generating 50 more: 100 tok each
+    lib["batched_generate"](m, _fake_tok(torch), ["a" * 50] * 40, max_new=50,
+                            max_batch_tokens=400, verbose=False)
+    widest = max(c[0] for c in m.calls)
+    assert widest <= 4, (
+        f"largest batch was {widest}; budget 400 / (50+50) allows 4"
+    )
+    assert widest >= 1
+
+
+def test_batched_generate_budget_does_not_split_when_unnecessary(lib) -> None:
+    """A generous budget must leave whole length-buckets intact, or batching is lost."""
+    torch = pytest.importorskip("torch")
+    m = _fake_lm([100], torch)
+    lib["batched_generate"](m, _fake_tok(torch), ["a" * 10] * 12, max_new=6,
+                            max_batch_tokens=4096, verbose=False)
+    assert max(c[0] for c in m.calls) == 12, "one bucket should stay one batch"

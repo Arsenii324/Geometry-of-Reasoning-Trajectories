@@ -1,0 +1,75 @@
+[{"stream_name":"stdout","time":0.903821756,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.105945047,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.134031369,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 90.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.166442278,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 32.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.217721704,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 92.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":32.710681165,"data":"CUDA: True\n"}
+,{"stream_name":"stderr","time":125.831987165,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:11\u003c03:33, 71.16s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:11\u003c00:00, 17.79s/it]\n"}
+,{"stream_name":"stderr","time":125.977548225,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 65.86it/s]\n"}
+,{"stream_name":"stdout","time":151.959998158,"data":"  generation smoke-test: 4/4 copied  -\u003e ['banana', 'orange', 'puzzle', 'kitten']\n"}
+,{"stream_name":"stdout","time":151.960042926,"data":"\n"}
+,{"stream_name":"stdout","time":151.96004899,"data":"=== example renderings ===\n"}
+,{"stream_name":"stdout","time":151.960351447,"data":"          bare: 'eader|\u003e\\n\\nCount how many ones are in this sequence.\\nSequence: 0 1 0 1\u003c|end_turn|\u003e\u003c|begin_header|\u003eHuginn\u003c|end_header|\u003e\\n\\n'\n"}
+,{"stream_name":"stdout","time":151.960513787,"data":"   constrained: 'equence.\\nSequence: 0 1 0 1\\nReply with only the answer, nothing else.\u003c|end_turn|\u003e\u003c|begin_header|\u003eHuginn\u003c|end_header|\u003e\\n\\n'\n"}
+,{"stream_name":"stdout","time":151.960726197,"data":"           cot: '0 1\\nThink step by step, then give the final answer on the last line.\u003c|end_turn|\u003e\u003c|begin_header|\u003eHuginn\u003c|end_header|\u003e\\n\\n'\n"}
+,{"stream_name":"stdout","time":151.960849477,"data":"     decompose: 'e one item at a time, keeping a running total, then state the total.\u003c|end_turn|\u003e\u003c|begin_header|\u003eHuginn\u003c|end_header|\u003e\\n\\n'\n"}
+,{"stream_name":"stdout","time":151.961204637,"data":"      fewshot2: 'eader|\u003e\\n\\nCount how many ones are in this sequence.\\nSequence: 0 1 0 1\u003c|end_turn|\u003e\u003c|begin_header|\u003eHuginn\u003c|end_header|\u003e\\n\\n'\n"}
+,{"stream_name":"stdout","time":151.961223156,"data":"\n"}
+,{"stream_name":"stdout","time":151.961228591,"data":"=== STAGE 1: which phrasing? (r=32, n=4) ===\n"}
+,{"stream_name":"stdout","time":151.961264322,"data":"         task         bare  constrained          cot    decompose     fewshot2\n"}
+,{"stream_name":"stderr","time":2465.555256985,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":2465.555307961,"data":"  File \"/kaggle/src/script.py\", line 346, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":2465.555701748,"data":"    main()\n"}
+,{"stream_name":"stderr","time":2465.555880542,"data":"  File \"/kaggle/src/script.py\", line 301, in main\n"}
+,{"stream_name":"stderr","time":2465.556144071,"data":"    acc, ex, gold = run_cell(model, tok, task, ph, PICK_DEPTH, mx)\n"}
+,{"stream_name":"stderr","time":2465.557881231,"data":"                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.557933611,"data":"  File \"/kaggle/src/script.py\", line 270, in run_cell\n"}
+,{"stream_name":"stderr","time":2465.558269676,"data":"    preds = batched_generate(model, tok, texts, max_new=max_new, num_steps=depth,\n"}
+,{"stream_name":"stderr","time":2465.560215254,"data":"            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.560250022,"data":"  File \"/kaggle/src/script.py\", line 122, in batched_generate\n"}
+,{"stream_name":"stderr","time":2465.560474874,"data":"    res = model(input_ids=ids, **kw)\n"}
+,{"stream_name":"stderr","time":2465.561386757,"data":"          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.561446589,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1776, in _wrapped_call_impl\n"}
+,{"stream_name":"stderr","time":2465.564559891,"data":"    return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":2465.565383073,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.565466831,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1787, in _call_impl\n"}
+,{"stream_name":"stderr","time":2465.566007757,"data":"    return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":2465.567079525,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.567132881,"data":"  File \"/root/.cache/huggingface/modules/transformers_modules/tomg-group-umd/huginn-0125/bb6621b65e90b6a4b9b29ef88dc83866d450470c/raven_modeling_minimal.py\", line 682, in forward\n"}
+,{"stream_name":"stderr","time":2465.567466619,"data":"    x, num_steps_no_grad, num_steps_with_grad, xk, block_idx = self.iterate_forward(\n"}
+,{"stream_name":"stderr","time":2465.569537892,"data":"                                                               ^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.569595401,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/_dynamo/external_utils.py\", line 203, in nonrecursive_disable_wrapper\n"}
+,{"stream_name":"stderr","time":2465.57153847,"data":"    return fn(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":2465.57231135,"data":"           ^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.572375418,"data":"  File \"/root/.cache/huggingface/modules/transformers_modules/tomg-group-umd/huginn-0125/bb6621b65e90b6a4b9b29ef88dc83866d450470c/raven_modeling_minimal.py\", line 751, in iterate_forward\n"}
+,{"stream_name":"stderr","time":2465.572711901,"data":"    x, block_idx = self.core_block_forward(\n"}
+,{"stream_name":"stderr","time":2465.573821767,"data":"                   ^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.573881508,"data":"  File \"/root/.cache/huggingface/modules/transformers_modules/tomg-group-umd/huginn-0125/bb6621b65e90b6a4b9b29ef88dc83866d450470c/raven_modeling_minimal.py\", line 777, in core_block_forward\n"}
+,{"stream_name":"stderr","time":2465.574220455,"data":"    x = block(x, freqs_cis, block_idx, mask, past_key_values)\n"}
+,{"stream_name":"stderr","time":2465.575759128,"data":"        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.57583302,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1776, in _wrapped_call_impl\n"}
+,{"stream_name":"stderr","time":2465.576296079,"data":"    return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":2465.577371139,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.577451283,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1787, in _call_impl\n"}
+,{"stream_name":"stderr","time":2465.577946417,"data":"    return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":2465.578971129,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.579043342,"data":"  File \"/root/.cache/huggingface/modules/transformers_modules/tomg-group-umd/huginn-0125/bb6621b65e90b6a4b9b29ef88dc83866d450470c/raven_modeling_minimal.py\", line 535, in forward\n"}
+,{"stream_name":"stderr","time":2465.579390677,"data":"    x = self.norm_4(self.mlp(self.norm_3(x)) + x)\n"}
+,{"stream_name":"stderr","time":2465.580482216,"data":"                    ^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.580561024,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1776, in _wrapped_call_impl\n"}
+,{"stream_name":"stderr","time":2465.581030983,"data":"    return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":2465.582105646,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.582179601,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1787, in _call_impl\n"}
+,{"stream_name":"stderr","time":2465.582632958,"data":"    return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":2465.583635115,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":2465.583717962,"data":"  File \"/root/.cache/huggingface/modules/transformers_modules/tomg-group-umd/huginn-0125/bb6621b65e90b6a4b9b29ef88dc83866d450470c/raven_modeling_minimal.py\", line 508, in forward\n"}
+,{"stream_name":"stderr","time":2465.584008648,"data":"    x = self.nonlin(x_fc_1) * x_fc_2\n"}
+,{"stream_name":"stderr","time":2465.58494687,"data":"        ~~~~~~~~~~~~~~~~~~~~^~~~~~~~\n"}
+,{"stream_name":"stderr","time":2465.585129896,"data":"torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 98.00 MiB. GPU 0 has a total capacity of 14.56 GiB of which 84.81 MiB is free. Including non-PyTorch memory, this process has 14.48 GiB memory in use. Of the allocated memory 14.11 GiB is allocated by PyTorch, and 243.29 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)\n"}
+,{"stream_name":"stderr","time":2471.721980085,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":2471.722009734,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":2471.993862113,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":2471.993888499,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":2472.62651151,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":2473.664862764,"data":"[NbConvertApp] Writing 344961 bytes to __results__.html\n"}
+]

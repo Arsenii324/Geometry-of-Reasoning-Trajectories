@@ -108,7 +108,8 @@ def free_arm(model, repo_id=None):
             print(f"  purged {d}", flush=True)
 
 
-def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True):
+def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True,
+                     continuous_compute=False, max_batch_tokens=1024):
     """Greedy generation over length-homogeneous batches, WITHOUT the KV cache.
 
     WHY NOT THE MODEL'S OWN `generate_minimal`. It is batched and cache-backed and
@@ -132,6 +133,19 @@ def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True
     measured rather than assumed (ten six-letter words through one template tokenise
     to 15 OR 16 tokens).
 
+    `continuous_compute` warm-starts each new token's latent from the previous
+    token's final latent instead of re-initialising it randomly -- Huginn's
+    "continuous CoT" mode, which no kernel in this project had ever used. It needs
+    `output_details` to return latents, so it is requested explicitly.
+
+    `max_batch_tokens` caps `batch x sequence_length`, because this loop has no KV
+    cache and therefore re-runs the FULL growing sequence every step. float32
+    weights are ~14.1 GB of a T4's 14.56 GB, leaving ~450 MB for activations, and
+    the gated MLP's inner width is 17920 -- so batch 16 x ~100 tokens OOM'd inside
+    `nonlin(x_fc_1) * x_fc_2`. Buckets are split into chunks satisfying
+    `chunk * (prompt_len + max_new) <= max_batch_tokens`, which keeps the peak
+    bounded regardless of how long the prompts or completions are.
+
     Raises if every output is empty: that is the D62 symptom, and returning it
     silently is what let a full table of zeros read as a capability finding.
     """
@@ -146,20 +160,35 @@ def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True
     buckets: dict[int, list[int]] = {}
     for i, e in enumerate(enc):
         buckets.setdefault(int(e.shape[0]), []).append(i)
+    # split each length-bucket so batch x seq stays inside the activation budget
+    chunks: list[list[int]] = []
+    for width, idxs in buckets.items():
+        per = max(1, max_batch_tokens // max(width + max_new, 1))
+        chunks += [idxs[k:k + per] for k in range(0, len(idxs), per)]
     if verbose:
-        sizes = sorted((len(v) for v in buckets.values()), reverse=True)
-        print(f"    batching {len(prompts)} prompts into {len(buckets)} length-buckets "
-              f"(sizes {sizes[:6]}{'...' if len(sizes) > 6 else ''})", flush=True)
+        print(f"    {len(prompts)} prompts -> {len(buckets)} length-buckets -> "
+              f"{len(chunks)} chunks (max {max(len(c) for c in chunks)} per chunk, "
+              f"budget {max_batch_tokens} tok)", flush=True)
 
     out: list[str] = [""] * len(prompts)
-    for idxs in buckets.values():
+    for idxs in chunks:
         ids = torch.stack([enc[i] for i in idxs]).to(dev)
         n_prompt = ids.shape[1]
         live = [True] * len(idxs)
+        state = None
         for _ in range(max_new):
+            kw = {"num_steps": num_steps}
+            if continuous_compute:
+                kw["output_details"] = {"return_logits": True, "return_latents": True,
+                                        "return_head": False, "return_stats": False}
+                if state is not None:
+                    kw["input_states"] = state
             with torch.no_grad():
-                res = model(input_ids=ids, num_steps=num_steps)
+                res = model(input_ids=ids, **kw)
             logits = res.logits if hasattr(res, "logits") else res[0]
+            if continuous_compute:
+                lat = getattr(res, "latent_states", None)
+                state = lat[:, -1:, :].clone() if lat is not None else None
             nxt = logits[:, -1, :].argmax(-1, keepdim=True)
             for b in range(len(idxs)):
                 if int(nxt[b, 0]) in stop:

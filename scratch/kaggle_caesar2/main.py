@@ -122,33 +122,46 @@ def free_arm(model, repo_id=None):
             print(f"  purged {d}", flush=True)
 
 
-def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True):
-    """Generate for many prompts using the model's OWN cached, batched generator.
+def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True,
+                     continuous_compute=False):
+    """Greedy generation over length-homogeneous batches, WITHOUT the KV cache.
 
-    WHY THIS EXISTS. The hand-rolled loop it replaces re-ran the ENTIRE sequence
-    through all `num_steps` unrolls for every generated token, at batch size 1 --
-    O(n^2) token-positions with no KV cache and no GPU utilisation. Huginn ships
-    `HuginnDynamicCache` (keyed per recurrence step) and four generate methods;
-    none of them was being used. The Caesar screen took >90 min for 240 short
-    completions because of this.
+    WHY NOT THE MODEL'S OWN `generate_minimal`. It is batched and cache-backed and
+    should be strictly better. It returned an EMPTY STRING for every prompt in
+    `geometry-task-accuracy` (D62) while the naive batch-1 loop reached 100% on the
+    same task and prompts (D60). Two candidate mechanisms were checked against the
+    source and BOTH REFUTED: it returns a plain tensor unless `return_dict_in_generate`
+    is set (it was not), and the stop check reads `next_token[i,0]` only, so the
+    prompt's own `<|begin_text|>` cannot trip it. What remains untested is the
+    cache+batch path itself. Rather than debug someone else's decode loop on a
+    borrowed GPU, this keeps the generator that is KNOWN to work and takes the
+    speedup from batching alone.
 
-    TWO ARCHITECTURE-SPECIFIC TRAPS, both verified in the model source:
-      * `RavenForCausalLM.forward` sets `prepared_attn_mask = None` -- the
-        attention mask is commented out -- so PADDING IS NOT MASKED and a padded
-        batch silently attends to pad tokens. Batching is therefore only safe
-        across prompts of IDENTICAL token length.
-      * Equal-looking prompts are not equal-length: ten six-letter words through
-        the same template tokenise to 15 OR 16 tokens, because the ciphertext
-        tokenises differently. So lengths must be measured, not assumed.
+    Batching still pays: the screen ran 240 completions at ~1 min each because it
+    was batch-1 (C9). Bucket sizes here are 8-16, so most of the win survives.
 
-    This buckets by exact token length, generates per bucket, and restores the
-    original order. `n_buckets` is reported: if it approaches `len(prompts)` the
-    batching is buying nothing and the prompt set should be redesigned.
+    ONE ARCHITECTURE-SPECIFIC TRAP, verified in the source: `forward` sets
+    `prepared_attn_mask = None` -- the attention mask is commented out -- so PADDING
+    IS NOT MASKED and a padded batch silently attends to pad tokens. Batching is
+    therefore only safe across prompts of IDENTICAL token length, and lengths are
+    measured rather than assumed (ten six-letter words through one template tokenise
+    to 15 OR 16 tokens).
+
+    `continuous_compute` warm-starts each new token's latent from the previous
+    token's final latent instead of re-initialising it randomly -- Huginn's
+    "continuous CoT" mode, which no kernel in this project had ever used. It needs
+    `output_details` to return latents, so it is requested explicitly.
+
+    Raises if every output is empty: that is the D62 symptom, and returning it
+    silently is what let a full table of zeros read as a capability finding.
     """
     import torch
-    from transformers import GenerationConfig
 
     dev = next(model.parameters()).device if hasattr(model, "parameters") else "cpu"
+    stop = {65504, 65505, 65508}                      # begin_text, end_text, end_turn
+    if getattr(tok, "eos_token_id", None) is not None:
+        stop.add(tok.eos_token_id)
+
     enc = [tok(p, return_tensors="pt", add_special_tokens=False).input_ids[0] for p in prompts]
     buckets: dict[int, list[int]] = {}
     for i, e in enumerate(enc):
@@ -158,19 +171,41 @@ def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True
         print(f"    batching {len(prompts)} prompts into {len(buckets)} length-buckets "
               f"(sizes {sizes[:6]}{'...' if len(sizes) > 6 else ''})", flush=True)
 
-    cfg = GenerationConfig(max_new_tokens=max_new, do_sample=False,
-                           eos_token_id=tok.eos_token_id,
-                           pad_token_id=tok.pad_token_id or tok.eos_token_id)
     out: list[str] = [""] * len(prompts)
     for idxs in buckets.values():
         ids = torch.stack([enc[i] for i in idxs]).to(dev)
-        with torch.no_grad():
-            gen = model.generate_minimal(ids, cfg, tokenizer=tok, num_steps=num_steps)
-        for row, i in zip(gen, idxs, strict=True):
-            out[i] = tok.decode(row[ids.shape[1]:], skip_special_tokens=True)
-        del ids, gen
+        n_prompt = ids.shape[1]
+        live = [True] * len(idxs)
+        state = None
+        for _ in range(max_new):
+            kw = {"num_steps": num_steps}
+            if continuous_compute:
+                kw["output_details"] = {"return_logits": True, "return_latents": True,
+                                        "return_head": False, "return_stats": False}
+                if state is not None:
+                    kw["input_states"] = state
+            with torch.no_grad():
+                res = model(input_ids=ids, **kw)
+            logits = res.logits if hasattr(res, "logits") else res[0]
+            if continuous_compute:
+                lat = getattr(res, "latent_states", None)
+                state = lat[:, -1:, :].clone() if lat is not None else None
+            nxt = logits[:, -1, :].argmax(-1, keepdim=True)
+            for b in range(len(idxs)):
+                if int(nxt[b, 0]) in stop:
+                    live[b] = False
+            ids = torch.cat([ids, nxt], dim=1)
+            if not any(live):
+                break
+        for b, i in enumerate(idxs):
+            out[i] = tok.decode(ids[b, n_prompt:], skip_special_tokens=True)
+        del ids
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
+    if not any(o.strip() for o in out):
+        raise RuntimeError(
+            f"batched_generate produced empty output for all {len(prompts)} prompts. "
+            "This is the D62 failure mode; refusing to return silently.")
     return out
 
 import json

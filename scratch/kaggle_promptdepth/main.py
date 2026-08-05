@@ -57,7 +57,7 @@ def run(cmd):
 
 
 def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True,
-                     continuous_compute=False):
+                     continuous_compute=False, max_batch_tokens=1024):
     """Greedy generation over length-homogeneous batches, WITHOUT the KV cache.
 
     WHY NOT THE MODEL'S OWN `generate_minimal`. It is batched and cache-backed and
@@ -86,6 +86,14 @@ def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True
     "continuous CoT" mode, which no kernel in this project had ever used. It needs
     `output_details` to return latents, so it is requested explicitly.
 
+    `max_batch_tokens` caps `batch x sequence_length`, because this loop has no KV
+    cache and therefore re-runs the FULL growing sequence every step. float32
+    weights are ~14.1 GB of a T4's 14.56 GB, leaving ~450 MB for activations, and
+    the gated MLP's inner width is 17920 -- so batch 16 x ~100 tokens OOM'd inside
+    `nonlin(x_fc_1) * x_fc_2`. Buckets are split into chunks satisfying
+    `chunk * (prompt_len + max_new) <= max_batch_tokens`, which keeps the peak
+    bounded regardless of how long the prompts or completions are.
+
     Raises if every output is empty: that is the D62 symptom, and returning it
     silently is what let a full table of zeros read as a capability finding.
     """
@@ -100,13 +108,18 @@ def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True
     buckets: dict[int, list[int]] = {}
     for i, e in enumerate(enc):
         buckets.setdefault(int(e.shape[0]), []).append(i)
+    # split each length-bucket so batch x seq stays inside the activation budget
+    chunks: list[list[int]] = []
+    for width, idxs in buckets.items():
+        per = max(1, max_batch_tokens // max(width + max_new, 1))
+        chunks += [idxs[k:k + per] for k in range(0, len(idxs), per)]
     if verbose:
-        sizes = sorted((len(v) for v in buckets.values()), reverse=True)
-        print(f"    batching {len(prompts)} prompts into {len(buckets)} length-buckets "
-              f"(sizes {sizes[:6]}{'...' if len(sizes) > 6 else ''})", flush=True)
+        print(f"    {len(prompts)} prompts -> {len(buckets)} length-buckets -> "
+              f"{len(chunks)} chunks (max {max(len(c) for c in chunks)} per chunk, "
+              f"budget {max_batch_tokens} tok)", flush=True)
 
     out: list[str] = [""] * len(prompts)
-    for idxs in buckets.values():
+    for idxs in chunks:
         ids = torch.stack([enc[i] for i in idxs]).to(dev)
         n_prompt = ids.shape[1]
         live = [True] * len(idxs)
