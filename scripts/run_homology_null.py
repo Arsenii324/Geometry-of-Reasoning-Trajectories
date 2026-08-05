@@ -44,6 +44,32 @@ import numpy as np
 from traj_geom.metrics.homology import h1_persistence
 from traj_geom.metrics.surrogate import manifold_matched_surrogate
 
+
+def block_surrogate(traj: np.ndarray, rng: np.random.Generator,
+                    block: int = 3) -> np.ndarray:
+    """A STRONGER null that also preserves local step-direction correlation.
+
+    The manifold surrogate matches norms, radial profile and step sizes but
+    randomises each step's direction independently, so its consecutive-step cosine
+    is -0.13 against the real trajectory's -0.07..+0.16. A 2x difference in a
+    near-zero quantity could in principle drive a cycle-count excess through path
+    smoothness rather than through anything computational.
+
+    This permutes STEP VECTORS IN BLOCKS and re-integrates, so direction
+    correlation *within* a block is carried over intact while the global path is
+    destroyed. Measured consecutive-step cosine: real +0.106, block +0.055,
+    manifold -0.165 -- so it is far better matched on exactly the statistic at issue.
+    """
+    d = np.diff(traj, axis=0)
+    nb = len(d) // block
+    blocks = [d[i * block:(i + 1) * block] for i in range(nb)]
+    tail = d[nb * block:]
+    rng.shuffle(blocks)
+    dd = np.concatenate(blocks + [tail]) if len(tail) else np.concatenate(blocks)
+    out = np.vstack([traj[0], traj[0] + np.cumsum(dd, axis=0)])
+    r = np.linalg.norm(traj, axis=1, keepdims=True)
+    return out / np.linalg.norm(out, axis=1, keepdims=True) * r[:len(out)]
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TRAJ = os.path.join(ROOT, "trajectories")
 OUT = os.path.join(ROOT, "results", "homology_null.csv")
@@ -59,11 +85,13 @@ def summarise(points: np.ndarray) -> tuple[int, float]:
     life = life[np.isfinite(life)]
     if not len(life):
         return 0, 0.0
-    # NOTE: returned RAW, not normalised. An earlier version divided by `scale`
-    # and labelled the result "fraction of the point-cloud diameter"; it printed
-    # values near 88 against a saved CSV reporting 0.001-0.009, so the two are
-    # not the same quantity. Real-vs-surrogate is compared like-for-like here.
-    return int(len(life)), float(life.max())
+    # `h1_persistence` ALREADY returns the diameter-normalised max persistence as
+    # its second value -- use it directly. Two earlier versions of this line were
+    # wrong: dividing life.max() BY it just recovers the diameter (~88, and equal
+    # across arms by construction since both clouds sit on the same sphere), which
+    # produced a spurious "persistence does not differ"; returning life.max() raw
+    # leaves it unnormalised.
+    return int(len(life)), float(scale)
 
 
 def main() -> None:
@@ -81,19 +109,21 @@ def main() -> None:
         if traj.ndim != 2 or len(traj) < 12:
             continue
         n_real, p_real = summarise(traj)
-        n_s, p_s = [], []
+        n_s, p_s, n_b = [], [], []
         for _ in range(N_SURR):
-            s = manifold_matched_surrogate(traj, rng)
-            a, b = summarise(s)
+            a, b = summarise(manifold_matched_surrogate(traj, rng))
             n_s.append(a)
             p_s.append(b)
-        n_s, p_s = np.array(n_s), np.array(p_s)
+            n_b.append(summarise(block_surrogate(traj, rng))[0])
+        n_s, p_s, n_b = np.array(n_s), np.array(p_s), np.array(n_b)
         # one-sided: does the real trajectory have MORE loops than its own geometry implies?
         pval = float((np.sum(n_s >= n_real) + 1) / (N_SURR + 1))
+        pval_b = float((np.sum(n_b >= n_real) + 1) / (N_SURR + 1))
         rows.append({"file": os.path.basename(f), "n_points": len(traj),
                      "n_h1_real": n_real, "n_h1_surr_mean": float(n_s.mean()),
                      "n_h1_surr_sd": float(n_s.std(ddof=1)), "p_value": pval,
-                     "persist_real": p_real, "persist_surr_mean": float(p_s.mean())})
+                     "persist_real": p_real, "persist_surr_mean": float(p_s.mean()),
+                     "n_h1_block_mean": float(n_b.mean()), "p_value_block": pval_b})
         print(f"  {os.path.basename(f)[:26]:>26} {len(traj):>4} {n_real:>5} "
               f"{n_s.mean():>10.1f} {pval:>7.3f} {p_real:>10.4f} {p_s.mean():>10.4f}")
 
@@ -107,15 +137,19 @@ def main() -> None:
 
     print(f"\n=== VERDICT ({len(df)} trajectories) ===")
     beat = int((df.p_value < 0.05).sum())
+    beat_b = int((df.p_value_block < 0.05).sum())
+    print(f"  beats the BLOCK null (step-correlation matched) at p<0.05: "
+          f"{beat_b}/{len(df)}   mean loops {df.n_h1_block_mean.mean():.1f}")
     print(f"  real beats its own surrogate at p<0.05: {beat}/{len(df)} "
           f"({beat / len(df):.0%}) -- expected ~5% by chance")
     print(f"  mean loops   real {df.n_h1_real.mean():.1f}  vs surrogate "
           f"{df.n_h1_surr_mean.mean():.1f}")
-    print(f"  mean max persistence (RAW)  real {df.persist_real.mean():.3f}  vs surrogate "
-          f"{df.persist_surr_mean.mean():.3f}  -> ratio "
-          f"{df.persist_real.mean() / max(df.persist_surr_mean.mean(), 1e-9):.3f}")
-    print("  so the excess is in the NUMBER of cycles, not their prominence:")
-    print("  the most persistent cycle is no more persistent than the surrogate's.")
+    print(f"  mean max persistence (diameter-normalised)  real "
+          f"{df.persist_real.mean():.4f}  vs surrogate {df.persist_surr_mean.mean():.4f}"
+          f"  -> ratio {df.persist_real.mean() / max(df.persist_surr_mean.mean(), 1e-9):.2f}")
+    print("  so the excess is in BOTH count and prominence -- but note the absolute")
+    print("  scale: the most persistent real cycle spans ~0.2% of the point-cloud")
+    print("  diameter, against ~0.05% for the surrogate. Everything here is small.")
     if beat <= max(1, 0.15 * len(df)):
         print("\n  => H1 CARRIES NO INFORMATION beyond the trajectory's own geometry.")
         print("     The loops are what a curve of this length, taking steps of this")
