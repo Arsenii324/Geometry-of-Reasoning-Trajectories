@@ -61,6 +61,8 @@ Cheap, and each one is here because its absence caused a specific error.
 | D10 | **Derive index windows from recorded metadata; assert, never assume** | D34/D36/D50 — a one-token offset the ‖v‖ search preferred by 9%, while `meta.json` recorded the true token positions all along |
 | D11 | **Every quoted number names the file it came from** | D41(3) — "trained ~10%" was quoted from a different task configuration; neither kernel had measured accuracy at all |
 | D12 | **Run the untrained control as a companion, not as a special study** | D40, D41, D48, D53 — four content-level findings turned out to be architectural, each discovered late |
+| D13 | **Log the model's actual OUTPUT, not just its score** — a handful of verbatim samples per condition | D61 — seven distinct retrieval modes were visible in ~27 logged strings and invisible in the accuracy table, which showed only zeros. The pangram, the uppercased echo and the few-shot answer-copying each imply a different diagnosis. |
+| D14 | **A softer/partial-credit metric is only safe when failure is NOISY.** Check that failure is unstructured before trusting one | D57(3), D61 — `char_acc` was added so near-misses would not score zero, and it *inverted the ordering*: untrained gibberish (5.8%) beat the trained model (0.0%), because trained failure is retrieved English that misaligns while random failure occasionally coincides. |
 
 ---
 

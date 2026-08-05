@@ -1,0 +1,78 @@
+[{"stream_name":"stdout","time":0.897141541,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54' scipy\n"}
+,{"stream_name":"stdout","time":3.794082203,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":4.857227309,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 77.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":4.888083798,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 37.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":4.941748524,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 80.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":31.228602589,"data":"CUDA: True\n"}
+,{"stream_name":"stdout","time":32.09228139,"data":"12 prompts across 4 families\n"}
+,{"stream_name":"stderr","time":116.876899666,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:03\u003c03:10, 63.39s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:04\u003c00:53, 26.81s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:04\u003c00:00, 16.15s/it]\n"}
+,{"stream_name":"stderr","time":117.010163588,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 64.46it/s]\n"}
+,{"stream_name":"stdout","time":130.032286998,"data":"targets: attn 4, mlp 4, both 8\n"}
+,{"stream_name":"stdout","time":130.482373723,"data":"\n"}
+,{"stream_name":"stdout","time":130.482411901,"data":"=== attn  eps = -0.100 ===\n"}
+,{"stream_name":"stderr","time":449.601985131,"data":"/kaggle/src/script.py:201: RuntimeWarning: Mean of empty slice\n"}
+,{"stream_name":"stderr","time":449.602059453,"data":"  f\"{np.nanmean([r[k] for r in rows]):.4f}\"\n"}
+,{"stream_name":"stdout","time":449.60201785,"data":"    attn-0.10: plai/amb=0.8568  plai/tan=0.8568  enve/tan=nan\n"}
+,{"stream_name":"stdout","time":450.033954736,"data":"\n"}
+,{"stream_name":"stdout","time":450.033993349,"data":"=== attn  eps = -0.050 ===\n"}
+,{"stream_name":"stdout","time":788.551238512,"data":"    attn-0.05: plai/amb=0.8680  plai/tan=0.8680  enve/tan=nan\n"}
+,{"stream_name":"stdout","time":788.985137638,"data":"\n"}
+,{"stream_name":"stdout","time":788.985209472,"data":"=== attn  eps = +0.000 ===\n"}
+,{"stream_name":"stdout","time":1127.771623526,"data":"    attn+0.00: plai/amb=0.8866  plai/tan=0.8866  enve/tan=0.9302\n"}
+,{"stream_name":"stdout","time":1128.209674115,"data":"\n"}
+,{"stream_name":"stdout","time":1128.209712778,"data":"=== attn  eps = +0.050 ===\n"}
+,{"stream_name":"stdout","time":1467.859635056,"data":"    attn+0.05: plai/amb=0.8710  plai/tan=0.8710  enve/tan=0.9240\n"}
+,{"stream_name":"stdout","time":1468.291002216,"data":"\n"}
+,{"stream_name":"stdout","time":1468.291040469,"data":"=== attn  eps = +0.100 ===\n"}
+,{"stream_name":"stdout","time":1808.046819546,"data":"    attn+0.10: plai/amb=0.8609  plai/tan=0.8609  enve/tan=0.9160\n"}
+,{"stream_name":"stdout","time":1808.482287783,"data":"\n"}
+,{"stream_name":"stdout","time":1808.482326021,"data":"=== mlp  eps = -0.100 ===\n"}
+,{"stream_name":"stdout","time":2147.020944246,"data":"    mlp-0.10: plai/amb=0.8633  plai/tan=0.8633  enve/tan=nan\n"}
+,{"stream_name":"stdout","time":2147.472871884,"data":"\n"}
+,{"stream_name":"stdout","time":2147.472910808,"data":"=== mlp  eps = -0.050 ===\n"}
+,{"stream_name":"stdout","time":2486.536378752,"data":"    mlp-0.05: plai/amb=0.8740  plai/tan=0.8740  enve/tan=0.9132\n"}
+,{"stream_name":"stdout","time":2486.986101938,"data":"\n"}
+,{"stream_name":"stdout","time":2486.986149173,"data":"=== mlp  eps = +0.000 ===\n"}
+,{"stream_name":"stdout","time":2825.061094722,"data":"    mlp+0.00: plai/amb=0.8866  plai/tan=0.8866  enve/tan=0.9302\n"}
+,{"stream_name":"stdout","time":2825.51334707,"data":"\n"}
+,{"stream_name":"stdout","time":2825.513402904,"data":"=== mlp  eps = +0.050 ===\n"}
+,{"stream_name":"stdout","time":3162.974784308,"data":"    mlp+0.05: plai/amb=0.8670  plai/tan=0.8670  enve/tan=0.9743\n"}
+,{"stream_name":"stdout","time":3163.421614269,"data":"\n"}
+,{"stream_name":"stdout","time":3163.421656009,"data":"=== mlp  eps = +0.100 ===\n"}
+,{"stream_name":"stdout","time":3502.148499654,"data":"    mlp+0.10: plai/amb=0.8914  plai/tan=0.8914  enve/tan=0.9078\n"}
+,{"stream_name":"stdout","time":3502.602699434,"data":"\n"}
+,{"stream_name":"stdout","time":3502.602743979,"data":"=== both  eps = -0.100 ===\n"}
+,{"stream_name":"stdout","time":3840.944607499,"data":"    both-0.10: plai/amb=0.8547  plai/tan=0.8547  enve/tan=nan\n"}
+,{"stream_name":"stdout","time":3841.400551785,"data":"\n"}
+,{"stream_name":"stdout","time":3841.400587951,"data":"=== both  eps = +0.100 ===\n"}
+,{"stream_name":"stdout","time":4180.420973969,"data":"    both+0.10: plai/amb=0.8929  plai/tan=0.8929  enve/tan=0.9404\n"}
+,{"stream_name":"stdout","time":4180.860900988,"data":"\n"}
+,{"stream_name":"stdout","time":4180.86093675,"data":"=== PAIRED SLOPES: where does the contraction live? ===\n"}
+,{"stream_name":"stdout","time":4180.865992966,"data":"   attn: slope +0.0225 +- 0.0828  p=0.803\n"}
+,{"stream_name":"stdout","time":4180.866928352,"data":"    mlp: slope +0.1294 +- 0.0781  p=0.196\n"}
+,{"stream_name":"stdout","time":4180.867212833,"data":"   both: slope +0.1908 (2-point, reproduction arm)\n"}
+,{"stream_name":"stdout","time":4180.867349976,"data":"\n"}
+,{"stream_name":"stdout","time":4180.867372925,"data":"  PREDICTION 1 (additivity): attn + mlp = +0.1520 vs both = +0.1908   ratio 0.796\n"}
+,{"stream_name":"stdout","time":4180.867382906,"data":"  PREDICTION 2 (mlp dominates): mlp/attn = 5.75  -\u003e CONFIRMED\n"}
+,{"stream_name":"stdout","time":4180.867493018,"data":"  PREDICTION 3 (reproduces D59 slope +0.2853): both = +0.1908, deviation -0.0945\n"}
+,{"stream_name":"stdout","time":4180.867516574,"data":"\n"}
+,{"stream_name":"stdout","time":4180.867521383,"data":"=== STAGE 0: estimator reconciliation at eps = 0 ===\n"}
+,{"stream_name":"stdout","time":4180.867705416,"data":"  plain / ambient  (as in D52) 0.8866 +- 0.0362  (n=12)\n"}
+,{"stream_name":"stdout","time":4180.867817491,"data":"  plain / tangent              0.8866 +- 0.0362  (n=12)\n"}
+,{"stream_name":"stdout","time":4180.867971293,"data":"  envelope / tangent           0.9302 +- 0.0559  (n=3)\n"}
+,{"stream_name":"stdout","time":4180.868121685,"data":"  median radial fraction of the orbit difference: 0.0000\n"}
+,{"stream_name":"stdout","time":4180.868297873,"data":"  peak spacing 7.18 unrolls -\u003e rotation period ~14.35 (Arnoldi gave 2.6-6.0)\n"}
+,{"stream_name":"stdout","time":4180.868393855,"data":"  d_end/d0 (fixed point if \u003c\u003c1, limit cycle if ~1): 4.08e-05\n"}
+,{"stream_name":"stdout","time":4180.868660622,"data":"  BETWEEN-PROMPT sd = 0.0559  -\u003e SWAMPS the 0.03 detectability floor\n"}
+,{"stream_name":"stdout","time":4180.868727164,"data":"  Arnoldi anchor (D31, ambient, 3 prompts): 0.80\n"}
+,{"stream_name":"stdout","time":4180.868762077,"data":"\n"}
+,{"stream_name":"stdout","time":4180.868779839,"data":"  (Stage 1 is superseded here by the PAIRED SLOPES block above, which\n"}
+,{"stream_name":"stdout","time":4180.868798857,"data":"   is the correct analysis: unpaired means carry the 0.056 between-prompt\n"}
+,{"stream_name":"stdout","time":4180.868803167,"data":"   sd, and this run's whole purpose is a difference between arms.)\n"}
+,{"stream_name":"stderr","time":4186.448321791,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":4186.448356493,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":4186.675454437,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":4186.675480434,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":4187.286130214,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":4188.281457158,"data":"[NbConvertApp] Writing 351477 bytes to __results__.html\n"}
+]

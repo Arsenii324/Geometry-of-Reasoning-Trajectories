@@ -1,0 +1,57 @@
+[{"stream_name":"stdout","time":0.907222671,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":3.97888766,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.098253215,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 85.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.133585003,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 32.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.190421992,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 78.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":33.160263353,"data":"CUDA: True\n"}
+,{"stream_name":"stdout","time":34.395438546,"data":"7 tasks x 5 sizes x 16 items x 2 formats x 2 arms = 2240 completions\n"}
+,{"stream_name":"stdout","time":34.39549918,"data":"  example: 'Is the number of ones in this sequence even or odd?\\nSequence: 0 1 1 0 0 0 0 0' -\u003e 'even'\n"}
+,{"stream_name":"stdout","time":34.395509267,"data":"\n"}
+,{"stream_name":"stdout","time":34.395514691,"data":"=== trained ===\n"}
+,{"stream_name":"stderr","time":126.79479201,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [00:59\u003c02:58, 59.39s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:11\u003c01:03, 31.52s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:11\u003c00:00, 17.85s/it]\n"}
+,{"stream_name":"stderr","time":126.932961777,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 62.96it/s]\n"}
+,{"stream_name":"stdout","time":140.517262711,"data":"  chat     count_ones: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":140.544955407,"data":"  chat         parity: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":140.577566283,"data":"  chat    running_max: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":140.607086483,"data":"  chat  running_count: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":140.637023739,"data":"  chat  nesting_depth: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":140.664266369,"data":"  chat           modk: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":140.691578099,"data":"  chat           copy: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":142.101129693,"data":"  trained FAILED: OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 14.56 GiB of which 20.81 MiB is free. Including non-PyTorch memory, this process has 14.54 GiB memory in use. Of the allo\n"}
+,{"stream_name":"stdout","time":157.202929331,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":158.114380758,"data":"  purged /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":158.114960069,"data":"\n"}
+,{"stream_name":"stdout","time":158.114976911,"data":"=== untrained ===\n"}
+,{"stream_name":"stderr","time":159.370820652,"data":"A new version of the following files was downloaded from https://huggingface.co/tomg-group-umd/huginn-0125:\n"}
+,{"stream_name":"stderr","time":159.370884169,"data":"- raven_modeling_minimal.py\n"}
+,{"stream_name":"stderr","time":159.370891099,"data":". Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.\n"}
+,{"stream_name":"stdout","time":229.080056756,"data":"  chat     count_ones: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":229.106793527,"data":"  chat         parity: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":229.137411856,"data":"  chat    running_max: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":229.166168774,"data":"  chat  running_count: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":229.196160222,"data":"  chat  nesting_depth: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":229.224245951,"data":"  chat           modk: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":229.247755129,"data":"  chat           copy: n=2:   0%  n=4:   0%  n=8:   0%  n=16:   0%  n=32:   0%\n"}
+,{"stream_name":"stdout","time":229.906267366,"data":"  untrained FAILED: OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 14.56 GiB of which 20.81 MiB is free. Including non-PyTorch memory, this process has 14.54 GiB memory in use. Of the allo\n"}
+,{"stream_name":"stdout","time":244.304527362,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":244.305228511,"data":"\n"}
+,{"stream_name":"stdout","time":244.305569962,"data":"=== DOES ANY FAMILY WORK AT THE SIZES THE GEOMETRY USED? ===\n"}
+,{"stream_name":"stdout","time":244.305583078,"data":"            task     n=2     n=4     n=8    n=16    n=32   untrained@n=8\n"}
+,{"stream_name":"stdout","time":244.305588288,"data":"      count_ones     0%      0%      0%      0%      0%        0%\n"}
+,{"stream_name":"stdout","time":244.305592691,"data":"          parity     0%      0%      0%      0%      0%        0%\n"}
+,{"stream_name":"stdout","time":244.305598966,"data":"     running_max     0%      0%      0%      0%      0%        0%\n"}
+,{"stream_name":"stdout","time":244.305605105,"data":"   running_count     0%      0%      0%      0%      0%        0%\n"}
+,{"stream_name":"stdout","time":244.305609843,"data":"   nesting_depth     0%      0%      0%      0%      0%        0%\n"}
+,{"stream_name":"stdout","time":244.305614976,"data":"            modk     0%      0%      0%      0%      0%        0%\n"}
+,{"stream_name":"stdout","time":244.305658683,"data":"            copy     0%      0%      0%      0%      0%        0%\n"}
+,{"stream_name":"stdout","time":244.305714167,"data":"\n"}
+,{"stream_name":"stdout","time":244.305739029,"data":"  NO family except `copy` clears 25% at n=8. D56(2) is confirmed: the\n"}
+,{"stream_name":"stdout","time":244.305877041,"data":"  geometry in this project was measured on tasks the model cannot do,\n"}
+,{"stream_name":"stdout","time":244.3058934,"data":"  and every geometric result must be scoped accordingly.\n"}
+,{"stream_name":"stderr","time":250.91218676,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":250.912221554,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":251.155830926,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":251.155885293,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":251.859400493,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":252.851911765,"data":"[NbConvertApp] Writing 340164 bytes to __results__.html\n"}
+]
