@@ -207,6 +207,34 @@ synthetics before noticing the real states are low-rank (PR 1.0–4.8, D48).*
   model's *reported* competence (GSM8K, ARC-C, HellaSwag) is on natural benchmarks,
   so "the model cannot do the task" may partly indict our task construction.
 
+### 6.9 ρ is characterised entirely OUTSIDE the training regime — found on the third pass
+
+Huginn was trained with `r` sampled log-normal-Poisson, **mean 33, median 29, mode
+24**. Every ρ in this project is fitted over the pre-floor window of a 128-unroll
+run, and that window is **65–98 points long — all 12/12 prompts beyond 2× the mean
+training depth**.
+
+So the project's central quantity, the one thing training demonstrably changes and
+the only quantity it has managed to steer, describes the map's behaviour in a
+regime the model was never trained to operate in. Whether ρ measured within r≤32
+equals ρ fitted over r≤98 is **unknown and untested**, and it bears directly on
+every claim built on it: D42, D44, D52, D59, and the retracted D43.
+
+*Status: open. It is a rerun, not an analysis — see 6.10.*
+
+### 6.10 The sweeps saved conclusions, not data
+
+6.9 cannot be answered from what is on disk. `eps_sweep.json` stores the fitted ρ
+and the number of points used, **not the per-unroll separation curves** — so
+refitting on a restricted window requires re-running the GPU job. The same is true
+of the checkpoint sweeps.
+
+This is a scaffolding failure with a clear rule attached: **a kernel should persist
+the curve it fitted, not just the fit.** The marginal cost is a few MB; the cost of
+not doing it is a GPU rerun for any question the original analysis did not
+anticipate — and this project has generated such questions at a rate of roughly one
+per experiment.
+
 ### 6.6 What a reader should not conclude
 
 - Not "Huginn cannot count" — only "does not, at these sizes, under these prompts."
