@@ -48,6 +48,7 @@
 !/scratch/kaggle_eps_split/
 !/scratch/_lib/
 # within those bundles, keep the harness noise out
+/scratch/QUEUE
 /scratch/*/poll.sh
 /scratch/*/poll*.log
 /scratch/*/watch*.log

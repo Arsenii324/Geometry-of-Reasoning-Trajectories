@@ -7,6 +7,8 @@
 #   kg pull   <bundle...>          download output into <bundle>/out
 #   kg watch  <bundle...>          poll until done, then pull. Backgroundable.
 #   kg run    <bundle...>          push, then watch, then pull
+#   kg enq    <bundle...>          append to scratch/QUEUE (launched as slots free)
+#   kg q                           show the queue
 #
 # A bundle is a directory under scratch/; the kernel name is read from its
 # kernel-metadata.json, so the two can never drift apart.
@@ -30,7 +32,21 @@ case "$cmd" in
   pull)  for b in "$@"; do b=${b%/}; mkdir -p "$b/out"
            kaggle kernels output "$(name_of "$b")" -p "$b/out" >/dev/null 2>&1 \
              && echo "  pulled $(short "$b") -> $b/out" || echo "  pull FAILED $(short "$b")"; done ;;
+  enq)   for b in "$@"; do echo "${b%/}" >> scratch/QUEUE; done
+         echo "queued: $*"; sort -u -o scratch/QUEUE scratch/QUEUE 2>/dev/null ;;
+  q)     [ -s scratch/QUEUE ] && cat scratch/QUEUE || echo "  (queue empty)" ;;
   watch) for ((i=0;i<MAX;i++)); do
+           # keep both slots busy from the queue
+           if [ -s scratch/QUEUE ]; then
+             busy=$(kaggle kernels list -m -s geometry 2>/dev/null | awk 'NR>2{print $1}' \
+                    | while read k; do kaggle kernels status "$k" 2>&1 \
+                      | grep -qE 'Status\.(RUNNING|QUEUED)' && echo x; done | wc -l | tr -d " ")
+             while [ "${busy:-2}" -lt 2 ] && [ -s scratch/QUEUE ]; do
+               nb=$(head -1 scratch/QUEUE); sed -i.bak 1d scratch/QUEUE; rm -f scratch/QUEUE.bak
+               echo "[$(date +%H:%M:%S)] queue -> launching $nb"
+               "$0" push "$nb"; set -- "$@" "$nb"; busy=$((busy+1))
+             done
+           fi
            left=0
            for b in "$@"; do b=${b%/}; [ -f "$b/.pulled" ] && continue
              s=$(kaggle kernels status "$(name_of "$b")" 2>&1 | grep -o 'Status\.[A-Z]*')
