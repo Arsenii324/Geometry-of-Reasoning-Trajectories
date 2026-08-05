@@ -165,8 +165,15 @@ today. The latter is the architecture's distinctive feature.
 - ρ is measured at the **final token position only**, on 12 prompts, one seed.
 - The untrained arm samples **one init family**; whether ρ≈0.705 is a property of
   random weights or of *Huginn's chosen init scale* is untested (vary `std` ±2×).
-- Persistent homology: 15 trajectories, **no null ever computed** — the last
-  untested topological claim and the project's original distinguishing idea.
+- ~~Persistent homology: no null ever computed~~ — **CLOSED 2026-08-05 (D64).** It
+  now has one, and it *passed*: real trajectories exceed all 40 manifold-matched
+  surrogates in 9/9 cases with loops, 8.7 vs 1.9 mean count. Heavily qualified
+  though — the excess is in the NUMBER of cycles, not their prominence (max
+  persistence ratio 1.003), every cycle is at the arithmetic-noise scale
+  (0.0000–0.0090 of the diameter), and the metric is still budget-governed: 0
+  cycles at `num_steps=16` in all 6 runs, 7–26 at 64 in all 9, p=6e-04. **The first
+  topological positive in the project, and it is a positive about counts of
+  noise-scale cycles that only exist past a recording threshold.**
 - `attn` vs `mlp` split is underpowered and its own gate says don't interpret (D63).
 
 ### 6.7 Every content measure in this project is LINEAR — found on the second pass
