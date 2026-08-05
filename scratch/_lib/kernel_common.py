@@ -433,3 +433,68 @@ def assert_generation_works(model, tok, chat=True):
             "Refusing to run an experiment on a generator that cannot copy a word.")
     return hits
 # ---8<---
+
+
+# ---8<--- cv_r2_nonlinear
+def cv_r2_nonlinear(x, y, groups=None, n_splits=5, n_null=0, seed=0, n_pc=8):
+    """Held-out R^2 from a NONLINEAR probe, as a companion to the linear one.
+
+    WHY THIS EXISTS. Every content measurement in this project is a ridge probe,
+    i.e. strictly linear (D41, D48, D50, D53). That licenses exactly one reading of
+    the headline -- "training does not change what the state contains" -- and
+    forbids another no measurement here can distinguish: **training may encode the
+    same content NONLINEARLY.** If the trained model represents the quantity in a
+    curved way while random weights preserve it linearly (which prompt re-injection
+    would do), a linear probe favours the UNTRAINED arm for reasons unrelated to
+    information content. That is exactly the D41/D48 pattern, so it is a live
+    alternative explanation rather than a hypothetical.
+
+    PCA to `n_pc`=8 components, then degree-2 polynomial ridge. `n_pc` is the
+    load-bearing setting and was tuned against synthetics, not guessed: at 20 PCs
+    the expansion is 230 features from ~64 training rows and R^2 caps at 0.36 even
+    on a CLEAN LINEAR target; at 8 PCs it is 44 features and reaches 0.725 linear /
+    0.620 quadratic with a null of -0.268. Regularisation strength barely matters
+    (0.354-0.356 across alpha 0.1-10); the feature-count ratio is everything.
+
+    THREE earlier designs were rejected against synthetic targets with KNOWN
+    structure, because a weak nonlinear probe biases the test toward confirming the
+    headline it exists to challenge:
+      * MLP(64) -- only R^2=0.42 on a CLEAN LINEAR target and 0.11 on a clean
+        quadratic; badly undertrained at n~80, d=5280.
+      * RBF kernel ridge with a median-distance gamma -- 0.02 on the clean linear
+        target, and a POSITIVE permutation null.
+      * PCA-24 + poly2 -- 0.36 on the clean linear target (over-parameterised).
+    PCA first is what makes this work at d >> n: it reduces to a regime where a
+    quadratic expansion is estimable, and the expansion is what buys the curvature.
+
+    The synthetic used for tuning is LOW-RANK, matching the real states' measured
+    participation ratio of 1.0-4.8 (D48). Isotropic synthetics were misleading in
+    both directions and produced two wrong verdicts about the probe before that was
+    noticed.
+
+    The permutation null matters more here, not less: the quadratic expansion has
+    more capacity, so a null at or above zero invalidates the figure.
+    """
+    import numpy as np
+    from sklearn.decomposition import PCA
+    from sklearn.linear_model import Ridge
+    from sklearn.model_selection import GroupKFold, KFold, cross_val_predict
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import PolynomialFeatures, StandardScaler
+
+    k = int(min(n_pc, max(2, len(x) // 4), x.shape[1]))
+    mdl = make_pipeline(StandardScaler(), PCA(n_components=k, random_state=0),
+                        PolynomialFeatures(degree=2, include_bias=False),
+                        StandardScaler(), Ridge(alpha=10.0))
+    cv = (GroupKFold(n_splits=n_splits) if groups is not None
+          else KFold(n_splits=n_splits, shuffle=True, random_state=0))
+
+    def score(target):
+        p = cross_val_predict(mdl, x, target, cv=cv, groups=groups)
+        return float(1 - ((target - p) ** 2).sum() / ((target - target.mean()) ** 2).sum())
+
+    r2 = score(y)
+    rng = np.random.default_rng(seed)
+    null = [score(rng.permutation(y)) for _ in range(n_null)]
+    return r2, null
+# ---8<---

@@ -90,6 +90,7 @@ def free_arm(model, repo_id=None):
     import gc
     import os
     import shutil
+
     import torch
     try:
         model = model.to("cpu") if model is not None else None

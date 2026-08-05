@@ -42,6 +42,7 @@ import subprocess
 
 import numpy as np
 
+
 def run(cmd):
     print(f"$ {cmd}", flush=True)
     subprocess.check_call(cmd, shell=True)
@@ -128,7 +129,8 @@ def main():
         # (saturated); the question is whether it does at low r, which is the
         # direct link to D35's depth requirement.
         from sklearn.linear_model import Ridge as _R
-        from sklearn.model_selection import KFold as _K, cross_val_predict as _cvp
+        from sklearn.model_selection import KFold as _K
+        from sklearn.model_selection import cross_val_predict as _cvp
         from sklearn.pipeline import make_pipeline as _mp
         from sklearn.preprocessing import StandardScaler as _S
         _p = _cvp(_mp(_S(), _R(alpha=1e3)), X, y, cv=_K(5, shuffle=True, random_state=0))

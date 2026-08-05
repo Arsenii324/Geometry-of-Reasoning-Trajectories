@@ -20,7 +20,6 @@ the experiment degrades gracefully rather than failing.
 """
 import json
 import subprocess
-import sys
 import traceback
 
 import numpy as np

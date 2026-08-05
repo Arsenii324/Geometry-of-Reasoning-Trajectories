@@ -287,3 +287,40 @@ def test_batched_generate_budget_does_not_split_when_unnecessary(lib) -> None:
     lib["batched_generate"](m, _fake_tok(torch), ["a" * 10] * 12, max_new=6,
                             max_batch_tokens=4096, verbose=False)
     assert max(c[0] for c in m.calls) == 12, "one bucket should stay one batch"
+
+
+def test_nonlinear_probe_is_strong_enough_to_challenge_the_headline(lib) -> None:
+    """The nonlinear probe must be able to FIND curvature, or it rigs the test.
+
+    It exists to challenge this project's headline ("training does not change what
+    the state contains") with the alternative no linear measurement can rule out:
+    that training encodes the same content NONLINEARLY. A weak probe would report
+    "no nonlinear lift" and falsely confirm the headline. Three designs were
+    rejected on exactly this ground -- MLP(64) reached 0.42 on a CLEAN LINEAR
+    target, RBF kernel ridge 0.02 with a positive null, PCA-24+poly2 0.36.
+
+    The synthetic is LOW-RANK, matching the real states' participation ratio of
+    1.0-4.8 (D48); isotropic synthetics gave two wrong verdicts before that was
+    noticed.
+    """
+    pytest.importorskip("sklearn")
+    rng = np.random.default_rng(0)
+    n, d, r = 80, 400, 12
+    u = rng.normal(size=(n, r))
+    x = u @ rng.normal(size=(r, d)) + rng.normal(size=(n, d)) * 0.05
+    z = u[:, 0]
+
+    lin_t = z * 3 + rng.normal(size=n) * 0.05
+    quad_t = (z ** 2) * 3 + rng.normal(size=n) * 0.05
+
+    nl, _ = lib["cv_r2_nonlinear"](x, lin_t)
+    assert nl > 0.5, f"probe cannot even recover a linear latent: {nl:.3f}"
+
+    lq, _ = lib["cv_r2"](x, quad_t, alpha=1.0)
+    nq, _ = lib["cv_r2_nonlinear"](x, quad_t)
+    assert nq > lq + 0.3, (
+        f"probe finds no curvature the linear one misses: {nq:.3f} vs {lq:.3f}"
+    )
+
+    _, null = lib["cv_r2_nonlinear"](x, rng.normal(size=n), n_null=5)
+    assert max(null) < 0.0, f"permutation null is not negative: {max(null):+.3f}"

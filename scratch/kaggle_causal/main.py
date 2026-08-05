@@ -29,7 +29,6 @@ Norm discipline: the state lies on a sphere of radius ~76.37 (RMSNorm). Patches
 are reported as a fraction of that radius so their size is interpretable, and
 the largest is kept small enough not to leave the shell the model operates on.
 """
-import itertools
 import json
 import random
 import re
