@@ -39,7 +39,7 @@ WHAT WOULD CHANGE THE PICTURE
 # ruff: noqa: E402  -- inlined blocks necessarily precede the body's imports
 # ---- BUILT by scripts/build_kernel.py from scratch/_lib/kernel_common.py.
 # ---- Edit body.py and rebuild; edits to this file are overwritten.
-# ---- inlined blocks: run load_arm free_arm batched_generate
+# ---- inlined blocks: run load_arm free_arm batched_generate assert_generation_works
 
 
 def run(cmd):
@@ -152,12 +152,53 @@ def batched_generate(model, tok, prompts, max_new=24, num_steps=32, verbose=True
         ids = torch.stack([enc[i] for i in idxs]).to(dev)
         with torch.no_grad():
             gen = model.generate_minimal(ids, cfg, tokenizer=tok, num_steps=num_steps)
+        # generate_minimal is typed `Union[Tensor, dict]`; iterating a dict yields
+        # its KEYS, which decode to nothing. That silently produced empty output for
+        # every prompt in geometry-task-accuracy and invalidated the run (D62).
+        if isinstance(gen, dict):
+            gen = gen.get("sequences", gen.get("input_ids"))
+        if gen is None:
+            raise RuntimeError("generate_minimal returned no sequences")
         for row, i in zip(gen, idxs, strict=True):
             out[i] = tok.decode(row[ids.shape[1]:], skip_special_tokens=True)
         del ids, gen
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
+    if not any(o.strip() for o in out):
+        raise RuntimeError(
+            f"batched_generate produced empty output for all {len(prompts)} prompts. "
+            "This is the D62 failure mode; refusing to return silently.")
     return out
+
+
+def assert_generation_works(model, tok, chat=True):
+    """Smoke-test the generator against a task the model provably does, before use.
+
+    D62: `batched_generate` returned an empty string for every prompt and the whole
+    task-accuracy run was scored on it. Its unit tests passed -- they asserted the
+    length-bucketing the author designed and never that the function returns correct
+    text. A block that talks to a real model needs a real check against that model.
+
+    `copy` is used because D60 measured it at 100% under the chat template, so a
+    failure here is unambiguous. Raises rather than warns: a silent generator is
+    exactly what produced a full run of zeros that read as a scientific result.
+    """
+    words = ["banana", "orange", "puzzle", "kitten"]
+    bodies = [f"Repeat this word exactly.\nWord: {w}" for w in words]
+    if chat:
+        texts = [tok.apply_chat_template([{"role": "user", "content": b}],
+                                         tokenize=False, add_generation_prompt=True)
+                 for b in bodies]
+    else:
+        texts = [b + "\nAnswer:" for b in bodies]
+    got = batched_generate(model, tok, texts, max_new=8, verbose=False)
+    hits = sum(w in g.lower() for w, g in zip(words, got, strict=True))
+    print(f"  generation smoke-test: {hits}/{len(words)} copied  -> {got}", flush=True)
+    if hits < len(words) // 2:
+        raise RuntimeError(
+            f"generation smoke-test FAILED ({hits}/{len(words)}); got {got}. "
+            "Refusing to run an experiment on a generator that cannot copy a word.")
+    return hits
 
 import json
 import random
@@ -256,6 +297,8 @@ def main():
         try:
             model = load_arm(None if arm == "untrained" else MODEL_ID, cfg,
                              0 if arm == "untrained" else REVISION)
+            if arm == "trained":
+                assert_generation_works(model, tok)   # D62: never score a dead generator
             out[arm] = {}
             for fmt in ("chat", "raw"):
                 out[arm][fmt] = {}
@@ -293,8 +336,14 @@ def main():
         if task in t:
             print(f"  {task:>14} " + " ".join(f"{t[task][n]:>6.0%} " for n in LADDER)
                   + f"   {u.get(task, {}).get(8, float('nan')):>6.0%}")
-    live = [k for k, v in t.items() if k != "copy" and v.get(8, 0) > 0.25]
+    copy_ok = t.get("copy", {}).get(2, 0.0)
     print()
+    if copy_ok < 0.5:
+        print(f"  THE COPY CONTROL FAILED ({copy_ok:.0%} at n=2). The harness is broken;")
+        print("  no conclusion about capability may be drawn. This gate exists because")
+        print("  D62 printed a capability verdict on a run where every output was empty.")
+        return
+    live = [k for k, v in t.items() if k != "copy" and v.get(8, 0) > 0.25]
     if live:
         print(f"  FAMILIES ALIVE AT n=8: {live}. Their geometry describes a working")
         print("  computation and is worth revisiting.")

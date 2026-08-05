@@ -244,7 +244,7 @@ def test_batched_generate_is_a_real_saving(lib) -> None:
                 input_ids=torch.zeros(1, 15 + (hash(p) % 2), dtype=torch.long))
 
         def decode(self, x, **kw):
-            return ""
+            return "text"      # non-empty: an all-empty return now raises (D62 guard)
 
     class Model:
         def parameters(self):
@@ -257,3 +257,64 @@ def test_batched_generate_is_a_real_saving(lib) -> None:
     lib["batched_generate"](Model(), Tok(), [f"w{i}" for i in range(20)], verbose=False)
     assert len(batches) <= 4, f"20 prompts fell into {len(batches)} buckets"
     assert max(batches) >= 5, "no bucket is large enough for batching to pay"
+
+
+def test_batched_generate_refuses_to_return_all_empty(lib) -> None:
+    """The D62 guard: a generator that produces nothing must raise, not return.
+
+    In `geometry-task-accuracy` every prompt came back as an empty string and the
+    run was scored anyway, producing a full table of zeros that read as a capability
+    finding. Silence is the dangerous failure here, so the block raises.
+    """
+    import types
+
+    torch = pytest.importorskip("torch")
+
+    class DeadTok:
+        eos_token_id = pad_token_id = 0
+
+        def __call__(self, p, **kw):
+            return types.SimpleNamespace(
+                input_ids=torch.zeros(1, len(p), dtype=torch.long))
+
+        def decode(self, x, **kw):
+            return ""          # the D62 symptom
+
+    class Model:
+        def parameters(self):
+            yield torch.zeros(1)
+
+        def generate_minimal(self, ids, cfg, **kw):
+            return torch.zeros(ids.shape[0], ids.shape[1] + 2, dtype=torch.long)
+
+    with pytest.raises(RuntimeError, match="empty output"):
+        lib["batched_generate"](Model(), DeadTok(), ["aaa", "bbb"], verbose=False)
+
+
+def test_batched_generate_unwraps_a_dict_return(lib) -> None:
+    """`generate_minimal` is typed `Union[Tensor, dict]`; iterating a dict yields its
+    KEYS, which decode to nothing. That is the mechanism behind D62."""
+    import types
+
+    torch = pytest.importorskip("torch")
+
+    class Tok:
+        eos_token_id = pad_token_id = 0
+
+        def __call__(self, p, **kw):
+            return types.SimpleNamespace(
+                input_ids=torch.zeros(1, len(p), dtype=torch.long))
+
+        def decode(self, x, **kw):
+            return "ok"
+
+    class DictModel:
+        def parameters(self):
+            yield torch.zeros(1)
+
+        def generate_minimal(self, ids, cfg, **kw):
+            return {"sequences": torch.zeros(ids.shape[0], ids.shape[1] + 2,
+                                             dtype=torch.long)}
+
+    out = lib["batched_generate"](DictModel(), Tok(), ["aaa", "bbb"], verbose=False)
+    assert out == ["ok", "ok"], f"dict return not unwrapped: {out}"

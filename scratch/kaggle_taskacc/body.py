@@ -36,7 +36,7 @@ WHAT WOULD CHANGE THE PICTURE
     characterised the trajectories of a model that could not do the tasks, and the
     honest scope of every geometric result narrows accordingly.
 """
-# @needs: run load_arm free_arm batched_generate
+# @needs: run load_arm free_arm batched_generate assert_generation_works
 
 import json
 import random
@@ -135,6 +135,8 @@ def main():
         try:
             model = load_arm(None if arm == "untrained" else MODEL_ID, cfg,
                              0 if arm == "untrained" else REVISION)
+            if arm == "trained":
+                assert_generation_works(model, tok)   # D62: never score a dead generator
             out[arm] = {}
             for fmt in ("chat", "raw"):
                 out[arm][fmt] = {}
@@ -172,8 +174,14 @@ def main():
         if task in t:
             print(f"  {task:>14} " + " ".join(f"{t[task][n]:>6.0%} " for n in LADDER)
                   + f"   {u.get(task, {}).get(8, float('nan')):>6.0%}")
-    live = [k for k, v in t.items() if k != "copy" and v.get(8, 0) > 0.25]
+    copy_ok = t.get("copy", {}).get(2, 0.0)
     print()
+    if copy_ok < 0.5:
+        print(f"  THE COPY CONTROL FAILED ({copy_ok:.0%} at n=2). The harness is broken;")
+        print("  no conclusion about capability may be drawn. This gate exists because")
+        print("  D62 printed a capability verdict on a run where every output was empty.")
+        return
+    live = [k for k, v in t.items() if k != "copy" and v.get(8, 0) > 0.25]
     if live:
         print(f"  FAMILIES ALIVE AT n=8: {live}. Their geometry describes a working")
         print("  computation and is worth revisiting.")
