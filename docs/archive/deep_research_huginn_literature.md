@@ -1,3 +1,8 @@
+> **FROZEN 2026-08-05.** Archived under CLAUDE.md §6 (three live documents only).
+> Not maintained. Superseded by `docs/UNDERSTANDING.md`, `claims_ledger.md`, `directions.md`.
+> Statements here may be contradicted by later work — several assert things since disproven
+> (e.g. "H1 was never tested": it was, and the test itself was invalid — see D56, D65).
+
 # Deep-research findings: Huginn literature & interpretability grounding
 
 > **⚠ PARTIALLY SUPERSEDED — read `docs/state_of_knowledge.md` first.**

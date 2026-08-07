@@ -50,7 +50,8 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS_DIR = ROOT / "scripts"
 RESULTS_DIR = ROOT / "results"
-ARCH_DOC = ROOT / "docs" / "architecture_state.md"
+_arch_archive = ROOT / "docs" / "archive" / "architecture_state.md"
+ARCH_DOC = _arch_archive if _arch_archive.exists() else ROOT / "docs" / "architecture_state.md"
 
 
 def _git_last_commit_time(path: Path) -> int | None:
