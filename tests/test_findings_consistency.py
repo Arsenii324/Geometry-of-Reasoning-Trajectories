@@ -1,6 +1,6 @@
 """Guards the headline findings against drift between prose and data.
 
-Backlog item 6.4 generalised. `docs/FINDINGS.md` quotes numbers that live in
+Backlog item 6.4 generalised. `FINDINGS.md` quotes numbers that live in
 `results/*.csv`; nothing previously stopped the two from diverging as either
 was edited. These tests fail if a quoted number stops matching its source, or
 if a document stops citing a result it is supposed to carry.
@@ -8,6 +8,13 @@ if a document stops citing a result it is supposed to carry.
 The failure mode this prevents is specific and has already happened once in
 this project's history: a summary regressed a figure its own source document
 had correct (claims_ledger D21, error 1).
+
+Documents are resolved from `docs/` first and `docs/archive/` second. Three of
+the four guarded documents were frozen into `docs/archive/` on 2026-08-05 under
+CLAUDE.md §6 (three live documents only); their prose is no longer maintained,
+but the numbers it quotes are still cited from the ledger, so the drift guard
+stays live against whichever copy exists. Without the archive fallback these
+checks silently skipped -- see the note on `test_key_documents_exist`.
 """
 
 from __future__ import annotations
@@ -19,7 +26,21 @@ import pytest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = os.path.join(ROOT, "docs")
+DOCS_ARCHIVE = os.path.join(DOCS, "archive")
 RESULTS = os.path.join(ROOT, "results")
+
+
+def _doc_path(name: str) -> str | None:
+    """Resolve a guarded document, live copy first, frozen archive second.
+
+    Live wins so that un-archiving a document silently re-points its guard at
+    the maintained copy rather than the stale one.
+    """
+    for base in (DOCS, DOCS_ARCHIVE):
+        path = os.path.join(base, name)
+        if os.path.exists(path):
+            return path
+    return None
 
 
 def _doc(name: str) -> str:
@@ -29,8 +50,8 @@ def _doc(name: str) -> str:
     readability, so a naive substring search for "-0.0091" misses "−0.0091".
     Normalising here keeps the typography free and the tests strict.
     """
-    path = os.path.join(DOCS, name)
-    if not os.path.exists(path):
+    path = _doc_path(name)
+    if path is None:
         pytest.skip(f"{name} not present")
     text = open(path, encoding="utf-8").read()
     return text.replace("\u2212", "-").replace("\u2013", "-").replace("\u2014", "-")
@@ -104,7 +125,16 @@ def test_register_sign_consistency_still_holds() -> None:
     ["FINDINGS.md", "state_of_knowledge.md", "claims_ledger.md", "backlog_not_done.md"],
 )
 def test_key_documents_exist(name: str) -> None:
-    assert _doc(name).strip(), f"{name} is empty"
+    """Deliberately does NOT go through `_doc`, which skips on a missing file.
+
+    Routing an existence check through a skip-on-absent helper makes it unable
+    to fail, which is precisely what happened: when these documents were frozen
+    into `docs/archive/` on 2026-08-05 this check skipped rather than catching
+    the move, and took the five prose-vs-data guards with it.
+    """
+    path = _doc_path(name)
+    assert path is not None, f"{name} is in neither docs/ nor docs/archive/"
+    assert open(path, encoding="utf-8").read().strip(), f"{name} is empty"
 
 
 def test_findings_states_its_negatives() -> None:

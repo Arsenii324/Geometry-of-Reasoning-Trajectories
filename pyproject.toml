@@ -42,8 +42,24 @@ packages = ["src/traj_geom"]
 line-length = 100
 target-version = "py311"
 src = ["src", "tests", "scripts"]
-# Notebooks are proven exploratory scratch (semicolons, throwaway vars) — don't lint.
-extend-exclude = ["notebooks"]
+# Lint what the project maintains. Each exclusion has a concrete reason; none of
+# them is "the number was large".
+#   notebooks         proven exploratory scratch (semicolons, throwaway vars).
+#   scratch/kaggle_*  FROZEN kernel bundles — the committed record of what actually
+#                     ran on Kaggle (.gitignore's 2026-07-28 exception). Editing one
+#                     breaks its correspondence with the results it produced. They
+#                     also cannot lint clean by construction: every `body.py` is a
+#                     FRAGMENT whose shared blocks are inlined by build_kernel.py, so
+#                     `run`/`batched_generate`/`cv_r2` read as F821 undefined-name.
+#                     `scratch/_lib/` is deliberately NOT excluded — it is the
+#                     maintained source of those blocks and carries its own tests.
+#   h3_toy_model      superseded toy-model codebase, kept as the evidence behind
+#                     claims_ledger row A6; its tests are still collected by pytest.
+# Audited before excluding (2026-08-07): all 18 B023 function-uses-loop-variable in
+# scratch/ are FALSE POSITIVES — every closure is consumed inside the iteration that
+# built it (kaggle_jacobian's eigs() call at main.py:136; the `cap` forward hooks,
+# removed in `finally`). No real defect is silenced here; D31/D55 are unaffected.
+extend-exclude = ["notebooks", "scratch/kaggle_*", "h3_toy_model"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "N", "W"]

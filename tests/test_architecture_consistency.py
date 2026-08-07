@@ -41,6 +41,7 @@ as the manual complement to this automated check.
 
 from __future__ import annotations
 
+import ast
 import re
 import subprocess
 from pathlib import Path
@@ -90,7 +91,13 @@ _REVIEWED_NON_SUBSTANTIVE_CHANGES: dict[str, str] = {
     "convergence.csv": (
         "2026-07-24: run_convergence.py gained a STATUS docstring line only "
         "(documentation practice pass, adding what every other script already "
-        "had) -- no change to the convergence-descriptor computation itself."
+        "had) -- no change to the convergence-descriptor computation itself. "
+        "2026-08-07: the module-level body moved verbatim into main() behind an "
+        "`if __name__` guard (import-safety fix, see "
+        "test_no_script_writes_data_at_import_time) -- statements and their order "
+        "are unchanged, only indentation and call site. Verified non-substantive by "
+        "re-running before and after: stdout diff empty, results/convergence.csv "
+        "sha256 13367ee0...ca5f2 unchanged."
     ),
     "dissociation.csv": (
         "2026-07-23 (d009d4e): run_dissociation.py's compute() gained "
@@ -112,7 +119,12 @@ _REVIEWED_NON_SUBSTANTIVE_CHANGES: dict[str, str] = {
     "homology.csv": (
         "2026-07-24: run_homology.py gained a STATUS docstring line only "
         "(documentation practice pass) -- no change to the H1-persistence "
-        "computation itself."
+        "computation itself. 2026-08-07: the module-level body moved verbatim into "
+        "main() behind an `if __name__` guard (import-safety fix, see "
+        "test_no_script_writes_data_at_import_time) -- statements and their order "
+        "are unchanged, only indentation and call site. Verified non-substantive by "
+        "re-running before and after: stdout diff empty, results/homology.csv "
+        "sha256 65a3817f...946d34 unchanged."
     ),
     "maxtask.csv": (
         "2026-07-23 (843505d): same print-step-only guard as counting.csv, "
@@ -244,3 +256,64 @@ def test_no_results_csv_committed_before_its_producing_script_last_changed():
             "diff) before trusting these numbers, then note the finding wherever "
             "they're cited (e.g. claims_ledger.md)."
         )
+
+
+# Module-level calls that are legitimate import-time SETUP, not work: they must
+# run before the imports or the plotting calls that depend on them.
+_IMPORT_TIME_SETUP = {"insert", "append", "use", "makedirs", "filterwarnings",
+                      "simplefilter", "set_option", "basicConfig", "getLogger"}
+# Attribute calls that PERSIST data. One of these at module level means importing
+# the script writes a file.
+_DATA_WRITERS = {"to_csv", "to_json", "to_parquet", "savefig", "save", "savez",
+                 "dump", "write_text", "write_bytes", "writelines"}
+
+
+def test_no_script_writes_data_at_import_time() -> None:
+    """A `scripts/*.py` must not run its analysis, or write a file, on import.
+
+    THIS IS NOT STYLE. `run_homology.py` and `run_convergence.py` ran their
+    analysis at module level and wrote `results/*.csv` as a side effect, so a
+    bare `import scripts.run_homology` re-ran ripser over the 15 banked
+    trajectories and OVERWROTE a committed result file. That is a silent
+    data-overwrite path in a project whose CSVs are cited evidence -- found on
+    2026-08-07 by an import-only sweep that rewrote both files. The numbers
+    reproduced byte-identically, so nothing was lost; that was luck, not a
+    guarantee, since ripser or numpy moving under it would instead have
+    rewritten the evidence. 41 of the then-44 scripts already used the
+    `if __name__ == "__main__":` guard, so this asserts a convention the
+    project already had.
+
+    SCOPED TO THE ACTUAL HAZARD, deliberately. Import-time *setup* is allowed
+    and sometimes required: `sys.path.insert` must precede the imports it
+    enables, and `matplotlib.use("Agg")` must precede the pyplot import. What
+    is banned is a module-level data loop (`for`/`while`/`with`) or a call that
+    persists data (`to_csv`, `savefig`, `np.save`, ...). An earlier draft of
+    this test flagged all twelve `sys.path.insert` scripts and was wrong.
+
+    Checked STATICALLY, via AST. Importing the modules to test them is the very
+    operation being guarded against: if a script regresses, the test that
+    detects it must not itself trigger the overwrite.
+    """
+    offenders: list[tuple[str, str]] = []
+    for path in sorted(SCRIPTS_DIR.glob("*.py")):
+        if path.stem == "__init__":
+            continue
+        # Only module-level statements. The `if __name__ == "__main__":` guard is
+        # an ast.If and is skipped wholesale -- its body runs only as a script.
+        for node in ast.parse(path.read_text(encoding="utf-8")).body:
+            if isinstance(node, (ast.For, ast.While, ast.With, ast.AsyncFor, ast.AsyncWith)):
+                offenders.append((path.name, f"line {node.lineno}: module-level "
+                                             f"{type(node).__name__.lower()} loop/context"))
+            elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Call):
+                fn = node.value.func
+                attr = fn.attr if isinstance(fn, ast.Attribute) else getattr(fn, "id", "")
+                if attr in _DATA_WRITERS and attr not in _IMPORT_TIME_SETUP:
+                    offenders.append((path.name, f"line {node.lineno}: writes data at "
+                                                 f"import via {attr}()"))
+
+    assert not offenders, (
+        "these scripts do work or write data at import time; move it into main() "
+        'behind `if __name__ == "__main__":` -- importing one runs its analysis '
+        "and can overwrite committed results:\n"
+        + "\n".join(f"  {name}: {why}" for name, why in offenders)
+    )
