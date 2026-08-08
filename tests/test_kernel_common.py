@@ -368,3 +368,92 @@ def test_every_kernel_main_py_is_current_with_its_body_and_blocks() -> None:
         "rebuild these with `python -m scripts.build_kernel <bundle>` -- the file "
         "Kaggle runs no longer matches its source:\n  " + "\n  ".join(stale)
     )
+
+
+def _fake_lm_enforcing_huginn_state_contract(torch):
+    """A fake that enforces the shape contract the REAL model imposes.
+
+    Read from `raven_modeling_minimal.py` at the pinned revision
+    bb6621b65e90b6a4b9b29ef88dc83866d450470c:
+
+        iterate_forward (line 736):
+            x = xk = self.initialize_state(input_embeds, scale=init_scale) \
+                     if input_states is None else input_states.clone()
+        initialize_state (line 803):
+            x = torch.randn_like(input_embeds)
+
+    So the recurrent state REPLACES a tensor shaped like `input_embeds`, i.e.
+    [batch, seq_len, dim]. Passing a state whose seq_len disagrees with the
+    input is a shape error in the real model. This fake raises the same way, so
+    the incompatibility is reproducible on CPU with no GPU and no download.
+    """
+    import types
+
+    class M:
+        def __init__(self):
+            self.calls = []
+            self.states_seen = []
+
+        def parameters(self):
+            yield torch.zeros(1)
+
+        def __call__(self, input_ids=None, num_steps=None, input_states=None, **kw):
+            b, n = input_ids.shape
+            self.calls.append((b, n))
+            if input_states is not None:
+                self.states_seen.append(tuple(input_states.shape))
+                if input_states.shape[1] != n:
+                    raise RuntimeError(
+                        "shape mismatch: input_states has seq_len "
+                        f"{input_states.shape[1]} but input_embeds has {n}"
+                    )
+            logits = torch.full((b, n, 70000), -1e9)
+            logits[:, -1, 100] = 0.0
+            return types.SimpleNamespace(
+                logits=logits, latent_states=torch.zeros(b, n, 8)
+            )
+
+    return M()
+
+
+def test_continuous_compute_is_incompatible_with_the_uncached_loop(lib) -> None:
+    """`continuous_compute=True` cannot work in `batched_generate`, by construction.
+
+    batched_generate is deliberately UNCACHED -- C11: "it re-runs the full
+    GROWING sequence every step" -- so at generated token k the input is
+    [b, prompt_len + k]. But the warm-start it passes is
+    `lat[:, -1:, :]`, i.e. [b, 1, dim]. The real model REPLACES a
+    [batch, seq_len, dim] tensor with that, so the two disagree from the second
+    generated token onward, at any `max_batch_tokens`.
+
+    Huginn's own generators do pass `latent_states[:, -1:, :]` (raven lines
+    1203/1469/1488/1566) -- but inside a KV-CACHED decode loop, where each step
+    feeds exactly one new token and the shapes agree. The cached path is the one
+    D62 found returns empty output and never diagnosed, so neither route to
+    continuous_compute currently works.
+
+    This matters beyond the helper: `geometry-prompt-depth` stage 2 calls
+    run_cell(..., cc=True), so that arm would crash, and directions.md B4.12
+    records continuous_compute as the architecture's distinctive feature that no
+    kernel has used. It has still not been used.
+    """
+    torch = pytest.importorskip("torch")
+    m = _fake_lm_enforcing_huginn_state_contract(torch)
+    with pytest.raises(RuntimeError, match="shape mismatch"):
+        lib["batched_generate"](m, _fake_tok(torch), ["aaa", "bbb"], max_new=4,
+                                verbose=False, continuous_compute=True)
+    assert m.states_seen, "no input_states was ever passed; the arm did not engage"
+    assert m.states_seen[0][1] == 1, (
+        f"expected a [b, 1, dim] warm-start, got {m.states_seen[0]}"
+    )
+
+
+def test_the_plain_arm_is_unaffected_by_that_contract(lib) -> None:
+    """The control: without continuous_compute no state is passed, so the same
+    fake generates happily. Isolates the failure to the cc path alone."""
+    torch = pytest.importorskip("torch")
+    m = _fake_lm_enforcing_huginn_state_contract(torch)
+    out = lib["batched_generate"](m, _fake_tok(torch), ["aaa", "bbb"], max_new=4,
+                                  verbose=False, continuous_compute=False)
+    assert len(out) == 2
+    assert not m.states_seen, "plain arm must not pass input_states"
