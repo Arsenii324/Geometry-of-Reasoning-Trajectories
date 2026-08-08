@@ -457,3 +457,98 @@ def test_the_plain_arm_is_unaffected_by_that_contract(lib) -> None:
                                   verbose=False, continuous_compute=False)
     assert len(out) == 2
     assert not m.states_seen, "plain arm must not pass input_states"
+
+
+# --- preflight: each guard tested against the REAL defect it would have caught --
+
+
+def test_attainable_rejects_the_exact_geomcorrect_defect(lib) -> None:
+    """n_perm=200 vs Bonferroni alpha 0.05/12 made rejection impossible.
+
+    Caught by hand before that kernel ran; this is the same arithmetic as a guard,
+    so it cannot recur silently. Measured power at 200 permutations was 0.00 even
+    for a 2 sd shift, because the p-floor 1/201 = 0.00498 exceeds alpha = 0.00417.
+    """
+    ok, floor = lib["attainable"](0.05 / 12, 200)
+    assert not ok and floor == pytest.approx(1 / 201)
+    ok5k, floor5k = lib["attainable"](0.05 / 12, 5000)
+    assert ok5k and floor5k == pytest.approx(1 / 5001)
+
+
+def test_attainable_is_not_vacuously_permissive(lib) -> None:
+    """A guard that always passes is worse than none."""
+    assert not lib["attainable"](0.001, 100)[0]
+    assert lib["attainable"](0.05, 1000)[0]
+
+
+def test_degenerate_flags_the_exact_prefill_failure(lib) -> None:
+    """geometry-discourse's prefill arm: byte fragments for 24/24 items.
+
+    Token ids 6704/7909/12894 decode to partial UTF-8 ('ä¸'), rendering U+FFFD.
+    The kernel printed "(B) DEGRADATION: D68 interpretation WRONG" from that arm.
+    This guard makes that arm unreadable instead of authoritative.
+    """
+    bad, why = lib["degenerate"](["�"] * 24)
+    assert bad and "unprintable" in why
+
+
+def test_degenerate_flags_a_collapsed_argmax(lib) -> None:
+    """The other shape: every item predicts the same token, so the measurement
+    carries no per-item information even though it looks like real text."""
+    bad, why = lib["degenerate"](["The"] * 24)
+    assert bad and "collapsed" in why
+
+
+def test_degenerate_passes_a_healthy_population(lib) -> None:
+    """The constrained arm at r=64 -- real digits, several distinct. Must pass,
+    or the guard would have suppressed the run's actual finding."""
+    bad, why = lib["degenerate"](["1"] * 8 + ["5"] * 5 + ["8"] * 3 + ["0"] * 8)
+    assert not bad, why
+
+
+def test_gated_verdict_withholds_when_the_instrument_fails(lib, capsys) -> None:
+    """D62's lesson, executable: a conclusion may not be printed over an arm that
+    did not qualify. geometry-discourse printed the OPPOSITE of the right answer
+    because P3/P4 keyed on one arm with no sanity gate."""
+    msg = lib["gated_verdict"](
+        "prefill recovers the answer", True,
+        [("output sanity", False, "24/24 argmax are byte fragments"),
+         ("threshold attainable", True, "")])
+    assert "WITHHELD" in msg and "byte fragments" in msg
+    assert "CONFIRMED" not in msg
+    assert "WITHHELD" in capsys.readouterr().out
+
+
+def test_gated_verdict_reports_when_every_gate_passes(lib) -> None:
+    ok = lib["gated_verdict"]("constrained restores the answer at r=64", True,
+                              [("output sanity", True, ""), ("control", True, "")])
+    assert "CONFIRMED" in ok and "WITHHELD" not in ok
+    bad = lib["gated_verdict"]("depth degrades the computation", False,
+                               [("output sanity", True, "")])
+    assert "REFUTED" in bad
+
+
+def test_no_kernel_body_seeds_items_with_pythons_salted_hash() -> None:
+    """`hash(str)` is salted PER PROCESS, so seeding item generation with it makes
+    the item set differ on every run.
+
+    Measured: hash("echo_digit") % 997 gave 544, 92 and 779 in three interpreters,
+    so geometry-graded-readout and geometry-discourse drew DIFFERENT items and the
+    same nominal cell read 96% in one and 83% in the other. Within-run comparisons
+    survive; cross-run ones do not. Kernels that have already RUN are exempt --
+    their body is the record of what executed, and rewriting it would falsify that.
+    """
+    import re
+
+    root = pathlib.Path(__file__).resolve().parent.parent
+    offenders = []
+    for body in sorted(root.glob("scratch/kaggle_*/body.py")):
+        if (body.parent / "out").exists():
+            continue                      # already ran; frozen record
+        src = body.read_text(encoding="utf-8")
+        for m in re.finditer(r"random\.Random\([^)]*\bhash\(", src):
+            offenders.append(f"{body.parent.name}: {src[m.start():m.start() + 60]!r}")
+    assert not offenders, (
+        "seed item generation with a stable digest (zlib.crc32) -- Python salts "
+        "str hashes per process, so these kernels are not reproducible:\n  "
+        + "\n  ".join(offenders))

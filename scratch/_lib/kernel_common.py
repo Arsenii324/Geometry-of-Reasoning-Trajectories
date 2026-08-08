@@ -498,3 +498,72 @@ def cv_r2_nonlinear(x, y, groups=None, n_splits=5, n_null=0, seed=0, n_pc=8):
     null = [score(rng.permutation(y)) for _ in range(n_null)]
     return r2, null
 # ---8<---
+
+
+# ---8<--- preflight
+def attainable(alpha, n_perm):
+    """Can a permutation test with `n_perm` draws ever reach `alpha`?
+
+    The smallest p a permutation test can report is 1/(n_perm+1). If that floor
+    sits above the significance threshold, REJECTION IS ARITHMETICALLY
+    IMPOSSIBLE and the run returns "not significant" for every cell no matter
+    what the data say -- a guaranteed null that reads like a scientific result.
+
+    Measured instance: `geometry-correctness` was drafted with n_perm=200 against
+    a Bonferroni alpha of 0.05/12 = 0.00417. Floor = 1/201 = 0.00498 > alpha, and
+    synthetic power was 0.00 even for a 2 sd shift. Same class as the winding
+    null's p=0.024 floor at n=40.
+
+    Returns (ok, floor).
+    """
+    floor = 1.0 / (n_perm + 1)
+    return floor < alpha, floor
+
+
+def degenerate(decoded, min_distinct=2):
+    """Is an argmax population degenerate rather than informative?
+
+    Two failure shapes, both seen on real runs:
+      * COLLAPSE -- every item predicts the same token, so the measurement
+        carries no per-item information.
+      * UNPRINTABLE -- the argmax decodes to a partial UTF-8 byte fragment
+        (U+FFFD after decode), which means the distribution is not on words at
+        all. `geometry-discourse`'s prefill arm did BOTH: token ids 6704/7909/
+        12894 ('ä¸') for 24/24 items on every task, and the kernel still printed
+        a confident verdict from that arm.
+
+    Returns (is_degenerate, reason).
+    """
+    uniq = set(decoded)
+    bad = sum("�" in d for d in decoded)
+    if bad > len(decoded) // 2:
+        return True, f"{bad}/{len(decoded)} argmax tokens are unprintable byte fragments"
+    if len(uniq) < min_distinct:
+        return True, f"argmax collapsed to {len(uniq)} distinct token(s): {sorted(uniq)[:3]}"
+    return False, ""
+
+
+def gated_verdict(claim, passed, gates):
+    """Print a conclusion ONLY if every precondition holds; else say why not.
+
+    D62: a capability verdict printed over empty strings because the analysis
+    excluded the control that would have caught it. `geometry-discourse` repeated
+    it -- P3/P4 keyed on one arm and printed the OPPOSITE of the right answer
+    without ever checking that arm's output was sane.
+
+    `gates` is a list of (name, ok, detail). A verdict computed from the same
+    variables as the run will agree with the run's mistakes, so the gates must
+    test the INSTRUMENT, not the hypothesis.
+
+    Returns the verdict string, and prints it.
+    """
+    failed = [(n, d) for n, ok, d in gates if not ok]
+    if failed:
+        msg = (f"  VERDICT WITHHELD -- {claim}\n"
+               + "\n".join(f"    gate FAILED: {n} -- {d}" for n, d in failed)
+               + "\n    the instrument did not qualify; this arm may not be read.")
+    else:
+        msg = f"  {claim}: {'CONFIRMED' if passed else 'REFUTED'}"
+    print(msg, flush=True)
+    return msg
+# ---8<---
