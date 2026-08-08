@@ -46,6 +46,7 @@
 !/scratch/kaggle_taskacc/
 !/scratch/kaggle_promptdepth/
 !/scratch/kaggle_capcontent/
+!/scratch/kaggle_memprobe/
 !/scratch/kaggle_eps_split/
 !/scratch/_lib/
 # within those bundles, keep the harness noise out
@@ -67,6 +68,9 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
 
 # Environments
 .venv/
