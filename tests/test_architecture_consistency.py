@@ -77,6 +77,16 @@ def _git_last_commit_time(path: Path) -> int | None:
 # the check fire again) the moment its script changes for a reason that
 # might actually affect what gets computed.
 _REVIEWED_NON_SUBSTANTIVE_CHANGES: dict[str, str] = {
+    "effective_dim.csv": (
+        "2026-08-09 (3eba672): run_effective_dim.py extracted an inline f-string "
+        "conditional into a `verdict` variable and reflowed one print, purely to "
+        "satisfy E501. No computed value is touched. EVIDENCE, not judgement: the "
+        "script was re-run at the current revision and results/effective_dim.csv is "
+        "BYTE-IDENTICAL (sha256 f91c9c187a009244f3b0a75a...), which is also why a "
+        "re-commit could not clear this check -- git records no change for an "
+        "unchanged file, so the commit order stands and the sign-off is the "
+        "documented mechanism."
+    ),
     "counting_accuracy.csv": (
         "2026-07-23 (d009d4e): run_accuracy.py gained save_partial() "
         "checkpointing only, already had try/except -- no change to what's computed."
