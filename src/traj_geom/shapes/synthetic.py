@@ -62,7 +62,17 @@ def make_variants(n_ops: int, seed: int = 0) -> dict:
 
     Returns:
         ``{"track", "local"}`` — ``track`` needs accumulation, ``local`` needs
-        only the last instruction; both have the same token length.
+        only the last instruction. The BODY is byte-identical; the questions are
+        not, so the two are *offset*-matched rather than equal in length.
+
+    MEASURED 2026-08-08, correcting this docstring's previous claim that both
+    "have the same token length": against the pinned Huginn tokenizer ``local``
+    is **+3 tokens** at every n_ops in 4..64 ("What was the last instruction?"
+    against "Final total?"). The offset is CONSTANT, which is the property the
+    control actually needs — it shifts both arms equally, so a metric-vs-n_ops
+    slope comparison (what B3/B3c read) is unaffected. An offset that grew with
+    n_ops would confound arm with difficulty; `tests/test_synthetic_tasks.py`
+    asserts it does not.
     """
     rng = random.Random(seed)
     ops = [rng.choice([1, -1]) for _ in range(n_ops)]
