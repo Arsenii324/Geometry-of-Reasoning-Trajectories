@@ -176,13 +176,31 @@ def assert_generation_works(model, tok, chat=True):
     return hits
 
 import json
+import traceback
 
 MODEL_ID = "tomg-group-umd/huginn-0125"
 REVISION = "bb6621b65e90b6a4b9b29ef88dc83866d450470c"
 N_ITEMS = 16                      # promptdepth's batch before any split
 MAX_NEW = 64                      # promptdepth's cot/decompose completion length
 NUM_STEPS = 32                    # promptdepth's PICK_DEPTH
-BUDGETS = (0, 1024, 768, 512, 384)  # 0 == unbudgeted (the config that failed)
+UNBUDGETED = 10**9          # a sentinel LARGE budget; see the note below
+BUDGETS = (UNBUDGETED, 1024, 384)
+
+# V2, after reading v1's raw numbers rather than its verdict. Two flaws found:
+#
+#  (a) v1 spelled "unbudgeted" as `kw = {}`, which takes batched_generate's
+#      DEFAULT max_batch_tokens=1024 -- it does not mean unlimited. So v1 never
+#      tested the unbudgeted path at all, and P1 was never evaluated. The tell was
+#      in the raw table, not the verdict: the "none" and "1024" arms reported a
+#      BYTE-IDENTICAL peak of 13977.0517578125 MiB, and "none" showed 0.191
+#      MiB/token against ~0.39 for every real arm -- exactly half, because its
+#      labelled chunk of 16 was my own arithmetic while the code ran chunk 8.
+#      Fixed by passing an explicit huge budget so the split is a no-op.
+#
+#  (b) v1 recorded only `type(e).__name__` for a failure, so the
+#      continuous_compute arm came back as a bare "RuntimeError" with no message
+#      and no mechanism. D62's lesson exactly: a failure you cannot read is a
+#      failure you will guess about. Now the message and traceback are captured.
 
 Q = ("Is the number of ones in this sequence even or odd?\nSequence: {x}"
      "\nGo through the sequence one item at a time, flipping between even and odd "
@@ -226,8 +244,8 @@ def main():
 
     print(f"\n{'budget':>8} {'chunk':>6} {'peak b*s':>9} {'peak MiB':>9} {'headroom MiB':>13}  outcome")
     for b in BUDGETS:
-        kw = {} if b == 0 else {"max_batch_tokens": b}
-        per = N_ITEMS if b == 0 else max(1, min(N_ITEMS, b // (max(widths) + MAX_NEW)))
+        kw = {"max_batch_tokens": b}
+        per = max(1, min(N_ITEMS, b // (max(widths) + MAX_NEW)))
         torch.cuda.empty_cache(); torch.cuda.reset_peak_memory_stats()
         try:
             batched_generate(model, tok, texts, max_new=MAX_NEW, num_steps=NUM_STEPS,
@@ -239,17 +257,18 @@ def main():
             ok = "OOM"
             torch.cuda.empty_cache()
         except Exception as e:                       # noqa: BLE001 - report, do not abort the ladder
-            peak, ok = float("nan"), f"{type(e).__name__}"
-        print(f"{b if b else 'none':>8} {per:>6} {per * (max(widths) + MAX_NEW):>9} "
-              f"{peak:>9.0f} {total - peak:>13.0f}  {ok}", flush=True)
+            peak, ok = float("nan"), f"{type(e).__name__}: {e}"
+            print(traceback.format_exc(), flush=True)
+        label = "unbudget" if b == UNBUDGETED else str(b)
+        print(f"{label:>8} {per:>6} {per * (max(widths) + MAX_NEW):>9} "
+              f"{peak:>9.0f} {total - peak:>13.0f}  {ok[:44]}", flush=True)
         rec["arms"].append({"budget": b, "chunk": per, "peak_mib": peak, "outcome": ok})
         with open("mem_probe.json", "w") as f:
             json.dump(rec, f, indent=1)
 
     # continuous_compute at the largest budget that survived
-    surv = [a["budget"] for a in rec["arms"] if a["outcome"] == "OK" and a["budget"]]
-    if surv:
-        b = max(surv)
+    rec["cc"] = []
+    for b in (1024, 384):
         torch.cuda.empty_cache(); torch.cuda.reset_peak_memory_stats()
         try:
             batched_generate(model, tok, texts, max_new=MAX_NEW, num_steps=NUM_STEPS,
@@ -259,19 +278,27 @@ def main():
             peak, ok = torch.cuda.max_memory_allocated() / 2**20, "OOM"
             torch.cuda.empty_cache()
         except Exception as e:                       # noqa: BLE001
-            peak, ok = float("nan"), f"{type(e).__name__}"
+            peak, ok = float("nan"), f"{type(e).__name__}: {e}"
+            print(traceback.format_exc(), flush=True)
         print(f"\ncontinuous_compute @ budget {b}: peak {peak:.0f} MiB  {ok}", flush=True)
-        rec["cc"] = {"budget": b, "peak_mib": peak, "outcome": ok}
+        rec["cc"].append({"budget": b, "peak_mib": peak, "outcome": ok})
 
     with open("mem_probe.json", "w") as f:
         json.dump(rec, f, indent=1)
 
     print("\n=== VERDICT ===")
-    p2 = [a for a in rec["arms"] if a["budget"] == 1024]
-    if p2:
-        print(f"  P2 (budget 1024 survives): "
-              f"{'CONFIRMED' if p2[0]['outcome'] == 'OK' else 'REFUTED -- promptdepth needs an explicit smaller budget'}")
-    safe = [a["budget"] for a in rec["arms"] if a["outcome"] == "OK" and a["budget"]]
+    by = {a["budget"]: a["outcome"] for a in rec["arms"]}
+    unb = by.get(UNBUDGETED, "not run")
+    print(f"  P1 (UNBUDGETED reproduces the original OOM): "
+          f"{'CONFIRMED' if unb == 'OOM' else f'REFUTED -- unbudgeted came back {unb}'}")
+    print(f"  P2 (budget 1024 survives): "
+          f"{'CONFIRMED' if by.get(1024) == 'OK' else 'REFUTED -- promptdepth needs a smaller budget'}")
+    cc_ok = [c['budget'] for c in rec['cc'] if c['outcome'] == 'OK']
+    print(f"  P4 (continuous_compute runs at all): "
+          f"{'yes, at ' + str(cc_ok) if cc_ok else 'NO -- it fails at every budget tried'}")
+    for c in rec["cc"]:
+        print(f"     cc@{c['budget']}: {c['outcome'][:100]}")
+    safe = [a["budget"] for a in rec["arms"] if a["outcome"] == "OK"]
     print(f"  largest budget that survived: {max(safe) if safe else 'NONE'}")
 
 

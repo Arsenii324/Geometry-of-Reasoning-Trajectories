@@ -1,0 +1,32 @@
+[{"stream_name":"stdout","time":0.952963006,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.751998166,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.828211488,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 89.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.864469336,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 29.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.915401772,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 96.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":37.282348745,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stdout","time":37.282408148,"data":"total GPU memory: 14912 MiB\n"}
+,{"stream_name":"stderr","time":130.626510087,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:09\u003c03:28, 69.58s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:09\u003c00:57, 28.77s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:09\u003c00:00, 17.44s/it]\n"}
+,{"stream_name":"stderr","time":130.798332276,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 57.75it/s]\n"}
+,{"stream_name":"stdout","time":142.965319043,"data":"weights allocated: 13610 MiB   headroom: 1302 MiB\n"}
+,{"stream_name":"stdout","time":155.475543091,"data":"  generation smoke-test: 4/4 copied  -\u003e ['banana', 'orange', 'puzzle', 'kitten']\n"}
+,{"stream_name":"stdout","time":155.481257646,"data":"prompt token widths: [56]  max_new=64  unsplit batch*seq = 1920\n"}
+,{"stream_name":"stdout","time":155.481433884,"data":"\n"}
+,{"stream_name":"stdout","time":155.481463108,"data":"  budget  chunk  peak b*s  peak MiB  headroom MiB  outcome\n"}
+,{"stream_name":"stdout","time":556.212049152,"data":"    none     16      1920     13977           935  OK\n"}
+,{"stream_name":"stdout","time":988.669801184,"data":"    1024      8       960     13977           935  OK\n"}
+,{"stream_name":"stdout","time":1481.29237911,"data":"     768      6       720     13889          1023  OK\n"}
+,{"stream_name":"stdout","time":1990.855776484,"data":"     512      4       480     13799          1113  OK\n"}
+,{"stream_name":"stdout","time":2561.999253387,"data":"     384      3       360     13753          1159  OK\n"}
+,{"stream_name":"stdout","time":2583.609815642,"data":"\n"}
+,{"stream_name":"stdout","time":2583.609866326,"data":"continuous_compute @ budget 1024: peak nan MiB  RuntimeError\n"}
+,{"stream_name":"stdout","time":2583.610389876,"data":"\n"}
+,{"stream_name":"stdout","time":2583.610401859,"data":"=== VERDICT ===\n"}
+,{"stream_name":"stdout","time":2583.610487053,"data":"  P2 (budget 1024 survives): CONFIRMED\n"}
+,{"stream_name":"stdout","time":2583.610537748,"data":"  largest budget that survived: 1024\n"}
+,{"stream_name":"stderr","time":2591.072797524,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":2591.072886863,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":2591.426459003,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":2591.426523946,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":2592.189282577,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":2593.427935212,"data":"[NbConvertApp] Writing 332067 bytes to __results__.html\n"}
+]
