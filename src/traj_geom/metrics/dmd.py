@@ -139,6 +139,33 @@ def dmd_rank_sweep(traj: np.ndarray, ranks=(2, 3, 4, 6, 8, 12, 16),
             "stable": bool(spread < tol), "spread": spread}
 
 
+def precision_floor(traj: np.ndarray) -> float:
+    """Step-norm scale below which the data is storage rounding, not dynamics.
+
+    Huginn's states are stored bf16-exact (D30), and bf16 carries 8 explicit
+    mantissa bits, so representing a state of norm ~76.4 costs a rounding error of
+    norm ~0.13. Any "step" smaller than that is the difference of two rounding
+    errors and carries no dynamics at all.
+
+    MEASURED, not assumed: rounding the fp32 states from `geom-bank` to bf16 and
+    recomputing leaves the geometry IDENTICAL to three decimals for the first ~20
+    unrolls and diverges past ~40 -- and the trained step norm crosses this floor
+    at unroll 39. So the two agree exactly where this function says they should.
+
+    Returns 0.0 when the trajectory is not bf16-exact (i.e. genuinely fp32), in
+    which case only the tail-based floor applies.
+    """
+    import torch
+    x = np.asarray(traj)
+    t = torch.from_numpy(np.ascontiguousarray(x.astype(np.float32)))
+    if not torch.equal(t, t.to(torch.bfloat16).to(torch.float32)):
+        return 0.0
+    err = t.to(torch.bfloat16).to(torch.float32).numpy().astype(np.float64) - x.astype(np.float64)
+    scale = float(np.median(np.linalg.norm(
+        np.abs(x.astype(np.float64)) * 2.0**-9, axis=1)))
+    return max(scale, float(np.median(np.linalg.norm(err, axis=1))))
+
+
 def pre_floor_window(traj: np.ndarray, floor_frac: float = 2.0,
                      tail: int = 10) -> tuple[int, int]:
     """Indices ``[a, b]`` of the regime above the arithmetic noise floor.
@@ -158,6 +185,13 @@ def pre_floor_window(traj: np.ndarray, floor_frac: float = 2.0,
     # floor appended to a clean spiral extended the window 12 steps past the end
     # of the signal under the median rule.
     floor = float(np.max(d[-tail:]))
+    # The tail-based floor is NOT sufficient on bf16-stored data. Consecutive
+    # rounding errors partially cancel, so the observed step norms in the dead
+    # regime can sit well BELOW the rounding scale that produced them -- measured:
+    # a bf16 trajectory whose steps are pure rounding past unroll 39 still gave a
+    # tail floor small enough to admit an 85-step window. Taking the larger of the
+    # two floors is what keeps a statistic from reporting the arithmetic (D28).
+    floor = max(floor, precision_floor(traj))
     keep = np.where(d > floor_frac * floor)[0]
     if len(keep) < 3:
         return 0, len(d)

@@ -140,3 +140,45 @@ def test_rank_cap_is_honoured() -> None:
 def test_rejects_too_few_snapshots() -> None:
     with pytest.raises(ValueError):
         dmd_eigenvalues(np.zeros((2, 5)))
+
+
+def test_precision_floor_is_zero_for_genuinely_fp32_data() -> None:
+    """It must not shorten a window that carries real fp32 signal."""
+    from traj_geom.metrics.dmd import precision_floor
+    rng = np.random.default_rng(21)
+    traj = np.cumsum(rng.normal(size=(40, 64)), axis=0)
+    assert precision_floor(traj) == 0.0
+
+
+def test_precision_floor_excludes_the_bf16_dead_regime() -> None:
+    """The tail-based floor alone is NOT enough on bf16-stored data.
+
+    Consecutive rounding errors partially cancel, so observed step norms in the
+    dead regime sit BELOW the rounding scale that produced them, and a tail-based
+    floor happily admits them. Measured on a real orbit: bf16 storage gave an
+    85-step window when the step norm crossed the rounding scale at unroll 39, and
+    a statistic over that window reports the arithmetic (D28's failure mode).
+    """
+    import torch
+
+    from traj_geom.metrics.dmd import pre_floor_window, precision_floor
+
+    rng = np.random.default_rng(22)
+    d = 512
+    v = rng.normal(size=d)
+    v *= 76.4 / np.linalg.norm(v)                     # Huginn's state norm
+    step = rng.normal(size=(120, d))
+    step /= np.linalg.norm(step, axis=1, keepdims=True)
+    traj = v[None, :] + np.cumsum(step * (0.8 ** np.arange(120))[:, None] * 5.0, axis=0)
+    bf = torch.from_numpy(traj.astype(np.float32)).to(torch.bfloat16)
+    bf16 = bf.to(torch.float32).numpy().astype(np.float64)
+
+    assert precision_floor(bf16) > 0.0
+    _, hi_bf = pre_floor_window(bf16)
+    _, hi_fp = pre_floor_window(traj)
+    assert hi_bf < hi_fp, (hi_bf, hi_fp)
+    # and the cut must land near where the signal actually crosses the floor
+    steps = np.linalg.norm(np.diff(bf16, axis=0), axis=1)
+    crossing = int(np.argmax(steps < precision_floor(bf16)))
+    assert abs(hi_bf - crossing) < 0.5 * max(crossing, 1), (hi_bf, crossing)
+
