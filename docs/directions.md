@@ -31,7 +31,7 @@ live state without asking. Updated 2026-08-09.
 | `geometry-h2-rotation` | Kaggle T4 | B4.15 — H2 on arg(lambda), length-matched | RUNNING |
 | `geometry-battery` | Kaggle T4 | 21-family capability screen, graded readout | **DONE -> D75.** 5 families >=50%, control at chance 21/21, and B6 unblocked |
 | `geom-eigenplane` | DataSphere g1.1, job `bt1mvf3juvrcjpl6kl1i` | does the orbit rotate at the rate the Jacobian predicts? | **DONE** -- no: 0.24x, and D74 explains why |
-| `geom-bank` | DataSphere g1.1, job `bt1hd3oqb17690amgolg` | B14 -- bank raw states for BOTH arms; the untrained control D74 needs | EXECUTING |
+| `geom-bank` | DataSphere g1.1, job `bt1hd3oqb17690amgolg` | B14 -- bank raw states for BOTH arms; the untrained control D74 needs | **DONE -> D76.** Training flips the step cosine -0.379 -> +0.541, disjoint at every window |
 | `geometry-b6-bank` | Kaggle T4 | **B6 re-run** -- states + per-unroll rank on the 4 families D75 showed have a gold value carrying both classes | RUNNING |
 
 **Premises checked and FALSE — do not re-derive these.** Each cost minutes to check

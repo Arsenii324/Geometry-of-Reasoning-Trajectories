@@ -93,3 +93,36 @@ def test_null_is_simulated_at_the_sample_count_not_the_ambient_dimension() -> No
     traj = np.cumsum(rng.normal(size=(25, 5280)), axis=0)
     out = effective_dimension(traj)
     assert 18 < out["null_mean"] <= 24, out["null_mean"]
+
+
+def test_consecutive_cosine_recovers_the_rotation_angle() -> None:
+    """cos_consecutive IS cos(phi) for a linear map with a dominant rotating mode.
+
+    If h_{t+1} - h* = A (h_t - h*), then the STEPS obey the same map exactly:
+    delta_t = h_{t+1} - h_t = (A - I)(h_t - h*), so delta_{t+1} = A delta_t. With
+    A = rho * R(phi) in an invariant plane, the angle between consecutive steps is
+    phi regardless of rho -- so this statistic is a rotation estimator that needs no
+    window, no projection plane and no centre, which is exactly what every winding
+    variant needed and got wrong. It is why the trained/untrained cosine gap in D76
+    is interpretable as a difference in per-step rotation rather than a curiosity.
+    """
+    rng = np.random.default_rng(11)
+    q, _ = np.linalg.qr(rng.normal(size=(300, 2)))
+    for phi in (0.3, 1.0, 2.0):
+        for rho in (0.6, 0.95):        # the angle must not depend on the decay rate
+            t = np.arange(50)
+            xy = (rho**t)[:, None] * np.stack([np.cos(phi * t), np.sin(phi * t)], axis=1)
+            got = effective_dimension(xy @ q.T)["cos_consecutive"]
+            assert got == pytest.approx(np.cos(phi), abs=1e-6), (phi, rho, got)
+
+
+def test_a_pure_contraction_has_perfectly_aligned_steps() -> None:
+    """phi = 0 gives cos = +1 for ANY decay rate, so a cosine below 1 is rotation
+    (or noise) and never merely 'fast convergence'. This is what rules out the
+    obvious alternative reading of D76's arm gap."""
+    rng = np.random.default_rng(12)
+    v = rng.normal(size=200)
+    for rho in (0.5, 0.8, 0.99):
+        traj = np.outer(rho ** np.arange(40), v)
+        assert effective_dimension(traj)["cos_consecutive"] == pytest.approx(1.0, abs=1e-9)
+
