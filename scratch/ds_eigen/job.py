@@ -184,7 +184,6 @@ def main():
             v = make_variants(n_ops, seed=seed)
             for kind in KINDS:
                 t0 = time.time()
-                tag = f"{kind} n_ops={n_ops} seed={seed}"
                 try:
                     ids = tok(v[kind], return_tensors="pt").input_ids.to("cuda")
                     freqs = model.freqs_cis[:, : ids.shape[1]]

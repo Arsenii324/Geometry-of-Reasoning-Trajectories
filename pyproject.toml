@@ -59,7 +59,16 @@ src = ["src", "tests", "scripts"]
 # scratch/ are FALSE POSITIVES — every closure is consumed inside the iteration that
 # built it (kaggle_jacobian's eigs() call at main.py:136; the `cap` forward hooks,
 # removed in `finally`). No real defect is silenced here; D31/D55 are unaffected.
-extend-exclude = ["notebooks", "scratch/kaggle_*", "h3_toy_model"]
+#   scratch/ds_*     DataSphere bundles -- same class as the Kaggle ones: the
+#                    committed record of what actually ran on a remote box.
+#                    Audited 2026-08-09: ds_eigen's 8 B023 are the SAME false
+#                    positive already audited for kaggle_jacobian -- `_rev`,
+#                    `matvec` and `_Cap` are built inside the `for kind` loop and
+#                    fully consumed by the `eigs(op, ...)` call in that same
+#                    iteration, so no closure outlives the variable it captured.
+#                    The 1 N818 is a naming preference on a private sentinel
+#                    exception. No real defect is silenced.
+extend-exclude = ["notebooks", "scratch/kaggle_*", "scratch/ds_*", "h3_toy_model"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "N", "W"]
