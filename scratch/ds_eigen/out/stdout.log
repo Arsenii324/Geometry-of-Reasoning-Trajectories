@@ -1,0 +1,64 @@
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: vaarsenii (vaarsenii-hse-university) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run dmhwnihp
+wandb: Tracking run with wandb version 0.28.1
+wandb: Run data is saved locally in /job/wandb/run-20260808_215117-dmhwnihp
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run ds-eigen-1786225876
+wandb: ⭐️ View project at https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories
+wandb: 🚀 View run at https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories/runs/dmhwnihp
+CUDA: True Tesla V100-PCIE-32GB
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [00:49<02:29, 49.80s/it]Fetching 4 files:  50%|█████     | 2/4 [04:25<04:25, 132.84s/it]Fetching 4 files:  75%|███████▌  | 3/4 [04:29<01:29, 89.74s/it] Fetching 4 files: 100%|██████████| 4/4 [04:30<00:00, 67.69s/it]Fetching 4 files: 100%|██████████| 4/4 [04:30<00:00, 67.69s/it]
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 167.32it/s]
+'(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')), '(Request ID: e6b887fb-27fb-417b-b34d-a0dc4cd1ddbd)')' thrown while requesting HEAD https://huggingface.co/tomg-group-umd/huginn-0125/resolve/bb6621b65e90b6a4b9b29ef88dc83866d450470c/generation_config.json
+Retrying in 1s [Retry 1/5].
+{"kind": "track", "n_ops": 4, "rho": 0.8255204370662785, "arg": 1.1007106220163703, "rate_over_arg": 0.1025729314084035, "cos_readout_mode": 0.08165568035653548, "secs": 11.3, "ok": true}
+{"kind": "local", "n_ops": 4, "rho": 0.8679838626491903, "arg": 0.3401489106583884, "rate_over_arg": 0.43496326984162925, "cos_readout_mode": 0.033894708617234176, "secs": 7.9, "ok": true}
+{"kind": "track", "n_ops": 8, "rho": 0.8160885593827845, "arg": 1.0756140618092387, "rate_over_arg": 0.240817666701189, "cos_readout_mode": 0.09235013670648277, "secs": 14.2, "ok": true}
+{"kind": "local", "n_ops": 8, "rho": 0.8087307088194514, "arg": 0.3673327778233396, "rate_over_arg": 0.2438211304732087, "cos_readout_mode": 0.02293514790704445, "secs": 21.4, "ok": true}
+{"kind": "track", "n_ops": 16, "rho": 0.8080188383852197, "arg": 1.0687674560835603, "rate_over_arg": 0.10154621661725917, "cos_readout_mode": 0.04294382783157024, "secs": 17.4, "ok": true}
+{"kind": "local", "n_ops": 16, "rho": 0.8011200368992037, "arg": 0.4240074853222909, "rate_over_arg": 1.269692426155541, "cos_readout_mode": 0.006957588845488431, "secs": 17.0, "ok": true}
+{"kind": "track", "n_ops": 32, "rho": 0.8097900397239425, "arg": 0.788916770250553, "rate_over_arg": 0.030026745041094788, "cos_readout_mode": 0.005348275849830157, "secs": 25.3, "ok": true}
+{"kind": "local", "n_ops": 32, "secs": 137.3, "ok": false}
+
+=== 7/8 usable ===
+wandb: updating run metadata
+wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+wandb: uploading output.log; uploading config.yaml
+wandb: 
+wandb: Run history:
+wandb:              local/arg ▁▃█
+wandb: local/cos_readout_mode █▅▁
+wandb:            local/n_ops ▁▂▄█
+wandb:    local/rate_over_arg ▂▁█
+wandb:              local/rho █▂▁
+wandb:             local/secs ▁▂▁█
+wandb:              track/arg █▇▇▁
+wandb: track/cos_readout_mode ▇█▄▁
+wandb:            track/n_ops ▁▂▄█
+wandb:    track/rate_over_arg ▃█▃▁
+wandb:                     +2 ...
+wandb: 
+wandb: Run summary:
+wandb:              local/arg 0.42401
+wandb: local/cos_readout_mode 0.00696
+wandb:            local/n_ops 32
+wandb:               local/ok False
+wandb:    local/rate_over_arg 1.26969
+wandb:              local/rho 0.80112
+wandb:             local/secs 137.3
+wandb:              track/arg 0.78892
+wandb: track/cos_readout_mode 0.00535
+wandb:            track/n_ops 32
+wandb:                     +4 ...
+wandb: 
+wandb: 🚀 View run ds-eigen-1786225876 at: https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories/runs/dmhwnihp
+wandb: ⭐️ View project at: https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260808_215117-dmhwnihp/logs
+  P2 radial fit R^2: median 0.979 (gate wants >= 0.9)
+  P3 measured_rate/|arg|: median 0.241 (point prediction is 1.0), range [0.030, 1.270]
+  P4 |cos(readout, mode)|: median 0.0339 vs random 0.0105
+saved /tmp/tmp.KiuA8FCtKQ/eigen.json
+DONE

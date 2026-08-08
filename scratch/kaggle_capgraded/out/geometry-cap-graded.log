@@ -1,0 +1,43 @@
+[{"stream_name":"stdout","time":1.5454929160000002,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":7.097378567,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.129556097,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 89.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.164128906,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 31.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.217390315,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 92.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":46.806737723,"data":"\n"}
+,{"stream_name":"stdout","time":46.806770198,"data":"=== trained ===\n"}
+,{"stream_name":"stderr","time":146.20109508,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:10\u003c03:31, 70.39s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:10\u003c00:00, 17.60s/it]\n"}
+,{"stream_name":"stderr","time":146.777079463,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 46.52it/s]\n"}
+,{"stream_name":"stdout","time":158.46561307,"data":"         task  log10 rank   acc@1  content R2     null\n"}
+,{"stream_name":"stdout","time":300.77790723,"data":"   echo_digit        0.00    100%      0.9691   -0.322\n"}
+,{"stream_name":"stdout","time":449.637967067,"data":"         add1        0.00    100%      0.9964   -0.279\n"}
+,{"stream_name":"stdout","time":610.389513102,"data":"       count4        0.60     17%      0.9945   -0.306\n"}
+,{"stream_name":"stdout","time":883.446574758,"data":"      count16        0.78     19%      0.8709   -0.389\n"}
+,{"stream_name":"stdout","time":895.965089086,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":896.857409054,"data":"  purged /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":896.857458531,"data":"\n"}
+,{"stream_name":"stdout","time":896.858484802,"data":"=== untrained ===\n"}
+,{"stream_name":"stderr","time":897.057662224,"data":"A new version of the following files was downloaded from https://huggingface.co/tomg-group-umd/huginn-0125:\n"}
+,{"stream_name":"stderr","time":897.057700852,"data":"- raven_modeling_minimal.py\n"}
+,{"stream_name":"stderr","time":897.057707506,"data":". Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.\n"}
+,{"stream_name":"stdout","time":963.52917291,"data":"         task  log10 rank   acc@1  content R2     null\n"}
+,{"stream_name":"stdout","time":1120.686591996,"data":"   echo_digit        3.68      0%      0.9301   -0.333\n"}
+,{"stream_name":"stdout","time":1270.202187047,"data":"         add1        4.07      0%      0.9966   -0.328\n"}
+,{"stream_name":"stdout","time":1430.587828825,"data":"       count4        4.25      0%      1.0000   -0.139\n"}
+,{"stream_name":"stdout","time":1704.065440829,"data":"      count16        3.91      0%      1.0000   -0.221\n"}
+,{"stream_name":"stdout","time":1716.532524894,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":1716.532572042,"data":"\n"}
+,{"stream_name":"stdout","time":1716.532579038,"data":"=== 6.1 MODERATION TEST ===\n"}
+,{"stream_name":"stdout","time":1716.532603651,"data":"         task  capability(-log10 rank)   content gap (T-U)\n"}
+,{"stream_name":"stdout","time":1716.532610386,"data":"   echo_digit                    -0.00              0.0390\n"}
+,{"stream_name":"stdout","time":1716.532614557,"data":"         add1                    -0.00             -0.0002\n"}
+,{"stream_name":"stdout","time":1716.53263408,"data":"       count4                    -0.60             -0.0055\n"}
+,{"stream_name":"stdout","time":1716.532744886,"data":"      count16                    -0.78             -0.1290\n"}
+,{"stream_name":"stdout","time":1716.600421787,"data":"  the content gap tracks capability (Spearman rho = +0.95 over 4 rungs): CONFIRMED\n"}
+,{"stream_name":"stdout","time":1716.600445018,"data":"  N=4 rungs: read as DIRECTION plus per-rung effect sizes, never as a p-value.\n"}
+,{"stream_name":"stderr","time":1731.332765965,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1731.332803472,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1731.876600639,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1731.876623742,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1734.608310209,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1736.094908741,"data":"[NbConvertApp] Writing 342325 bytes to __results__.html\n"}
+]

@@ -1,0 +1,33 @@
+{
+  "bytes": 25427,
+  "columns": [
+    "file",
+    "family",
+    "num_steps",
+    "n_ops",
+    "floor_frac",
+    "window_lo",
+    "window_hi",
+    "n_steps",
+    "ambient",
+    "pr",
+    "null_mean",
+    "null_sd",
+    "z",
+    "ratio",
+    "cos_consecutive"
+  ],
+  "file": "effective_dim.csv",
+  "floor_frac": 2.0,
+  "git_commit": "814aba756bbce3f193543603fb9af14270ba2da5",
+  "git_dirty": true,
+  "kind": "effective_dim",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 140,
+  "produced_by": "/home/user/Geometry-of-Reasoning-Trajectories/scripts/run_effective_dim.py",
+  "run_id": "20260808T230024Z-84a986a1",
+  "sha256": "f91c9c187a009244f3b0a75a32197f036dde03593c3c963ce6667eb9c8cee666",
+  "source": "results/trajectories",
+  "written_utc": "2026-08-08T23:00:24.661465+00:00"
+}

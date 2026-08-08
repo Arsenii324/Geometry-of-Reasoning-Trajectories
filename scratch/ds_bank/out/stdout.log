@@ -1,0 +1,89 @@
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: vaarsenii (vaarsenii-hse-university) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run dux9z4c6
+wandb: Tracking run with wandb version 0.28.1
+wandb: Run data is saved locally in /job/wandb/run-20260808_222748-dux9z4c6
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run ds-bank-1786228067
+wandb: ⭐️ View project at https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories
+wandb: 🚀 View run at https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories/runs/dux9z4c6
+CUDA: True Tesla V100-PCIE-32GB
+
+=== trained ===
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [01:44<05:12, 104.30s/it]Fetching 4 files:  50%|█████     | 2/4 [04:38<04:38, 139.07s/it]Fetching 4 files:  75%|███████▌  | 3/4 [04:38<01:32, 92.76s/it] Fetching 4 files: 100%|██████████| 4/4 [04:42<00:00, 70.50s/it]Fetching 4 files: 100%|██████████| 4/4 [04:42<00:00, 70.50s/it]
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 179.55it/s]
+'(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')), '(Request ID: 9b63d117-7254-4a14-9e81-957f5ed9cc6c)')' thrown while requesting HEAD https://huggingface.co/tomg-group-umd/huginn-0125/resolve/bb6621b65e90b6a4b9b29ef88dc83866d450470c/generation_config.json
+Retrying in 1s [Retry 1/5].
+{"tag": "trained_track_n4_ns128_seed0", "best_rank": 31, "correct_any_depth": false, "n_tokens": 22, "bf16_exact": false, "ok": true}
+{"tag": "trained_local_n4_ns128_seed0", "best_rank": 86, "correct_any_depth": false, "n_tokens": 25, "bf16_exact": false, "ok": true}
+{"tag": "trained_count_ones_n4_ns128_seed0", "best_rank": 21, "correct_any_depth": false, "n_tokens": 20, "bf16_exact": false, "ok": true}
+{"tag": "trained_track_n4_ns128_seed1", "best_rank": 17, "correct_any_depth": false, "n_tokens": 22, "bf16_exact": false, "ok": true}
+{"tag": "trained_local_n4_ns128_seed1", "best_rank": 119, "correct_any_depth": false, "n_tokens": 25, "bf16_exact": false, "ok": true}
+{"tag": "trained_count_ones_n4_ns128_seed1", "best_rank": 11, "correct_any_depth": false, "n_tokens": 20, "bf16_exact": false, "ok": true}
+{"tag": "trained_track_n8_ns128_seed0", "best_rank": 47, "correct_any_depth": false, "n_tokens": 34, "bf16_exact": false, "ok": true}
+{"tag": "trained_local_n8_ns128_seed0", "best_rank": 66, "correct_any_depth": false, "n_tokens": 37, "bf16_exact": false, "ok": true}
+{"tag": "trained_count_ones_n8_ns128_seed0", "best_rank": 32, "correct_any_depth": false, "n_tokens": 24, "bf16_exact": false, "ok": true}
+{"tag": "trained_track_n8_ns128_seed1", "best_rank": 24, "correct_any_depth": false, "n_tokens": 34, "bf16_exact": false, "ok": true}
+{"tag": "trained_local_n8_ns128_seed1", "best_rank": 145, "correct_any_depth": false, "n_tokens": 37, "bf16_exact": false, "ok": true}
+{"tag": "trained_count_ones_n8_ns128_seed1", "best_rank": 18, "correct_any_depth": false, "n_tokens": 24, "bf16_exact": false, "ok": true}
+{"tag": "trained_track_n16_ns128_seed0", "best_rank": 75, "correct_any_depth": false, "n_tokens": 58, "bf16_exact": false, "ok": true}
+{"tag": "trained_local_n16_ns128_seed0", "best_rank": 68, "correct_any_depth": false, "n_tokens": 61, "bf16_exact": false, "ok": true}
+{"tag": "trained_count_ones_n16_ns128_seed0", "best_rank": 4, "correct_any_depth": false, "n_tokens": 33, "bf16_exact": false, "ok": true}
+{"tag": "trained_track_n16_ns128_seed1", "best_rank": 31, "correct_any_depth": false, "n_tokens": 58, "bf16_exact": false, "ok": true}
+{"tag": "trained_local_n16_ns128_seed1", "best_rank": 35, "correct_any_depth": false, "n_tokens": 61, "bf16_exact": false, "ok": true}
+{"tag": "trained_count_ones_n16_ns128_seed1", "best_rank": 30, "correct_any_depth": false, "n_tokens": 33, "bf16_exact": false, "ok": true}
+{"tag": "trained_track_n32_ns128_seed0", "best_rank": 137, "correct_any_depth": false, "n_tokens": 106, "bf16_exact": false, "ok": true}
+{"tag": "trained_local_n32_ns128_seed0", "best_rank": 40, "correct_any_depth": false, "n_tokens": 109, "bf16_exact": false, "ok": true}
+{"tag": "trained_count_ones_n32_ns128_seed0", "best_rank": 11, "correct_any_depth": false, "n_tokens": 49, "bf16_exact": false, "ok": true}
+{"tag": "trained_track_n32_ns128_seed1", "best_rank": 16, "correct_any_depth": false, "n_tokens": 106, "bf16_exact": false, "ok": true}
+{"tag": "trained_local_n32_ns128_seed1", "best_rank": 38, "correct_any_depth": false, "n_tokens": 109, "bf16_exact": false, "ok": true}
+{"tag": "trained_count_ones_n32_ns128_seed1", "best_rank": 11, "correct_any_depth": false, "n_tokens": 49, "bf16_exact": false, "ok": true}
+
+=== untrained ===
+A new version of the following files was downloaded from https://huggingface.co/tomg-group-umd/huginn-0125:
+- raven_modeling_minimal.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+{"tag": "untrained_track_n4_ns128_seed0", "best_rank": 13795, "correct_any_depth": false, "n_tokens": 22, "bf16_exact": false, "ok": true}
+{"tag": "untrained_local_n4_ns128_seed0", "best_rank": 50052, "correct_any_depth": false, "n_tokens": 25, "bf16_exact": false, "ok": true}
+{"tag": "untrained_count_ones_n4_ns128_seed0", "best_rank": 17347, "correct_any_depth": false, "n_tokens": 20, "bf16_exact": false, "ok": true}
+{"tag": "untrained_track_n4_ns128_seed1", "best_rank": 19014, "correct_any_depth": false, "n_tokens": 22, "bf16_exact": false, "ok": true}
+{"tag": "untrained_local_n4_ns128_seed1", "best_rank": 4799, "correct_any_depth": false, "n_tokens": 25, "bf16_exact": false, "ok": true}
+{"tag": "untrained_count_ones_n4_ns128_seed1", "best_rank": 38048, "correct_any_depth": false, "n_tokens": 20, "bf16_exact": false, "ok": true}
+{"tag": "untrained_track_n8_ns128_seed0", "best_rank": 14668, "correct_any_depth": false, "n_tokens": 34, "bf16_exact": false, "ok": true}
+{"tag": "untrained_local_n8_ns128_seed0", "best_rank": 39309, "correct_any_depth": false, "n_tokens": 37, "bf16_exact": false, "ok": true}
+{"tag": "untrained_count_ones_n8_ns128_seed0", "best_rank": 736, "correct_any_depth": false, "n_tokens": 24, "bf16_exact": false, "ok": true}
+{"tag": "untrained_track_n8_ns128_seed1", "best_rank": 5174, "correct_any_depth": false, "n_tokens": 34, "bf16_exact": false, "ok": true}
+{"tag": "untrained_local_n8_ns128_seed1", "best_rank": 46433, "correct_any_depth": false, "n_tokens": 37, "bf16_exact": false, "ok": true}
+{"tag": "untrained_count_ones_n8_ns128_seed1", "best_rank": 14506, "correct_any_depth": false, "n_tokens": 24, "bf16_exact": false, "ok": true}
+{"tag": "untrained_track_n16_ns128_seed0", "best_rank": 5030, "correct_any_depth": false, "n_tokens": 58, "bf16_exact": false, "ok": true}
+{"tag": "untrained_local_n16_ns128_seed0", "best_rank": 7645, "correct_any_depth": false, "n_tokens": 61, "bf16_exact": false, "ok": true}
+{"tag": "untrained_count_ones_n16_ns128_seed0", "best_rank": 25291, "correct_any_depth": false, "n_tokens": 33, "bf16_exact": false, "ok": true}
+{"tag": "untrained_track_n16_ns128_seed1", "best_rank": 8922, "correct_any_depth": false, "n_tokens": 58, "bf16_exact": false, "ok": true}
+{"tag": "untrained_local_n16_ns128_seed1", "best_rank": 43763, "correct_any_depth": false, "n_tokens": 61, "bf16_exact": false, "ok": true}
+{"tag": "untrained_count_ones_n16_ns128_seed1", "best_rank": 26420, "correct_any_depth": false, "n_tokens": 33, "bf16_exact": false, "ok": true}
+{"tag": "untrained_track_n32_ns128_seed0", "best_rank": 5615, "correct_any_depth": false, "n_tokens": 106, "bf16_exact": false, "ok": true}
+{"tag": "untrained_local_n32_ns128_seed0", "best_rank": 5163, "correct_any_depth": false, "n_tokens": 109, "bf16_exact": false, "ok": true}
+{"tag": "untrained_count_ones_n32_ns128_seed0", "best_rank": 45068, "correct_any_depth": false, "n_tokens": 49, "bf16_exact": false, "ok": true}
+{"tag": "untrained_track_n32_ns128_seed1", "best_rank": 30898, "correct_any_depth": false, "n_tokens": 106, "bf16_exact": false, "ok": true}
+{"tag": "untrained_local_n32_ns128_seed1", "best_rank": 3551, "correct_any_depth": false, "n_tokens": 109, "bf16_exact": false, "ok": true}
+{"tag": "untrained_count_ones_n32_ns128_seed1", "best_rank": 28740, "correct_any_depth": false, "n_tokens": 49, "bf16_exact": false, "ok": true}
+
+=== banked 48/48 in 10.0 min ===
+  trained: 24 orbits, gold reaches rank 1 at some depth in 0% (descriptive only)
+  untrained: 24 orbits, gold reaches rank 1 at some depth in 0% (descriptive only)
+wandb: updating run metadata
+wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+wandb: uploading output.log; uploading config.yaml
+wandb: 
+wandb: Run history:
+wandb: banked ▁▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
+wandb: 
+wandb: Run summary:
+wandb: banked 48
+wandb: 
+wandb: 🚀 View run ds-bank-1786228067 at: https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories/runs/dux9z4c6
+wandb: ⭐️ View project at: https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260808_222748-dux9z4c6/logs
+DONE

@@ -18,12 +18,13 @@ import os
 import numpy as np
 import pandas as pd
 import pytest
-import torch
 
-from traj_geom.metrics.convergence import consecutive_step_cosine, path_independence
-from traj_geom.metrics.dynamics import steps_to_settle
-from traj_geom.metrics.regime import contraction_from_pair, step_cosine_converging
-from traj_geom.metrics.winding import winding_of
+torch = pytest.importorskip("torch")  # the `model` extra; skip rather than fail collection
+
+from traj_geom.metrics.convergence import consecutive_step_cosine, path_independence  # noqa: E402
+from traj_geom.metrics.dynamics import steps_to_settle  # noqa: E402
+from traj_geom.metrics.regime import contraction_from_pair, step_cosine_converging  # noqa: E402
+from traj_geom.metrics.winding import winding_of  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RES_TRAJ = os.path.join(ROOT, "results", "trajectories")

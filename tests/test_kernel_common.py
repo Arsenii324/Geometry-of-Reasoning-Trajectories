@@ -13,6 +13,7 @@ a laptop second is not, so anything that can be checked here is.
 from __future__ import annotations
 
 import os
+import pathlib
 
 import numpy as np
 import pytest
@@ -324,3 +325,303 @@ def test_nonlinear_probe_is_strong_enough_to_challenge_the_headline(lib) -> None
 
     _, null = lib["cv_r2_nonlinear"](x, rng.normal(size=n), n_null=5)
     assert max(null) < 0.0, f"permutation null is not negative: {max(null):+.3f}"
+
+
+def test_every_kernel_main_py_is_current_with_its_body_and_blocks() -> None:
+    """A committed `main.py` must equal what `build_kernel` produces from its
+    `body.py` plus the shared blocks it declares.
+
+    main.py IS THE FILE KAGGLE RUNS. body.py is only its source, so a rebuild
+    that never happened means the experiment on the GPU is not the experiment
+    in the repo -- and the divergence is invisible, because both files are
+    committed and each looks fine on its own.
+
+    Both stale bundles found on 2026-08-07 show why this needs to be automatic:
+
+      kaggle_promptdepth  commit ffb42fc ("restore default max_batch_tokens")
+                          edited body.py and did NOT rebuild, so body.py asked
+                          for the default while main.py still passed
+                          max_batch_tokens=384. The revert was half-applied.
+      kaggle_caesar2      main.py was built BEFORE the activation budget was
+                          added to kernel_common (cc4a5a3) and never rebuilt,
+                          so this not-yet-launched bundle still carried the
+                          unbudgeted `for idxs in buckets.values()` generator --
+                          the exact configuration that OOM'd geometry-prompt-depth.
+
+    Compares in memory via `build()`; never writes. `scripts/build_kernel.py
+    --check <bundle>` is the same check as a command.
+    """
+    from scripts.build_kernel import build
+
+    root = pathlib.Path(__file__).resolve().parent.parent
+    stale = []
+    for body in sorted(root.glob("scratch/kaggle_*/body.py")):
+        bundle = body.parent
+        main_py = bundle / "main.py"
+        if not main_py.exists():
+            stale.append(f"{bundle.name}: body.py exists but main.py was never built")
+            continue
+        if build(str(bundle)) != main_py.read_text(encoding="utf-8"):
+            stale.append(f"{bundle.name}: main.py is STALE vs body.py + shared blocks")
+
+    assert not stale, (
+        "rebuild these with `python -m scripts.build_kernel <bundle>` -- the file "
+        "Kaggle runs no longer matches its source:\n  " + "\n  ".join(stale)
+    )
+
+
+def _fake_lm_enforcing_huginn_state_contract(torch):
+    """A fake that enforces the shape contract the REAL model imposes.
+
+    Read from `raven_modeling_minimal.py` at the pinned revision
+    bb6621b65e90b6a4b9b29ef88dc83866d450470c:
+
+        iterate_forward (line 736):
+            x = xk = self.initialize_state(input_embeds, scale=init_scale) \
+                     if input_states is None else input_states.clone()
+        initialize_state (line 803):
+            x = torch.randn_like(input_embeds)
+
+    So the recurrent state REPLACES a tensor shaped like `input_embeds`, i.e.
+    [batch, seq_len, dim]. Passing a state whose seq_len disagrees with the
+    input is a shape error in the real model. This fake raises the same way, so
+    the incompatibility is reproducible on CPU with no GPU and no download.
+    """
+    import types
+
+    class M:
+        def __init__(self):
+            self.calls = []
+            self.states_seen = []
+
+        def parameters(self):
+            yield torch.zeros(1)
+
+        def __call__(self, input_ids=None, num_steps=None, input_states=None, **kw):
+            b, n = input_ids.shape
+            self.calls.append((b, n))
+            if input_states is not None:
+                self.states_seen.append(tuple(input_states.shape))
+                if input_states.shape[1] != n:
+                    raise RuntimeError(
+                        "shape mismatch: input_states has seq_len "
+                        f"{input_states.shape[1]} but input_embeds has {n}"
+                    )
+            logits = torch.full((b, n, 70000), -1e9)
+            logits[:, -1, 100] = 0.0
+            return types.SimpleNamespace(
+                logits=logits, latent_states=torch.zeros(b, n, 8)
+            )
+
+    return M()
+
+
+def test_continuous_compute_is_incompatible_with_the_uncached_loop(lib) -> None:
+    """`continuous_compute=True` cannot work in `batched_generate`, by construction.
+
+    batched_generate is deliberately UNCACHED -- C11: "it re-runs the full
+    GROWING sequence every step" -- so at generated token k the input is
+    [b, prompt_len + k]. But the warm-start it passes is
+    `lat[:, -1:, :]`, i.e. [b, 1, dim]. The real model REPLACES a
+    [batch, seq_len, dim] tensor with that, so the two disagree from the second
+    generated token onward, at any `max_batch_tokens`.
+
+    Huginn's own generators do pass `latent_states[:, -1:, :]` (raven lines
+    1203/1469/1488/1566) -- but inside a KV-CACHED decode loop, where each step
+    feeds exactly one new token and the shapes agree. The cached path is the one
+    D62 found returns empty output and never diagnosed, so neither route to
+    continuous_compute currently works.
+
+    This matters beyond the helper: `geometry-prompt-depth` stage 2 calls
+    run_cell(..., cc=True), so that arm would crash, and directions.md B4.12
+    records continuous_compute as the architecture's distinctive feature that no
+    kernel has used. It has still not been used.
+    """
+    torch = pytest.importorskip("torch")
+    m = _fake_lm_enforcing_huginn_state_contract(torch)
+    with pytest.raises(RuntimeError, match="shape mismatch"):
+        lib["batched_generate"](m, _fake_tok(torch), ["aaa", "bbb"], max_new=4,
+                                verbose=False, continuous_compute=True)
+    assert m.states_seen, "no input_states was ever passed; the arm did not engage"
+    assert m.states_seen[0][1] == 1, (
+        f"expected a [b, 1, dim] warm-start, got {m.states_seen[0]}"
+    )
+
+
+def test_the_plain_arm_is_unaffected_by_that_contract(lib) -> None:
+    """The control: without continuous_compute no state is passed, so the same
+    fake generates happily. Isolates the failure to the cc path alone."""
+    torch = pytest.importorskip("torch")
+    m = _fake_lm_enforcing_huginn_state_contract(torch)
+    out = lib["batched_generate"](m, _fake_tok(torch), ["aaa", "bbb"], max_new=4,
+                                  verbose=False, continuous_compute=False)
+    assert len(out) == 2
+    assert not m.states_seen, "plain arm must not pass input_states"
+
+
+# --- preflight: each guard tested against the REAL defect it would have caught --
+
+
+def test_attainable_rejects_the_exact_geomcorrect_defect(lib) -> None:
+    """n_perm=200 vs Bonferroni alpha 0.05/12 made rejection impossible.
+
+    Caught by hand before that kernel ran; this is the same arithmetic as a guard,
+    so it cannot recur silently. Measured power at 200 permutations was 0.00 even
+    for a 2 sd shift, because the p-floor 1/201 = 0.00498 exceeds alpha = 0.00417.
+    """
+    ok, floor = lib["attainable"](0.05 / 12, 200)
+    assert not ok and floor == pytest.approx(1 / 201)
+    ok5k, floor5k = lib["attainable"](0.05 / 12, 5000)
+    assert ok5k and floor5k == pytest.approx(1 / 5001)
+
+
+def test_attainable_is_not_vacuously_permissive(lib) -> None:
+    """A guard that always passes is worse than none."""
+    assert not lib["attainable"](0.001, 100)[0]
+    assert lib["attainable"](0.05, 1000)[0]
+
+
+def test_degenerate_flags_the_exact_prefill_failure(lib) -> None:
+    """geometry-discourse's prefill arm: byte fragments for 24/24 items.
+
+    Token ids 6704/7909/12894 decode to partial UTF-8 ('ä¸'), rendering U+FFFD.
+    The kernel printed "(B) DEGRADATION: D68 interpretation WRONG" from that arm.
+    This guard makes that arm unreadable instead of authoritative.
+    """
+    bad, why = lib["degenerate"](["�"] * 24)
+    assert bad and "unprintable" in why
+
+
+def test_degenerate_flags_a_collapsed_argmax(lib) -> None:
+    """The other shape: every item predicts the same token, so the measurement
+    carries no per-item information even though it looks like real text."""
+    bad, why = lib["degenerate"](["The"] * 24)
+    assert bad and "collapsed" in why
+
+
+def test_degenerate_passes_a_healthy_population(lib) -> None:
+    """The constrained arm at r=64 -- real digits, several distinct. Must pass,
+    or the guard would have suppressed the run's actual finding."""
+    bad, why = lib["degenerate"](["1"] * 8 + ["5"] * 5 + ["8"] * 3 + ["0"] * 8)
+    assert not bad, why
+
+
+def test_gated_verdict_withholds_when_the_instrument_fails(lib, capsys) -> None:
+    """D62's lesson, executable: a conclusion may not be printed over an arm that
+    did not qualify. geometry-discourse printed the OPPOSITE of the right answer
+    because P3/P4 keyed on one arm with no sanity gate."""
+    msg = lib["gated_verdict"](
+        "prefill recovers the answer", True,
+        [("output sanity", False, "24/24 argmax are byte fragments"),
+         ("threshold attainable", True, "")])
+    assert "WITHHELD" in msg and "byte fragments" in msg
+    assert "CONFIRMED" not in msg
+    assert "WITHHELD" in capsys.readouterr().out
+
+
+def test_gated_verdict_reports_when_every_gate_passes(lib) -> None:
+    ok = lib["gated_verdict"]("constrained restores the answer at r=64", True,
+                              [("output sanity", True, ""), ("control", True, "")])
+    assert "CONFIRMED" in ok and "WITHHELD" not in ok
+    bad = lib["gated_verdict"]("depth degrades the computation", False,
+                               [("output sanity", True, "")])
+    assert "REFUTED" in bad
+
+
+def test_no_kernel_body_seeds_items_with_pythons_salted_hash() -> None:
+    """`hash(str)` is salted PER PROCESS, so seeding item generation with it makes
+    the item set differ on every run.
+
+    Measured: hash("echo_digit") % 997 gave 544, 92 and 779 in three interpreters,
+    so geometry-graded-readout and geometry-discourse drew DIFFERENT items and the
+    same nominal cell read 96% in one and 83% in the other. Within-run comparisons
+    survive; cross-run ones do not. Kernels that have already RUN are exempt --
+    their body is the record of what executed, and rewriting it would falsify that.
+    """
+    import re
+
+    root = pathlib.Path(__file__).resolve().parent.parent
+    offenders = []
+    for body in sorted(root.glob("scratch/kaggle_*/body.py")):
+        if (body.parent / "out").exists():
+            continue                      # already ran; frozen record
+        src = body.read_text(encoding="utf-8")
+        for m in re.finditer(r"random\.Random\([^)]*\bhash\(", src):
+            offenders.append(f"{body.parent.name}: {src[m.start():m.start() + 60]!r}")
+    assert not offenders, (
+        "seed item generation with a stable digest (zlib.crc32) -- Python salts "
+        "str hashes per process, so these kernels are not reproducible:\n  "
+        + "\n  ".join(offenders))
+
+
+def test_dynamic_range_flags_the_exact_capgraded_ceiling(lib) -> None:
+    """geometry-cap-graded's content probe saturated in BOTH arms.
+
+    Real values: trained R2 0.9691 / 0.9964 / 0.9945 / 0.8709, untrained 0.9301 /
+    0.9966 / 1.0000 / 1.0000. Every cell >= 0.87 and the untrained arm hit exactly
+    1.0000 twice, so the trained-minus-untrained gap could only span
+    [-0.129, +0.039] -- and a Spearman over those four slivers printed +0.95
+    CONFIRMED. That is D63's "a ratio of noise is not a confirmation" again.
+    """
+    real = [0.9691, 0.9964, 0.9945, 0.8709, 0.9301, 0.9966, 1.0000, 1.0000]
+    ok, why = lib["has_dynamic_range"](real, name="content R2")
+    assert not ok and "CEILING" in why
+
+
+def test_dynamic_range_passes_a_measure_that_can_actually_move(lib) -> None:
+    """Must not fire on a healthy spread, or it would suppress real findings."""
+    ok, why = lib["has_dynamic_range"]([0.10, 0.42, 0.66, 0.88], name="content R2")
+    assert ok, why
+
+
+def test_dynamic_range_also_flags_a_floor(lib) -> None:
+    ok, why = lib["has_dynamic_range"]([0.001, 0.004, 0.002], name="probe")
+    assert not ok and "FLOOR" in why
+
+
+# --- gap_is_readable: every case below uses geometry-nonlinear-content's REAL
+# numbers (scratch/kaggle_nonlinear/out/nonlin.json), i.e. the data that fooled
+# the kernel, not a plausible-looking synthetic. See claims_ledger D73(5).
+
+
+def test_gap_not_readable_when_neither_arm_clears_its_null(lib) -> None:
+    """The defect: `parity_gap = -0.2617` was printed as the run's headline.
+
+    Trained parity R2 = -0.3567 sits BELOW its own null (-0.2626); untrained
+    -0.0950 is above its null (-0.1322) but still far below zero. Neither arm
+    decoded parity, so the gap ranks two noise draws.
+    """
+    ok, why = lib["gap_is_readable"](
+        -0.3567, -0.2626, -0.0950, -0.1322,
+        names=("trained", "untrained"), name="parity gap",
+    )
+    assert not ok, why
+    assert "NEITHER" in why
+
+
+def test_gap_readable_when_only_one_arm_has_signal(lib) -> None:
+    """Non-suppression: this is the same run's GENUINE finding and must survive.
+
+    Trained `alt` = 0.7568 against a null of -0.2639, untrained -0.0479 at
+    chance. One arm with signal beside one arm at chance IS the result; a guard
+    that killed it would be worse than no guard.
+    """
+    ok, why = lib["gap_is_readable"](
+        0.7568, -0.2639, -0.0479, -0.1281,
+        names=("trained", "untrained"), name="alt gap",
+    )
+    assert ok, why
+
+
+def test_gap_readable_when_both_arms_have_signal(lib) -> None:
+    """The control target: both arms decode `count`, so the gap is a real -0.044."""
+    ok, why = lib["gap_is_readable"](
+        0.9561, -0.2256, 0.99999, -0.1182,
+        names=("trained", "untrained"), name="count gap",
+    )
+    assert ok, why
+
+
+def test_gap_not_readable_on_non_finite(lib) -> None:
+    ok, why = lib["gap_is_readable"](float("nan"), -0.2, float("nan"), -0.2)
+    assert not ok and "non-finite" in why

@@ -349,6 +349,7 @@ def cv_r2_nonlinear(x, y, groups=None, n_splits=5, n_null=0, seed=0, n_pc=8):
 
 import json
 import random
+import zlib
 
 MODEL_ID = "tomg-group-umd/huginn-0125"
 REVISION = "bb6621b65e90b6a4b9b29ef88dc83866d450470c"
@@ -362,7 +363,11 @@ CONTROL = "copy"
 
 def item(task, seed):
     """(question_body, gold_string, latent_value_for_the_probe)."""
-    rng = random.Random(seed * 7919 + hash(task) % 997)
+    # zlib.crc32, NOT hash(): Python salts str hashes PER PROCESS (measured
+    # 544 / 92 / 779 for the same string in three interpreters), so this drew a
+    # DIFFERENT item set on every run and could not be replicated. Design,
+    # generator and item count are unchanged -- only the seed offset is stable.
+    rng = random.Random(seed * 7919 + zlib.crc32(task.encode()) % 997)
     if task == "copy":
         w = "".join(rng.choice("abcdefghijklmnopqrstuvwxyz") for _ in range(5))
         return (f"Repeat this word exactly.\nWord: {w}", w, 0.0)   # control, not probed

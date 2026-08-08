@@ -86,7 +86,14 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
-import torch
+
+# torch is imported lazily, inside `_teacher_forced_logp` -- the ONLY function here
+# that touches it. It lives in the optional `model` extra, and importing it at module
+# level made `from traj_geom.eval_depth import threshold_depth` fail without it, even
+# though `threshold_depth`, `_logsumexp`, `answer_surface_forms` and `answer_token_ids`
+# are pure. That turned a missing optional dependency into a pytest COLLECTION error,
+# which aborts the whole run rather than skipping one module. `scripts/_common.py`
+# already defers the model import the same way.
 
 __all__ = ["answer_token_ids", "answer_surface_forms", "depth_curve", "threshold_depth"]
 
@@ -205,6 +212,8 @@ def _teacher_forced_logp(
     model: Any, tok: Any, prompt: str, ids_ans: list[int], max_r: int
 ) -> np.ndarray:
     """Per-unroll summed log-prob of ``ids_ans`` following ``prompt``."""
+    import torch
+
     from traj_geom.extraction.hook import _replicate_coda_head
 
     ids_prompt = tok(prompt, return_tensors="pt").input_ids.to(model.device)

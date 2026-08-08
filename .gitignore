@@ -46,7 +46,26 @@
 !/scratch/kaggle_taskacc/
 !/scratch/kaggle_promptdepth/
 !/scratch/kaggle_capcontent/
+!/scratch/kaggle_memprobe/
+!/scratch/kaggle_graded/
+!/scratch/kaggle_discourse/
+!/scratch/kaggle_geomcorrect/
+!/scratch/kaggle_capgraded/
+!/scratch/kaggle_headcheck/
 !/scratch/kaggle_eps_split/
+!/scratch/kaggle_h2rot/
+!/scratch/kaggle_battery/
+!/scratch/kaggle_b6bank/
+# DataSphere bundle: template only, the real cfg.yaml is generated at submit time
+# with the WandB key injected and is deliberately NOT committed.
+!/scratch/ds_eigen/
+!/scratch/ds_bank/
+!/scratch/ds_seeds/
+# Recovered 2026-08-09 by `kaggle kernels pull` after the authoring session's
+# container was lost before pushing. main.py is the artifact Kaggle actually ran
+# (the record D73 rests on); its body.py did not survive, so this bundle cannot
+# be rebuilt by build_kernel and is deliberately artifact-only.
+!/scratch/kaggle_nonlinear/
 !/scratch/_lib/
 # within those bundles, keep the harness noise out
 /scratch/QUEUE
@@ -67,6 +86,9 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
 
 # Environments
 .venv/

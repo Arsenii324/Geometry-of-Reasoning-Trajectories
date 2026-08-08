@@ -1,0 +1,38 @@
+[{"stream_name":"stdout","time":0.923791235,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.64154898,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.666230389,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 97.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.699605966,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 33.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.752383454,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 85.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":34.211745832,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stdout","time":35.003872727,"data":"\n"}
+,{"stream_name":"stdout","time":35.003900898,"data":"=== trained ===\n"}
+,{"stream_name":"stderr","time":124.740107547,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:07\u003c03:23, 67.75s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:07\u003c00:00, 16.94s/it]\n"}
+,{"stream_name":"stderr","time":124.894376791,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 63.44it/s]\n"}
+,{"stream_name":"stdout","time":296.628819266,"data":"   echo_digit: median rank@r64        3  best-depth median        1  acc@1  0.0%  chance=32768\n"}
+,{"stream_name":"stdout","time":479.80817171,"data":"         add1: median rank@r64       26  best-depth median        1  acc@1  0.0%  chance=32768\n"}
+,{"stream_name":"stdout","time":676.422850642,"data":"       count4: median rank@r64       12  best-depth median        2  acc@1  0.0%  chance=32768\n"}
+,{"stream_name":"stdout","time":1007.380694166,"data":"      count16: median rank@r64       22  best-depth median        8  acc@1  0.0%  chance=32768\n"}
+,{"stream_name":"stdout","time":1205.197770258,"data":"   rot13_word: median rank@r64     1980  best-depth median      479  acc@1  0.0%  chance=32768\n"}
+,{"stream_name":"stdout","time":1217.731492028,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":1217.731536853,"data":"\n"}
+,{"stream_name":"stdout","time":1217.731543091,"data":"=== untrained ===\n"}
+,{"stream_name":"stdout","time":1475.256867584,"data":"   echo_digit: median rank@r64    33636  best-depth median    13697  acc@1  0.0%  chance=32768\n"}
+,{"stream_name":"stdout","time":1660.079860665,"data":"         add1: median rank@r64    24992  best-depth median    10202  acc@1  0.0%  chance=32768\n"}
+,{"stream_name":"stdout","time":1857.766708555,"data":"       count4: median rank@r64    32294  best-depth median    18963  acc@1  0.0%  chance=32768\n"}
+,{"stream_name":"stdout","time":2188.560734792,"data":"      count16: median rank@r64    14668  best-depth median    10816  acc@1  0.0%  chance=32768\n"}
+,{"stream_name":"stdout","time":2386.250629827,"data":"   rot13_word: median rank@r64    46119  best-depth median    33636  acc@1  0.0%  chance=32768\n"}
+,{"stream_name":"stdout","time":2398.836819021,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":2398.836867893,"data":"\n"}
+,{"stream_name":"stdout","time":2398.836895645,"data":"=== VERDICT ===\n"}
+,{"stream_name":"stdout","time":2398.842842554,"data":"   echo_digit: trained median rank        3 (BELOW chance)  untrained    33636  log10 gap +4.05\n"}
+,{"stream_name":"stdout","time":2398.843181958,"data":"         add1: trained median rank       26 (BELOW chance)  untrained    24992  log10 gap +2.96\n"}
+,{"stream_name":"stdout","time":2398.843515802,"data":"       count4: trained median rank       12 (BELOW chance)  untrained    32294  log10 gap +3.43\n"}
+,{"stream_name":"stdout","time":2398.843950927,"data":"      count16: trained median rank       22 (BELOW chance)  untrained    14668  log10 gap +2.81\n"}
+,{"stream_name":"stdout","time":2398.84435783,"data":"   rot13_word: trained median rank     1980 (BELOW chance)  untrained    46119  log10 gap +1.37\n"}
+,{"stream_name":"stderr","time":2409.41883384,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":2409.418869878,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":2409.766785188,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":2409.766816892,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":2411.526198094,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":2412.646059097,"data":"[NbConvertApp] Writing 328699 bytes to __results__.html\n"}
+]

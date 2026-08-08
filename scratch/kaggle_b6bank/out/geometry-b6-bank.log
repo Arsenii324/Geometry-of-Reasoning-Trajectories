@@ -1,0 +1,25 @@
+[{"stream_name":"stdout","time":0.984855264,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":3.966450459,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":4.981333677,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 87.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.011412587,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 33.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.061899623,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 85.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":31.21065897,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stderr","time":130.690639852,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:18\u003c03:54, 78.01s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:18\u003c00:00, 19.50s/it]\n"}
+,{"stream_name":"stderr","time":130.817174663,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 70.46it/s]\n"}
+,{"stream_name":"stdout","time":486.625507614,"data":"    count_mod3: 32 items, acc 31%, 0 gold values carry both classes, 0 items in them (P1 gate wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":694.735955969,"data":"          sub1: 32 items, acc 44%, 2 gold values carry both classes, 5 items in them (P1 gate wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":924.866099846,"data":"      nth_item: 32 items, acc 25%, 3 gold values carry both classes, 14 items in them (P1 gate wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":1315.504147885,"data":"    local_last: 32 items, acc 19%, 2 gold values carry both classes, 32 items in them (P1 gate wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":1327.937231346,"data":"  after cleanup: 14.31 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":1328.720087465,"data":"  purged /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":1328.720267646,"data":"\n"}
+,{"stream_name":"stdout","time":1328.720279881,"data":"=== banked 128/128 in 19.8 min ===\n"}
+,{"stream_name":"stdout","time":1328.720350443,"data":"no analysis here by design; see scripts/run_b6.py\n"}
+,{"stream_name":"stdout","time":1328.720432467,"data":"DONE\n"}
+,{"stream_name":"stderr","time":1335.293449271,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1335.293510737,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1335.552615311,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1335.552643458,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1336.149014889,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1337.106796055,"data":"[NbConvertApp] Writing 329350 bytes to __results__.html\n"}
+]

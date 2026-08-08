@@ -1,0 +1,28 @@
+[{"stream_name":"stdout","time":0.637917814,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":3.73996347,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 605.8 kB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.196764943,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 45.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.260085432,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 37.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.341905649,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 89.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":31.091464373,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stderr","time":118.449948178,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:05\u003c03:15, 65.20s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:05\u003c00:00, 16.30s/it]\n"}
+,{"stream_name":"stderr","time":118.56931043,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 76.09it/s]\n"}
+,{"stream_name":"stdout","time":131.089009797,"data":"\n"}
+,{"stream_name":"stdout","time":131.089058317,"data":"   r   max|Δ| two_ln_f   max|Δ| one_ln_f  rank agree   gold rank (mine/model)\n"}
+,{"stream_name":"stderr","time":132.305015302,"data":"/kaggle/src/script.py:185: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.\n"}
+,{"stream_name":"stderr","time":132.305064958,"data":"Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)\n"}
+,{"stream_name":"stderr","time":132.305072016,"data":"  d_ok.append(float((mine - ref).abs().max()))\n"}
+,{"stream_name":"stdout","time":135.684483116,"data":"   4          0.000000          2.464681       100% [(1, 1), (1, 1), (1, 1)]\n"}
+,{"stream_name":"stdout","time":146.330438176,"data":"  16          0.000000          2.344282       100% [(4, 4), (3, 3), (4, 4)]\n"}
+,{"stream_name":"stdout","time":167.022338812,"data":"  32          0.000000          2.334536       100% [(4, 4), (3, 3), (4, 4)]\n"}
+,{"stream_name":"stdout","time":167.02297071,"data":"\n"}
+,{"stream_name":"stdout","time":167.022993342,"data":"=== VERDICT ===\n"}
+,{"stream_name":"stdout","time":167.023056739,"data":"  the per-unroll readout reproduces the model's own head: CONFIRMED\n"}
+,{"stream_name":"stdout","time":167.023073662,"data":"    two-ln_f  max|delta| = 0.000000  (P1 wants \u003c 1e-2)\n"}
+,{"stream_name":"stdout","time":167.023122872,"data":"    one-ln_f  max|delta| = 2.334536  (P2 wants \u003e 1)\n"}
+,{"stream_name":"stderr","time":172.39567828,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":172.395705712,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":172.627266508,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":172.627296641,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":173.219729858,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":174.14253752,"data":"[NbConvertApp] Writing 311843 bytes to __results__.html\n"}
+]

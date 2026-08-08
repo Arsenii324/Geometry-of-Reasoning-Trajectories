@@ -498,3 +498,150 @@ def cv_r2_nonlinear(x, y, groups=None, n_splits=5, n_null=0, seed=0, n_pc=8):
     null = [score(rng.permutation(y)) for _ in range(n_null)]
     return r2, null
 # ---8<---
+
+
+# ---8<--- preflight
+def attainable(alpha, n_perm):
+    """Can a permutation test with `n_perm` draws ever reach `alpha`?
+
+    The smallest p a permutation test can report is 1/(n_perm+1). If that floor
+    sits above the significance threshold, REJECTION IS ARITHMETICALLY
+    IMPOSSIBLE and the run returns "not significant" for every cell no matter
+    what the data say -- a guaranteed null that reads like a scientific result.
+
+    Measured instance: `geometry-correctness` was drafted with n_perm=200 against
+    a Bonferroni alpha of 0.05/12 = 0.00417. Floor = 1/201 = 0.00498 > alpha, and
+    synthetic power was 0.00 even for a 2 sd shift. Same class as the winding
+    null's p=0.024 floor at n=40.
+
+    Returns (ok, floor).
+    """
+    floor = 1.0 / (n_perm + 1)
+    return floor < alpha, floor
+
+
+def degenerate(decoded, min_distinct=2):
+    """Is an argmax population degenerate rather than informative?
+
+    Two failure shapes, both seen on real runs:
+      * COLLAPSE -- every item predicts the same token, so the measurement
+        carries no per-item information.
+      * UNPRINTABLE -- the argmax decodes to a partial UTF-8 byte fragment
+        (U+FFFD after decode), which means the distribution is not on words at
+        all. `geometry-discourse`'s prefill arm did BOTH: token ids 6704/7909/
+        12894 ('ä¸') for 24/24 items on every task, and the kernel still printed
+        a confident verdict from that arm.
+
+    Returns (is_degenerate, reason).
+    """
+    uniq = set(decoded)
+    bad = sum("�" in d for d in decoded)
+    if bad > len(decoded) // 2:
+        return True, f"{bad}/{len(decoded)} argmax tokens are unprintable byte fragments"
+    if len(uniq) < min_distinct:
+        return True, f"argmax collapsed to {len(uniq)} distinct token(s): {sorted(uniq)[:3]}"
+    return False, ""
+
+
+def gated_verdict(claim, passed, gates):
+    """Print a conclusion ONLY if every precondition holds; else say why not.
+
+    D62: a capability verdict printed over empty strings because the analysis
+    excluded the control that would have caught it. `geometry-discourse` repeated
+    it -- P3/P4 keyed on one arm and printed the OPPOSITE of the right answer
+    without ever checking that arm's output was sane.
+
+    `gates` is a list of (name, ok, detail). A verdict computed from the same
+    variables as the run will agree with the run's mistakes, so the gates must
+    test the INSTRUMENT, not the hypothesis.
+
+    Returns the verdict string, and prints it.
+    """
+    failed = [(n, d) for n, ok, d in gates if not ok]
+    if failed:
+        msg = (f"  VERDICT WITHHELD -- {claim}\n"
+               + "\n".join(f"    gate FAILED: {n} -- {d}" for n, d in failed)
+               + "\n    the instrument did not qualify; this arm may not be read.")
+    else:
+        msg = f"  {claim}: {'CONFIRMED' if passed else 'REFUTED'}"
+    print(msg, flush=True)
+    return msg
+# ---8<---
+
+
+# ---8<--- dynamic_range
+def has_dynamic_range(values, ceiling=1.0, min_headroom=0.2, min_signal=0.05,
+                      name="measure"):
+    """Can a MODERATED variable move, or is it pinned against its own bound?
+
+    A moderation test needs the moderated quantity to vary. For a bounded measure
+    such as R^2 the question is not "are the values large" but "is there HEADROOM
+    for a between-arm difference to appear". If every cell sits just under the
+    ceiling, the gap is compressed into a sliver -- and a rank correlation over
+    slivers still returns a confident-looking rho.
+
+    Measured instance: `geometry-cap-graded` content R2 was 0.9691/0.9964/0.9945/
+    0.8709 trained and 0.9301/0.9966/1.0000/1.0000 untrained. Headroom from the
+    ceiling was only 1.0 - 0.8709 = 0.129, so the trained-minus-untrained gap could
+    span at most [-0.129, +0.039]; Spearman over those four numbers printed +0.95
+    CONFIRMED. That is D63's "a ratio of noise is not a confirmation" in a new
+    costume, and it is why this guard exists.
+
+    An earlier draft tested `min(values) > 0.95` and did NOT catch that case,
+    because one cell sat at 0.8709. Headroom is the right quantity, not level.
+
+    Returns (ok, detail).
+    """
+    v = [x for x in values if x == x]
+    if not v:
+        return False, f"{name}: no finite values"
+    head = ceiling - min(v)
+    if head < min_headroom:
+        return False, (f"{name} is at CEILING: headroom {head:.4f} < {min_headroom} "
+                       f"(min {min(v):.4f} against ceiling {ceiling}), so between-arm "
+                       f"differences are bounded into a sliver")
+    if max(v) < min_signal:
+        return False, f"{name} is at FLOOR: max {max(v):.4f} < {min_signal}"
+    return True, f"{name} spans [{min(v):.4f}, {max(v):.4f}], headroom {head:.4f}"
+# ---8<---
+
+
+# ---8<--- gap_readable
+def gap_is_readable(a, a_null, b, b_null, min_signal=0.0, names=("A", "B"), name="gap"):
+    """May a BETWEEN-ARM gap be formed from these two cells, or is it noise minus noise?
+
+    A gap needs at least ONE arm to have actually measured something. Where
+    neither arm clears its own permutation null, the difference is not a small
+    effect -- it is not an effect, and its SIGN is set by whichever arm's noise
+    draw happened to be larger.
+
+    Measured instance: `geometry-nonlinear-content` printed `parity_gap =
+    -0.2617` as its headline conclusion. The trained arm's parity R2 was -0.3567
+    against its own null of -0.2626 -- BELOW it -- and the untrained arm's was
+    -0.0950 against -0.1322. Neither arm decoded parity at all, so the headline
+    ranked two noise draws. That is D63 and D70(5) for the third time.
+
+    NOT "both arms must clear their null": that rule would have suppressed the
+    same run's genuine finding, where trained `alt` = 0.7568 against a null of
+    -0.2639 while untrained sits at chance (-0.0479). One arm with signal beside
+    one arm at chance IS the result; zero arms with signal is not. A guard that
+    kills the real finding is worse than no guard.
+
+    `has_dynamic_range` does not cover this. It asks whether a measure has
+    headroom beneath its CEILING; this asks whether either arm rose off its FLOOR.
+
+    Returns (ok, detail).
+    """
+    out = []
+    for label, v, nl in ((names[0], a, a_null), (names[1], b, b_null)):
+        if not (v == v and nl == nl):
+            out.append((label, False, f"{label}: non-finite value or null"))
+        elif v > nl and v > min_signal:
+            out.append((label, True, f"{label}={v:.4f} clears null {nl:.4f}"))
+        else:
+            out.append((label, False, f"{label}={v:.4f} vs null {nl:.4f}, min_signal {min_signal}"))
+    if any(ok for _, ok, _ in out):
+        return True, f"{name} readable -- " + "; ".join(d for _, _, d in out)
+    return False, (f"{name} may not be formed: NEITHER arm clears its own null, so the "
+                   f"difference ranks two noise draws -- " + "; ".join(d for _, _, d in out))
+# ---8<---

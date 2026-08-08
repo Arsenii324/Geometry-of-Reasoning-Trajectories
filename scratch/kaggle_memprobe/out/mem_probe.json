@@ -1,0 +1,40 @@
+{
+ "device": "Tesla T4",
+ "total_mib": 14911.6875,
+ "weights_mib": 13609.6298828125,
+ "widths": [
+  56
+ ],
+ "arms": [
+  {
+   "budget": 1000000000,
+   "chunk": 16,
+   "peak_mib": 14336.5390625,
+   "outcome": "OK"
+  },
+  {
+   "budget": 1024,
+   "chunk": 8,
+   "peak_mib": 13977.0517578125,
+   "outcome": "OK"
+  },
+  {
+   "budget": 384,
+   "chunk": 3,
+   "peak_mib": 13752.7158203125,
+   "outcome": "OK"
+  }
+ ],
+ "cc": [
+  {
+   "budget": 1024,
+   "peak_mib": NaN,
+   "outcome": "RuntimeError: Sizes of tensors must match except in dimension 2. Expected size 1 but got size 57 for tensor number 1 in the list."
+  },
+  {
+   "budget": 384,
+   "peak_mib": NaN,
+   "outcome": "RuntimeError: Sizes of tensors must match except in dimension 2. Expected size 1 but got size 57 for tensor number 1 in the list."
+  }
+ ]
+}
