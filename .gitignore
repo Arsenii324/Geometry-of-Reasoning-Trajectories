@@ -55,6 +55,7 @@
 !/scratch/kaggle_eps_split/
 !/scratch/kaggle_h2rot/
 !/scratch/kaggle_battery/
+!/scratch/kaggle_b6bank/
 # DataSphere bundle: template only, the real cfg.yaml is generated at submit time
 # with the WandB key injected and is deliberately NOT committed.
 !/scratch/ds_eigen/
