@@ -567,3 +567,40 @@ def gated_verdict(claim, passed, gates):
     print(msg, flush=True)
     return msg
 # ---8<---
+
+
+# ---8<--- dynamic_range
+def has_dynamic_range(values, ceiling=1.0, min_headroom=0.2, min_signal=0.05,
+                      name="measure"):
+    """Can a MODERATED variable move, or is it pinned against its own bound?
+
+    A moderation test needs the moderated quantity to vary. For a bounded measure
+    such as R^2 the question is not "are the values large" but "is there HEADROOM
+    for a between-arm difference to appear". If every cell sits just under the
+    ceiling, the gap is compressed into a sliver -- and a rank correlation over
+    slivers still returns a confident-looking rho.
+
+    Measured instance: `geometry-cap-graded` content R2 was 0.9691/0.9964/0.9945/
+    0.8709 trained and 0.9301/0.9966/1.0000/1.0000 untrained. Headroom from the
+    ceiling was only 1.0 - 0.8709 = 0.129, so the trained-minus-untrained gap could
+    span at most [-0.129, +0.039]; Spearman over those four numbers printed +0.95
+    CONFIRMED. That is D63's "a ratio of noise is not a confirmation" in a new
+    costume, and it is why this guard exists.
+
+    An earlier draft tested `min(values) > 0.95` and did NOT catch that case,
+    because one cell sat at 0.8709. Headroom is the right quantity, not level.
+
+    Returns (ok, detail).
+    """
+    v = [x for x in values if x == x]
+    if not v:
+        return False, f"{name}: no finite values"
+    head = ceiling - min(v)
+    if head < min_headroom:
+        return False, (f"{name} is at CEILING: headroom {head:.4f} < {min_headroom} "
+                       f"(min {min(v):.4f} against ceiling {ceiling}), so between-arm "
+                       f"differences are bounded into a sliver")
+    if max(v) < min_signal:
+        return False, f"{name} is at FLOOR: max {max(v):.4f} < {min_signal}"
+    return True, f"{name} spans [{min(v):.4f}, {max(v):.4f}], headroom {head:.4f}"
+# ---8<---

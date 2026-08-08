@@ -552,3 +552,28 @@ def test_no_kernel_body_seeds_items_with_pythons_salted_hash() -> None:
         "seed item generation with a stable digest (zlib.crc32) -- Python salts "
         "str hashes per process, so these kernels are not reproducible:\n  "
         + "\n  ".join(offenders))
+
+
+def test_dynamic_range_flags_the_exact_capgraded_ceiling(lib) -> None:
+    """geometry-cap-graded's content probe saturated in BOTH arms.
+
+    Real values: trained R2 0.9691 / 0.9964 / 0.9945 / 0.8709, untrained 0.9301 /
+    0.9966 / 1.0000 / 1.0000. Every cell >= 0.87 and the untrained arm hit exactly
+    1.0000 twice, so the trained-minus-untrained gap could only span
+    [-0.129, +0.039] -- and a Spearman over those four slivers printed +0.95
+    CONFIRMED. That is D63's "a ratio of noise is not a confirmation" again.
+    """
+    real = [0.9691, 0.9964, 0.9945, 0.8709, 0.9301, 0.9966, 1.0000, 1.0000]
+    ok, why = lib["has_dynamic_range"](real, name="content R2")
+    assert not ok and "CEILING" in why
+
+
+def test_dynamic_range_passes_a_measure_that_can_actually_move(lib) -> None:
+    """Must not fire on a healthy spread, or it would suppress real findings."""
+    ok, why = lib["has_dynamic_range"]([0.10, 0.42, 0.66, 0.88], name="content R2")
+    assert ok, why
+
+
+def test_dynamic_range_also_flags_a_floor(lib) -> None:
+    ok, why = lib["has_dynamic_range"]([0.001, 0.004, 0.002], name="probe")
+    assert not ok and "FLOOR" in why
