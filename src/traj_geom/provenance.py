@@ -217,7 +217,26 @@ def save_table(path: str, df: Any, kind: str = "table", **meta: Any) -> dict[str
 
     Recording ``columns`` and ``n_rows`` makes a schema change visible in the
     manifest rather than only at the next read.
+
+    REFUSES TO WRITE AN EMPTY TABLE, because doing so destroys evidence. The raw
+    ``trajectories/*.npy`` several scripts read are gitignored, so in a fresh clone
+    they are simply absent: ``run_answer_probe.py`` then skipped every task, built a
+    zero-row frame, overwrote the committed 11-row ``results/answer_probe.csv`` with
+    nothing, and only afterwards crashed on ``df.groupby("task")`` -- so the failure
+    surfaced one line too late to save the file. A sweep that produced zero rows has
+    failed; writing that result is never what the caller wanted. ``save_partial()``
+    already guards the same way (``if not rows: return``); this raises instead of
+    returning quietly so the caller cannot go on to print a verdict over stale data.
     """
+    if len(df) == 0:
+        destroys = os.path.exists(path) and os.path.getsize(path) > 0
+        raise ValueError(
+            f"refusing to write an empty table to {path}"
+            + (" -- that file already holds data, which would be destroyed"
+               if destroys else "")
+            + ". A sweep that produced zero rows has failed; check its inputs "
+              "(the raw .npy trajectories are gitignored and absent in a fresh clone)."
+        )
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     df.to_csv(path, index=False)
     return record_artifact(

@@ -97,3 +97,44 @@ def test_manifest_is_append_only_history(tmp_path) -> None:
     lines = (tmp_path / MANIFEST_NAME).read_text().strip().split("\n")
     assert len(lines) == 2
     assert json.loads(lines[0])["sha256"] != json.loads(lines[1])["sha256"]
+
+
+def test_save_table_refuses_to_destroy_data_with_an_empty_frame(tmp_path) -> None:
+    """An empty result must not overwrite a committed CSV.
+
+    Found 2026-08-07 by running every script in a fresh clone: the raw
+    `trajectories/*.npy` that `run_answer_probe.py` reads are gitignored, so
+    every task hit its `len(g) < 10: continue` guard, `compute()` returned a
+    zero-row frame, and `save_table` wrote it straight over the committed
+    11-row `results/answer_probe.csv`. The script then crashed on
+    `df.groupby("task")` -- one line AFTER the evidence was already gone.
+    """
+    import pandas as pd
+    import pytest
+
+    p = str(tmp_path / "evidence.csv")
+    save_table(p, pd.DataFrame({"task": ["count_ones"], "r2": [0.2]}))
+    before = open(p, encoding="utf-8").read()
+
+    with pytest.raises(ValueError, match="empty table"):
+        save_table(p, pd.DataFrame())
+
+    assert open(p, encoding="utf-8").read() == before, "the CSV was modified anyway"
+
+
+def test_save_table_empty_frame_message_flags_the_destructive_case(tmp_path) -> None:
+    """The message must distinguish 'would destroy data' from 'nothing there yet',
+    because those need different responses from whoever reads the traceback."""
+    import pandas as pd
+    import pytest
+
+    fresh = str(tmp_path / "new.csv")
+    with pytest.raises(ValueError) as e:
+        save_table(fresh, pd.DataFrame())
+    assert "would be destroyed" not in str(e.value)
+
+    existing = str(tmp_path / "held.csv")
+    save_table(existing, pd.DataFrame({"a": [1]}))
+    with pytest.raises(ValueError) as e:
+        save_table(existing, pd.DataFrame())
+    assert "would be destroyed" in str(e.value)
