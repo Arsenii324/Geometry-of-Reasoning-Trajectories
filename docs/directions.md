@@ -19,6 +19,36 @@ file that closed it) · `parked` (with why) · `dropped` (with why).
 
 ---
 
+## 0. Runs in flight, and premises already ruled out
+
+**Why this section exists.** Everything below is about what to do next; nothing said
+what is happening NOW, and the previous session's results were lost because they
+existed only in a container. A reader opening this repo should be able to see the
+live state without asking. Updated 2026-08-09.
+
+| run | where | question | status |
+|---|---|---|---|
+| `geometry-h2-rotation` | Kaggle T4 | B4.15 — H2 on arg(lambda), length-matched | RUNNING |
+| `geometry-battery` | Kaggle T4 | 21-family capability screen, graded readout | RUNNING (v2; v1 aborted on its own slice gate) |
+| `geom-eigenplane` | DataSphere g1.1, job `bt1mvf3juvrcjpl6kl1i` | does the orbit rotate at the rate the Jacobian predicts? | EXECUTING |
+
+**Premises checked and FALSE — do not re-derive these.** Each cost minutes to check
+and would have cost hours to discover downstream.
+
+- **`results/trajectories/*.npy` contains no multi-initialisation information.**
+  `init{N}` is the TASK seed; h_0 is fixed across those files, proven by a prompt
+  collision at n_ops=2 giving bit-identical arrays. So the two-orbit contraction
+  estimator (`contraction_from_pair`, the quantity H3 is about) is NOT computable
+  from them, and neither is UNDERSTANDING §6.9's ρ(r≤32) vs ρ(r≤98) question. The
+  top-level `trajectories/` with its `manifest.csv` is the directory that does vary
+  h_0, and it only goes to ns=64. *(Checked 2026-08-09; the provenance sidecars say
+  so explicitly, and `contraction_from_pair`'s own docstring warns about it.)*
+- **Fitting ρ from a single trajectory's approach to its own endpoint is the
+  tautology this project already made once.** It is near-tautological for any
+  convergent sequence and is called out in `metrics/regime.py`. So §6.9 cannot be
+  rescued by a single-trajectory estimator either; §6.10's "this needs a rerun"
+  stands, and was verified rather than assumed.
+
 ## A. Standing requests from the curator/user
 
 | # | request | status | where it lives |
@@ -470,6 +500,54 @@ next unanticipated question does not need another GPU hour.
 
 Every gap reported must pass `gap_is_readable` (both arms are otherwise free to be
 below their own nulls, which is how D73's parity headline happened). ~1 GPU-h.
+
+### B14. BANK THE STATES, ANALYSE OFFLINE — **the structural fix, and it subsumes several rows**
+
+**The problem, stated as a pattern rather than an incident.** Every GPU run in this
+project computes its own statistics and returns conclusions. So every question the
+design did not anticipate costs another GPU hour, and this project generates about
+one such question per experiment:
+
+- §6.9/B4.13 cannot be answered because `eps_sweep.json` stored the fitted ρ and
+  not the per-unroll separation curves (§6.10, B4.14).
+- D73's rank-1 objection cannot be settled because the kernel stored `r2` and the
+  targets but not the STATES, so participation ratio per arm is not computable.
+- D72's confound needed the item set REGENERATED from the kernel's own seeding
+  because prompt and gold were not persisted.
+
+B4.14 adopted "persist the curve you fitted". This goes one step further and is the
+version that actually closes the class: **persist the STATES, and make the GPU run
+a data-collection step with no analysis in it at all.**
+
+**Why it is affordable.** One trajectory at 128 unrolls x 5280 dims x float32 is
+2.7 MB. A 24-prompt x 2-arm grid is ~130 MB — nothing, against a 20 GB output
+allowance. Storing bf16-exact float32 keeps D30's arithmetic-floor analysis valid.
+
+**What one such run would then make CPU-local and re-runnable**, with no further
+GPU at all: every winding variant W1-W9; the eigenplane projection; ρ by any
+estimator over any window (which is §6.9); participation ratio per arm (D73's open
+confound); persistent homology; step-cosine by regime; and any statistic invented
+later. It also makes the analysis unit-testable, which is where three kernels in
+this project produced wrong conclusions.
+
+**What must be recorded alongside the states**, learned from the rows above: the
+prompt, the gold, the per-unroll rank of gold (so correctness is known AT EVERY
+DEPTH rather than at one), the arm, the task seed, and the tokenised length. The
+per-unroll rank is what makes correctness a variable rather than a constant, and it
+comes free from the same forward via the D71-validated coda readout.
+
+**Caveat on the readout, worth stating because it bears on the geometry.** Decoding
+intermediate states through the coda head is the project's most exotic instrument;
+D71 established it reproduces the model's own logits exactly at the FINAL unroll,
+which is where the identity is guaranteed. At intermediate unrolls the model never
+applies coda, so the readout is a probe rather than the model's own computation. It
+is the right instrument for "is the answer available at depth r" and it is NOT
+evidence about what the model would emit at depth r. The geometric quantities do not
+depend on it at all, which is a reason to bank the states rather than only the
+readout.
+
+**Status: designed, not yet run.** It should be the next GPU job after the three in
+flight, and it plausibly replaces B13 and part of B4.13 rather than adding to them.
 
 ### B12. THE CONTENT NULLS THEMSELVES, RE-MEASURED — **open, and still the decisive gap**
 
