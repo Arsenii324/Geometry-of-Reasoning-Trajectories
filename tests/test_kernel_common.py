@@ -13,6 +13,7 @@ a laptop second is not, so anything that can be checked here is.
 from __future__ import annotations
 
 import os
+import pathlib
 
 import numpy as np
 import pytest
@@ -324,3 +325,46 @@ def test_nonlinear_probe_is_strong_enough_to_challenge_the_headline(lib) -> None
 
     _, null = lib["cv_r2_nonlinear"](x, rng.normal(size=n), n_null=5)
     assert max(null) < 0.0, f"permutation null is not negative: {max(null):+.3f}"
+
+
+def test_every_kernel_main_py_is_current_with_its_body_and_blocks() -> None:
+    """A committed `main.py` must equal what `build_kernel` produces from its
+    `body.py` plus the shared blocks it declares.
+
+    main.py IS THE FILE KAGGLE RUNS. body.py is only its source, so a rebuild
+    that never happened means the experiment on the GPU is not the experiment
+    in the repo -- and the divergence is invisible, because both files are
+    committed and each looks fine on its own.
+
+    Both stale bundles found on 2026-08-07 show why this needs to be automatic:
+
+      kaggle_promptdepth  commit ffb42fc ("restore default max_batch_tokens")
+                          edited body.py and did NOT rebuild, so body.py asked
+                          for the default while main.py still passed
+                          max_batch_tokens=384. The revert was half-applied.
+      kaggle_caesar2      main.py was built BEFORE the activation budget was
+                          added to kernel_common (cc4a5a3) and never rebuilt,
+                          so this not-yet-launched bundle still carried the
+                          unbudgeted `for idxs in buckets.values()` generator --
+                          the exact configuration that OOM'd geometry-prompt-depth.
+
+    Compares in memory via `build()`; never writes. `scripts/build_kernel.py
+    --check <bundle>` is the same check as a command.
+    """
+    from scripts.build_kernel import build
+
+    root = pathlib.Path(__file__).resolve().parent.parent
+    stale = []
+    for body in sorted(root.glob("scratch/kaggle_*/body.py")):
+        bundle = body.parent
+        main_py = bundle / "main.py"
+        if not main_py.exists():
+            stale.append(f"{bundle.name}: body.py exists but main.py was never built")
+            continue
+        if build(str(bundle)) != main_py.read_text(encoding="utf-8"):
+            stale.append(f"{bundle.name}: main.py is STALE vs body.py + shared blocks")
+
+    assert not stale, (
+        "rebuild these with `python -m scripts.build_kernel <bundle>` -- the file "
+        "Kaggle runs no longer matches its source:\n  " + "\n  ".join(stale)
+    )

@@ -281,7 +281,7 @@ def run_cell(model, tok, task, phrasing, depth, max_new, cc=False):
     items = [item(task, s) for s in range(N_ITEMS)]
     texts = [render(task, x, phrasing, tok) for x, _ in items]
     preds = batched_generate(model, tok, texts, max_new=max_new, num_steps=depth,
-                             verbose=False, continuous_compute=cc, max_batch_tokens=384)
+                             verbose=False, continuous_compute=cc)
     sc = [score(task, p, g) for p, (_, g) in zip(preds, items, strict=True)]
     return float(np.mean(sc)), preds[:2], [g for _, g in items[:2]]
 
