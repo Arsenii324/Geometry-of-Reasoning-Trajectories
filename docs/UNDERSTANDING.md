@@ -255,7 +255,18 @@ That is precisely the observed pattern (D41: untrained 19× more precise; D48:
 untrained representation literally 1-D). So it is a live alternative explanation of
 the headline, not a hypothetical.
 
-*Status: UNDER TEST in the same kernel, via a nonlinear probe. Getting that probe
+*Status: NOT UNDER TEST — corrected 2026-08-09. The probe has never touched a
+real state. `cv_r2_nonlinear` is inlined in exactly one bundle, `kaggle_capcontent`,
+and that kernel has never been launched (§6.1 warns it would repeat the instrument
+error). `geometry-nonlinear-content`, the one that did run, used the LINEAR probe
+deliberately — its own docstring says "not to a nonlinear probe, which would only
+re-open D68's 6.7 worry". So 6.7 is fully open, and it now bears directly on D73:
+if a nonlinear probe lifts the untrained arm on `max_run`/`alt`, D73's
+capability-ordered gap is a LINEARITY artifact rather than a content difference.
+See directions.md B13, which is the experiment that settles it. Original status
+text, retained because the probe design work it records is real:*
+
+*UNDER TEST in the same kernel, via a nonlinear probe. Getting that probe
 right took four designs — MLP(64) reached only 0.42 on a **clean linear** target,
 RBF kernel ridge 0.02 with a positive null, PCA-24+poly2 0.36 — because a weak
 nonlinear probe reports "no lift" and falsely confirms the headline it exists to

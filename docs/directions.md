@@ -423,6 +423,54 @@ parity well, the re-injection story is wrong and D70(4) must be amended. Gated o
 `has_dynamic_range`, so a repeat of D70's ceiling withholds the verdict rather than
 reporting a rank correlation over slivers.
 
+### B13. IS D73's GAP CONTENT OR LINEARITY? — **open, cheap, and it can refute D73**
+
+D73 found the trained-minus-untrained gap ordered by distance from a linear
+function of the input bag (-0.044 count → +0.805 alt). Two objections remain,
+and one of them is now the only live one.
+
+**Dead: the rank-1 objection.** D48 measured the untrained count representation at
+participation ratio 1.0, which would have explained the entire table. It is
+refuted from data already on disk (D73(7)): `last` is at most r2=0.0743
+explainable by `count`, yet the untrained arm decodes `last` at 0.7528. One
+dimension cannot carry both.
+
+**Live: 6.7, and it has never actually been tested.** Every content number in
+this project — D41, D48, D50, D53, D70, D73 — comes from a LINEAR ridge. If the
+trained model encodes order NONLINEARLY while random weights preserve the input
+linearly, a linear probe manufactures exactly D73's pattern for reasons unrelated
+to information content. UNDERSTANDING §6.7 claimed this was under test; it was
+not. `cv_r2_nonlinear` is inlined in `kaggle_capcontent` alone, which has never
+run, and `geometry-nonlinear-content` used the linear probe by design.
+
+**Design.** Same 96 items, 16 bits, r=32, both arms, same five targets — so the
+comparison is like-for-like with D73 — running four things off one forward per
+item: (1) `cv_r2` linear, as a positive control that the pipeline reproduces D73;
+(2) `cv_r2_nonlinear` (PCA-8 + degree-2 ridge, the design already tuned against
+synthetics); (3) participation ratio per arm, the descriptive capacity number;
+(4) **the states persisted** (96 x 5280 float32 ≈ 2 MB per arm), per B4.14, so the
+next unanticipated question does not need another GPU hour.
+
+**Pre-registered predictions.**
+1. *P1, gate.* Linear R2 reproduces D73 within ±0.05 on all 10 cells. If not, the
+   pipeline differs and nothing else in the run may be read.
+2. *P2, gate.* Untrained participation ratio > 1. A PR of 1.0 would contradict an
+   inference already drawn from disk (D73(7)) and must be resolved first.
+3. *P3, gate — the one that decides whether P4/P5 are readable at all.* The
+   nonlinear probe must beat the linear one on a PLANTED curved target measured in
+   the same run. `cv_r2_nonlinear`'s own docstring records that three earlier
+   designs failed this, and **a weak nonlinear probe reports "no lift" and thereby
+   confirms the headline it exists to challenge.**
+4. *P4.* Nonlinear lifts untrained `max_run`/`alt` by ≥ +0.3 over linear ⇒ D73's
+   gap is a linearity artifact, D73(3) must be amended, and 6.7 is a real threat.
+5. *P5.* Lift < +0.1 ⇒ the information is absent in any form this probe reaches,
+   D73(3) stands, and 6.7 is answered negatively for these targets. P4 and P5 are
+   mutually exclusive; the 0.1–0.3 band is reported as partial, not rounded to
+   either.
+
+Every gap reported must pass `gap_is_readable` (both arms are otherwise free to be
+below their own nulls, which is how D73's parity headline happened). ~1 GPU-h.
+
 ### B12. THE CONTENT NULLS THEMSELVES, RE-MEASURED — **open, and still the decisive gap**
 
 D40/D41/D48/D53 have never been re-run with either a graded capability axis or a
