@@ -577,3 +577,51 @@ def test_dynamic_range_passes_a_measure_that_can_actually_move(lib) -> None:
 def test_dynamic_range_also_flags_a_floor(lib) -> None:
     ok, why = lib["has_dynamic_range"]([0.001, 0.004, 0.002], name="probe")
     assert not ok and "FLOOR" in why
+
+
+# --- gap_is_readable: every case below uses geometry-nonlinear-content's REAL
+# numbers (scratch/kaggle_nonlinear/out/nonlin.json), i.e. the data that fooled
+# the kernel, not a plausible-looking synthetic. See claims_ledger D73(5).
+
+
+def test_gap_not_readable_when_neither_arm_clears_its_null(lib) -> None:
+    """The defect: `parity_gap = -0.2617` was printed as the run's headline.
+
+    Trained parity R2 = -0.3567 sits BELOW its own null (-0.2626); untrained
+    -0.0950 is above its null (-0.1322) but still far below zero. Neither arm
+    decoded parity, so the gap ranks two noise draws.
+    """
+    ok, why = lib["gap_is_readable"](
+        -0.3567, -0.2626, -0.0950, -0.1322,
+        names=("trained", "untrained"), name="parity gap",
+    )
+    assert not ok, why
+    assert "NEITHER" in why
+
+
+def test_gap_readable_when_only_one_arm_has_signal(lib) -> None:
+    """Non-suppression: this is the same run's GENUINE finding and must survive.
+
+    Trained `alt` = 0.7568 against a null of -0.2639, untrained -0.0479 at
+    chance. One arm with signal beside one arm at chance IS the result; a guard
+    that killed it would be worse than no guard.
+    """
+    ok, why = lib["gap_is_readable"](
+        0.7568, -0.2639, -0.0479, -0.1281,
+        names=("trained", "untrained"), name="alt gap",
+    )
+    assert ok, why
+
+
+def test_gap_readable_when_both_arms_have_signal(lib) -> None:
+    """The control target: both arms decode `count`, so the gap is a real -0.044."""
+    ok, why = lib["gap_is_readable"](
+        0.9561, -0.2256, 0.99999, -0.1182,
+        names=("trained", "untrained"), name="count gap",
+    )
+    assert ok, why
+
+
+def test_gap_not_readable_on_non_finite(lib) -> None:
+    ok, why = lib["gap_is_readable"](float("nan"), -0.2, float("nan"), -0.2)
+    assert not ok and "non-finite" in why

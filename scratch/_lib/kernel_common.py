@@ -604,3 +604,44 @@ def has_dynamic_range(values, ceiling=1.0, min_headroom=0.2, min_signal=0.05,
         return False, f"{name} is at FLOOR: max {max(v):.4f} < {min_signal}"
     return True, f"{name} spans [{min(v):.4f}, {max(v):.4f}], headroom {head:.4f}"
 # ---8<---
+
+
+# ---8<--- gap_readable
+def gap_is_readable(a, a_null, b, b_null, min_signal=0.0, names=("A", "B"), name="gap"):
+    """May a BETWEEN-ARM gap be formed from these two cells, or is it noise minus noise?
+
+    A gap needs at least ONE arm to have actually measured something. Where
+    neither arm clears its own permutation null, the difference is not a small
+    effect -- it is not an effect, and its SIGN is set by whichever arm's noise
+    draw happened to be larger.
+
+    Measured instance: `geometry-nonlinear-content` printed `parity_gap =
+    -0.2617` as its headline conclusion. The trained arm's parity R2 was -0.3567
+    against its own null of -0.2626 -- BELOW it -- and the untrained arm's was
+    -0.0950 against -0.1322. Neither arm decoded parity at all, so the headline
+    ranked two noise draws. That is D63 and D70(5) for the third time.
+
+    NOT "both arms must clear their null": that rule would have suppressed the
+    same run's genuine finding, where trained `alt` = 0.7568 against a null of
+    -0.2639 while untrained sits at chance (-0.0479). One arm with signal beside
+    one arm at chance IS the result; zero arms with signal is not. A guard that
+    kills the real finding is worse than no guard.
+
+    `has_dynamic_range` does not cover this. It asks whether a measure has
+    headroom beneath its CEILING; this asks whether either arm rose off its FLOOR.
+
+    Returns (ok, detail).
+    """
+    out = []
+    for label, v, nl in ((names[0], a, a_null), (names[1], b, b_null)):
+        if not (v == v and nl == nl):
+            out.append((label, False, f"{label}: non-finite value or null"))
+        elif v > nl and v > min_signal:
+            out.append((label, True, f"{label}={v:.4f} clears null {nl:.4f}"))
+        else:
+            out.append((label, False, f"{label}={v:.4f} vs null {nl:.4f}, min_signal {min_signal}"))
+    if any(ok for _, ok, _ in out):
+        return True, f"{name} readable -- " + "; ".join(d for _, _, d in out)
+    return False, (f"{name} may not be formed: NEITHER arm clears its own null, so the "
+                   f"difference ranks two noise draws -- " + "; ".join(d for _, _, d in out))
+# ---8<---
