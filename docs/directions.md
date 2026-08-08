@@ -215,6 +215,105 @@ is worth knowing.
 | B4.10 | **Re-operationalise or retire H1's regime labels.** As they stand they partition without separating (Kruskal–Wallis p=0.48). | **open** (D56(1)) |
 | B4.6 | **Jacobian eigenvalue ARGUMENTS.** D31 ran Arnoldi on J-vector products and reported only the magnitude (ρ≈0.79–0.81). A contracting map rotates iff its eigenvalues are complex, at a rate given by their argument — a quantity needing no trajectory, no window and no null. The rotation question that five trajectory statistics failed to settle (D22/D26/D28/D32) is one cheap run away, and the data may already be on disk. | **DONE → D55.** Answered from data already on disk: leading eigenvalue complex in 3/3 prompts, period ≈2.6–6.0 unrolls, rotation real but surviving only ~4 turns and sampled at ~3 points/turn. Zero GPU. A proper multi-prompt sweep is now the follow-up. |
 
+
+### B5. THE READOUT IS THE CONFOUND — **in progress, and it gates B6-B8**
+
+**The problem.** Every capability claim here is scored by *greedy generation plus
+string match*: D56, D60, D61, the Caesar screen, and the unrun `capcontent`. That
+instrument has failed loudly twice — D62 returned empty output for every prompt,
+D60 showed format alone moving `copy` 15% → 100% — and it has **no dynamic
+range**. Once accuracy is 0, "the model cannot do this" and "the readout cannot
+see it" are the same measurement. UNDERSTANDING §6.1 makes that the project's
+largest open threat, because every *content is architectural* result (D40, D41,
+D48, D53) was measured precisely there.
+
+**The Caesar screen is the sharp case, and its own raw output shows it.** Trained
+exact-match is 0.0% in all six cells. The second metric it added to avoid this
+trap does not survive inspection: **the untrained arm beats the trained one in
+four of six cells on `char_acc` (5.8% vs 0.0%)**, and the trained arm's best
+cells come from emitting a memorised pangram (`'the cat sat on the mat'` →
+`'The quick brown fox jumps over the lazy dog'`) — D61's retrieval mode, not
+partial competence. So B1's "drop this family" verdict rests on two blunt
+metrics, one of them chance-dominated and sign-inverted.
+
+**The instrument already exists and was never pointed here.**
+`traj_geom/eval_depth.py` scores teacher-forced `log P(gold)` per unroll by
+hooking `core_block[-1]` and decoding each unroll through a replicated coda+head.
+Built for D35; never used for capability. Two properties decide it:
+
+- **One forward at `num_steps=R` yields the whole `r=1..R` curve**, because the
+  hook fires once per unroll. Generation needs a separate decode per depth. This
+  is the difference between a depth × task × arm sweep costing minutes and hours
+  (C9: generation was the *entire* cost, ~1 completion/min).
+- It already computes `log_softmax` over the **full vocabulary**, so **rank is one
+  line away** and was simply never recorded.
+
+**Why rank and not Acc@k.** Acc@k truncates exactly where the variation lives: a
+model at 0% accuracy may hold gold at rank 3 or rank 8000, and Acc@5 scores both
+as a miss. Full-vocab rank separates them by three orders of magnitude; chance is
+32768. Recorded per unroll, "does depth help" gains a gradient instead of a step.
+
+**Status: `geometry-graded-readout` running.** 5 tasks spanning capability
+(`echo_digit`, `add1`, `count4`, `count16`, `rot13_word`) × 24 items ×
+trained/untrained, recording rank, `log P(gold)`, distractor margin and top-1 at
+every unroll. Four pre-registered predictions in the kernel docstring, including
+the one that kills the direction cheaply: **if trained median rank is ~chance on
+the 0%-accuracy cells, the graded readout adds nothing** and "the model cannot do
+these tasks" is robust. Persists the curves (B4.14). ~1 GPU-h.
+
+### B6. GEOMETRY CONDITIONED ON CORRECTNESS, AT MATCHED DIFFICULTY — **the strongest available test of the founding hypothesis**
+
+Every geometric measurement in this project has **pooled correct and incorrect
+trajectories**, and since accuracy is ~0 almost everywhere, that means the
+geometry describes *failure*. The project set out to ask whether trajectory shape
+encodes reasoning; it has never compared the shape of a trajectory that got the
+answer right against one that got it wrong.
+
+**Design.** Use B5's graded readout to locate cells where the model *succeeds*
+(rank 1) and *fails* (rank ≫ 1) **within the same task at the same difficulty and
+prompt length**, then measure ρ, the Jacobian eigenvalue argument, and the
+convergence geometry on each group. Task, length, format and difficulty are all
+held fixed by construction; only correctness varies. That is the contrast the
+project has never had.
+
+**Pre-registered prediction.** If trajectory geometry tracks computation, correct
+and incorrect trajectories must differ on *some* geometric statistic at matched
+difficulty. **If they do not differ on any of ρ, |arg λ| or settling time, then
+geometry is not tracking the computation** — a clean, falsifiable negative that no
+amount of pooled measurement could have produced. Requires B5 to find successes
+first; ~1-2 GPU-h after that.
+
+### B7. B4.11 (DEPTH vs ACCURACY) REDESIGNED — **one forward per item, not one generation per depth**
+
+B4.11 is "the single most obvious experiment for this architecture" and remains
+unrun: `geometry-prompt-depth` attempted it by generation, OOM'd (D66 shows that
+OOM is still unexplained), and its `continuous_compute` arm cannot work at all
+(D66). The teacher-forced curve gives **every depth from a single forward**, which
+sidesteps the decode loop entirely — no KV cache (D62, unresolved), no format
+swing (D60), no `continuous_compute` (D66, blocked), no OOM.
+
+**Predictions.** Rank improves monotonically with `r` on tasks the model can do
+and is flat on those it cannot; and D35's *threshold depth scales with difficulty*
+should generalise from its original tasks to the capability ladder — or fail to,
+which would scope D35. Essentially free once B5's kernel exists.
+
+### B8. RE-OPEN CAESAR BEFORE DROPPING IT — **cheap, and it changes what B1 means**
+
+B1 is the "highest-value open direction" and its screen said drop. That verdict
+came from the blunt readout. If `rot13_word` shows **low gold rank while top-1 is
+a pangram**, the finding is not "cannot decode" but **"knows but does not emit"** —
+which is a different claim, rehabilitates the family as the capability-contrast
+candidate the project needs, and gives D61's retrieval modes a mechanism rather
+than a taxonomy. Already an arm of B5's kernel, so cost is zero.
+
+### B9. STANDING RULE PROPOSED FROM B5
+
+CLAUDE.md §1 already says *"before scoring geometry on a task, ask whether the
+model can do the task."* B5 supplies the missing half: **that question must be
+asked with a graded readout, not exact match** — because exact match cannot
+distinguish an absent capability from an invisible one, and every claim built on
+a 0% cell inherits that ambiguity.
+
 ---
 
 ## C. Scaffolding audit (request A1)
