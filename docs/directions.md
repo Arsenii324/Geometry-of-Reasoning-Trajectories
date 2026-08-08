@@ -276,6 +276,18 @@ convergence geometry on each group. Task, length, format and difficulty are all
 held fixed by construction; only correctness varies. That is the contrast the
 project has never had.
 
+**KNOWN LIMITATION OF THE RUNNING VERSION, found by self-review while it was in
+flight.** Geometry is captured at `[0, -1, :]` — the appended **gold-token**
+position — while correctness is read at `n_p - 1`, the prompt-final position.
+They are one token apart, and `[-1]` no longer matches the project's prior
+convention either: earlier work appended nothing, so `-1` *was* the
+answer-predicting position. The comparison is not void — the gold token is the
+same for both classes, so nothing confounds class with position content — but the
+geometry is measured one step downstream of where correctness is decided, on a
+token the model did not choose. **Read the result with that caveat, and treat a
+re-run at `n_p - 1` as the follow-up.** Not killed mid-flight because the run is
+interpretable and the GPU time is already spent.
+
 **Status: `geometry-correctness` RUNNING** (launched 2026-08-08). Split criterion
 is depth-free — correct = gold reaches rank 1 at any unroll ≤ 64 — because D68
 showed the accuracy peak moves with task, so a fixed depth would make the split a
@@ -366,6 +378,7 @@ float)`) **three times**, costing one GPU run.
 | C9 | **Generation was the entire cost.** Measured on the Caesar screen: 239 min total, model load **0.6 min (0.25%)** — so a Kaggle-dataset weights cache would have saved nothing. The remaining 238 min was 240 completions at **1.00/min**, batch-1 with no KV cache. | `batched_generate` runs the decode loop KNOWN to work over length-homogeneous batches. **It does NOT use the KV cache**: `generate_minimal` (batched + cached) returned empty output for every prompt (D62) and both of my proposed mechanisms were refuted against the source, so the cause is unresolved and I sidestepped it rather than debug a borrowed decode loop on a borrowed GPU. Buckets must be length-homogeneous because `forward` sets `prepared_attn_mask = None`, so padding is unmasked. | **partial — speedup NOT YET MEASURED.** An earlier version of this row claimed "~50× slower than necessary"; that figure was never measured and has been removed. The only measured throughput is the 1.00/min baseline. |
 | C11 | **The uncached loop needs an activation budget.** Without a KV cache it re-runs the full GROWING sequence every step, so cost is `batch x seq` and rises as generation proceeds. float32 weights are ~14.1 GB of a T4's 14.56 GB, leaving ~450 MB against a gated MLP of inner width 17920 — batch 16 x ~100 tokens died inside `nonlin(x_fc_1) * x_fc_2` in `geometry-prompt-depth`. | `max_batch_tokens` (default 1024) splits each length-bucket so `chunk x (prompt_len + max_new) <= budget`. Real cells now run at batch 14 (short answers) and 8 (CoT), so batching survives. Two tests: the budget binds when it should, and does NOT split when it needn't. | **done** |
 | C12 | **The reverted generator is VALIDATED on GPU.** `geometry-prompt-depth`'s smoke test printed `4/4 copied -> ['banana','orange','puzzle','kitten']` before the OOM. So the uncached batched loop produces correct text, and D62's empty output was specifically the `generate_minimal` cache+batch path — not batching, and not my decode logic. | — | **done** |
+| C13 | **A third GPU push is REJECTED, not queued.** `kaggle kernels push` with two sessions live returns `Maximum batch GPU session count of 2 reached` and the push fails outright — `code_env_info/kaggle-cli-guide.md` §5 says to "expect it to QUEUE rather than run or fail", which is wrong for this account/CLI version. `kg enq` exists for exactly this and is the correct path. | use `scripts/kg enq`, never a bare third push | **corrected 2026-08-08** |
 | C10 | **No queue: Kaggle slots idle between turns.** Two concurrent slots and ~30 GPU-h/week were available throughout, but launches were reactive — one or two at a time, with slots idle while ledger rows were written. The inner loop was optimised (load profiled, batching added) and the outer loop was not. | `scratch/QUEUE` + `kg watch` pops the next bundle whenever fewer than 2 kernels are busy | **done** |
 
 **What must NOT be "optimised" away.** Reading full logs when a result is
