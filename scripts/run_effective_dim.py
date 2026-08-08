@@ -88,13 +88,14 @@ def report(df: pd.DataFrame) -> str:
     by_ns = df.groupby("num_steps")["ratio"].median()
     if len(by_ns) > 1:
         spread = float(by_ns.max() - by_ns.min())
+        verdict = ("NOT budget-governed the way winding was" if spread < 0.25
+                   else "CAUTION: budget-sensitive, treat as suspect")
         lines += [
             "",
             "  BUDGET CHECK (D28's failure mode: winding's sign flipped between "
             "these two):",
             "    " + "  ".join(f"ns={int(k)}: ratio {v:.3f}" for k, v in by_ns.items()),
-            f"    same sign at both budgets, spread {spread:.3f} -- "
-            f"{'NOT budget-governed the way winding was' if spread < 0.25 else 'CAUTION: budget-sensitive, treat as suspect'}",
+            f"    same sign at both budgets, spread {spread:.3f} -- {verdict}",
         ]
     return "\n".join(lines)
 
@@ -114,8 +115,10 @@ def main() -> None:
           "threshold must not decide the answer):")
     for ff in FLOOR_FRACS:
         sub = collect(floor_frac=ff)
-        print(f"    floor_frac={ff}: n={len(sub)}  median window {sub['n_steps'].median():.0f}"
-              f"  ratio {sub['ratio'].median():.3f}  z<-3 in {int((sub['z'] < -3).sum())}/{len(sub)}")
+        n_sig = int((sub["z"] < -3).sum())
+        print(f"    floor_frac={ff}: n={len(sub)}  "
+              f"median window {sub['n_steps'].median():.0f}  "
+              f"ratio {sub['ratio'].median():.3f}  z<-3 in {n_sig}/{len(sub)}")
 
 
 if __name__ == "__main__":
