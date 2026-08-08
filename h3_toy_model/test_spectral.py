@@ -5,8 +5,11 @@ maps before trusting it on the TRM model. Run with:
 
 from __future__ import annotations
 
-import torch
-from spectral import spectral_norm_at_point
+import pytest
+
+torch = pytest.importorskip("torch")  # the `model` extra; skip rather than fail collection
+
+from spectral import spectral_norm_at_point  # noqa: E402  (after importorskip)
 
 
 def test_identity_map_has_unit_norm() -> None:

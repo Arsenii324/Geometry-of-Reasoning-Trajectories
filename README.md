@@ -59,10 +59,15 @@ Inference-only анализ латентных траекторий рекурр
 
 ## Воспроизведение
 ```
-uv sync ; uv run pytest ; uv run ruff check .
-uv sync --extra tda ; uv run python scripts/run_homology.py     # ripser
-uv sync --extra model                                            # torch, transformers==4.53.3
+uv sync --extra dev ; uv run pytest ; uv run ruff check .
+uv sync --extra dev --extra tda ; uv run python scripts/run_homology.py     # ripser
+uv sync --extra dev --extra model                                # torch, transformers==4.53.3
 ```
+`uv sync` приводит окружение в *точное* соответствие запрошенным extras, то есть
+доустанавливает нужное и удаляет лишнее — поэтому каждая строка перечисляет все
+extras, которые ей нужны, а не только новый. `pytest` и `ruff` живут в `dev`: без
+`--extra dev` команда `uv run pytest` поднимает pytest в отдельном окружении без
+зависимостей проекта и падает на `ModuleNotFoundError: numpy/pandas` при сборе тестов.
 Пины (в `src/traj_geom/constants.py`): `transformers==4.53.3` (рабочее окно 4.50–4.53), `revision="bb6621b65e90b6a4b9b29ef88dc83866d450470c"`. Замечания: `num_steps` — int; хук на `core_block[-1]` с `_forward_hooks.clear()` + try/finally; для траектории `forward`, не `generate`.
 
 ## Структура
