@@ -1,0 +1,101 @@
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: vaarsenii (vaarsenii-hse-university) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run i7eut9km
+wandb: Tracking run with wandb version 0.28.1
+wandb: Run data is saved locally in /job/wandb/run-20260808_225744-i7eut9km
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run ds-bank-1786229863
+wandb: ⭐️ View project at https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories
+wandb: 🚀 View run at https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories/runs/i7eut9km
+CUDA: True Tesla V100-PCIE-32GB
+
+=== untrained0 ===
+A new version of the following files was downloaded from https://huggingface.co/tomg-group-umd/huginn-0125:
+- raven_modeling_minimal.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+{"tag": "untrained0_track_n4_ns128_seed0", "best_rank": 13795, "correct_any_depth": false, "n_tokens": 22, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_local_n4_ns128_seed0", "best_rank": 50052, "correct_any_depth": false, "n_tokens": 25, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_count_ones_n4_ns128_seed0", "best_rank": 17347, "correct_any_depth": false, "n_tokens": 20, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_track_n8_ns128_seed0", "best_rank": 9866, "correct_any_depth": false, "n_tokens": 34, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_local_n8_ns128_seed0", "best_rank": 45600, "correct_any_depth": false, "n_tokens": 37, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_count_ones_n8_ns128_seed0", "best_rank": 4379, "correct_any_depth": false, "n_tokens": 24, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_track_n16_ns128_seed0", "best_rank": 9617, "correct_any_depth": false, "n_tokens": 58, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_local_n16_ns128_seed0", "best_rank": 5737, "correct_any_depth": false, "n_tokens": 61, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_count_ones_n16_ns128_seed0", "best_rank": 28927, "correct_any_depth": false, "n_tokens": 33, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_track_n32_ns128_seed0", "best_rank": 4163, "correct_any_depth": false, "n_tokens": 106, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_local_n32_ns128_seed0", "best_rank": 2344, "correct_any_depth": false, "n_tokens": 109, "bf16_exact": false, "ok": true}
+{"tag": "untrained0_count_ones_n32_ns128_seed0", "best_rank": 18990, "correct_any_depth": false, "n_tokens": 49, "bf16_exact": false, "ok": true}
+
+=== untrained1 ===
+{"tag": "untrained1_track_n4_ns128_seed0", "best_rank": 18322, "correct_any_depth": false, "n_tokens": 22, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_local_n4_ns128_seed0", "best_rank": 61239, "correct_any_depth": false, "n_tokens": 25, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_count_ones_n4_ns128_seed0", "best_rank": 12116, "correct_any_depth": false, "n_tokens": 20, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_track_n8_ns128_seed0", "best_rank": 18908, "correct_any_depth": false, "n_tokens": 34, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_local_n8_ns128_seed0", "best_rank": 61903, "correct_any_depth": false, "n_tokens": 37, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_count_ones_n8_ns128_seed0", "best_rank": 58529, "correct_any_depth": false, "n_tokens": 24, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_track_n16_ns128_seed0", "best_rank": 10442, "correct_any_depth": false, "n_tokens": 58, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_local_n16_ns128_seed0", "best_rank": 5088, "correct_any_depth": false, "n_tokens": 61, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_count_ones_n16_ns128_seed0", "best_rank": 3164, "correct_any_depth": false, "n_tokens": 33, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_track_n32_ns128_seed0", "best_rank": 17662, "correct_any_depth": false, "n_tokens": 106, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_local_n32_ns128_seed0", "best_rank": 4158, "correct_any_depth": false, "n_tokens": 109, "bf16_exact": false, "ok": true}
+{"tag": "untrained1_count_ones_n32_ns128_seed0", "best_rank": 10078, "correct_any_depth": false, "n_tokens": 49, "bf16_exact": false, "ok": true}
+
+=== untrained2 ===
+{"tag": "untrained2_track_n4_ns128_seed0", "best_rank": 20549, "correct_any_depth": false, "n_tokens": 22, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_local_n4_ns128_seed0", "best_rank": 357, "correct_any_depth": false, "n_tokens": 25, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_count_ones_n4_ns128_seed0", "best_rank": 17819, "correct_any_depth": false, "n_tokens": 20, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_track_n8_ns128_seed0", "best_rank": 27422, "correct_any_depth": false, "n_tokens": 34, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_local_n8_ns128_seed0", "best_rank": 195, "correct_any_depth": false, "n_tokens": 37, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_count_ones_n8_ns128_seed0", "best_rank": 54664, "correct_any_depth": false, "n_tokens": 24, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_track_n16_ns128_seed0", "best_rank": 31784, "correct_any_depth": false, "n_tokens": 58, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_local_n16_ns128_seed0", "best_rank": 36642, "correct_any_depth": false, "n_tokens": 61, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_count_ones_n16_ns128_seed0", "best_rank": 711, "correct_any_depth": false, "n_tokens": 33, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_track_n32_ns128_seed0", "best_rank": 19396, "correct_any_depth": false, "n_tokens": 106, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_local_n32_ns128_seed0", "best_rank": 56227, "correct_any_depth": false, "n_tokens": 109, "bf16_exact": false, "ok": true}
+{"tag": "untrained2_count_ones_n32_ns128_seed0", "best_rank": 680, "correct_any_depth": false, "n_tokens": 49, "bf16_exact": false, "ok": true}
+
+=== untrained3 ===
+{"tag": "untrained3_track_n4_ns128_seed0", "best_rank": 3820, "correct_any_depth": false, "n_tokens": 22, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_local_n4_ns128_seed0", "best_rank": 56228, "correct_any_depth": false, "n_tokens": 25, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_count_ones_n4_ns128_seed0", "best_rank": 15078, "correct_any_depth": false, "n_tokens": 20, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_track_n8_ns128_seed0", "best_rank": 817, "correct_any_depth": false, "n_tokens": 34, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_local_n8_ns128_seed0", "best_rank": 57267, "correct_any_depth": false, "n_tokens": 37, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_count_ones_n8_ns128_seed0", "best_rank": 29539, "correct_any_depth": false, "n_tokens": 24, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_track_n16_ns128_seed0", "best_rank": 3444, "correct_any_depth": false, "n_tokens": 58, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_local_n16_ns128_seed0", "best_rank": 25419, "correct_any_depth": false, "n_tokens": 61, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_count_ones_n16_ns128_seed0", "best_rank": 27604, "correct_any_depth": false, "n_tokens": 33, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_track_n32_ns128_seed0", "best_rank": 4049, "correct_any_depth": false, "n_tokens": 106, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_local_n32_ns128_seed0", "best_rank": 16070, "correct_any_depth": false, "n_tokens": 109, "bf16_exact": false, "ok": true}
+{"tag": "untrained3_count_ones_n32_ns128_seed0", "best_rank": 24602, "correct_any_depth": false, "n_tokens": 49, "bf16_exact": false, "ok": true}
+
+=== untrained4 ===
+{"tag": "untrained4_track_n4_ns128_seed0", "best_rank": 46571, "correct_any_depth": false, "n_tokens": 22, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_local_n4_ns128_seed0", "best_rank": 1254, "correct_any_depth": false, "n_tokens": 25, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_count_ones_n4_ns128_seed0", "best_rank": 12283, "correct_any_depth": false, "n_tokens": 20, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_track_n8_ns128_seed0", "best_rank": 7219, "correct_any_depth": false, "n_tokens": 34, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_local_n8_ns128_seed0", "best_rank": 1919, "correct_any_depth": false, "n_tokens": 37, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_count_ones_n8_ns128_seed0", "best_rank": 515, "correct_any_depth": false, "n_tokens": 24, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_track_n16_ns128_seed0", "best_rank": 48336, "correct_any_depth": false, "n_tokens": 58, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_local_n16_ns128_seed0", "best_rank": 86, "correct_any_depth": false, "n_tokens": 61, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_count_ones_n16_ns128_seed0", "best_rank": 23404, "correct_any_depth": false, "n_tokens": 33, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_track_n32_ns128_seed0", "best_rank": 34659, "correct_any_depth": false, "n_tokens": 106, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_local_n32_ns128_seed0", "best_rank": 226, "correct_any_depth": false, "n_tokens": 109, "bf16_exact": false, "ok": true}
+{"tag": "untrained4_count_ones_n32_ns128_seed0", "best_rank": 20586, "correct_any_depth": false, "n_tokens": 49, "bf16_exact": false, "ok": true}
+
+=== banked 60/60 in 11.7 min ===
+wandb: updating run metadata
+wandb: uploading output.log; uploading wandb-summary.json; uploading config.yaml
+wandb: uploading wandb-summary.json; uploading config.yaml
+wandb: 
+wandb: Run history:
+wandb: banked ▁▁▁▁▁▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▆▆▇▇▇▇██
+wandb: 
+wandb: Run summary:
+wandb: banked 60
+wandb: 
+wandb: 🚀 View run ds-bank-1786229863 at: https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories/runs/i7eut9km
+wandb: ⭐️ View project at: https://wandb.ai/vaarsenii-hse-university/geometry-of-reasoning-trajectories
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260808_225744-i7eut9km/logs
+DONE
