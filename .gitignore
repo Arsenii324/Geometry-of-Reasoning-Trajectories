@@ -53,6 +53,7 @@
 !/scratch/kaggle_capgraded/
 !/scratch/kaggle_headcheck/
 !/scratch/kaggle_eps_split/
+!/scratch/kaggle_h2rot/
 # Recovered 2026-08-09 by `kaggle kernels pull` after the authoring session's
 # container was lost before pushing. main.py is the artifact Kaggle actually ran
 # (the record D73 rests on); its body.py did not survive, so this bundle cannot
