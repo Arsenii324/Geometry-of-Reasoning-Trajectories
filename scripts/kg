@@ -24,8 +24,15 @@ do_build() { [ -f "$1/body.py" ] && python3 -m scripts.build_kernel "$1" >/dev/n
 
 cmd=${1:-}; shift || true
 case "$cmd" in
-  push)  for b in "$@"; do b=${b%/}; do_build "$b"
-           printf "%-28s " "$(short "$b")"; kaggle kernels push -p "$b" 2>&1 | tail -1; done ;;
+  push)  rc=0
+         for b in "$@"; do b=${b%/}; do_build "$b"
+           printf "%-28s " "$(short "$b")"
+           # capture, do NOT pipe: piping made the exit status tail's, so a
+           # rejected push ("Maximum batch GPU session count of 2 reached")
+           # reported success and `watch` dropped the queued bundle. See C13/C14.
+           o=$(kaggle kernels push -p "$b" 2>&1 | tail -1); echo "$o"
+           case "$o" in *"successfully pushed"*) ;; *) rc=3;; esac
+         done; exit $rc ;;
   st)    if [ $# -eq 0 ]; then set -- $(kaggle kernels list -m -s geometry 2>/dev/null | awk 'NR>2{print $1}'); fi
          for k in "$@"; do [ -d "$k" ] && k=$(name_of "${k%/}"); [[ "$k" == */* ]] || k="arsen4ikvar/$k"
            printf "  %-46s " "$k"; kaggle kernels status "$k" 2>&1 | grep -o 'Status\.[A-Z]*' || echo "(none)"; done ;;
@@ -42,9 +49,16 @@ case "$cmd" in
                     | while read k; do kaggle kernels status "$k" 2>&1 \
                       | grep -qE 'Status\.(RUNNING|QUEUED)' && echo x; done | wc -l | tr -d " ")
              while [ "${busy:-2}" -lt 2 ] && [ -s scratch/QUEUE ]; do
-               nb=$(head -1 scratch/QUEUE); sed -i.bak 1d scratch/QUEUE; rm -f scratch/QUEUE.bak
+               nb=$(head -1 scratch/QUEUE)
                echo "[$(date +%H:%M:%S)] queue -> launching $nb"
-               "$0" push "$nb"; set -- "$@" "$nb"; busy=$((busy+1))
+               # pop ONLY after a confirmed push: the old order dequeued first and
+               # lost the bundle whenever the push was rejected (C14).
+               if "$0" push "$nb"; then
+                 sed -i.bak 1d scratch/QUEUE; rm -f scratch/QUEUE.bak
+                 set -- "$@" "$nb"; busy=$((busy+1))
+               else
+                 echo "[$(date +%H:%M:%S)] push refused; $nb stays queued"; break
+               fi
              done
            fi
            left=0
