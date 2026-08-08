@@ -71,7 +71,7 @@ any follow-up question can be asked locally without another GPU run.
 # ruff: noqa: E402  -- inlined blocks necessarily precede the body's imports
 # ---- BUILT by scripts/build_kernel.py from scratch/_lib/kernel_common.py.
 # ---- Edit body.py and rebuild; edits to this file are overwritten.
-# ---- inlined blocks: run fit_rho
+# ---- inlined blocks: run fit_rho preflight
 
 
 def run(cmd):
@@ -115,6 +115,73 @@ def fit_rho(curve, k=3.0, tail_frac=0.25):
     r2 = float(1 - ((ly - pred) ** 2).sum() / denom) if denom > 0 else float("nan")
     return float(np.exp(slope)), int(n), r2
 
+
+def attainable(alpha, n_perm):
+    """Can a permutation test with `n_perm` draws ever reach `alpha`?
+
+    The smallest p a permutation test can report is 1/(n_perm+1). If that floor
+    sits above the significance threshold, REJECTION IS ARITHMETICALLY
+    IMPOSSIBLE and the run returns "not significant" for every cell no matter
+    what the data say -- a guaranteed null that reads like a scientific result.
+
+    Measured instance: `geometry-correctness` was drafted with n_perm=200 against
+    a Bonferroni alpha of 0.05/12 = 0.00417. Floor = 1/201 = 0.00498 > alpha, and
+    synthetic power was 0.00 even for a 2 sd shift. Same class as the winding
+    null's p=0.024 floor at n=40.
+
+    Returns (ok, floor).
+    """
+    floor = 1.0 / (n_perm + 1)
+    return floor < alpha, floor
+
+
+def degenerate(decoded, min_distinct=2):
+    """Is an argmax population degenerate rather than informative?
+
+    Two failure shapes, both seen on real runs:
+      * COLLAPSE -- every item predicts the same token, so the measurement
+        carries no per-item information.
+      * UNPRINTABLE -- the argmax decodes to a partial UTF-8 byte fragment
+        (U+FFFD after decode), which means the distribution is not on words at
+        all. `geometry-discourse`'s prefill arm did BOTH: token ids 6704/7909/
+        12894 ('ä¸') for 24/24 items on every task, and the kernel still printed
+        a confident verdict from that arm.
+
+    Returns (is_degenerate, reason).
+    """
+    uniq = set(decoded)
+    bad = sum("�" in d for d in decoded)
+    if bad > len(decoded) // 2:
+        return True, f"{bad}/{len(decoded)} argmax tokens are unprintable byte fragments"
+    if len(uniq) < min_distinct:
+        return True, f"argmax collapsed to {len(uniq)} distinct token(s): {sorted(uniq)[:3]}"
+    return False, ""
+
+
+def gated_verdict(claim, passed, gates):
+    """Print a conclusion ONLY if every precondition holds; else say why not.
+
+    D62: a capability verdict printed over empty strings because the analysis
+    excluded the control that would have caught it. `geometry-discourse` repeated
+    it -- P3/P4 keyed on one arm and printed the OPPOSITE of the right answer
+    without ever checking that arm's output was sane.
+
+    `gates` is a list of (name, ok, detail). A verdict computed from the same
+    variables as the run will agree with the run's mistakes, so the gates must
+    test the INSTRUMENT, not the hypothesis.
+
+    Returns the verdict string, and prints it.
+    """
+    failed = [(n, d) for n, ok, d in gates if not ok]
+    if failed:
+        msg = (f"  VERDICT WITHHELD -- {claim}\n"
+               + "\n".join(f"    gate FAILED: {n} -- {d}" for n, d in failed)
+               + "\n    the instrument did not qualify; this arm may not be read.")
+    else:
+        msg = f"  {claim}: {'CONFIRMED' if passed else 'REFUTED'}"
+    print(msg, flush=True)
+    return msg
+
 import json
 import random
 import zlib
@@ -125,7 +192,15 @@ MAX_R = 64
 N_ITEMS = 64
 N_PERM = 5000
 PEAK = {"count4": 2, "add1": 4, "count16": 4}      # D68's per-task accuracy peak
-TASKS = ("count4", "add1", "count16")
+TASKS = ("count4", "add1", "count16", "echo_digit")
+METRICS = ("rho_orbit", "rho_step", "settle", "cos_step")
+ALPHA = 0.05 / (len(METRICS) * len(TASKS))     # Bonferroni over every cell reported
+
+# ONE prompt format (bare), deliberately. D69 showed `constrained` keeps the
+# answer available at depth and would populate the success class better, but every
+# prior geometric measurement in this project used the bare form, and changing it
+# here would confound "geometry vs correctness" with "geometry vs prompt format".
+# Comparability is worth more than class balance; constrained is the follow-up.
 
 
 def items(task, n=N_ITEMS):
@@ -137,7 +212,10 @@ def items(task, n=N_ITEMS):
         # geometry-discourse each drew a DIFFERENT set, which is why the same
         # nominal cell read 96% in one and 83% in the other.
         rng = random.Random(s * 7919 + zlib.crc32(task.encode()) % 997)
-        if task == "add1":
+        if task == "echo_digit":
+            v = rng.randint(0, 9)
+            out.append((f"Repeat this number exactly.\nNumber: {v}", str(v)))
+        elif task == "add1":
             v = rng.randint(0, 8)
             out.append((f"What is {v} + 1?", str(v + 1)))
         else:
@@ -209,6 +287,41 @@ def geometry(a, b):
             d.tolist(), s.tolist())
 
 
+def analyse(recs, task, n_perm=None, seed=0):
+    """Label-permutation test per metric. Pure, so it can be exercised offline.
+
+    Separated from main() on purpose: geometry-mem-probe and geometry-discourse
+    both failed in their VERDICT logic rather than their measurement, and that
+    logic was only reachable by spending a GPU run. This one is simulated locally
+    against synthetic data with a planted effect and with none.
+    """
+    import numpy as np
+    n_perm = N_PERM if n_perm is None else n_perm
+    rng = np.random.default_rng(seed)
+    ok = np.array([r["correct"] for r in recs], bool)
+    res = {"n_ok": int(ok.sum()), "n_bad": int((~ok).sum()), "cells": [], "recs": recs}
+    cells = []
+    for m in METRICS:
+        v = np.array([r[m] for r in recs], float)
+        fin = np.isfinite(v)
+        cell = {"metric": m, "n_finite": int(fin.sum())}
+        if (ok & fin).sum() < 3 or ((~ok) & fin).sum() < 3:
+            cell.update(delta=None, p_perm=None, note="too few in one class")
+            cells.append("        (too few)       ")
+        else:
+            obs = abs(np.median(v[fin & ok]) - np.median(v[fin & ~ok]))
+            lab = ok[fin].copy()
+            null = np.array([abs(np.median(v[fin][p := rng.permutation(lab)]) -
+                                 np.median(v[fin][~p])) for _ in range(n_perm)])
+            pv = float((np.sum(null >= obs) + 1) / (n_perm + 1))
+            cell.update(delta=float(obs), p_perm=pv)
+            cells.append(f"d={obs:+.4f} p={pv:.4f}")
+        res["cells"].append(cell)
+    print(f"{task:>11} {res['n_ok']:>5} {res['n_bad']:>6} " +
+          " ".join(f"{c:>24}" for c in cells), flush=True)
+    return res
+
+
 def main():
     run("pip install -q 'transformers>=4.50,<4.54'")
     import numpy as np
@@ -219,11 +332,8 @@ def main():
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_ID, revision=REVISION, trust_remote_code=True).to(torch.float32).to("cuda").eval()
 
-    METRICS = ("rho_orbit", "rho_step", "settle", "cos_step")
-    out = {"max_r": MAX_R, "n_items": N_ITEMS, "peak": PEAK, "tasks": {}}
-    rng = np.random.default_rng(0)
-    print(f"\n{'task':>9} {'n_ok':>5} {'n_bad':>6} " +
-          " ".join(f"{m:>22}" for m in METRICS))
+    out = {"max_r": MAX_R, "n_items": N_ITEMS, "peak": PEAK, "alpha": ALPHA, "tasks": {}}
+    print(f"\n{'task':>11} {'n_ok':>5} {'n_bad':>6} " + " ".join(f"{m:>24}" for m in METRICS))
     for task in TASKS:
         recs = []
         for body, gold in items(task):
@@ -232,34 +342,37 @@ def main():
             a, rank = orbit(model, tok, text, gold, 1000, True)
             b, _ = orbit(model, tok, text, gold, 2000, False)
             g, dcur, scur = geometry(a, b)
-            g["correct"] = bool(rank[PEAK[task] - 1] == 1)
+            # PRIMARY criterion, pre-specified and DEPTH-FREE: gold reaches rank 1
+            # at ANY unroll <= MAX_R. Preferred over "correct at the peak depth"
+            # because D68 showed the peak MOVES with task, so a fixed depth would
+            # make the split a function of my choice rather than of the model.
+            g["correct"] = bool(min(rank) == 1)
+            g["correct_at_peak"] = bool(rank[PEAK[task] - 1] == 1)
+            g["best_rank"] = int(min(rank))
             g["rank"] = rank
             g["sep_curve"] = dcur
             g["step_curve"] = scur
             recs.append(g)
-        out["tasks"][task] = recs
-        ok = np.array([r["correct"] for r in recs])
-        cells = []
-        for m in METRICS:
-            v = np.array([r[m] for r in recs], float)
-            fin = np.isfinite(v)
-            if ok[fin].sum() < 3 or (~ok[fin]).sum() < 3:
-                cells.append("      (too few)      ")
-                continue
-            obs = abs(np.median(v[fin & ok]) - np.median(v[fin & ~ok]))
-            lab = ok[fin].copy()
-            null = [abs(np.median(v[fin][p := rng.permutation(lab)]) -
-                        np.median(v[fin][~p])) for _ in range(N_PERM)]
-            p = float((np.sum(np.array(null) >= obs) + 1) / (N_PERM + 1))
-            cells.append(f"d={obs:+.4f} p_perm={p:.3f}")
-        print(f"{task:>9} {int(ok.sum()):>5} {int((~ok).sum()):>6} " +
-              " ".join(f"{c:>22}" for c in cells), flush=True)
+        out["tasks"][task] = analyse(recs, task)
         with open("geomcorrect.json", "w") as f:
             json.dump(out, f)
 
-    print("\n=== VERDICT (Bonferroni alpha = 0.05/12 = 0.0042) ===")
-    print("  see the p_perm column; the null is a LABEL PERMUTATION, so a metric")
-    print("  only counts if the real split beats its own shuffled labels.")
+    print(f"\n=== VERDICT (Bonferroni alpha = {ALPHA:.5f}) ===")
+    hits = [(t_, c) for t_, r in out["tasks"].items()
+            for c in r["cells"] if c.get("p_perm") is not None and c["p_perm"] < ALPHA]
+    ok_thresh, floor = attainable(ALPHA, N_PERM)
+    enough = [t_ for t_, r in out["tasks"].items() if r["n_ok"] >= 3 and r["n_bad"] >= 3]
+    gated_verdict(
+        "geometry separates correct from incorrect at matched difficulty",
+        bool(hits),
+        [("threshold attainable", ok_thresh, f"p-floor {floor:.5f} vs alpha {ALPHA:.5f}"),
+         ("some task has both classes", bool(enough),
+          f"tasks with >=3 per class: {enough}")])
+    for t_, c in hits:
+        print(f"    HIT {t_}/{c['metric']}: d={c['delta']:+.4f} p_perm={c['p_perm']:.4f}")
+    if not hits and enough:
+        print("    no metric separated the classes; read at the measured sensitivity")
+        print("    (power 0.93 at 1.5 sd, 0.09 at 0.5 sd) -- this is 'no LARGE effect'.")
     with open("geomcorrect.json", "w") as f:
         json.dump(out, f)
 
