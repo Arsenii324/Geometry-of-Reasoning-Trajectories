@@ -29,7 +29,7 @@ live state without asking. Updated 2026-08-09.
 | run | where | question | status |
 |---|---|---|---|
 | `geometry-h2-rotation` | Kaggle T4 | B4.15 — H2 on arg(lambda), length-matched | RUNNING |
-| `geometry-battery` | Kaggle T4 | 21-family capability screen, graded readout | RUNNING (v2; v1 aborted on its own slice gate) |
+| `geometry-battery` | Kaggle T4 | 21-family capability screen, graded readout | **DONE -> D75.** 5 families >=50%, control at chance 21/21, and B6 unblocked |
 | `geom-eigenplane` | DataSphere g1.1, job `bt1mvf3juvrcjpl6kl1i` | does the orbit rotate at the rate the Jacobian predicts? | **DONE** -- no: 0.24x, and D74 explains why |
 | `geom-bank` | DataSphere g1.1, job `bt1hd3oqb17690amgolg` | B14 -- bank raw states for BOTH arms; the untrained control D74 needs | EXECUTING |
 
@@ -319,7 +319,9 @@ token the model did not choose. **Read the result with that caveat, and treat a
 re-run at `n_p - 1` as the follow-up.** Not killed mid-flight because the run is
 interpretable and the GPU time is already spent.
 
-**Status: `geometry-correctness` RUNNING** (launched 2026-08-08). Split criterion
+**Status: VOID as first run (D72), and now UNBLOCKED (D75).** The first run's correctness was a deterministic function of the answer value, so the label permutation broke the prompt-geometry link at the same time. D75's screen supplies what it needed: `count_mod3`, `sub1`, `nth_item` and `local_last` each have a gold value carrying BOTH a success and a failure, so the contrast can be run WITHIN a fixed answer. The re-run should stratify on gold value and use those families. Original status line follows.
+
+**`geometry-correctness` RAN 2026-08-08.** Split criterion
 is depth-free — correct = gold reaches rank 1 at any unroll ≤ 64 — because D68
 showed the accuracy peak moves with task, so a fixed depth would make the split a
 function of my choice rather than of the model. Analysis path validated offline

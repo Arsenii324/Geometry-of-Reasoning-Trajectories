@@ -1,24 +1,93 @@
-[{"stream_name":"stdout","time":0.634922631,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
-,{"stream_name":"stdout","time":3.669025477,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.2 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":5.153285929,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 43.5 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":5.221564862,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 32.5 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":5.300242634,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 102.9 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":30.331143427,"data":"CUDA: True Tesla T4\n"}
-,{"stream_name":"stdout","time":32.410315865,"data":"\n"}
-,{"stream_name":"stdout","time":32.410339252,"data":"=== trained ===\n"}
-,{"stream_name":"stderr","time":117.226698236,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:05\u003c03:16, 65.37s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:05\u003c00:00, 16.34s/it]\n"}
-,{"stream_name":"stderr","time":117.392937497,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 72.82it/s]\n"}
-,{"stream_name":"stdout","time":135.700296522,"data":"  SLICE CHECK (P1 gate): max|delta| = 5.7220458984375e-06 -- must be exactly 0.0\n"}
-,{"stream_name":"stderr","time":135.70061412,"data":"Traceback (most recent call last):\n"}
-,{"stream_name":"stderr","time":135.700628614,"data":"  File \"/kaggle/src/script.py\", line 444, in \u003cmodule\u003e\n"}
-,{"stream_name":"stderr","time":135.701065136,"data":"    main()\n"}
-,{"stream_name":"stderr","time":135.701222317,"data":"  File \"/kaggle/src/script.py\", line 408, in main\n"}
-,{"stream_name":"stderr","time":135.701636801,"data":"    raise RuntimeError(\n"}
-,{"stream_name":"stderr","time":135.701774477,"data":"RuntimeError: SLICE CHECK FAILED: max|delta| = 5.7220458984375e-06. The readout is no longer the one D71 validated; refusing to produce numbers.\n"}
-,{"stream_name":"stderr","time":140.744563887,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
-,{"stream_name":"stderr","time":140.744596381,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
-,{"stream_name":"stderr","time":140.956324293,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
-,{"stream_name":"stderr","time":140.9563548,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
-,{"stream_name":"stderr","time":141.543440065,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
-,{"stream_name":"stderr","time":142.516160848,"data":"[NbConvertApp] Writing 371933 bytes to __results__.html\n"}
+[{"stream_name":"stdout","time":1.035000166,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.421918225,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.524757998,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 76.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.555547205,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 37.8 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.60881313,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 85.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":34.985006552,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stdout","time":36.021189526,"data":"\n"}
+,{"stream_name":"stdout","time":36.021218225,"data":"=== trained ===\n"}
+,{"stream_name":"stderr","time":136.309717916,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:18\u003c03:54, 78.20s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:18\u003c00:00, 19.55s/it]\n"}
+,{"stream_name":"stderr","time":136.471270411,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 52.84it/s]\n"}
+,{"stream_name":"stdout","time":246.76306156,"data":"       echo_digit: best-depth median rank        1  acc@1(best r) 100.0%  acc@1(r64)  0.0%  median rank@r64        3\n"}
+,{"stream_name":"stdout","time":355.240254584,"data":"        echo_word: best-depth median rank        1  acc@1(best r) 87.5%  acc@1(r64) 75.0%  median rank@r64        1\n"}
+,{"stream_name":"stdout","time":467.835781138,"data":"         nth_item: best-depth median rank        4  acc@1(best r) 31.2%  acc@1(r64)  0.0%  median rank@r64       10\n"}
+,{"stream_name":"stdout","time":581.026729201,"data":"        last_item: best-depth median rank        3  acc@1(best r) 18.8%  acc@1(r64)  0.0%  median rank@r64        5\n"}
+,{"stream_name":"stdout","time":685.244233151,"data":"             add1: best-depth median rank        1  acc@1(best r) 81.2%  acc@1(r64)  0.0%  median rank@r64       19\n"}
+,{"stream_name":"stdout","time":789.310401115,"data":"             sub1: best-depth median rank        2  acc@1(best r) 31.2%  acc@1(r64)  0.0%  median rank@r64       16\n"}
+,{"stream_name":"stdout","time":896.713133043,"data":"           add_2d: best-depth median rank        2  acc@1(best r) 18.8%  acc@1(r64)  0.0%  median rank@r64       17\n"}
+,{"stream_name":"stdout","time":1007.622211157,"data":"          compare: best-depth median rank        1  acc@1(best r) 93.8%  acc@1(r64) 56.2%  median rank@r64        1\n"}
+,{"stream_name":"stdout","time":1119.584352415,"data":"           count4: best-depth median rank        5  acc@1(best r) 12.5%  acc@1(r64)  0.0%  median rank@r64       12\n"}
+,{"stream_name":"stdout","time":1300.080381216,"data":"           count8: best-depth median rank        8  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64       15\n"}
+,{"stream_name":"stdout","time":1491.10975428,"data":"          count16: best-depth median rank       10  acc@1(best r)  6.2%  acc@1(r64)  0.0%  median rank@r64       25\n"}
+,{"stream_name":"stdout","time":1684.258203044,"data":"       count_mod3: best-depth median rank        2  acc@1(best r) 43.8%  acc@1(r64)  0.0%  median rank@r64       14\n"}
+,{"stream_name":"stdout","time":1877.199761873,"data":"          parity8: best-depth median rank        2  acc@1(best r) 12.5%  acc@1(r64)  0.0%  median rank@r64        3\n"}
+,{"stream_name":"stdout","time":2070.205195545,"data":"      track_total: best-depth median rank        6  acc@1(best r) 37.5%  acc@1(r64)  0.0%  median rank@r64        8\n"}
+,{"stream_name":"stdout","time":2262.038289885,"data":"       local_last: best-depth median rank        2  acc@1(best r) 25.0%  acc@1(r64)  0.0%  median rank@r64        4\n"}
+,{"stream_name":"stdout","time":2453.466160271,"data":"          max_run: best-depth median rank        5  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64        9\n"}
+,{"stream_name":"stdout","time":2566.398087061,"data":"         sort_min: best-depth median rank        2  acc@1(best r) 50.0%  acc@1(r64)  0.0%  median rank@r64        4\n"}
+,{"stream_name":"stdout","time":2675.420163422,"data":"      succ_letter: best-depth median rank        8  acc@1(best r) 12.5%  acc@1(r64)  0.0%  median rank@r64       18\n"}
+,{"stream_name":"stdout","time":2786.819794811,"data":"   caesar1_letter: best-depth median rank        5  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64       11\n"}
+,{"stream_name":"stdout","time":2938.783733827,"data":"     caesar1_word: best-depth median rank      596  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64      739\n"}
+,{"stream_name":"stdout","time":3050.934635249,"data":"       rot13_word: best-depth median rank     1960  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64     4858\n"}
+,{"stream_name":"stdout","time":3064.159545131,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":3065.078122121,"data":"  purged /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":3065.078153181,"data":"\n"}
+,{"stream_name":"stdout","time":3065.07815915,"data":"=== untrained ===\n"}
+,{"stream_name":"stderr","time":3065.287355131,"data":"A new version of the following files was downloaded from https://huggingface.co/tomg-group-umd/huginn-0125:\n"}
+,{"stream_name":"stderr","time":3065.287381352,"data":"- raven_modeling_minimal.py\n"}
+,{"stream_name":"stderr","time":3065.287386452,"data":". Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.\n"}
+,{"stream_name":"stdout","time":3245.009515519,"data":"       echo_digit: best-depth median rank     8680  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    17220\n"}
+,{"stream_name":"stdout","time":3354.026015321,"data":"        echo_word: best-depth median rank    25150  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    29926\n"}
+,{"stream_name":"stdout","time":3466.504693886,"data":"         nth_item: best-depth median rank     7110  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    17130\n"}
+,{"stream_name":"stdout","time":3580.03991637,"data":"        last_item: best-depth median rank    12764  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    32495\n"}
+,{"stream_name":"stdout","time":3684.328671276,"data":"             add1: best-depth median rank    11086  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    24993\n"}
+,{"stream_name":"stdout","time":3788.741861467,"data":"             sub1: best-depth median rank    14000  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    33638\n"}
+,{"stream_name":"stdout","time":3897.124811236,"data":"           add_2d: best-depth median rank     9450  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    14550\n"}
+,{"stream_name":"stdout","time":4007.711001065,"data":"          compare: best-depth median rank    11090  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    33200\n"}
+,{"stream_name":"stdout","time":4119.750163901,"data":"           count4: best-depth median rank    10668  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    24558\n"}
+,{"stream_name":"stdout","time":4300.835662828,"data":"           count8: best-depth median rank     9964  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    15632\n"}
+,{"stream_name":"stdout","time":4491.275087922,"data":"          count16: best-depth median rank     5212  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    12781\n"}
+,{"stream_name":"stdout","time":4683.089132867,"data":"       count_mod3: best-depth median rank    19064  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    44360\n"}
+,{"stream_name":"stdout","time":4874.034084601,"data":"          parity8: best-depth median rank    33629  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    55861\n"}
+,{"stream_name":"stdout","time":5065.40707026,"data":"      track_total: best-depth median rank    36729  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    52068\n"}
+,{"stream_name":"stdout","time":5256.196870823,"data":"       local_last: best-depth median rank     4386  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64     5191\n"}
+,{"stream_name":"stdout","time":5447.543959412,"data":"          max_run: best-depth median rank    10272  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    16850\n"}
+,{"stream_name":"stdout","time":5560.883295539,"data":"         sort_min: best-depth median rank    11138  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    33724\n"}
+,{"stream_name":"stdout","time":5671.034248609,"data":"      succ_letter: best-depth median rank    21398  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    48356\n"}
+,{"stream_name":"stdout","time":5783.263587002,"data":"   caesar1_letter: best-depth median rank    29718  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    37392\n"}
+,{"stream_name":"stdout","time":5933.932066511,"data":"     caesar1_word: best-depth median rank    31089  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    39696\n"}
+,{"stream_name":"stdout","time":6045.967209863,"data":"       rot13_word: best-depth median rank    21340  acc@1(best r)  0.0%  acc@1(r64)  0.0%  median rank@r64    32842\n"}
+,{"stream_name":"stdout","time":6059.581249289,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":6059.731315391,"data":"\n"}
+,{"stream_name":"stdout","time":6059.731353497,"data":"=== MEASURED in 100.4 min ===\n"}
+,{"stream_name":"stdout","time":6059.731529721,"data":"  family            trained_acc@1(best r)   untrained_median_rank(r64)\n"}
+,{"stream_name":"stdout","time":6059.736648554,"data":"       echo_digit       100.0%                   17220\n"}
+,{"stream_name":"stdout","time":6059.736887005,"data":"        echo_word        87.5%                   29926\n"}
+,{"stream_name":"stdout","time":6059.737093281,"data":"         nth_item        31.2%                   17130\n"}
+,{"stream_name":"stdout","time":6059.73730671,"data":"        last_item        18.8%                   32495\n"}
+,{"stream_name":"stdout","time":6059.737527395,"data":"             add1        81.2%                   24993\n"}
+,{"stream_name":"stdout","time":6059.737761027,"data":"             sub1        31.2%                   33638\n"}
+,{"stream_name":"stdout","time":6059.737966477,"data":"           add_2d        18.8%                   14550\n"}
+,{"stream_name":"stdout","time":6059.738164474,"data":"          compare        93.8%                   33200\n"}
+,{"stream_name":"stdout","time":6059.738374328,"data":"           count4        12.5%                   24558\n"}
+,{"stream_name":"stdout","time":6059.738656077,"data":"           count8         0.0%                   15632\n"}
+,{"stream_name":"stdout","time":6059.738888432,"data":"          count16         6.2%                   12781\n"}
+,{"stream_name":"stdout","time":6059.739100592,"data":"       count_mod3        43.8%                   44360\n"}
+,{"stream_name":"stdout","time":6059.7393212,"data":"          parity8        12.5%                   55861\n"}
+,{"stream_name":"stdout","time":6059.739538696,"data":"      track_total        37.5%                   52068\n"}
+,{"stream_name":"stdout","time":6059.739763528,"data":"       local_last        25.0%                    5191\n"}
+,{"stream_name":"stdout","time":6059.73996934,"data":"          max_run         0.0%                   16850\n"}
+,{"stream_name":"stdout","time":6059.740186914,"data":"         sort_min        50.0%                   33724\n"}
+,{"stream_name":"stdout","time":6059.740434246,"data":"      succ_letter        12.5%                   48356\n"}
+,{"stream_name":"stdout","time":6059.740729267,"data":"   caesar1_letter         0.0%                   37392\n"}
+,{"stream_name":"stdout","time":6059.740975045,"data":"     caesar1_word         0.0%                   39696\n"}
+,{"stream_name":"stdout","time":6059.741219608,"data":"       rot13_word         0.0%                   32842\n"}
+,{"stream_name":"stdout","time":6059.741256671,"data":"saved /kaggle/working/battery.json\n"}
+,{"stream_name":"stdout","time":6059.741330667,"data":"DONE\n"}
+,{"stream_name":"stderr","time":6069.882307637,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":6069.88234311,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":6070.230498293,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":6070.230531532,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":6071.9038644,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":6073.126000793,"data":"[NbConvertApp] Writing 367341 bytes to __results__.html\n"}
 ]
