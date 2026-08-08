@@ -12,6 +12,7 @@ import pytest
 
 from traj_geom.analysis.stratified import (
     attainable,
+    combinatorial_floor,
     stratified_diff,
     stratified_permutation_p,
 )
@@ -107,3 +108,37 @@ def test_reported_p_never_undercuts_its_own_floor() -> None:
     v, lab, s = _design(effect=50.0, seed=4)
     out = stratified_permutation_p(v, lab, s, n_perm=200, seed=0)
     assert out["p"] >= out["p_floor"]
+
+
+def test_combinatorial_floor_catches_what_the_sampling_floor_cannot() -> None:
+    """B6's `nth_item` cell, exactly: 14 items, 3 strata, and no power at all.
+
+    `attainable(0.00313, 20000)` PASSES -- the sampling floor is 5e-05 -- yet a
+    power simulation on the real data found detection probability 0.00 at every
+    planted effect up to 2.0 within-stratum sd. The binding constraint was the
+    number of distinct within-stratum arrangements (300), not the number of draws.
+    """
+    # 3 strata of sizes 5/4/4 with ONE positive each -> C(5,1)*C(4,1)*C(4,1) = 80,
+    # the same shape as nth_item's 14 items over 3 gold values.
+    labels = np.array([1, 0, 0, 0, 0] + [1, 0, 0, 0] + [1, 0, 0, 0], dtype=bool)
+    strata = np.array(["a"] * 5 + ["b"] * 4 + ["c"] * 4)
+    floor, n_arr = combinatorial_floor(labels, strata)
+    assert n_arr == 5 * 4 * 4
+    assert floor == pytest.approx(1 / 80)
+    assert attainable(0.00313, 20000)[0], "the sampling check passes ..."
+    assert floor > 0.00313, "... while the design itself cannot reach alpha"
+
+
+def test_combinatorial_floor_passes_a_well_powered_design() -> None:
+    """Non-suppression: B6's `local_last` cell has 119952 arrangements and real power."""
+    labels = np.array([True] * 6 + [False] * 10 + [True] * 6 + [False] * 10)
+    strata = np.array(["a"] * 16 + ["b"] * 16)
+    floor, n_arr = combinatorial_floor(labels, strata)
+    assert n_arr > 10_000 and floor < 0.00313
+
+
+def test_single_class_strata_contribute_no_arrangements() -> None:
+    labels = np.array([True, True, False, False])
+    strata = np.array(["a", "a", "b", "b"])      # each stratum is one class
+    assert combinatorial_floor(labels, strata) == (1.0, 1)
+

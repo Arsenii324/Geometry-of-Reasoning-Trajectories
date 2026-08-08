@@ -104,3 +104,38 @@ def attainable(alpha: float, n_perm: int) -> tuple[bool, float]:
     """
     floor = 1.0 / (n_perm + 1)
     return floor < alpha, floor
+
+
+def combinatorial_floor(labels: np.ndarray, strata: np.ndarray) -> tuple[float, int]:
+    """Smallest p this DESIGN can produce, whatever `n_perm` is set to.
+
+    `attainable` asks whether enough permutations were drawn. This asks the prior
+    question: how many DISTINCT within-stratum label arrangements exist at all? That
+    is the product over strata of C(n_s, k_s), and the smallest reachable p is its
+    reciprocal. With few items per stratum the design is combinatorially bounded no
+    matter how many draws are taken, and no amount of extra permutation helps.
+
+    MEASURED INSTANCE. B6's `nth_item` cell has 14 items across 3 mixed gold values.
+    `attainable(0.00313, 20000)` passes -- the sampling floor is 5e-05 -- yet a power
+    simulation on the real data found detection probability **0.00 at every planted
+    effect up to 2.0 within-stratum sd**. The binding constraint was never the number
+    of draws; it was that the design admits too few arrangements. This is D72's
+    "rejection was arithmetically impossible" in a form the sampling check cannot see.
+
+    Returns ``(floor, n_arrangements)``.
+    """
+    from math import comb
+
+    labels = np.asarray(labels, dtype=bool)
+    strata = np.asarray(strata)
+    n_arr = 1
+    for s in np.unique(strata):
+        m = strata == s
+        n_s, k_s = int(m.sum()), int(labels[m].sum())
+        if k_s in (0, n_s):
+            continue                    # single-class stratum contributes nothing
+        n_arr *= comb(n_s, k_s)
+        if n_arr > 10**12:              # comfortably unbounded; stop multiplying
+            return 1e-12, 10**12
+    return (1.0 / n_arr if n_arr > 0 else 1.0), int(n_arr)
+

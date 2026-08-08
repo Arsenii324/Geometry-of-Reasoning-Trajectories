@@ -1,0 +1,30 @@
+{
+  "bytes": 13606,
+  "columns": [
+    "tag",
+    "family",
+    "item",
+    "gold",
+    "correct",
+    "best_rank",
+    "best_depth",
+    "n_tokens",
+    "window",
+    "pr",
+    "cos_consecutive",
+    "contraction",
+    "settle"
+  ],
+  "file": "b6.csv",
+  "git_commit": "7fc9d134dc04e4ed9d38a7550230e723b0d5b573",
+  "git_dirty": true,
+  "kind": "b6",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 128,
+  "produced_by": "/home/user/Geometry-of-Reasoning-Trajectories/scripts/run_b6.py",
+  "run_id": "20260808T231547Z-fa8b522f",
+  "sha256": "37aeeab7a74d9a4621d0466578437e0982ddce82fdf7498e637fbf56149e50a6",
+  "source": "scratch/kaggle_b6bank/out",
+  "written_utc": "2026-08-08T23:15:47.926506+00:00"
+}
