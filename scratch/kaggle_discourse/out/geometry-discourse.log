@@ -1,0 +1,45 @@
+[{"stream_name":"stdout","time":1.030387559,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.335473687,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.382875978,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 92.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.418173739,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 32.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.471860835,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 81.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":34.170156851,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stderr","time":119.380362464,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:02\u003c03:08, 62.99s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:02\u003c00:00, 15.75s/it]\n"}
+,{"stream_name":"stderr","time":119.529134835,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 67.51it/s]\n"}
+,{"stream_name":"stdout","time":133.755234387,"data":"\n"}
+,{"stream_name":"stdout","time":133.75527783,"data":"=== bare ===\n"}
+,{"stream_name":"stdout","time":133.755303216,"data":"         task  acc@1 r4  acc@1 r64  med rank r4  med rank r64  top1@r64\n"}
+,{"stream_name":"stdout","time":299.629463793,"data":"   echo_digit      83%        0%            1             2  [('The', 13), ('Number', 8)]\n"}
+,{"stream_name":"stdout","time":488.511931818,"data":"         add1      21%        0%            3            26  [('The', 24)]\n"}
+,{"stream_name":"stdout","time":691.725194402,"data":"       count4       8%        0%            8            13  [('There', 11), ('The', 10)]\n"}
+,{"stream_name":"stdout","time":1032.233299296,"data":"      count16       8%        0%           11            21  [('To', 23), ('1', 1)]\n"}
+,{"stream_name":"stdout","time":1234.979499373,"data":"   rot13_word       0%        0%         2284          1514  [('The', 24)]\n"}
+,{"stream_name":"stdout","time":1234.987835089,"data":"\n"}
+,{"stream_name":"stdout","time":1234.987854674,"data":"=== constrained ===\n"}
+,{"stream_name":"stdout","time":1234.987945782,"data":"         task  acc@1 r4  acc@1 r64  med rank r4  med rank r64  top1@r64\n"}
+,{"stream_name":"stdout","time":1558.122227501,"data":"   echo_digit     100%       83%            1             1  [('1', 8), ('5', 5)]\n"}
+,{"stream_name":"stdout","time":1761.844661791,"data":"         add1       0%        0%            5             8  [('5', 5), ('0', 4)]\n"}
+,{"stream_name":"stdout","time":2101.360255017,"data":"       count4      25%        0%            3             5  [('There', 24)]\n"}
+,{"stream_name":"stdout","time":2565.130024512,"data":"      count16      12%        0%           10            37  [('The', 24)]\n"}
+,{"stream_name":"stdout","time":2903.244031711,"data":"   rot13_word       0%        0%         2090           948  [('The', 24)]\n"}
+,{"stream_name":"stdout","time":2903.259384302,"data":"\n"}
+,{"stream_name":"stdout","time":2903.25940478,"data":"=== prefill ===\n"}
+,{"stream_name":"stdout","time":2903.259591076,"data":"         task  acc@1 r4  acc@1 r64  med rank r4  med rank r64  top1@r64\n"}
+,{"stream_name":"stdout","time":3105.464354667,"data":"   echo_digit     100%        0%            1            73  [('�', 24)]\n"}
+,{"stream_name":"stdout","time":3305.298570198,"data":"         add1       0%        0%           10           327  [('�', 24)]\n"}
+,{"stream_name":"stdout","time":3630.553990267,"data":"       count4      12%        0%            4            44  [('�', 24)]\n"}
+,{"stream_name":"stdout","time":3977.191765786,"data":"      count16      29%        0%            4            78  [('（', 23), ('�', 1)]\n"}
+,{"stream_name":"stdout","time":4201.875882693,"data":"   rot13_word       0%        0%         4249          1566  [('�', 24)]\n"}
+,{"stream_name":"stdout","time":4201.897526472,"data":"\n"}
+,{"stream_name":"stdout","time":4201.897544709,"data":"=== VERDICT ===\n"}
+,{"stream_name":"stdout","time":4201.897979353,"data":"  P1 replication (bare echo_digit acc@1 r4 \u003e= 80%): OK  (83%)\n"}
+,{"stream_name":"stdout","time":4201.898367981,"data":"  P2 constrained improves median rank r64 \u003e= 5x: 2.50x\n"}
+,{"stream_name":"stdout","time":4201.898637949,"data":"  P3/P4 DECIDER -- prefill acc@1 at r64 = 0%\n"}
+,{"stream_name":"stdout","time":4201.898703672,"data":"     =\u003e (B) DEGRADATION: D68 interpretation WRONG, amend it\n"}
+,{"stream_name":"stderr","time":4208.200898426,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":4208.200949067,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":4208.479194978,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":4208.479224541,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":4209.126510341,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":4210.13929309,"data":"[NbConvertApp] Writing 317984 bytes to __results__.html\n"}
+]

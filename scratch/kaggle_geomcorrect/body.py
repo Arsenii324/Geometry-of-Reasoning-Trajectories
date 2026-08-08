@@ -72,6 +72,7 @@ any follow-up question can be asked locally without another GPU run.
 
 import json
 import random
+import zlib
 
 MODEL_ID = "tomg-group-umd/huginn-0125"
 REVISION = "bb6621b65e90b6a4b9b29ef88dc83866d450470c"
@@ -85,7 +86,12 @@ TASKS = ("count4", "add1", "count16")
 def items(task, n=N_ITEMS):
     out = []
     for s in range(n):
-        rng = random.Random(s * 7919 + hash(task) % 997)
+        # zlib.crc32, NOT hash(): Python salts str hashes PER PROCESS, so
+        # hash(task) made the item set differ on every run (measured: 544, 92,
+        # 779 across three interpreters). geometry-graded-readout and
+        # geometry-discourse each drew a DIFFERENT set, which is why the same
+        # nominal cell read 96% in one and 83% in the other.
+        rng = random.Random(s * 7919 + zlib.crc32(task.encode()) % 997)
         if task == "add1":
             v = rng.randint(0, 8)
             out.append((f"What is {v} + 1?", str(v + 1)))
