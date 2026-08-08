@@ -334,7 +334,7 @@ asked with a graded readout, not exact match** — because exact match cannot
 distinguish an absent capability from an invisible one, and every claim built on
 a 0% cell inherits that ambiguity.
 
-### B10. THE 6.1 MODERATION TEST, WITH A CAPABILITY AXIS THAT CAN SEE — **running**
+### B10. THE 6.1 MODERATION TEST, WITH A CAPABILITY AXIS THAT CAN SEE — **DONE → D70**
 
 `geometry-cap-content` was built to settle UNDERSTANDING §6.1 and measures its
 capability axis by **greedy generation plus exact match** — the instrument D68
@@ -399,3 +399,33 @@ arithmetic noise. Metric *diversity* gave false confidence because the metrics w
 diverse in *statistic* and identical in *assumption*. The fix is not more metrics;
 it is metrics that fail differently, plus a small set of standing diagnostics that
 would have caught the failures actually observed.
+
+### B11. A CONTENT PROBE WHOSE TARGET IS NOT IN THE INPUT — **running, and it can refute D70**
+
+D70's deepest finding: every content probe in this project (D40, D41, D48, D53,
+D70) targets a quantity that is a **linear function of the input token bag** — a
+count, a digit, a sum — and Huginn re-injects the prompt embeddings at *every*
+unroll through the adapter on `[h, e]`. So the bag is in every state by
+architecture, a random-weight model preserves it (untrained R² = **1.0000** twice),
+and the probe answers *"is the input linearly recoverable"* rather than *"did the
+model compute anything"*. Both arms pass trivially; the gap had no headroom to move.
+
+**The fix is the target, not the probe.** `geometry-nonlinear-content` holds the
+probe fixed — the same ridge `cv_r2` as D41/D48/D53 — and varies how linearly
+available the target is, all five derived from one bit-string so they share one
+forward: `count` (linear, control), `parity` (not linear — the canonical case),
+`last` (needs position), `max_run` and `alt` (order-dependent). The theory is
+already in this project's bibliography: Grazzi et al. 2411.12537 on LRNNs and
+parity, Merrill et al. 2404.08819 on the illusion of state.
+
+**P5 is written so the run can refute D70 itself:** if the *untrained* arm decodes
+parity well, the re-injection story is wrong and D70(4) must be amended. Gated on
+`has_dynamic_range`, so a repeat of D70's ceiling withholds the verdict rather than
+reporting a rank correlation over slivers.
+
+### B12. THE CONTENT NULLS THEMSELVES, RE-MEASURED — **open, and still the decisive gap**
+
+D40/D41/D48/D53 have never been re-run with either a graded capability axis or a
+target outside the input bag. B10 and B11 measure *new* tasks; the original nulls
+still stand on the old instrument. Until they are redone, "content is
+architectural" is supported only indirectly.
