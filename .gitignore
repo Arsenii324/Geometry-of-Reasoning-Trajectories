@@ -50,6 +50,7 @@
 !/scratch/kaggle_graded/
 !/scratch/kaggle_discourse/
 !/scratch/kaggle_geomcorrect/
+!/scratch/kaggle_capgraded/
 !/scratch/kaggle_eps_split/
 !/scratch/_lib/
 # within those bundles, keep the harness noise out
