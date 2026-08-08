@@ -163,3 +163,130 @@ def test_battery_covers_families_with_few_gold_values() -> None:
            if len({g for _, g, _ in ns["items"](t)}) <= 3}
     assert {"parity8", "count_mod3", "local_last"} <= few, (
         f"expected low-cardinality families for B6 stratification, got {sorted(few)}")
+
+
+# --------------------------------------------------------------------------
+# geomcap: the capability-vs-geometry bank, plus its own reliability ceiling.
+# --------------------------------------------------------------------------
+
+
+def test_geomcap_items_are_byte_identical_to_the_battery() -> None:
+    """All 336 D75 items, verbatim -- or the capability axis is a different axis.
+
+    geomcap's entire tie to D75 is that its 21 families ARE D75's 21 families with
+    D75's items. AST equality of `items` alone would not show this: `items` calls
+    `WORDS`, `zlib.crc32` and per-family arithmetic that can drift independently.
+    So this runs both generators and compares the emitted triples.
+    """
+    bat = _load("kaggle_battery", "def coda_head")
+    cap = _load("kaggle_geomcap", "def coda_head")
+    assert bat["TASKS"] == cap["TASKS"], "family list drifted from the battery"
+    for task in bat["TASKS"]:
+        assert cap["items"](task, n=16) == bat["items"](task, n=16), (
+            f"{task}: geomcap's items drifted from the battery's, so its "
+            f"accuracies are not D75's accuracies")
+
+
+def test_geomcap_item_generator_is_prefix_stable() -> None:
+    """n=24 must EXTEND the battery's 16, not redraw them.
+
+    geomcap raises N_ITEMS above the battery's 16 to give the within-family
+    stratified test more items per family. That is only legitimate if the first 16
+    are unchanged -- otherwise P1's "correlate with D75" gate compares two
+    different item sets and cannot fail for the right reason.
+    """
+    cap = _load("kaggle_geomcap", "def coda_head")
+    assert cap["N_ITEMS"] == 24
+    for task in cap["TASKS"]:
+        wide = cap["items"](task, n=24)
+        assert len(wide) == 24
+        assert wide[:16] == cap["items"](task, n=16), f"{task} is not prefix-stable"
+
+
+def test_geomcap_readout_has_not_drifted_from_the_validated_one() -> None:
+    """Same D71 guard as the battery: the readout must carry its own evidence."""
+    src_b = open(os.path.join(ROOT, "scratch", "kaggle_battery", "body.py"),
+                 encoding="utf-8").read()
+    src_c = open(os.path.join(ROOT, "scratch", "kaggle_geomcap", "body.py"),
+                 encoding="utf-8").read()
+
+    def body_of(src: str, name: str) -> str:
+        for node in ast.walk(ast.parse(src)):
+            if isinstance(node, ast.FunctionDef) and node.name == name:
+                node.body = [s for s in node.body
+                             if not (isinstance(s, ast.Expr)
+                                     and isinstance(s.value, ast.Constant)
+                                     and isinstance(s.value.value, str))]
+                return ast.unparse(node)
+        raise AssertionError(f"{name} not found")
+
+    assert body_of(src_c, "coda_head") == body_of(src_b, "coda_head")
+
+
+def test_geomcap_pools_with_b6bank_at_the_same_depth() -> None:
+    """NUM_STEPS must match b6bank, or the two banks cannot be analysed together.
+
+    Every window-dependent statistic in this project moves with the number of
+    unrolls -- D74(6) records `partial_spearman` refusing to correct for window
+    length at rho = -1.000, i.e. the confound is total. Two banks at different
+    depths are two datasets, not one.
+    """
+    cap = _load("kaggle_geomcap", "def coda_head")
+    bank = _load("kaggle_b6bank", "def coda_head")
+    assert cap["NUM_STEPS"] == bank["NUM_STEPS"] == 64
+
+
+def test_geomcap_ceiling_block_spans_the_accuracy_range() -> None:
+    """`pick_spanning` must take the extremes, not a clump.
+
+    The ceiling block exists to put within-prompt spread in the same units as the
+    between-family spread. If it sampled only mid-accuracy families the comparison
+    would understate the between-family range it is meant to calibrate.
+    """
+    cap = _load("kaggle_geomcap", "def coda_head")
+    acc = {f: i / 20 for i, f in enumerate(cap["TASKS"])}      # 0.00 .. 1.00
+    span = cap["pick_spanning"](acc, k=8)
+    assert len(span) == 8
+    assert min(acc[f] for f in span) == 0.0
+    assert max(acc[f] for f in span) == 1.0
+    assert len(set(span)) == 8, "a family must not be replicated twice"
+
+
+def test_geomcap_ceiling_block_is_deterministic_and_tie_safe() -> None:
+    """All-equal accuracies must not crash or return duplicates.
+
+    An all-zero accuracy vector is a real possibility for this model -- D75 found
+    several families at exactly 0% -- and a selector that ties on every key must
+    still return k distinct families.
+    """
+    cap = _load("kaggle_geomcap", "def coda_head")
+    flat = dict.fromkeys(cap["TASKS"], 0.0)
+    span = cap["pick_spanning"](flat, k=8)
+    assert len(span) == len(set(span)) == 8
+    assert span == cap["pick_spanning"](flat, k=8), "selection is not deterministic"
+
+
+def test_geomcap_seeds_h0_only_when_asked() -> None:
+    """`manual_seed` must be reachable ONLY under the `h0_seed is not None` branch.
+
+    The `main` and `rep` blocks have to reproduce Huginn's own unseeded
+    `initialize_state`, because that is what every other measurement in this
+    project ran under (D78). A stray unconditional seed would silently make `rep`'s
+    replicates identical and turn the reliability ceiling into a tautology --
+    reporting zero within-prompt variance because the code removed it.
+    """
+    src = open(os.path.join(ROOT, "scratch", "kaggle_geomcap", "body.py"),
+               encoding="utf-8").read()
+    fn = next(n for n in ast.walk(ast.parse(src))
+              if isinstance(n, ast.FunctionDef) and n.name == "bank_one")
+    seeds = [n for n in ast.walk(fn)
+             if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+             and n.func.attr == "manual_seed"]
+    assert len(seeds) == 1, f"{len(seeds)} manual_seed calls in bank_one"
+    guards = [n for n in ast.walk(fn)
+              if isinstance(n, ast.If)
+              and any(isinstance(c, ast.Call) and isinstance(c.func, ast.Attribute)
+                      and c.func.attr == "manual_seed" for c in ast.walk(n))]
+    assert guards, "manual_seed is not inside a conditional"
+    assert "h0_seed" in ast.unparse(guards[0].test), (
+        f"manual_seed is guarded by {ast.unparse(guards[0].test)!r}, not by h0_seed")
