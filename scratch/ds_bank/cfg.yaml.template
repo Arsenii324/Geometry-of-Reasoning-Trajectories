@@ -1,0 +1,16 @@
+# DataSphere job config. The real cfg.yaml is generated at submit time with the
+# WandB key substituted in, and is NOT committed -- the template is the record.
+name: geom-bank
+desc: Bank raw states for both arms; the untrained control for D74 and the offline-analysis fix (B14).
+cmd: bash ${RUN} ${JOB} ${RESULT}
+inputs:
+  - run.sh: RUN
+  - job.py: JOB
+outputs:
+  - result.tgz: RESULT
+env:
+  vars:
+    WANDB_API_KEY: __WANDB_API_KEY__
+  docker:
+    image: nvidia/cuda:12.2.2-runtime-ubuntu22.04
+cloud-instance-type: g1.1

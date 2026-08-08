@@ -30,7 +30,8 @@ live state without asking. Updated 2026-08-09.
 |---|---|---|---|
 | `geometry-h2-rotation` | Kaggle T4 | B4.15 — H2 on arg(lambda), length-matched | RUNNING |
 | `geometry-battery` | Kaggle T4 | 21-family capability screen, graded readout | RUNNING (v2; v1 aborted on its own slice gate) |
-| `geom-eigenplane` | DataSphere g1.1, job `bt1mvf3juvrcjpl6kl1i` | does the orbit rotate at the rate the Jacobian predicts? | EXECUTING |
+| `geom-eigenplane` | DataSphere g1.1, job `bt1mvf3juvrcjpl6kl1i` | does the orbit rotate at the rate the Jacobian predicts? | **DONE** -- no: 0.24x, and D74 explains why |
+| `geom-bank` | DataSphere g1.1, job `bt1hd3oqb17690amgolg` | B14 -- bank raw states for BOTH arms; the untrained control D74 needs | EXECUTING |
 
 **Premises checked and FALSE — do not re-derive these.** Each cost minutes to check
 and would have cost hours to discover downstream.
