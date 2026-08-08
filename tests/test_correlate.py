@@ -8,6 +8,7 @@ import pytest
 
 from traj_geom.analysis.correlate import (
     benjamini_hochberg,
+    fmt_by_level,
     multivariate_rank_control,
     partial_spearman,
     spearman_by_level,
@@ -175,3 +176,50 @@ def test_multivariate_rank_control_raises_on_insufficient_dof() -> None:
     x2 = np.array([2.0, 3.0, 1.0])
     with pytest.raises(ValueError, match="degrees of freedom"):
         multivariate_rank_control(y, {"x1": x1, "x2": x2})
+
+
+# --- fmt_by_level: the significance verdict that eight scripts PRINT ---------
+#
+# run_counting, run_switch, run_maxtask, run_pararule, run_dissociation,
+# run_dissociation_multiinit, run_three_scale and run_three_scale_modk all report
+# their headline correlation through this one function, and it had no test. The
+# string it returns is what a reader uses to decide whether a result stands, so a
+# flipped comparison here would mislabel every result in the project at once.
+
+
+def test_fmt_by_level_marks_a_perfect_positive_trend_significant() -> None:
+    got = fmt_by_level(_levels_df(tuple(range(1, 7)), slope=1.0), "x", "y")
+    assert "rho=+1.000" in got and "N=6" in got and "crit=0.886" in got and "sig" in got
+    assert "n.s." not in got
+
+
+def test_fmt_by_level_uses_abs_rho_so_a_negative_trend_is_still_significant() -> None:
+    """The one that matters: ledger B3 reports local winding~n_ops at rho=-0.943
+    (N=6) as SIGNIFICANT. A `rho >= crit` comparison instead of `abs(rho) >= crit`
+    would silently downgrade every negative result in the project to n.s."""
+    got = fmt_by_level(_levels_df(tuple(range(1, 7)), slope=-1.0), "x", "y")
+    assert "rho=-1.000" in got
+    assert "sig" in got and "n.s." not in got, f"negative rho reported as {got!r}"
+
+
+def test_fmt_by_level_marks_a_sub_critical_trend_not_significant() -> None:
+    """rho=+0.829 at N=6 sits below the 0.886 threshold -- the near-miss case."""
+    means = {1: 2.0, 2: 1.0, 3: 4.0, 4: 3.0, 5: 6.0, 6: 5.0}   # sum d^2 = 6 -> rho = 0.829
+    df = pd.DataFrame([{"x": k, "y": v} for k, v in means.items()])
+    got = fmt_by_level(df, "x", "y")
+    assert "rho=+0.829" in got and "n.s." in got, got
+
+
+def test_fmt_by_level_reports_no_threshold_outside_the_tabulated_range() -> None:
+    """N<4 or N>10 has no tabulated critical value; it must say so, not guess."""
+    got = fmt_by_level(_levels_df((1, 2, 3), slope=1.0), "x", "y")
+    assert "crit=n/a" in got
+    assert "sig" not in got and "n.s." not in got, f"claimed a verdict without a threshold: {got}"
+
+
+def test_fmt_by_level_agrees_with_spearman_by_level() -> None:
+    """The formatter must not recompute anything differently from the statistic."""
+    df = _levels_df(tuple(range(1, 8)), slope=1.0)
+    rho, n, crit = spearman_by_level(df, "x", "y")
+    got = fmt_by_level(df, "x", "y")
+    assert f"rho={rho:+.3f}" in got and f"N={n}" in got and f"crit={crit:.3f}" in got
