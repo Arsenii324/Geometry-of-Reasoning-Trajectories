@@ -107,6 +107,41 @@ def test_battery_items_are_process_stable() -> None:
         "reproducible between runs")
 
 
+def test_battery_readout_has_not_drifted_from_the_validated_one() -> None:
+    """`coda_head` must stay the exact tail D71 measured as bit-identical.
+
+    D71 is the only positive control the per-unroll readout has: max|delta| =
+    0.000000 against the model's own logits, with the known-wrong one-ln_f variant
+    separating at 2.33-2.46. That validation attaches to a specific piece of code,
+    so any new kernel reusing the readout has to reuse it unchanged -- otherwise it
+    inherits the CLAIM without the EVIDENCE.
+
+    Version 1 of the battery kernel is the cautionary case. It applied `lm_head`
+    only to the read positions, which is exact by construction for a position-wise
+    Linear, and the in-kernel check still measured 5.72e-06: cuBLAS reduces a
+    3-row matmul in a different order than a 30-row one. Mathematically right,
+    not bit-identical.
+    """
+    src_g = open(os.path.join(ROOT, "scratch", "kaggle_graded", "body.py"),
+                 encoding="utf-8").read()
+    src_b = open(os.path.join(ROOT, "scratch", "kaggle_battery", "body.py"),
+                 encoding="utf-8").read()
+
+    def body_of(src: str, name: str) -> str:
+        for node in ast.walk(ast.parse(src)):
+            if isinstance(node, ast.FunctionDef) and node.name == name:
+                node.body = [s for s in node.body
+                             if not (isinstance(s, ast.Expr)
+                                     and isinstance(s.value, ast.Constant)
+                                     and isinstance(s.value.value, str))]
+                return ast.unparse(node)
+        raise AssertionError(f"{name} not found")
+
+    assert body_of(src_b, "coda_head") == body_of(src_g, "coda_head"), (
+        "kaggle_battery's coda_head has drifted from the D71-validated version in "
+        "kaggle_graded; the readout would no longer carry D71's evidence")
+
+
 def test_battery_distractor_never_equals_gold() -> None:
     """`logp_dist` is the margin term; a distractor equal to gold makes it zero."""
     ns = _load("kaggle_battery", "def coda_head")
