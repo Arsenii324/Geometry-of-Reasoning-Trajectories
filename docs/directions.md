@@ -216,7 +216,7 @@ is worth knowing.
 | B4.6 | **Jacobian eigenvalue ARGUMENTS.** D31 ran Arnoldi on J-vector products and reported only the magnitude (ρ≈0.79–0.81). A contracting map rotates iff its eigenvalues are complex, at a rate given by their argument — a quantity needing no trajectory, no window and no null. The rotation question that five trajectory statistics failed to settle (D22/D26/D28/D32) is one cheap run away, and the data may already be on disk. | **DONE → D55.** Answered from data already on disk: leading eigenvalue complex in 3/3 prompts, period ≈2.6–6.0 unrolls, rotation real but surviving only ~4 turns and sampled at ~3 points/turn. Zero GPU. A proper multi-prompt sweep is now the follow-up. |
 
 
-### B5. THE READOUT IS THE CONFOUND — **in progress, and it gates B6-B8**
+### B5. THE READOUT IS THE CONFOUND — **DONE → D68, D69; it gated B6-B8 and B10**
 
 **The problem.** Every capability claim here is scored by *greedy generation plus
 string match*: D56, D60, D61, the Caesar screen, and the unrun `capcontent`. That
@@ -253,7 +253,7 @@ model at 0% accuracy may hold gold at rank 3 or rank 8000, and Acc@5 scores both
 as a miss. Full-vocab rank separates them by three orders of magnitude; chance is
 32768. Recorded per unroll, "does depth help" gains a gradient instead of a step.
 
-**Status: `geometry-graded-readout` running.** 5 tasks spanning capability
+**Status: DONE -> D68, D69.** 5 tasks spanning capability
 (`echo_digit`, `add1`, `count4`, `count16`, `rot13_word`) × 24 items ×
 trained/untrained, recording rank, `log P(gold)`, distractor margin and top-1 at
 every unroll. Four pre-registered predictions in the kernel docstring, including
@@ -275,6 +275,14 @@ prompt length**, then measure ρ, the Jacobian eigenvalue argument, and the
 convergence geometry on each group. Task, length, format and difficulty are all
 held fixed by construction; only correctness varies. That is the contrast the
 project has never had.
+
+**Status: `geometry-correctness` RUNNING** (launched 2026-08-08). Split criterion
+is depth-free — correct = gold reaches rank 1 at any unroll ≤ 64 — because D68
+showed the accuracy peak moves with task, so a fixed depth would make the split a
+function of my choice rather than of the model. Analysis path validated offline
+first: 0 false positives on a null, finds exactly the planted metric at 2 sd,
+refuses with "too few" at 1-vs-63 balance, and the verdict withholds when the
+threshold is unattainable.
 
 **Pre-registered prediction.** If trajectory geometry tracks computation, correct
 and incorrect trajectories must differ on *some* geometric statistic at matched
@@ -313,6 +321,28 @@ model can do the task."* B5 supplies the missing half: **that question must be
 asked with a graded readout, not exact match** — because exact match cannot
 distinguish an absent capability from an invisible one, and every claim built on
 a 0% cell inherits that ambiguity.
+
+### B10. THE 6.1 MODERATION TEST, WITH A CAPABILITY AXIS THAT CAN SEE — **running**
+
+`geometry-cap-content` was built to settle UNDERSTANDING §6.1 and measures its
+capability axis by **greedy generation plus exact match** — the instrument D68
+shows is blind exactly there (0.0% by exact match, median rank 22 against chance
+32768). Run as written its *moderator* would be ~0 across the whole ladder for
+measurement reasons, and it would "confirm" the headline by construction.
+
+That kernel is **not edited** (§3: say what is wrong rather than rewrite someone
+else's experiment); the warning sits in UNDERSTANDING §6.1 and
+`geometry-cap-graded` is a separate kernel with the capability axis replaced by
+log₁₀ rank. Content is the **same** ridge probe as D41/D48/D53, so the comparison
+is like-for-like. Two gates, both simulated before launch: `cv_r2`'s permutation
+null must be ≤0.05 (a positive null means the probe interpolates), and the
+untrained arm must sit at chance (the control that made D68 credible). **P4 is
+written as equally publishable**: a ~0 gap at every rung, including ones the model
+demonstrably does, means "content is architectural" survives its strongest
+challenge. N=4 rungs, so read as direction plus effect sizes, never a p-value.
+
+**Still open after this:** D40/D41/D48/D53 have not themselves been re-measured
+with a graded readout — only new tasks have. That is the remaining decisive gap.
 
 ---
 
