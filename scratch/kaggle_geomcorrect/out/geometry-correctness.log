@@ -1,0 +1,27 @@
+[{"stream_name":"stdout","time":1.165374707,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.947353935,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.958489453,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 96.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.990371572,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 34.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.043991752,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 86.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":34.9116299,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stderr","time":131.043215718,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:13\u003c03:40, 73.60s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:13\u003c01:00, 30.42s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:13\u003c00:00, 18.45s/it]\n"}
+,{"stream_name":"stderr","time":131.187057523,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 69.24it/s]\n"}
+,{"stream_name":"stdout","time":142.162665846,"data":"\n"}
+,{"stream_name":"stdout","time":142.162711371,"data":"       task  n_ok  n_bad                rho_orbit                 rho_step                   settle                 cos_step\n"}
+,{"stream_name":"stdout","time":803.897677224,"data":"     count4     7     57       d=+0.0040 p=0.1252       d=+0.0197 p=0.0008       d=+1.0000 p=0.1624       d=+0.3987 p=0.0026\n"}
+,{"stream_name":"stdout","time":1455.388091279,"data":"       add1    43     21       d=+0.0056 p=0.0270       d=+0.0143 p=0.0002       d=+1.0000 p=0.0016       d=+0.0306 p=0.1738\n"}
+,{"stream_name":"stdout","time":2644.022116001,"data":"    count16     1     63         (too few)                (too few)                (too few)                (too few)       \n"}
+,{"stream_name":"stderr","time":2654.54094673,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":2654.540994536,"data":"  File \"/kaggle/src/script.py\", line 380, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":2654.541366,"data":"    main()\n"}
+,{"stream_name":"stderr","time":2654.541582344,"data":"  File \"/kaggle/src/script.py\", line 350, in main\n"}
+,{"stream_name":"stderr","time":2654.541887107,"data":"    g[\"correct_at_peak\"] = bool(rank[PEAK[task] - 1] == 1)\n"}
+,{"stream_name":"stderr","time":2654.543116758,"data":"                                     ~~~~^^^^^^\n"}
+,{"stream_name":"stderr","time":2654.543234461,"data":"KeyError: 'echo_digit'\n"}
+,{"stream_name":"stderr","time":2660.688574543,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":2660.688603966,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":2660.985673429,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":2660.985697673,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":2661.642947191,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":2662.642361811,"data":"[NbConvertApp] Writing 348553 bytes to __results__.html\n"}
+]
