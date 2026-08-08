@@ -1,24 +1,76 @@
-# State of understanding — 2026-08-05
+# State of understanding — 2026-08-08
 
-Supersedes `REVIEW_state_of_understanding.md` (last touched 2026-08-04, predates
-D59–D63). Written to be read on its own; every number cites the ledger row that
-carries its evidence.
+Supersedes the 2026-08-05 revision, which predates D66–D69. Written to be read on
+its own; every number cites the ledger row that carries its evidence.
 
 ---
 
 ## 1. The one-paragraph version
 
 The project asked whether latent-trajectory *geometry* in Huginn-3.5B encodes
-reasoning depth. It does not, in the form originally proposed. What the work
-actually established is narrower and, I think, more interesting: **training changes
-the model's dynamics, not the content of its state.** The contraction rate rises
-from ρ = 0.7048 ± 0.0087 to 0.8577 ± 0.0139 across 14 independent weight-sets with
-*complete separation* (D52), while every content-level measurement — linear
-decodability of the task variable, effective dimensionality, endpoint geometry, the
-counting register itself — is matched or **beaten** by a randomly initialised model
-(D40, D41, D48, D53). And ρ is now the first quantity in the project to be moved
-rather than merely observed: a gradient-free rescale of the core block's output
-projections shifts it with paired slope +0.285 ± 0.045 (D59).
+reasoning depth. It does not, in the form originally proposed. The 2026-08-05
+revision then held that **training changes the model's dynamics, not the content
+of its state** — ρ rising 0.7048 → 0.8577 across 14 weight-sets with complete
+separation (D52), while every content measurement was matched or beaten by random
+weights (D40, D41, D48, D53). **That second half is now in serious doubt, and the
+reason is that the readout was the confound.** Every content-null result was
+measured on tasks scored 0% by greedy generation plus exact match. Scored instead
+by rank of the gold token over the full vocabulary, the trained model holds the
+answer *far* below chance on those same tasks — `count16` at median rank 22
+against a chance of 32768 — and the trained-minus-untrained gap is **ordered by
+capability**: +4.05, +3.43, +2.96, +2.81, +1.37 in log₁₀ rank from `echo_digit`
+down to `rot13_word` (D68). Where the model can do the task, its weights carry
+four orders of magnitude more answer-information than random ones. That is a
+content difference, and a large one.
+
+## 1b. What changed on 2026-08-08, and what it costs
+
+Three findings, in the order they landed.
+
+- **The instrument was wrong, not the model** (D68). Teacher-forced rank per
+  unroll, from one forward per item — an instrument `eval_depth.py` already
+  contained and that had been used for D35 and never for capability.
+- **Depth makes a discourse choice** (D68, amended). Accuracy is non-monotone in
+  `r`: `echo_digit` reaches 96% rank-1 at r=4 and 0% by r=8, while top-1 moves
+  from the answer digit to a prose opener — `'The'` for 96–100% of items at r=64
+  across every task. Every accuracy kernel in this project ran at `num_steps=32`,
+  past that transition. **Amended the same day**: the "answer merely drops to rank
+  2–3 behind *The*" reading holds only for the trivial task; on `count4`/`count16`/
+  `add1` gold sits 10–25 places back, so genuine uncertainty rides on top of the
+  discourse choice. It is a decomposition, not one mechanism.
+- **The computation survives depth** (D69). With *"Reply with only the answer"*,
+  `echo_digit` at r=64 goes 0% → **83%**, median rank 1, top-1 the actual digit.
+  Same model, same depth, one instruction. Depth did not destroy the computation;
+  the bare prompt's discourse convergence hid it.
+
+The cost: D69's kernel **printed the opposite conclusion** and had to be rejected
+on its own raw output, because the arm I nominated as decider was degenerate
+(argmax = partial-UTF-8 byte fragments for 24/24 items on every task) and the
+verdict logic never checked. That is D62 repeated in new code, and it is why the
+`preflight` guards now exist.
+
+## 1c. The strongest defensible result, and the strongest objection
+
+**Best replicated:** D52 — ρ separates trained from untrained across 14 independent
+weight-sets with no overlap (U=0, p=5e-04, d=13.2). Unchanged by any of this.
+
+**Most consequential, least replicated:** D68's capability-ordered rank gap. It has
+a working control — the untrained arm sits *at* chance (14668–46119), which a
+broken decode could not produce alongside rank 3 in the other arm — but it is one
+run, n=24 per task, one seed.
+
+**The strongest objection I cannot answer:** rank is not capability. A low rank
+means the answer is available to the readout, not that the model would emit it, and
+the whole point of D68 is that those differ. Everything in §1 therefore rests on a
+proxy whose relationship to behaviour is exactly what D69 began measuring and has
+established for one trivial task only.
+
+**The decisive missing experiment follows directly:** D40/D41/D48/D53 — the
+content-null results — have *not* been redone with a graded readout. Until they
+are, "content is architectural" is neither established nor refuted; it is measured
+with an instrument now known to be blind in that regime. Note that `capcontent`,
+the queued kernel for exactly this question, still scores capability by generation
+and would repeat the error as written.
 
 ## 2. The architecture, verified against source
 
@@ -135,12 +187,26 @@ tasks with no content to change. The claim needs at least one task the trained
 model demonstrably performs. Today the only such task in the entire project is
 `copy` (100% under chat format, D60), which is trivial.
 
-*Status: UNDER TEST. `geometry-cap-content` (queued) spans capability from ~100%
-(`echo_num`) through `add1` and `count4` to 0% (`count16`) and measures the
-trained-minus-untrained content gap at each, with a pre-registered prediction: if
-6.1 is a real confound the gap is positive where capability is high and ~0 where it
-is zero. Either outcome is decisive — it either scopes the headline to "tasks the
-model cannot do" or strengthens it considerably.*
+*Status: PARTLY ANSWERED, 2026-08-08, and the answer runs AGAINST the headline.
+D68 measured the trained-minus-untrained gap with a graded readout across a
+capability ladder and found it **ordered by capability**: +4.05 log₁₀ rank on
+`echo_digit` down to +1.37 on `rot13_word`. So the content gap is real and large
+where the model can do the task, and shrinks where it cannot — which is what 6.1
+predicted would happen if the confound were real. The counting-family nulls
+(D40, D41, D48, D53) sit at the far, capability-zero end of that ladder.*
+
+*NOT closed, for two reasons. (a) D68 is one run, n=24 per task, one seed, and
+rank is not capability. (b) The content-null results themselves have not been
+REDONE with a graded readout — only new tasks have been measured with it. Until
+D40/D41/D48/D53 are re-measured, "content is architectural" is neither
+established nor refuted.*
+
+*A WARNING ABOUT THE QUEUED KERNEL. `geometry-cap-content` was built to settle
+this and still scores its capability axis by greedy generation plus exact match —
+the instrument D68 shows is blind in exactly the regime that matters. Run as
+written, its moderator variable would be near-zero across the ladder for
+measurement reasons, and it would "confirm" the headline by construction. It
+needs the rank readout wired into its capability axis before it is launched.*
 
 ### 6.2 ρ has never been connected to behaviour
 
