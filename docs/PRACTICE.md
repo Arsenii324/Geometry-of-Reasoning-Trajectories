@@ -282,3 +282,36 @@ one command, and that data existed the whole time.
 Worth noting what did NOT go wrong: the claim was written into the tooling, so it was
 correctable in one place. The failure mode to fear is the same inference made
 silently and acted on for a week.
+
+## What two independent audits actually caught
+
+*2026-08-10. Two Opus agents were given the ledger: one hunting CONTRADICTIONS between rows, one
+RECOMPUTING the primary statistic of each of the 19 rows written that session. The yields were
+very different, and the difference is the lesson.*
+
+**The contradiction agent found three real errors, all confirmed on inspection**, and one of them
+retracted a finding:
+- **D120 duplicates D52** — same runs, same numbers to three decimals, four days apart. My
+  "banked data nobody had opened" was false, and the sweep that was supposed to prevent exactly
+  this missed it because I searched a DIRECTORY name against a ledger that cites RUN names.
+- **D119** claimed a job was "never joined to the ledger"; it is cited in D74(4) and D81.
+- **D110** inherited D101's "it has never been run" — D33 and D35 both ran behavioural H2, and
+  D35 CONFIRMED it with the length confound removed.
+
+**The recomputation agent verified 18 of 19 rows and its one MISMATCH was a false positive**, as
+were all six of its "suspicious" items. Re-derived against the row's own convention: D110's three
+arms give −0.4810 / −0.5265 / +0.0719 against −0.481 / −0.527 / +0.072; D127's residual 0.3085 and
+ratio 121.7; D123's settling 105/184 and median 1 loop; D112's 508/608, 103/128, 0.0003. Exact,
+every one.
+
+**The asymmetry to remember when spending an audit:** recomputing a number mostly re-measures what
+the author already measured, and disagreements are usually convention drift rather than error. What
+the author CANNOT do is notice that a row four days old already contains the finding — that needs a
+reader who is not holding the author's mental index. **Point audits at relationships between
+claims, not at the arithmetic inside one.**
+
+**One thing the low-yield audit got right anyway, and it was worth the whole run:** it observed
+that no script under `scripts/` referenced `ds_addk`, so D110's analysis lived only in shell
+heredocs and nobody could re-derive it. That is true of a load-bearing number and is now fixed
+(`scripts/run_addk_arms.py`). A correct number with no reproducible derivation is one nobody can
+check, including its author six hours later.
