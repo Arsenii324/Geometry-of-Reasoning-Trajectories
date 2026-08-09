@@ -6,6 +6,60 @@ ordered plan and the reasoning behind the order.*
 
 ---
 
+## STATE — read this first after any context loss
+
+*Last updated 2026-08-09 ~10:56 MSK. Deadline 21:00 MSK.*
+
+**A machine switch happened mid-session** (cloud sandbox → local Mac) and lost
+everything that had not yet been committed: this STATE block, the §1 ρ correction
+above, `docs/related_work.md`, the `scratch/kaggle_clrs/` bundle, and its
+`tests/test_kernel_tasks.py` guards. All have been reconstructed from conversation
+context and **re-verified against ground truth, not just retyped**: the ρ range was
+recomputed fresh from `results/geomcap.csv`, and `scratch/kaggle_clrs/main.py` was
+diffed byte-for-byte against `kaggle kernels pull` on the kernel actually running —
+identical. Commit early and often from here; a second loss should not require this.
+
+**Running now**
+- `geometry-h0bank` — RUNNING. 16 boundary prompts × 32 unseeded h₀ draws = 512
+  orbits. The powered, **pre-registered** test of D91's lead.
+  Analyse with `scripts/run_h0_within.py`, committed *before* the data existed,
+  fixing the window grid, statistic, null, threshold and decision rule.
+  **Do not change that file after the data lands.**
+- `geometry-clrs` — RUNNING. The CLRS-Text capability screen (§2). Kaggle's 2-slot
+  cap means these two occupy both; nothing else can launch until one finishes.
+
+**The three findings from this session a reader must not lose**
+- **D89** — `correct` scores only the FIRST TOKEN of gold; 8 of 21 battery families
+  have multi-token golds and 4 have them for every item, so `compare`'s 92% is
+  first-*digit* accuracy. D85's null survives a tokenisation-free re-test.
+- **D90** — h₀ alone decides the answer: gold rank varies in 6/8 prompts across h₀
+  (up to 6×), 3/8 split on correctness, and 0/8 vary when h₀ is seeded (p = 0.0023).
+  Every capability number in this project is a *distribution*, not a value.
+- **D91 — the lead, not a finding.** Correctness decodes at **68.4% (p = 0.010) at
+  unrolls 6–18** and 65.9% at 12–24, chance elsewhere out to 56. Does not survive
+  Bonferroni over 8 windows; n = 60. The location was predicted independently by
+  arXiv:2607.20594 (verified). `geometry-h0bank` is the powered replication.
+
+**Next, in order**
+1. Poll `geometry-h0bank` / `geometry-clrs`; pull and analyse whichever finishes
+   first with its already-written script (`run_h0_within.py` / the CLRS scorer).
+2. Analyse h0bank with the pre-registered script exactly as written. If a
+   transient window clears α = 0.00625 and the far tail does not, D91 replicates
+   and the correctness nulls (D79/D84/D85) narrow to the *converged* region.
+3. Score the CLRS screen; if any (algorithm, size) cell lands in 20–80%, bank
+   trajectories there next.
+4. Activation patching on cells with real dynamic range (§4a).
+5. The QK probe (§4b) — the supervisor's own open item, still 0% done.
+
+**Literature position** (`docs/related_work.md` for verification status). "Depth is
+a contraction" is scooped by Blayney et al. (verified title/abstract). What
+survives clean is **D88's same-computation control** and **D85's reliability-bounded
+null**. Several 2026 arXiv numbers reached me via scouting agents rather than PDFs
+and are marked unverified — **do not put them in the ledger without checking the
+PDF.**
+
+---
+
 ## 0. Four things settled from the model source, not from memory
 
 Read out of `raven_modeling_minimal.py` at the pinned revision
@@ -40,22 +94,39 @@ difficulty parameter. This is the single most useful fact in this document — s
 H1 is the settle/loop/drift taxonomy. B4 found loop and drift **only** when the
 compute budget is starved to `num_steps=16`, vanishing by 24.
 
-Because the map is autonomous and contractive (ρ ≈ 0.86 < 1, D52), the orbit
-**must** converge. A persistent "loop" would be a limit cycle and a persistent
-"drift" a non-convergent orbit; neither is available to a contraction. So
-loop-and-drift-at-16 is not a taxonomy of computations — it is a taxonomy of *where
-the recording stopped*, which is exactly D80's window law seen from another angle.
+**The autonomous-map fact is verified from source; the contraction is a
+MEASUREMENT, and the difference matters.** An autonomous map converges only if it is
+contractive — otherwise limit cycles and divergence are both available to it. So the
+argument "loop and drift cannot persist" is *conditional on ρ<1*, and stating it as
+though it were architectural was an overclaim on my part.
 
-The supervisor's intuition is right and the source confirms it: **more budget is
-more iterations of one fixed map, not passage through a schedule.** Diffusion feeds
-the timestep to the network, so its dynamics are non-autonomous and genuinely
-different at different `t`; Huginn's are not. **H1 as posed is not a well-formed
-hypothesis about this architecture**, and the honest disposition is to retire it with
-that reason stated, rather than to keep testing it with better rulers.
+**Measured, 2026-08-09, over all 504 geomcap orbits at all five windows (re-verified
+against `results/geomcap.csv` after the machine switch):** ρ ∈ **[0.808, 0.920]**,
+median 0.859, and **zero orbits at or above 0.98**, let alone 1.0. So on this task
+set the condition holds with a healthy margin, and the argument goes through. It does
+*not* establish ρ<1 for all inputs — 21 synthetic families at one token position is
+not the space of prompts, and the supervisor's point stands that a regime where
+contraction is not imposed is a different question.
 
-*What could still rescue a version of it:* if the contraction rate itself varied with
-the task, "settles fast / settles slow" would be a real dichotomy. That is H3's
-question, and §4 says how to test it against behaviour.
+Two things follow that the first draft of this section got wrong:
+
+1. **ρ varies systematically with the task** — per-family medians run 0.829
+   (`add_2d`) to 0.906 (`count16`), a real ordered spread. "Settles fast / settles
+   slow" is therefore a live graded property even though settle/loop/drift is not a
+   live taxonomy. But D85 already tested ρ against capability (ρ_Spearman = −0.131,
+   n.s.) and against prompt length (**+0.665**), so the variation that exists is
+   length, not difficulty.
+2. **Contraction may be something Huginn's TRAINING imposes**, not a property of
+   looped architectures generally — D80(7) measured the trained arm collapsing 8×
+   faster than six untrained weight draws, which diffuse. If the hypothesis is about
+   models where that has not been imposed, this model cannot test it, and saying so
+   is different from refuting it.
+
+The supervisor's intuition about the schedule is right and the source confirms it:
+**more budget is more iterations of one fixed map, not passage through a schedule.**
+Diffusion feeds the timestep to the network; Huginn's `block_idx` reaches only the
+KV-cache slot. So *within the measured ρ range*, loop-and-drift-at-16 is a taxonomy
+of where the recording stopped rather than of computations — D80's window law again.
 
 ---
 

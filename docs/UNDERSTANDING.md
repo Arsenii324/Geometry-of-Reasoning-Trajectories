@@ -11,17 +11,24 @@ is what the D68/D69 work concluded at the time and the difference is informative
 
 **One sentence: the geometry of Huginn's latent trajectory is set by the weights,
 by how far the contraction has run, and by the input — down to a single token,
-whether or not that token changes what the model computes — but not by whether the
-computation succeeded.**
+whether or not that token changes what the model computes — and carries, at most, a
+weak and not-yet-confirmed trace of whether the computation succeeded.**
 
-*(This sentence has been rewritten twice in one day, and the history is the
+*(This sentence has been rewritten three times in one day, and the history is the
 evidence. It began as "…not of the input or of the computation". D84 refuted the
 first half — the shape identifies the input at ceiling — but could not separate task
 from prompt length, since no two families in any bank share a token count. D87 then
 settled that: at verified-identical token counts, with prompts differing in exactly
-one marker character, the shape separates two computations at 96.9–100%. What
-survives every revision is the second half: the outcome is what the path does not
-carry.)*
+one marker character, the shape separates two computations at 96.9–100%. The second
+half — "not by whether the computation succeeded" — held through D79/D84/D85's
+hand-picked-statistic and between-family tests, but D92 found that the SAME
+full-shape classifier, run within (family, gold) strata with its centring fitted
+inside each CV fold rather than on the pooled data, decodes correctness at 61.0%
+against a 50.2% null (p = 0.030, stable across CV seeds) — small, driven by 2 of 3
+strata, not pre-registered, but converging with an independently designed test
+(D91) that found the same qualitative thing at unrolls 6–24 specifically. Neither
+confirms it. `geometry-h0bank`, launched before D91/D92 existed, is the powered
+test that will.)*
 
 That is a claim with three legs, and each is measured rather than argued.
 
@@ -126,18 +133,46 @@ predicts more that is not yet in. Two runs are in flight to test exactly that:
   as measured but narrows to single-token input sensitivity — which makes the main
   dissociation cleaner, since the thing the shape tracks is now demonstrably the
   input and the experiment that could have shown otherwise came back negative.
+- **A stale-CSV bug surfaced a real signal, D92.** `run_correctness_decode.py` was
+  fixed (D88 commit) to stratify by (family, gold) and fit its centring inside each
+  CV fold, closing the D72-shaped confound its first draft had — but the committed
+  CSV was never re-generated, so it sat showing the pre-fix numbers until a machine
+  switch's staleness check caught it. The corrected run: shape decodes correctness
+  at **61.0% against a 50.2% null, p = 0.030**, stable 0.010–0.062 across six CV
+  seeds, driven by `nth_item` (93.8%, p = 0.005) and `local_last` (74.6%, p = 0.020)
+  with `parity8` flat. Position does WORSE (57.8%, n.s.) — evidence against pure
+  residual family leakage, since both features are centred identically. Converges
+  with D91 (below) from an unrelated design.
+- `geometry-h0bank` — **running.** The powered, pre-registered settlement of D91 and
+  D92 together: 16 boundary prompts × 32 unseeded h₀ draws, the window grid and
+  decision rule fixed in `scripts/run_h0_within.py` before this data existed.
+- `geometry-clrs` — **running.** Capability screen on CLRS-Text, which is IN
+  Huginn's training mixture and has a clean integer difficulty knob — the
+  parametric task ladder this project has never had (the battery's two ladders,
+  `count4/8/16` and the Caesar family, are both floored or non-monotone, D89).
+
+**A lead the project cannot yet call a finding, D91.** Sliding a shape-code window
+along the unroll axis, correctness decodes at **68.4% (p = 0.010) at unrolls 6–18**
+and 65.9% at 12–24, chance elsewhere out to 56. It does not survive Bonferroni over
+the 8 windows tested (n = 60), but the location was predicted independently by
+arXiv:2607.20594 ("tail instruments only see the converged region where they
+provably saturate; the algorithm, if there is one, lives in the head") — verified by
+title, authors and the quoted claim, not merely summarised.
 
 **The strongest objection I cannot yet answer.** Everything above is about
 statistics of the *path*. It does not show that no geometric description could
-encode the computation — only that the four this project can justify do not, at
-the scales and windows measured, on this model. A representation living in a
-direction none of these functionals is sensitive to would be invisible here, and
-D79(5) says so explicitly.
+encode the computation — only that the four hand-picked ones this project first
+justified do not, and that the between-family test (D85) does not either, at the
+scales and windows measured, on this model. D92 and D91 are the first evidence that
+a MORE searching instrument — the full shape code, properly stratified — might see
+something those miss, and neither is confirmed yet.
 
 **The second-strongest.** All of (a)–(c) is the trained arm at one token position on
 synthetic tasks. D76 supplies the untrained contrast for the geometry but not for
 the capability axis, and no natural-language reasoning benchmark has been run
-end-to-end with this instrumentation.
+end-to-end with this instrumentation. `geometry-clrs` is the first step toward
+closing this — CLRS-Text is in Huginn's own pre-training data, so "the model looks
+incapable because the prompts are off-distribution" stops being a live explanation.
 
 ---
 

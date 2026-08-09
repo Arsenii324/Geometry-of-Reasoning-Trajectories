@@ -34,6 +34,8 @@ live state without asking. Updated 2026-08-09.
 | `geometry-marker` | Kaggle T4 | the control D87 needs: A and C defined IDENTICALLY, B differently | **DONE -> D88.** A-vs-C (same computation) 98.0-100% against A-vs-B's 96.0-100%. **No gap: the shape reads the TOKEN, not the computation.** The pre-registered prediction failed and is recorded as the result |
 | `geometry-depthacc` | Kaggle T4 | does the model SAY what its rank curve says it knows? closes D68(5) | **DONE -> D86.** Exact match hits 0% by r=8 while containment rises to 33-39% (p = 0.0215): depth wraps the answer in prose. rank->output link phi = +0.600 at r=4, gone by r=32 |
 | `geometry-battery` | Kaggle T4 | 21-family capability screen, graded readout | **DONE -> D75.** 5 families >=50%, control at chance 21/21, and B6 unblocked |
+| `geometry-h0bank` | Kaggle T4 | **the powered, PRE-REGISTERED test of D91's lead** — 16 boundary prompts x 32 unseeded h_0 draws, within-ITEM correctness decode with the window grid fixed in advance | RUNNING |
+| `geometry-clrs` | Kaggle T4 | capability screen on CLRS-Text, which is IN Huginn's training mixture and has a clean integer difficulty knob — the task gap the supervisor named | RUNNING |
 | `geom-eigenplane` | DataSphere g1.1, job `bt1mvf3juvrcjpl6kl1i` | does the orbit rotate at the rate the Jacobian predicts? | **DONE** -- no: 0.24x, and D74 explains why |
 | `geom-bank` | DataSphere g1.1, job `bt1hd3oqb17690amgolg` | B14 -- bank raw states for BOTH arms; the untrained control D74 needs | **DONE -> D76.** Training flips the step cosine -0.379 -> +0.541, disjoint at every window |
 | `geom-seeds` | DataSphere g1.1 | closes D76's one-draw limit | **DONE.** Five draws agree (cos -0.339..-0.389); trained/untrained completely disjoint, p=1.05e-12 |
@@ -581,3 +583,5 @@ D40/D41/D48/D53 have never been re-run with either a graded capability axis or a
 target outside the input bag. B10 and B11 measure *new* tasks; the original nulls
 still stand on the old instrument. Until they are redone, "content is
 architectural" is supported only indirectly.
+
+| — | **DEQUEUED UNRUN 2026-08-09: `kaggle_capcontent` and `kaggle_promptdepth`.** Both were queued from a local session that predates D70–D89. `capcontent` tested UNDERSTANDING 6.1 (is "content is architectural" an artefact of zero-capability tasks) with a linear+nonlinear probe of the answer-position state — the design D70 showed is at ceiling in both arms and D73 showed is near-tautological, since Huginn re-injects the prompt every unroll and random weights decode a count at R²=0.99999. `promptdepth` swept prompt phrasing × recurrence depth; D85/D86 supersede it with 21 families and a graded readout. Neither would add anything to the current record. The supervisor killed the running `geometry-cap-content` job. | **dropped** |

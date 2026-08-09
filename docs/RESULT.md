@@ -17,12 +17,17 @@ being performed. We measure that directly and find a dissociation:
 
 > **The shape of the latent trajectory identifies the input with near-perfect
 > fidelity — enough to separate two prompts differing in a single token, whether or
-> not that token changes what the model computes — and carries essentially no
-> information about whether the computation succeeded.**
+> not that token changes what the model computes — and carries, at most, a weak and
+> not-yet-confirmed trace of whether the computation succeeded.**
 
 Both halves are measured on the same orbits with the same classifier, and both
-halves are bounded: the positive at ceiling, the negative against a measured
-detection floor.
+halves are bounded: the positive at ceiling (D84, D87, D88), the negative side
+across every hand-picked-statistic and between-family test (D79, D85) against a
+measured reliability ceiling — but the single most sensitive test run, a
+within-stratum full-shape classifier, finds a small, reproducible, family-concentrated
+signal (D92) that converges with an independent lead from a second design (D91).
+Neither is individually powered to confirm it; the powered, pre-registered
+replication is in flight (`geometry-h0bank`).
 
 ---
 
@@ -96,9 +101,9 @@ computation — failed, and this is the result rather than a reframing of it.
 
 ---
 
-## 3. The shape does not encode the outcome
+## 3. The shape mostly does not encode the outcome — with one loose thread
 
-The same orbits, the same classifier, and three independent ways of asking:
+Every HAND-PICKED-statistic and BETWEEN-family test is a clean null:
 
 - **Across 21 task families spanning 0% to 100% accuracy**, no geometric statistic
   tracks capability at any of five windows — **0 of 18 usable cells** — while 6 of 18
@@ -109,20 +114,36 @@ The same orbits, the same classifier, and three independent ways of asking:
   not differ in effective dimensionality, step cosine, contraction rate or settling
   time — in the one family D79 could test, and in two more from the new bank (0 of 8
   cells at α = 5.95e-04).
-- **By the full shape classifier**, correctness is not decodable where family
-  identity has been conditioned out, against a measured detection floor.
 
-The reliability ceiling is what makes this a result rather than a shrug. This
+The reliability ceiling is what makes these results rather than a shrug. This
 project has twice reported a null from an instrument that could not have moved:
 D70 read a content gap of ~0 off a probe pinned at R² ≥ 0.87 in both arms, and D72's
 design admitted 300 label arrangements so no data could reach α. Each null above
 carries the number it could have shown.
 
+**The one test that is NOT a clean null is the most sensitive one.** The full
+shape-code classifier, stratified by (family, gold value) with its centring fitted
+inside each cross-validation fold, decodes correctness at **61.0% balanced accuracy
+against a within-stratum null of 50.2%, p = 0.030** — stable 0.010–0.062 across six
+CV seeds — pooled over 86 orbits in 5 strata from 4 banks. It is driven by 2 of 3
+well-populated strata (`nth_item` 93.8%, p = 0.005; `local_last` 74.6%, p = 0.020)
+with the third flat (`parity8` 43.8%, n.s.), and the design's own detection floor
+shows it reliably catches only effects at or above ~1 standard deviation (D92).
+That is a small, fragile result — not powered, not pre-registered, carried by a
+minority of strata — but it converges with an independently designed sliding-window
+test that found correctness decodable specifically at unrolls 6–24 and nowhere else
+(D91), in the location an unrelated theoretical paper predicts the algorithm should
+live if it lives anywhere (arXiv:2607.20594). Two different designs landing on the
+same qualitative answer is worth more than either alone, and neither is confirmatory
+by itself. The powered, pre-registered test (`geometry-h0bank`,
+`scripts/run_h0_within.py`) was launched specifically to settle it.
+
 ---
 
 ## 4. Where the computation does live
 
-The trajectory's *shape* is blind to the outcome; the *readout* is not.
+The trajectory's hand-picked statistics are blind to the outcome, and its full
+shape mostly is too (§3); the *readout* carries it clearly.
 
 - Capability spans **0% to 100%** across the 21 families (D75, D85), so there is a
   computation to track.
@@ -135,8 +156,9 @@ The trajectory's *shape* is blind to the outcome; the *readout* is not.
   (φ = +0.600); by r=32 nothing is emitted exactly at all and the link is gone (D86).
 
 So the answer is available early and stays available; what deepening changes is the
-*form* of the output, not the presence of the content. That is the same object the
-shape statistics are blind to.
+*form* of the output, not the presence of the content. The hand-picked statistics
+and between-family tests are blind to that content (§3); whether the full shape
+classifier's weak signal (D92) is a trace of it is exactly what remains open.
 
 ---
 
@@ -167,7 +189,10 @@ computation. On this model it traces the input and the clock. Concretely:
   instrumentation.
 - **The marker sits at the end of the prompt**, adjacent to the read position. A
   marker placed early might behave differently, and that is not tested (D88(6)).
-- **The correctness null is bounded, not absolute.** It rules out differences above
-  the measured detection floor and says nothing below it, and it is a linear
-  classifier on one shape code.
+- **The correctness picture is not settled.** The clean nulls (D79, D85) rule out
+  differences above their measured detection floors and say nothing below them;
+  the full-shape within-stratum test is not a clean null (D92, 61.0% vs 50.2%,
+  p = 0.030) but is small, not pre-registered, and carried by 2 of 3 strata. The
+  powered replication (`geometry-h0bank`) is in flight and will supersede both
+  readings.
 - **One model.** Every number is Huginn-3.5B at a pinned revision.
