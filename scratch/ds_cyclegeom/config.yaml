@@ -1,0 +1,19 @@
+name: cycle-geometry-vs-difficulty
+desc: >
+  H2 asked about the object D98 found. Every prior H2 instrument measured a
+  CONVERGING PATH and D80 showed they were reading a clock; D98 found a large,
+  stable period-4 cycle across the four core blocks that every prior instrument
+  was blind to by construction. This measures the cycle's geometry (perimeter,
+  pairwise vertex distances, planarity, area, radius) against difficulty on
+  three LENGTH-CONSTANT ladders -- including the fixed-body binary-search
+  construction (fixed sorted list, vary only the target) that the deep-research
+  pass identified as the single most valuable available property. The
+  pre-registered prediction is NEGATIVE.
+cmd: python job.py ${RESULT}
+outputs:
+  - cyclegeom.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
