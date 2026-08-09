@@ -1,0 +1,20 @@
+name: blockbank-per-block-states
+desc: >
+  Banks the state after EVERY one of the four core blocks at every unroll, on the
+  lenmatch marker design (two arms differing in exactly one token, token count
+  verified per pair in-kernel). Unblocks three threads at once: A3 (the cycle
+  RESIDUAL, whose per-block states exist nowhere -- ds_blockcycle holds 6 summary
+  records and ds_cyclegeom 63 feature rows), D123 per-block (is the H1 signature a
+  within-block or an across-block object?), and a D98 replication at matched
+  length. No analysis in the kernel by design: D105 died with nothing saved
+  because banking and analysis shared one 12-hour job. Imports nothing from the
+  repo, so the A4b ImportError class cannot apply. Output is a tarball because the
+  run writes ~128 .npy files.
+cmd: python job.py ${RESULT}
+outputs:
+  - blockbank.tgz: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1

@@ -1,5 +1,11 @@
 """Block-resolved trajectories at a VERIFIED-IDENTICAL token count. A bank, not a test.
 
+DATASPHERE PORT of `scratch/kaggle_blockbank/main.py` -- Kaggle's weekly 30 h GPU quota
+is exhausted. Identical banking logic; the only changes are the pip preamble, a local
+OUTDIR, and a tarball at the end because DataSphere `outputs:` collects declared FILES
+and this run writes ~128 of them. It imports NOTHING from the repo, so the A4b
+ImportError class cannot apply here.
+
 WHY THIS RUN EXISTS. Three separate threads are blocked on the same missing data,
 and none of them can be answered from anything currently banked:
 
@@ -49,6 +55,9 @@ GATES, all before any state is written:
 
 import json
 import os
+import subprocess
+import sys
+import tarfile
 import time
 import traceback
 
@@ -59,8 +68,8 @@ REVISION = "bb6621b65e90b6a4b9b29ef88dc83866d450470c"
 NUM_STEPS = 64
 N_ITEMS = 22          # per pair-type; 3 types x 2 markers x 22 = 132 orbits
 SEQ_LEN = 8
-OUTDIR = "/kaggle/working/out"
-WALL_BUDGET_S = 30000  # bank, then stop cleanly; Kaggle's limit is 43200
+OUTDIR = os.path.abspath("out")
+WALL_BUDGET_S = 9000   # DataSphere port; bank, then stop cleanly
 
 
 def build_items(rng):
@@ -101,9 +110,18 @@ def build_items(rng):
     return items
 
 
+def run(cmd):
+    print(f"Running: {cmd}", flush=True)
+    subprocess.check_call(cmd, shell=True)
+
+
 def main():
+    out_tar = (os.path.abspath(sys.argv[1]) if len(sys.argv) > 1
+               else os.path.abspath("blockbank.tgz"))
     os.makedirs(OUTDIR, exist_ok=True)
     t0 = time.time()
+    run("pip install torch==2.5.1")
+    run("pip install transformers==4.53.3 accelerate safetensors")
     import random
 
     import torch
@@ -244,6 +262,9 @@ def main():
     print(f"  token counts banked: {nt}", flush=True)
     print("\nno analysis here by design -- A3, per-block TDA and the D98 replication "
           "are local scripts over this bank.", flush=True)
+    with tarfile.open(out_tar, "w:gz") as tf:
+        tf.add(OUTDIR, arcname="out")
+    print(f"wrote {out_tar} ({os.path.getsize(out_tar) / 1e6:.1f} MB)", flush=True)
     print("DONE", flush=True)
 
 
