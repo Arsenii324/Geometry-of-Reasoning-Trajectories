@@ -177,6 +177,11 @@ from a template, so **write results incrementally rather than once at the end.**
 - **Launch from the config's own directory.** `cmd: python job.py` is resolved
   relative to the CWD, so `-c scratch/foo/config.yaml` from the repo root dies with
   `FileNotFoundError: job.py` before contacting the API.
+- **The local CLI dying does NOT kill the job.** On 2026-08-09 `job execute` crashed
+  locally with `AssertionError` in `auth.get_md` (`assert current_iam_token`) — an IAM
+  token refresh failing in the attached client. The job stayed `EXECUTING` server-side
+  and completed normally. Treat a local crash as a lost log stream, not a lost run:
+  confirm with `job list -p <PROJECT>` before relaunching, or you will pay twice.
 - **Do not pipe `job execute` through `grep`.** It streams; grep block-buffers and
   the launch looks silent. Check with `job list -p <PROJECT>` instead.
 - `job get` takes `--id <ID>` alone — no `-p`. `job execute` takes both
