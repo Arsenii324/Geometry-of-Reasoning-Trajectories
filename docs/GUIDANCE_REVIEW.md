@@ -125,6 +125,23 @@ Stated plainly so this review is not mistaken for an argument against the guidan
   entirely. Without it, D96 would have been published from a spy reading the
   prelude block.
 
+## 6. The error I made twice, which no rule caused
+
+Worth recording separately, because it is not a rule-reading failure but a habit
+one. **I quoted one item's spread as though it were a range, twice in one day.**
+First in D98 ("per-block residual 0.09–0.11", which was `echo_digit`'s four
+per-block values and matched no prompt's across-prompt range). Then — *after*
+identifying and fixing that — again in D99, where "40 independent orbits, median
+1.30e-04" turned out to be `sorted(glob)[:40]`, i.e. **32 replicates of
+`add1_i08` plus 8 of `add1_i10`: 1.25 items.** The true population of 512 orbits
+gives a median 2.6× smaller.
+
+Both survived my own review and were caught by an auditor recomputing from the
+raw files. The generalisable guard, now applied: **whenever a range or an n is
+quoted, print the number of independent units behind it in the same breath** —
+`n_prompts`, not `n_files`. A convenience slice (`[:40]`, `head`, a glob order)
+is never a sample.
+
 **The pattern across today:** the rules that mandate *checking* paid for
 themselves many times over. The rules that mandate *restraint* (§2, §3, §7) each
 cost something when read literally, because each was written against a real past
