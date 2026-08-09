@@ -1,0 +1,20 @@
+name: embsep-does-the-embedding-select-the-regime
+desc: >
+  A23: is the regime-selecting property linear in the TOKEN EMBEDDING? D132 showed
+  one noun flips the map between settling and a damped period-6 rotation with
+  computation, answer, token count and sequences fixed; D134 refuted meaning, form
+  and tokenisation, leaving the embedding by elimination. The first pass tested the
+  early STATE -- the prelude's NONLINEAR output of the embedding -- and failed on
+  that proxy at 16 nouns. This reads the embedding matrix rows directly and widens
+  to 51 nouns, which D134 makes affordable: rotation is DETERMINISTIC per noun
+  (24/24 or 0/24, never mixed), so 4 orbits per noun suffice for the label and the
+  budget buys nouns instead of repeats. A determinism gate VOIDs the run if any noun
+  comes back mixed, and five nouns must reproduce D134's labels.
+cmd: python job.py ${RESULT}
+outputs:
+  - embsep.tgz: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
