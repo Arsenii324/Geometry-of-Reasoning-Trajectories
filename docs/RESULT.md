@@ -23,11 +23,33 @@ being performed. We measure that directly and find a dissociation:
 Both halves are measured on the same orbits with the same classifier, and both
 halves are bounded: the positive at ceiling (D84, D87, D88), the negative side
 across every hand-picked-statistic and between-family test (D79, D85) against a
-measured reliability ceiling — but the single most sensitive test run, a
-within-stratum full-shape classifier, finds a small, reproducible, family-concentrated
-signal (D92) that converges with an independent lead from a second design (D91).
-Neither is individually powered to confirm it; the powered, pre-registered
-replication is in flight (`geometry-h0bank`).
+measured reliability ceiling. The single most sensitive test run, a within-stratum
+full-shape classifier, finds a small, reproducible, family-concentrated signal
+(D92) that converged with an independent lead from a second design (D91) —
+**and the powered, pre-registered replication of that lead has now returned NOT
+CONFIRMED (D93), under an instrument whose own detection floor was found broken,
+fixed, and then shown to catch a planted 0.5 sd effect 100% of the time.** So D91's
+specific transient-window mechanism is ruled out rather than merely unconfirmed;
+D92's between-item result is a different test and stands, still unreplicated.
+
+**A second claim, established the same day and independent of the first:**
+
+> **The iteration is a uniform contraction, and no loop or drift regime exists
+> anywhere we have looked.** The per-step contraction factor measured the honest
+> way — between two orbits of the *same* prompt from *different* random
+> initialisations — is ρ = 0.855, with **0.0% of ~960 orbit pairs at ρ ≥ 1**
+> (D94), and its per-prompt range 0.832–0.901 sits *inside* the interval
+> [0.808, 0.920] obtained by a completely different estimator. Independently,
+> classifying every token position's own path with a settle/loop/drift
+> classifier gives **179 of 179 positions `settle`** (D97).
+
+That second claim carries an explicit caveat we are testing rather than asserting:
+both instruments read the state at the *same* block of the recurrent stack. If
+"loop" in this literature means a cycle *across* the blocks within one iteration —
+each block converging to its own distinct fixed point — then every block converging
+is consistent with a cycle rather than evidence against one, and these results
+would need restating as "no loop in the iteration-to-iteration map at a fixed
+block". That test is running.
 
 ---
 
@@ -138,6 +160,34 @@ same qualitative answer is worth more than either alone, and neither is confirma
 by itself. The powered, pre-registered test (`geometry-h0bank`,
 `scripts/run_h0_within.py`) was launched specifically to settle it.
 
+**It has now returned, and D91's lead does not replicate (D93).** 512 orbits from
+16 boundary prompts × 32 unseeded initialisations, 10 of 16 prompts splitting on
+correctness so the pre-registered gate passed. Best window (unrolls 6–18): **52.0%
+against a 46.8% null, p = 0.0125** — missing the corrected α = 0.00625 by about
+2×, with no far-tail window significant either. The decision rule, the window grid,
+the statistic and the null were all fixed in a file committed before the data
+existed.
+
+**The reason that null is worth believing is that the instrument was caught failing
+first.** The run's planted-effect detection floor reported 0% detection at every
+effect size *including 1.0 sd*, which reads as a hopelessly underpowered design and
+is in fact an arithmetic impossibility: it used 40 permutations against α = 0.00625,
+and the smallest p-value reachable with 40 permutations is 1/41 ≈ 0.024. The check
+could not have fired whatever the data said. Re-run at 400 permutations it detects
+a planted **0.5 sd** effect **100%** of the time. So the design would have seen an
+effect several times smaller than what D91 reported, and saw nothing.
+
+Its timing control adds one more qualification: `best_depth` alone — *when* the
+answer peaks, which varies 7–25 within a single prompt — decodes correctness about
+as well as the best shape window does. So even the near-miss is not cleanly about
+shape.
+
+One loose thread is left honestly open: the *position* comparison arm (raw state
+features, not shape-invariant) reaches p = 0.0050 at that same 6–18 window, which
+clears the per-window threshold. It was never part of the pre-registered gate and
+would not survive correction across the full 24-row grid actually tested, so it is
+reported as an uncorrected lead, not a finding.
+
 ---
 
 ## 4. Where the computation does live
@@ -167,6 +217,15 @@ classifier's weak signal (D92) is a trace of it is exactly what remains open.
 The natural inference from a converging latent path is that its geometry traces the
 computation. On this model it traces the input and the clock. Concretely:
 
+0. **The iteration is a contraction, measured two ways, and that governs what any
+   intervention can do.** ρ = 0.855 between orbits of the same prompt from
+   different initialisations, 0 of ~960 pairs non-contracting (D94); 179 of 179
+   token positions classify as `settle` (D97). A perturbation injected at
+   iteration *r* is attenuated by ρ^(remaining steps) — about 150× by iteration 32
+   — so **causal interventions late in the recurrence are erased before the output
+   head reads them**, which is what a patching experiment observed directly before
+   failing its own supply gate (D95). Anyone planning activation patching on a
+   recurrent-depth model should expect this.
 1. **Shape statistics are largely a depth readout.** Report the window or report
    nothing: the same orbits move ~3× more along depth than across prompts.
 2. **A geometric difference between conditions is a difference between INPUTS until
@@ -183,16 +242,36 @@ computation. On this model it traces the input and the clock. Concretely:
 
 ## What is not established
 
-- **Trained arm, one token position, synthetic tasks.** D80(7) supplies the untrained
-  contrast for the *geometry* but not for the capability axis, and no
-  natural-language reasoning benchmark has been run end to end with this
-  instrumentation.
+- **Trained arm, synthetic tasks.** D80(7) supplies the untrained contrast for the
+  *geometry* but not for the capability axis, and no natural-language reasoning
+  benchmark has been run end to end with this instrumentation. *(The "one token
+  position" limitation that stood here was CLOSED by D97: all 179 positions were
+  measured, they converge in a tight 31–36 interquartile band, and the answer
+  position sits at a mean 30th percentile — so single-position reading was not
+  sampling an unrepresentative phase.)*
+- **Everything is read at ONE BLOCK of the recurrent stack**, and this is now the
+  load-bearing caveat. If the literature's "loop" is a cycle *across* the four core
+  blocks — each converging to its own fixed point — then D94 and D97 are consistent
+  with a cycle rather than evidence against one. The test is running; until it
+  returns, the contraction claim is scoped to the iteration-to-iteration map at a
+  fixed block.
 - **The marker sits at the end of the prompt**, adjacent to the read position. A
   marker placed early might behave differently, and that is not tested (D88(6)).
-- **The correctness picture is not settled.** The clean nulls (D79, D85) rule out
-  differences above their measured detection floors and say nothing below them;
-  the full-shape within-stratum test is not a clean null (D92, 61.0% vs 50.2%,
-  p = 0.030) but is small, not pre-registered, and carried by 2 of 3 strata. The
-  powered replication (`geometry-h0bank`) is in flight and will supersede both
-  readings.
+- **The correctness picture is narrowed but not closed.** The clean nulls (D79,
+  D85) rule out differences above their measured detection floors and say nothing
+  below them. D91's sliding-window lead is now **ruled out** by a powered
+  pre-registered replication under a validated instrument (D93). D92's
+  between-item stratified result (61.0% vs 50.2%, p = 0.030) is untouched by that
+  test and remains small, not pre-registered, carried by 2 of 3 strata, and
+  unreplicated.
+- **Causal evidence is absent, not negative.** The one activation-patching run
+  built and validated its instrument (a no-op replay reproduced the original rank
+  curve exactly) but failed its own pre-registered supply gate — it needed 4 of 9
+  prompts to split on correctness and got 2 — and declared itself VOID rather than
+  null (D95). Nothing causal is claimed.
+- **The binding constraint is now task supply, not instrumentation.** Two
+  experiments have died on it. Tasks with clean difficulty knobs are synthetic and
+  score near zero; tasks the model genuinely does (GSM8K 32.6%, ARC-E 69.9% at
+  r=32, from the model's own paper) are natural-language with uncontrolled
+  difficulty and multi-token answers. Runs aimed squarely at this are in flight.
 - **One model.** Every number is Huginn-3.5B at a pinned revision.
