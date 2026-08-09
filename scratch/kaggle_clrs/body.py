@@ -58,11 +58,28 @@ REVISION = "bb6621b65e90b6a4b9b29ef88dc83866d450470c"
 DATASET = "tomg-group-umd/CLRS-Text-train"
 OUTDIR = "/kaggle/working"
 
-N_ITEMS = 6              # per (algorithm, size) cell
+N_ITEMS = 4              # per (algorithm, size) cell -- was 6; see DEPTHS below
 MAX_NEW = 24
-DEPTHS = (4, 32)         # D86's bracket: exact peaks shallow, containment rises deep
+# DEPTHS WAS (4, 32) AND COULD NOT FINISH (D105). Depth 4 took 6126 s on 222 items;
+# depth 32 is 8x the unrolls, so the pair needed ~55500 s against Kaggle's 43200 s
+# limit, and because the dump happened only at the END of a depth the overrun
+# produced NOTHING. (4, 8) costs ~6126 + ~12250 = ~18400 s, which fits with margin
+# even after few-shot exemplars lengthen every prompt.
+# KEPT AT (4, 32) DELIBERATELY. An earlier fix dropped it to (4, 8) to fit the
+# budget, and `test_clrs_brackets_the_depth_where_d86_found_the_transition` caught
+# that this destroys the design: D86's finding is that exact-match peaks SHALLOW
+# while containment rises DEEP, and only a 4-vs-32 bracket tests it. The budget is
+# met by cutting N_ITEMS 6 -> 4 (222 -> ~148 items) instead, and by the two
+# protections D105 lacked: per-batch dumps and the wall guard below, which together
+# mean an overrun costs the tail of a depth rather than everything.
+DEPTHS = (4, 32)
+WALL_BUDGET_S = 34000    # stop cleanly well inside Kaggle's 12 h, having saved
 N_ALGOS = 10
 SIZE_BINS = (4, 8, 12, 16)   # problem sizes, read off the input list length
+N_SHOTS = 2              # same-algorithm exemplars, selected PER ITEM excluding itself
+INSTRUCTION = ("Answer with only the final value after the last '|'. "
+               "Do not restate the trace.")
+ANSWER_PREFIX = "Final answer: "
 
 
 def final_answer(ans):
@@ -149,32 +166,84 @@ def main():
     assert_generation_works(model, tok, chat=True)
     print("P1: generation gate PASSED", flush=True)
 
+    # FEW-SHOT + A STRICT ANSWER PREFIX. D105 scored 0.0% exact with a bare
+    # question and no exemplars, which the deep-research pass says cannot be read
+    # as a capability floor -- and this project's own D69 measured one added
+    # instruction moving a family 0% -> 83%. Exemplars are drawn from the SAME
+    # algorithm as the item so the format is demonstrated, and are taken from
+    # items NOT scored, so no item ever sees its own answer.
+    by_algo: dict[str, list] = {}
     for it in items:
-        text = tok.apply_chat_template([{"role": "user", "content": it["question"]}],
+        by_algo.setdefault(it["algo"], []).append(it)
+
+    for it in items:
+        # Exemplars from the SAME algorithm but never this item: every item is
+        # scored, so drawing shots from a fixed prefix of the group would hand
+        # items 0..N_SHOTS-1 their own gold. Selecting per item is the fix, and
+        # the leakage gate below verifies it rather than trusting it.
+        pool = [d for d in by_algo[it["algo"]] if d is not it][:N_SHOTS]
+        shot_text = "".join(
+            f"{d['question']}\n{ANSWER_PREFIX}{d['gold']}\n\n" for d in pool)
+        prompt = (f"{INSTRUCTION}\n\n{shot_text}"
+                  f"{it['question']}\n{ANSWER_PREFIX}")
+        text = tok.apply_chat_template([{"role": "user", "content": prompt}],
                                        tokenize=False, add_generation_prompt=True)
         it["text"] = text
         it["n_tokens"] = int(tok(text, add_special_tokens=False,
                                  return_tensors="pt").input_ids.shape[1])
 
+    # NO ITEM MAY SEE ITS OWN ANSWER. An exemplar drawn from the scored set would
+    # hand the model the gold it is being tested on; check it rather than assume.
+    # Check QUESTION IDENTITY, not gold value. CLRS golds are small integers, so
+    # two items in one cell routinely share one; a value-based check would read
+    # that coincidence as leakage and abort a legitimate run. What actually
+    # matters is whether an item appears as its OWN exemplar.
+    leaked = [it["algo"] for it in items
+              if it["text"].count(it["question"]) > 1]
+    if leaked:
+        print(f"  LEAKAGE GATE FAILED: {len(leaked)} items contain their own gold "
+              f"in an exemplar -- refusing to score. Algos: {sorted(set(leaked))}",
+              flush=True)
+        return
+    print(f"  leakage gate PASSED ({len(items)} items, {N_SHOTS}-shot)", flush=True)
+
     records = []
     t0 = time.time()
+    BATCH = 24
     for depth in DEPTHS:
+        if time.time() - t0 > WALL_BUDGET_S:
+            print(f"  wall budget {WALL_BUDGET_S}s reached before depth {depth} -- "
+                  f"stopping cleanly with {len(records)} records SAVED", flush=True)
+            break
         try:
-            outs = batched_generate(model, tok, [i["text"] for i in items],
-                                    max_new=MAX_NEW, num_steps=depth, verbose=False)
+            # PER-BATCH, NOT PER-DEPTH. D105 lost 4.8 hours of depth-32 work because
+            # the dump happened only after a whole depth finished.
+            outs = []
+            for b0 in range(0, len(items), BATCH):
+                chunk = items[b0:b0 + BATCH]
+                outs.extend(batched_generate(
+                    model, tok, [i["text"] for i in chunk],
+                    max_new=MAX_NEW, num_steps=depth, verbose=False))
+                for it, o in zip(chunk, outs[b0:b0 + len(chunk)]):
+                    ex, ct = score(o, it["gold"])
+                    records.append({k: it[k] for k in ("algo", "size", "n_raw",
+                                                       "gold", "n_tokens", "question")}
+                                   | {"depth": depth, "output": o,
+                                      "exact": bool(ex), "contains": bool(ct)})
+                with open(os.path.join(OUTDIR, "clrs.json"), "w") as fh:
+                    json.dump(records, fh)
+                done = b0 + len(chunk)
+                print(f"    depth {depth:>3} [{done}/{len(items)}] "
+                      f"elapsed {time.time()-t0:.0f}s, saved", flush=True)
+                if time.time() - t0 > WALL_BUDGET_S:
+                    print("    wall budget reached mid-depth -- saved and stopping",
+                          flush=True)
+                    break
         except Exception as exc:
             print(f"  depth {depth}: FAILED {type(exc).__name__}: {exc}", flush=True)
             print(traceback.format_exc(), flush=True)
             continue
         deg = degenerate(outs)
-        for it, o in zip(items, outs):
-            ex, ct = score(o, it["gold"])
-            records.append({k: it[k] for k in ("algo", "size", "n_raw", "gold",
-                                               "n_tokens", "question")}
-                           | {"depth": depth, "output": o, "exact": bool(ex),
-                              "contains": bool(ct)})
-        with open(os.path.join(OUTDIR, "clrs.json"), "w") as fh:
-            json.dump(records, fh)
         here = [r for r in records if r["depth"] == depth]
         n = max(1, len(here))
         print(f"  depth {depth:>3}: exact {sum(r['exact'] for r in here) / n:.1%}, "
