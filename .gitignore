@@ -18,6 +18,7 @@
 # re-run. ~55 MB, no single file over 1 MB. The older kaggle_* dirs stay
 # ignored — they are full repo copies, not experiments.
 /scratch/*
+!/scratch/RUNS.json
 !/scratch/kaggle_precision_gate/
 !/scratch/kaggle_jacobian/
 !/scratch/kaggle_register/

@@ -1,0 +1,10 @@
+[
+  {"platform": "kaggle",     "id": "arsen4ikvar/geometry-census", "what": "observability census: which items have dynamic range"},
+  {"platform": "kaggle",     "id": "arsen4ikvar/geometry-clrs",   "what": "CLRS-Text capability screen (in training mixture)"},
+  {"platform": "datasphere", "id": "bt17krflb4tqtuffonu6",        "what": "D98 untrained control, untrained-only mode (3rd attempt)"},
+  {"platform": "datasphere", "id": "bt1vgfjlofgu7sut7kb1",        "what": "difficulty x depth grid -> D101"},
+  {"platform": "datasphere", "id": "bt17gufvdcnlp777c5cg",        "what": "cycle geometry vs difficulty -> D100"},
+  {"platform": "datasphere", "id": "bt1ji09c30ksvttripsv",        "what": "QK probe + D88 marker control -> D96"},
+  {"platform": "datasphere", "id": "bt1gefs432d0i0f8qhfo",        "what": "per-token shape census (G1) -> D97"},
+  {"platform": "datasphere", "id": "bt1f31eeijhc7t6mt859",        "what": "block-cycle test -> D98"}
+]

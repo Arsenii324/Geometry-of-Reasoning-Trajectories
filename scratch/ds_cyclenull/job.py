@@ -83,6 +83,13 @@ PROMPTS = [
 def main():
     out_path = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else \
         os.path.abspath("cyclenull.json")
+    # UNTRAINED-ONLY MODE. fp32 Huginn is ~13.5 GB and a T4 has 14.75 GB, so
+    # building a SECOND model in the same process peaks over the ceiling (the first
+    # attempt allocated 13.30 GB then died needing 1.29 GB more, almost certainly
+    # the untied embedding/lm_head copy). Running the untrained arm in its own
+    # process leaves the whole GPU free. The trained arm is already measured twice
+    # (D98, and this job's own first attempt), so the comparison is done offline.
+    untrained_only = len(sys.argv) > 2 and sys.argv[2] == "untrained_only"
     print(f"results -> {out_path}", flush=True)
 
     run("git clone -b claude/geometry-reasoning-recap-rhe0bp "
@@ -181,11 +188,15 @@ def main():
                   flush=True)
         json.dump(rows, open(out_path, "w"))
 
-    print("\n=== TRAINED ARM (also an independent replication of D98) ===", flush=True)
-    model = AutoModelForCausalLM.from_pretrained(
+    if untrained_only:
+        print("\n=== UNTRAINED-ONLY MODE: skipping the trained arm so the GPU is "
+              "empty for the fp32 build ===", flush=True)
+    model = None if untrained_only else AutoModelForCausalLM.from_pretrained(
         MODEL_ID, revision=REVISION, config=cfg, trust_remote_code=True,
         torch_dtype=torch.float32, low_cpu_mem_usage=True).to("cuda").eval()
-    sweep(model, "trained")
+    if model is not None:
+        print("\n=== TRAINED ARM (also an independent replication of D98) ===", flush=True)
+        sweep(model, "trained")
     # Keep the CLASS, never the instance: holding the model object here would pin
     # ~14 GB and OOM the untrained arm on the same 16 GB T4.
     # (the trained model is freed here; nothing holds a reference to the instance)
@@ -256,6 +267,24 @@ def main():
         verdicts.append((stat, float(np.median(a)), float(np.median(b)), p, disj))
         print(f"  {stat:>26}: trained {np.median(a):10.3f}  untrained {np.median(b):10.3f}"
               f"  p={p:.5f}{'  DISJOINT' if disj else ''}", flush=True)
+    # A VERDICT MUST NEVER BE PRINTED OVER AN EMPTY COMPARISON. The first run of
+    # this job had all three untrained seeds die on CUDA OOM, leaving `verdicts`
+    # empty -- and the `if not sig:` branch below then printed "NO statistic
+    # separates trained from untrained => D98's cycle is ARCHITECTURAL", a
+    # scientific conclusion drawn from zero data. That is exactly the D95 failure
+    # mode (a verdict over an empty result set) reproduced in a new instrument.
+    n_un = len([r for r in un if r.get("ok")])
+    if not verdicts or n_un == 0:
+        print(f"\n  **VOID, NOT NULL.** usable untrained measurements: {n_un}; "
+              f"comparable statistics: {len(verdicts)}.", flush=True)
+        print("  The untrained arm did not produce data, so NOTHING is concluded "
+              "about whether the cycle is learned or architectural.", flush=True)
+        print("  D98's control remains OUTSTANDING. Do not read this run as a null.",
+              flush=True)
+        json.dump({"rows": rows, "verdict": "VOID_no_untrained_data",
+                   "n_untrained_ok": n_un}, open(out_path, "w"))
+        print("DONE", flush=True)
+        return
     sig = [v for v in verdicts if v[3] < 0.05 / max(1, len(verdicts))]
     print(f"\n  statistics separating the arms after Bonferroni: {len(sig)}/{len(verdicts)}",
           flush=True)

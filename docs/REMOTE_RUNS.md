@@ -244,3 +244,47 @@ remote job they are the cheapest thing on the bill.
 - For a pre-registered analysis, run the script **unedited** first, record the
   result, and only then fix anything; note the fix and re-run separately so the
   pre-registered output and the corrected one are both in the record.
+
+
+---
+
+## 5. Monitoring and recovery — the practice, after a day of losing time to it
+
+**Use one command, not per-job polling.** `uv run python -m scripts.runs_status`
+reads `scratch/RUNS.json` and prints every job on both platforms in one table;
+`--pull` additionally downloads each finished DataSphere job and **reads its raw
+logs**, flagging the specific failure signatures this project has actually hit.
+Keep the registry current — a job missing from it is a job nobody is watching.
+
+**The status field is not the result, and this cost time three separate times in
+one day.** All three failures below reported something other than what happened:
+
+| what the platform said | what actually happened | how to tell |
+|---|---|---|
+| `ERROR`, with a `RemoteDisconnected` in stderr | **host-RAM OOM.** The disconnect had already retried and succeeded two lines later | look for `bash: ... Killed` — SIGKILL, further down than the traceback |
+| `SUCCESS`, printing a confident scientific verdict | **all three experimental arms had died of CUDA OOM**; the verdict came from an `if not sig:` branch firing on an empty list | check the arm counts before reading any conclusion |
+| `ERROR`, apparently total loss | **fully recoverable** — the declared `outputs:` file was collected anyway | `download-files --with-logs` and open the JSON |
+
+**Rules that follow.**
+
+1. **Write results incrementally, never once at the end.** DataSphere collects the
+   declared `outputs:` file even when the job ends in ERROR. Every completed arm
+   survived because of a `json.dump(...)` after each one. There is no resume:
+   `job attach` works only on a *running* job, `job fork` starts fresh.
+2. **A run that concludes must first check it has something to conclude from.**
+   Guard every verdict branch on the count of usable measurements and print
+   `VOID, NOT NULL` when that count is zero. An empty result set must never reach
+   an `if not significant:` branch. *(This is the D95 failure mode; it recurred in
+   a script written hours later, so the guard belongs in the template.)*
+3. **Two 3.5B fp32 models do not coexist in one T4 process.** fp32 Huginn is
+   ~13.5 GB against 14.75 GB of device memory, and `from_config` peaks about
+   1.29 GB higher than the resident model (the untied embedding/lm_head copy).
+   Put each arm in its **own job** and compare offline; a within-job A/B is not
+   worth the OOM risk when the reference arm is already banked.
+4. **Diagnose from the bottom of the log upward.** The proximate cause is the last
+   thing printed, not the first alarming thing. A retried-and-succeeded warning
+   above a fatal line is the most expensive shape of log to read carelessly.
+5. **Distinguish the three exit kinds before re-running:** `Killed` (host OOM,
+   change where the model is built), `OutOfMemoryError` (GPU OOM, split the job),
+   and a Python traceback (real bug). Each has a different fix, and guessing wrong
+   costs a full run — it did.

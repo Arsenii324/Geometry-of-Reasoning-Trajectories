@@ -8,7 +8,7 @@ desc: >
   untrained arms, loading and freeing one 3.5B model at a time. Pre-registered:
   the EXISTENCE of a cycle is expected to be architectural; the test is whether
   its geometry separates the arms.
-cmd: python job.py ${RESULT}
+cmd: python job.py ${RESULT} untrained_only
 outputs:
   - cyclenull.json: RESULT
 env:
