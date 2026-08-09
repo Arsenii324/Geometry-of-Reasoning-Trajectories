@@ -1,5 +1,15 @@
 [
   {
+    "platform": "datasphere",
+    "id": "bt1piv6aglul4h2nbtnk",
+    "what": "B1 e-stream potency curve (the causal instrument null)"
+  },
+  {
+    "platform": "datasphere",
+    "id": "bt1vuup3tfvmj2j3bmsr",
+    "what": "B4 powered addk H2 (pre-registered, correct unit)"
+  },
+  {
     "platform": "kaggle",
     "id": "arsen4ikvar/geometry-census",
     "what": "observability census: which items have dynamic range"

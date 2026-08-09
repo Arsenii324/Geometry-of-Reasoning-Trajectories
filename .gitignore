@@ -79,6 +79,8 @@
 !/scratch/ds_blockcycle/
 !/scratch/ds_cyclegeom/
 !/scratch/ds_cyclenull/
+!/scratch/ds_estream/
+!/scratch/ds_addk/
 # G1's raw state grids: the full [48 x n_tokens x 5280] tensor is 101 MB as
 # JSON, over GitHub's 100 MB per-file limit, so it is stored as compressed
 # npz alongside a 45 KB stats-only JSON. *.npz is ignored globally above.

@@ -132,6 +132,27 @@ def main() -> None:
         print(f"{r['platform']:>11} {st:>10}  {r['what']}  [{r['id']}]")
         if st in ("SUCCESS", "ERROR", "COMPLETE", "CANCELLED"):
             finished.append((r, st))
+    # CAPACITY, NOT JUST OCCUPANCY. On 2026-08-09 this tool listed running jobs and
+    # never said what was FREE, and the author consequently spent hours doing
+    # "zero-GPU" work while DataSphere sat idle -- anchoring on Kaggle's 2-slot cap
+    # because that was the constraint most recently hit. A monitor that shows only
+    # what is busy invites exactly that error.
+    kag_running = sum(1 for r, s in
+                      [(r, ds_status(r["id"]) if r["platform"] == "datasphere"
+                        else kaggle_status(r["id"])) for r in runs]
+                      if r["platform"] == "kaggle" and s in ("RUNNING", "QUEUED"))
+    ds_running = sum(1 for r, s in
+                     [(r, ds_status(r["id"]) if r["platform"] == "datasphere"
+                       else kaggle_status(r["id"])) for r in runs]
+                     if r["platform"] == "datasphere" and s in ("EXECUTING", "PREPARING"))
+    print(f"\nCAPACITY  kaggle {kag_running}/2 used"
+          f"{'  <-- FULL' if kag_running >= 2 else f'  ({2 - kag_running} FREE)'}"
+          f"   |   datasphere {ds_running} running, NO SLOT CAP -- always launchable "
+          f"(personal account, budget confirmed)")
+    if kag_running >= 2 and ds_running == 0:
+        print("  ! Kaggle is full and DataSphere is idle. Do not call this "
+              "'no GPU available'.")
+
     if pull and finished:
         print("\n=== pulling finished jobs and reading their RAW logs ===")
         for r, st in finished:

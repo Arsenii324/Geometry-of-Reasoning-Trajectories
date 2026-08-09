@@ -1,0 +1,18 @@
+name: estream-potency-curve
+desc: >
+  B1: cross-prompt e-stream patching with a potency-vs-r calibration curve, the
+  instrument null that must pass before ANY patching result in this project can
+  be interpreted. Patches the re-injected prelude output (the map's PARAMETER)
+  via a forward-pre-hook on transformer.adapter, against a contrasting arm that
+  patches the state. Pre-registered: e-potency FALLS with r (less time to
+  converge to the new fixed point) while state-potency RISES with r (less budget
+  left to decay). Opposite directions, so a flat pair of curves means the
+  instrument is dead and every patching null so far is uninterpretable.
+cmd: python job.py ${RESULT}
+outputs:
+  - estream.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
