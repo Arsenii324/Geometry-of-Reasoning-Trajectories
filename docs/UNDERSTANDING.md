@@ -14,6 +14,14 @@ by how far the contraction has run, and by the input — down to a single token,
 whether or not that token changes what the model computes — and carries, at most, a
 weak and not-yet-confirmed trace of whether the computation succeeded.**
 
+**And as of the 2026-08-09 evening pass, the contraction is no longer an assumption
+but a measurement, under two independent instruments: the map contracts at
+ρ ≈ 0.855 with 0 of ~960 orbit pairs at ρ ≥ 1 (D94), and 179 of 179 token
+positions classify as `settle` with zero loops or drift (D97). There is no
+loop/drift regime anywhere we have looked on this model.** The binding constraint
+on further progress is no longer instrumentation — it is finding tasks whose
+outcome varies at all.
+
 *(This sentence has been rewritten three times in one day, and the history is the
 evidence. It began as "…not of the input or of the computation". D84 refuted the
 first half — the shape identifies the input at ceiling — but could not separate task
@@ -153,36 +161,95 @@ predicts more that is not yet in. Two runs are in flight to test exactly that:
   with `parity8` flat. Position does WORSE (57.8%, n.s.) — evidence against pure
   residual family leakage, since both features are centred identically. Converges
   with D91 (below) from an unrelated design.
-- `geometry-h0bank` — **running.** The powered, pre-registered settlement of D91 and
-  D92 together: 16 boundary prompts × 32 unseeded h₀ draws, the window grid and
-  decision rule fixed in `scripts/run_h0_within.py` before this data existed.
+- `geometry-h0bank` — **landed, D93, and D91's lead did NOT replicate.** The
+  powered pre-registered test (16 boundary prompts × 32 unseeded h₀ draws, 512
+  orbits, 10/16 prompts splitting so the P1 gate passed) returns **NOT
+  CONFIRMED**: best window (unrolls 6–18) gives 52.0% against a 46.8% null,
+  p = 0.0125, missing the corrected α = 0.00625 by about 2×, with no far-tail
+  window significant either. **The null is trustworthy because the instrument's
+  own detection floor was found broken and fixed first** — it used 40
+  permutations against α = 0.00625, whose minimum reachable p-value (1/41 ≈
+  0.024) can never clear that threshold, so it reported 0% detection at every
+  planted effect size including 1.0 sd. Re-run at 400 permutations it detects a
+  planted 0.5 sd effect **100%** of the time. So D91's transient-window mechanism
+  is *ruled out*, not merely unconfirmed. Its P6 timing control also shows
+  `best_depth` alone decodes correctness about as well as the best shape window,
+  so even the near-miss is confounded with *when* the answer peaks rather than
+  with shape.
 - `geometry-clrs` — **running.** Capability screen on CLRS-Text, which is IN
   Huginn's training mixture and has a clean integer difficulty knob — the
   parametric task ladder this project has never had (the battery's two ladders,
   `count4/8/16` and the Caesar family, are both floored or non-monotone, D89).
 
-**A lead the project cannot yet call a finding, D91.** Sliding a shape-code window
-along the unroll axis, correctness decodes at **68.4% (p = 0.010) at unrolls 6–18**
-and 65.9% at 12–24, chance elsewhere out to 56. It does not survive Bonferroni over
-the 8 windows tested (n = 60), but the location was predicted independently by
-arXiv:2607.20594 ("tail instruments only see the converged region where they
-provably saturate; the algorithm, if there is one, lives in the head") — verified by
-title, authors and the quoted claim, not merely summarised.
+### The hypotheses and goals, as of the 2026-08-09 evening pass
 
-**The strongest objection I cannot yet answer.** Everything above is about
-statistics of the *path*. It does not show that no geometric description could
-encode the computation — only that the four hand-picked ones this project first
-justified do not, and that the between-family test (D85) does not either, at the
-scales and windows measured, on this model. D92 and D91 are the first evidence that
-a MORE searching instrument — the full shape code, properly stratified — might see
-something those miss, and neither is confirmed yet.
+Four results landed in one afternoon and they change the standing of H1, H3, G1
+and G2. Stated plainly, with what each rests on:
 
-**The second-strongest.** All of (a)–(c) is the trained arm at one token position on
-synthetic tasks. D76 supplies the untrained contrast for the geometry but not for
-the capability axis, and no natural-language reasoning benchmark has been run
-end-to-end with this instrumentation. `geometry-clrs` is the first step toward
-closing this — CLRS-Text is in Huginn's own pre-training data, so "the model looks
-incapable because the prompts are off-distribution" stops being a live explanation.
+- **H3 (contraction) — MEASURED, for the first time, with the estimator H3 is
+  actually about (D94).** `contraction_from_pair` needs two orbits of the *same*
+  prompt from *different* h₀; no bank in this project satisfied that at depth
+  until `geometry-h0bank` produced 16 prompts × 32 unseeded draws as a by-product.
+  Over ~960 pairs: **median ρ = 0.8550, and 0.0% of pairs at ρ ≥ 1.** Per-prompt
+  medians span 0.832–0.901 — a range that sits *inside* D52's independently
+  measured [0.808, 0.920]. Two unrelated instruments agreeing on the same physical
+  quantity is the strongest convergent evidence this project has. The residual gap
+  between orbits is bounded away from zero everywhere (median 2e-2), so different
+  initialisations reach *nearby but distinct* endpoints — which is what makes
+  correctness h₀-dependent at all (D90).
+- **G3 (spectral radius on Huginn) — substantially closed by the same result.**
+  It was long flagged as never measured on the real model; the pair-based ρ is
+  that quantity, measured dynamically rather than by autograd.
+- **H1 (settle / loop / drift) — the empirical premise is now measured rather
+  than assumed (D94 + D97).** The concern on record was that the argument
+  "loop/drift cannot persist under a contraction" risks circularity by *assuming*
+  the contraction. Both conjuncts are now measured: the autonomous-map fact from
+  source (the iteration index reaches only the KV-cache slot, so there is no
+  timestep conditioning), and ρ ≈ 0.855 from data. **G1's per-token census (D97)
+  adds a second, independent instrument on a different object: 179 of 179 token
+  positions across 12 prompts classify as `settle`. Zero loop, zero drift.**
+- **G1 (each token's path at every depth) — DONE, and it is a negative control
+  that passed (D97).** This was the largest structural blind spot: every
+  instrument in this ledger reads *one* token position, and the live worry was
+  that per-token convergence is a wide mixture, making every null a claim about
+  an arbitrary phase of the clock D80 identified. It is not. Excluding the
+  trivial BOS position (which converges at unroll 4 in all 12 prompts), the 167
+  content positions converge with **median 34 and an interquartile range of just
+  31–36**; only 4.8% converge before unroll 24. Positions are *synchronised*, and
+  the answer position sits at a mean **30th percentile** of its own prompt's
+  distribution rather than at an extreme. **Single-position reading was not
+  misleading, which retroactively strengthens D79, D84, D85 and D93.** My own
+  pre-registered prediction of a wide spread was wrong and is recorded as wrong;
+  the cited contrary paper uses a different convergence criterion, so this is not
+  a refutation of it.
+- **G2 (query–key alignment) — measured at last, and INCONCLUSIVE (D96).** It
+  was 0% done. The probe's self-check earned its place immediately: the first
+  submission compared `core_block[-1]`'s reconstructed (q, k) against the
+  *prelude* block's ground truth, failed at an error of ~15, and halted before
+  producing a single number; after the fix it matches at exactly 0.0. The result
+  then **rejects its own pre-registered prediction** — A-vs-B (different
+  computation) separates 2.15× more than A-vs-C (same computation), significant
+  at all four windows. But B is simply an *easier* task (median best_rank 7
+  against 33.5 and 21), the rank-gap ratio is 2.88 against the QK-gap ratio 2.15,
+  and |Δlog rank| predicts |ΔQK| at Spearman **+0.750**, p = 2.4e-05. So a third
+  reading neither branch pre-registered — *QK tracks how well the computation is
+  going, not which computation it is* — explains the same numbers, and this design
+  cannot separate them. The control's own premise is also only partly met: in
+  4 of 12 items C behaves closer to B than to A.
+- **H2 — every GEOMETRIC instrument still returns nothing** (D28 winding, D74(6)
+  dimensionality, D83 the Jacobian argument). The *behavioural* version has never
+  been run and is now in flight: does the depth at which the answer first becomes
+  available rise with problem difficulty? The pre-registered prediction is **no**.
+
+**The binding constraint is no longer instrumentation — it is task supply.** Two
+experiments have now died on it rather than on method: D47, and D95, whose gate
+wanted 4 of 9 prompts to split on correctness and got 2 (the patching instrument
+itself validated cleanly — a no-op replay reproduced the original rank curve
+exactly). Tasks with clean difficulty knobs are synthetic and score ~0; tasks the
+model genuinely does well (GSM8K 32.6%, ARC-E 69.9%) are natural-language with
+uncontrolled difficulty and multi-token answers. `geometry-census` and the
+difficulty×depth grid are the two runs aimed squarely at this, and it is the
+subject of the first of three deep-research inquiries in `docs/`.
 
 ---
 
