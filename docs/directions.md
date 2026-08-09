@@ -40,6 +40,8 @@ live state without asking. Updated 2026-08-09.
 | `geom-bank` | DataSphere g1.1, job `bt1hd3oqb17690amgolg` | B14 -- bank raw states for BOTH arms; the untrained control D74 needs | **DONE -> D76.** Training flips the step cosine -0.379 -> +0.541, disjoint at every window |
 | `geom-seeds` | DataSphere g1.1 | closes D76's one-draw limit | **DONE.** Five draws agree (cos -0.339..-0.389); trained/untrained completely disjoint, p=1.05e-12 |
 | `geometry-b6-bank` | Kaggle T4 | **B6 re-run** | **DONE -> D79.** Bounded null: no geometric difference at matched answer, powered to 1.5 sd, in the 1 family of 4 that the design could test |
+| `geometry-patch` | Kaggle T4, queued (built + CPU-verified, blocked on a slot — Kaggle caps at 2) | **first non-void causal test.** Patch the answer-position state at unroll r from a correct h_0-draw into an incorrect h_0-draw of the SAME prompt (D90's mechanism); sweep r over {0,8,16,24,32,48}; does the flip rate concentrate in D91's window? | BUILT, `scratch/kaggle_patch/`, 8/8 CPU dry-run tests pass. Push with `kaggle kernels push -p scratch/kaggle_patch` |
+| `qk-alignment-probe-smoke` | **Yandex DataSphere**, job `bt1jfkkdf71ms695e6id`, project `bt12q57tmrs03pnt8drc` (personal account, ~80k RUB remaining, valid to end of year — confirmed by the user 2026-08-09, NOT the expired smiles2026 grant) | the supervisor's own open item (`project_plan.md` G2, 0% done): per-unroll query-key cosine alignment at the answer position, on the SAME paired track/local length-matched design as H2/D83 | LAUNCHED 2026-08-09 ~12:05 MSK. Self-checks its own (q,k) extraction against `F.scaled_dot_product_attention`'s actual ground-truth call before trusting any experimental number (verified 0.0 error against the real `CausalSelfAttention` class locally, tiny dims, before submitting). Small smoke pass (4 n_ops × 3 seeds × 2 kinds = 24 forwards), not powered. Poll with `GRPC_DNS_RESOLVER=native datasphere project job get -p bt12q57tmrs03pnt8drc bt1jfkkdf71ms695e6id` (the `native` DNS resolver env var is REQUIRED on this Mac — the default c-ares resolver fails against its VPN/Tailscale-assigned DNS server even though the OS resolver and `curl` work fine) |
 
 **Answered offline since, with no GPU, from data already on disk.**
 
@@ -85,6 +87,11 @@ and would have cost hours to discover downstream.
 | A4 | How are "random" weights selected? Is Huginn's init scheme the right one for a recurrent transformer? | **partly answered** | §B2 |
 | A5 | Is SoTA parameter-efficient fine-tuning feasible on Kaggle for a 3.5B recurrent model? | **assessed (§B3); research brief written for an external agent** | §B3, `docs/briefs/peft_for_spectral_control.md` |
 | A6 | Keep recognised ideas in a file, not in working memory | **done** | this file |
+| A7 | Build a TESTED parser for answer/gold extraction that correctly handles Huginn's own BOS/EOS and request/response markers, not just naive first-token rank — rule the D89 defect in or out property-by-property rather than family-by-family | **open** | §E1 below |
+| A8 | For every battery family currently reading low/zero accuracy: is it a genuine model failure, or an artifact (multi-token gold, prompt formatting, insufficient prompting/depth)? Disentangle before trusting the capability axis's LOW end the way D89 disentangled the multi-token defect | **open, partly informed by D89** | §E1 below |
+| A9 | Explain the shape-code classifier (D84/D87/D88/D92) in plain terms — answered inline 2026-08-09, see the chat | **answered** | `src/traj_geom/metrics/shape_code.py`, D84 |
+| A10 | Do published Huginn papers report genuine TASK accuracy (not trajectory geometry) on any benchmark — could sanity-check whether the battery's low numbers are a real capability floor or an artifact of this project's own prompting/scoring | **open** | §E2 below |
+| A11 | Did the large multi-family battery run from earlier in the session complete, and is its data preserved? | **answered inline 2026-08-09** — yes: `geometry-battery` (D75, 21 families, `results/battery.csv`) and `geometry-geomcap` (D85, 608/608 orbits banked, `results/geomcap.csv` + raw `.npy` states) both completed and are committed. Nothing from either run was lost. | D75, D85 |
 
 **Standing constraints** (do not re-litigate): push only to `Arsenii324`, never
 `origin`. Kaggle free tier, ~30 GPU-h/week, max 2 concurrent notebooks — **treat
@@ -585,3 +592,82 @@ still stand on the old instrument. Until they are redone, "content is
 architectural" is supported only indirectly.
 
 | — | **DEQUEUED UNRUN 2026-08-09: `kaggle_capcontent` and `kaggle_promptdepth`.** Both were queued from a local session that predates D70–D89. `capcontent` tested UNDERSTANDING 6.1 (is "content is architectural" an artefact of zero-capability tasks) with a linear+nonlinear probe of the answer-position state — the design D70 showed is at ceiling in both arms and D73 showed is near-tautological, since Huginn re-injects the prompt every unroll and random weights decode a count at R²=0.99999. `promptdepth` swept prompt phrasing × recurrence depth; D85/D86 supersede it with 21 families and a graded readout. Neither would add anything to the current record. The supervisor killed the running `geometry-cap-content` job. | **dropped** |
+
+## E. New open threads, 2026-08-09 (post machine-switch session)
+
+### E1. A tested parser for gold/answer extraction — closing A7/A8 properly
+
+D89 found ONE defect (first-token-only scoring) affecting 8 of 21 battery families,
+and showed D85's conclusion survives it. That is not the same as ruling out every
+scoring artefact across the battery's LOW-accuracy end. The user's framing is right:
+disentangle GENUINE model failure from INSTRUMENT failure, property by property,
+not family by family guessed at.
+
+**What a proper audit needs to check, per family:**
+1. **Gold tokenisation** (D89's defect) — already checked, `docs/claims_ledger.md`
+   D89(1) has the full family list.
+2. **Prompt-format sensitivity** — D69 showed ONE instruction ("Reply with only the
+   answer") moved `echo_digit` 0%→83%. D86 showed the SAME instruction is worth only
+   +9.5 points at r=4 averaged over 21 families and ~0 elsewhere. So format
+   sensitivity is family-specific and UNMEASURED per-family beyond that one test.
+3. **Depth/`num_steps` sensitivity** — D68 showed accuracy is NON-monotone in r,
+   peaking shallow for some families. Every battery run so far used ONE fixed
+   depth (`geometry-battery`/`geometry-geomcap` at whatever `NUM_STEPS` each used).
+   A family reading 0% at that one depth could be >0% at another (D86 is the
+   existing evidence this happens).
+4. **Huginn's own special tokens** — the user's specific question: does this
+   project's prompt-building correctly use Huginn's begin/end-of-text,
+   begin/end-of-turn tokens (ids 65504/65505/65508/65509, confirmed in
+   `raven_modeling_minimal.py`'s generation config and used correctly in
+   `batched_generate`'s stop-token set) EVERYWHERE, or did any kernel roll its own
+   parsing that diverges? Worth a static AST-level audit across
+   `scratch/kaggle_*/body.py`, mirroring `tests/test_kernel_tasks.py`'s existing
+   drift guards (which already check `coda_head` and `items()` for drift — extend
+   the same discipline to tokenisation/stop-token handling).
+
+**Proposed design, not yet built.** A tested module
+(`src/traj_geom/scoring.py`, following the `numerical-research-code` skill's
+discipline: single-source the scoring logic, pin known-answer cases, fail loudly on
+ambiguous input) with:
+- `extract_gold_rank(logits_row, gold_ids)` — the SAME first-token-rank logic
+  everywhere, but with an explicit `multi_token: bool` flag surfaced in every output
+  record, computed from `len(gold_ids) > 1`, so "first-token defect" becomes
+  something every downstream table can filter on rather than something that has to
+  be re-discovered per-analysis the way D89 was.
+- `extract_decoded_answer(text, format: Literal["bare","constrained"])` —
+  containment/exact scoring (already exists in `run_depth_accuracy.py`/
+  `run_correctness_decode.py` as `normalise`/`score`; the ask is to CONSOLIDATE
+  these into one tested module rather than the current per-script duplication).
+- A **per-family diagnostic table**: family × {multi_token_gold, best_depth_used,
+  constrained_format_tried, accuracy_at_best_depth_and_format} — run offline from
+  data ALREADY BANKED (`geomcap.csv`, `depthacc.json`) wherever possible, no new
+  GPU needed for most of it.
+
+**On the user's workflow/subagent suggestion.** Given this is fundamentally a
+STATIC, single-file audit task (read kernel bodies, check for a specific pattern)
+rather than an open-ended research question, it does not obviously need a
+multi-agent workflow — a single focused pass would likely be cheaper and just as
+thorough. Revisit if it turns out to require reading and cross-referencing many
+kernel bundles in parallel.
+
+### E2. Do published Huginn papers report genuine task accuracy anywhere?
+
+The user's question, unanswered: does Geiping et al.'s own paper, or any of the
+2026 follow-ups the literature scout found (`docs/related_work.md`), report Huginn
+achieving non-trivial accuracy on some standard benchmark — which would sanity-check
+whether this project's battery reading mostly 0-30% is a genuine capability floor of
+a 3.5B model or an artefact of THIS project's own prompting/scoring (D89-style).
+
+**Not yet checked.** `docs/related_work.md`'s scouting pass focused on trajectory
+geometry / looped-transformer mechanics, not Huginn's benchmark numbers. Geiping et
+al.'s own abstract (fetched earlier, `docs/PLAN.md` §0) mentions the model is
+"surprisingly capable in reasoning" — worth reading the actual benchmark table
+(GSM8K, ARC, etc. are the likely candidates given the training mixture includes
+`nvidia/OpenMathInstruct-1`, `meta-math/MetaMathQA`, `hkust-nlp/gsm8k-fix`) rather
+than trusting the marketing-style abstract line. If Huginn scores e.g. 30-40% on
+GSM8K at higher `num_steps`, that directly bounds what this project's near-zero
+battery accuracies could mean — either the battery's synthetic tasks are
+harder/more OOD than GSM8K-style problems (plausible: ciphers, parity, indexing are
+not what the training mixture emphasises), or something in the scoring is still
+wrong beyond D89's fix.
+
