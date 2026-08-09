@@ -1,0 +1,22 @@
+name: implicit-diff-attribution
+desc: >
+  A18 / DR3 Method 2, the one recommendation in that report never started and the
+  one it calls "the novel, publishable core -- sound, cheap, artefact-free, and
+  unclaimed in the literature". Computes dh*/de = (I-J)^-1 dF/de at the fixed
+  point by an adjoint Neumann iteration (one VJP per term), then one VJP through
+  the adapter for per-token attribution. Defined AT the fixed point, so it
+  sidesteps the rho^(R-r) damping every patching result in this project fights,
+  and attributes to e -- the PARAMETER D111/D113 showed actually moves h*.
+  Ground truth is the marker token: two prompts identical but for one trailing
+  A/B that selects the computation. Pre-registered: the marker ranks top-3, and a
+  RANDOM readout direction is run as the instrument's own null. Truncation is
+  ADAPTIVE, correcting DR3's fixed ~30-40 JVPs: our measured rates need 33/38 and
+  75 for D127's rotating templates, so a fixed cut would bias by template type.
+cmd: python job.py ${RESULT}
+outputs:
+  - implicit.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
