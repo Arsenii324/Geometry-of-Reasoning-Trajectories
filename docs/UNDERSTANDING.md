@@ -19,6 +19,35 @@ but a measurement, under two independent instruments: the map contracts at
 ρ ≈ 0.855 raw / ≈0.82 bias-corrected, with 0 orbit pairs at ρ ≥ 1 across 16 prompts (D94; n_eff is the prompt, not the ~960 pairs), and 179 of 179 token
 positions classify as `settle` with zero loops or drift (D97).**
 
+**A third instrument has now measured ρ *causally*, and it agrees.** Injecting a
+donor's state at unroll r and reading how much of the kick survives to the output
+gives a potency that decays as ρ^(R−r) across nearly three orders of magnitude,
+fitting **ρ = 0.822** (R² = 0.98, D111). Every earlier estimate was a passive fit to
+how fast an unperturbed orbit stops moving; this one perturbs the system and watches
+the perturbation die. It lands on D94's bias-corrected ≈0.82 and beside D31's
+Arnoldi 0.79–0.81. **D94's row should no longer be read as uncorroborated** — with
+the caveat that all of D111's pairs share ONE recipient prompt, so it is currently a
+rate measured at one fixed point; B1c is running the 16-recipient replication.
+
+**The same experiment turns the DEQ framing from an architectural argument into a
+measured fact.** `e` (the re-injected prelude output) is the map's PARAMETER and `h`
+its STATE: patching `e` flips which answer the model prefers 6 of 8 times **at every
+injection depth, including r = 40 with 8 unrolls left**, and its potency is flat in
+r — because moving `e` moves the fixed point h\*(e) itself. Patching `h` never flips
+the answer (0 of 56) and decays at exactly the contraction rate, because it displaces
+an initial condition the contraction erases (D111).
+
+**H2's behavioural arm is now closed, and it closes against H2.** On `addk`, harder
+problems reach their best readout depth **earlier**, not later: ρ(k, best_depth) =
+−0.440 at the true problem unit, and the two stratifications that move the first
+operand in *opposite* directions both give ≈−0.5 while holding difficulty fixed
+gives +0.07 — so the driver is difficulty, not the answer token (D110). In H2's
+pre-registered positive direction p = 0.995. This also reconciles D101's +0.362,
+which came from a design where the answer was 93% collinear with difficulty. The
+effect is ~1 unroll in 48 and post-hoc on one family, so it is a direction, not yet a
+law — but it converges with the two results above: the fixed point arrives fast, and
+on harder problems the model settles sooner onto a worse answer.
+
 **But both instruments read ONE block of the recurrent stack, and D98 shows that
 choice was hiding the loop.** Hooking all four core blocks: each converges tightly
 to its *own* fixed point (residual 58-71 → ~0.1), and those four fixed points are

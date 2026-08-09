@@ -167,6 +167,18 @@ from a template, so **write results incrementally rather than once at the end.**
 - `GRPC_DNS_RESOLVER=native` is REQUIRED on every `datasphere` invocation. The
   default c-ares resolver fails against the machine's VPN/Tailscale DNS server
   (100.98.255.254) although the OS resolver and `curl` work fine.
+- **DataSphere project ID: `bt12q57tmrs03pnt8drc`.** Recorded here because it was
+  written down nowhere and recovering it cost ~15 minutes: `job get` does not
+  report it, the CLI logs under `$TMPDIR/datasphere/` do not contain it, `yc` has
+  no `datasphere` subcommand in this install, and `job list` REQUIRES it. It was
+  finally found by `git grep` over history. A neighbouring id, `bt14qn4u9t3n09nfjoqu`,
+  appears in a sibling directory's launch command and returns PERMISSION_DENIED —
+  it is not this account's.
+- **Launch from the config's own directory.** `cmd: python job.py` is resolved
+  relative to the CWD, so `-c scratch/foo/config.yaml` from the repo root dies with
+  `FileNotFoundError: job.py` before contacting the API.
+- **Do not pipe `job execute` through `grep`.** It streams; grep block-buffers and
+  the launch looks silent. Check with `job list -p <PROJECT>` instead.
 - `job get` takes `--id <ID>` alone — no `-p`. `job execute` takes both
   `-p <PROJECT_ID>` and `-c <CONFIG>`.
 - Project: `bt12q57tmrs03pnt8drc`. Billing is the user's **personal** account

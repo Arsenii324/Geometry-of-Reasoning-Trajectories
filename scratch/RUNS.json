@@ -1,6 +1,11 @@
 [
   {
     "platform": "datasphere",
+    "id": "bt1j30cub5aifduql4fl",
+    "what": "B1c rho across 16 distinct recipients (D111(3) fix)"
+  },
+  {
+    "platform": "datasphere",
     "id": "bt1ac05vfako35rndads",
     "what": "B1b state arm fixed (single injection, matched-unroll donor) + e-arm reproducibility"
   },
