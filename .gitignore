@@ -74,6 +74,10 @@
 # producing code is committed for the same reason the kaggle_* bundles are.
 !/scratch/ds_qkprobe/
 !/scratch/ds_pertoken/
+# G1's raw state grids: the full [48 x n_tokens x 5280] tensor is 101 MB as
+# JSON, over GitHub's 100 MB per-file limit, so it is stored as compressed
+# npz alongside a 45 KB stats-only JSON. *.npz is ignored globally above.
+!/scratch/ds_pertoken/out/*.npz
 # Recovered 2026-08-09 by `kaggle kernels pull` after the authoring session's
 # container was lost before pushing. main.py is the artifact Kaggle actually ran
 # (the record D73 rests on); its body.py did not survive, so this bundle cannot
