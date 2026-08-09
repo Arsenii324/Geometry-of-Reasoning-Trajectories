@@ -1,5 +1,5 @@
 {
-  "bytes": 2972,
+  "bytes": 5231,
   "columns": [
     "usable",
     "feature",
@@ -18,18 +18,18 @@
     "why"
   ],
   "file": "shape_decode.csv",
-  "git_commit": "597f320edd60cf0bc673644ce5389f2324a51b89",
+  "git_commit": "92600a25ba1bccab24f43429522ad5c616425750",
   "git_dirty": true,
   "kind": "shape_decode",
   "m": 20,
   "model_id": "tomg-group-umd/huginn-0125",
   "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
-  "n_orbits": 152,
-  "n_perm": 200,
-  "n_rows": 18,
+  "n_orbits": 844,
+  "n_perm": 120,
+  "n_rows": 30,
   "produced_by": "/home/user/Geometry-of-Reasoning-Trajectories/scripts/run_shape_decode.py",
   "rotation_invariance": 6.245004513516506e-16,
-  "run_id": "20260809T012254Z-ed424965",
-  "sha256": "4dcfbd51c1378697a8bc2fd0238068464f193b4c484e4e020f632ddb9bb3725a",
-  "written_utc": "2026-08-09T01:22:54.421598+00:00"
+  "run_id": "20260809T090155Z-401a240a",
+  "sha256": "2babdc8a0eb721fd3d553872cc92486e610a05a3ffffb4057f46f773b0650a27",
+  "written_utc": "2026-08-09T09:01:55.381097+00:00"
 }
