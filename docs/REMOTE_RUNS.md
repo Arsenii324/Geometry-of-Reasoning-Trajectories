@@ -288,3 +288,30 @@ one day.** All three failures below reported something other than what happened:
    change where the model is built), `OutOfMemoryError` (GPU OOM, split the job),
    and a Python traceback (real bug). Each has a different fix, and guessing wrong
    costs a full run — it did.
+
+### Workflow observability — where a paused run's work actually lives
+
+`journal.jsonl` records only **completed** agent() calls. A workflow paused or
+killed mid-flight can therefore show `result: null` for everything while its
+agents have in fact done substantial work — the transcripts are the recovery path,
+not the journal.
+
+Recovering a paused workflow's findings, at zero further agent cost:
+
+```bash
+D=~/.claude/projects/<proj>/<session>/subagents/workflows/<run_id>
+ls -S "$D"/agent-*.jsonl | head        # biggest transcript = most work done
+grep -c StructuredOutput "$D"/agent-*.jsonl
+```
+
+then parse the `{"findings": [...]}` blob out of the transcript directly. On
+2026-08-09 the journal held **0** usable results while the transcripts held **19
+substantiated findings**, six of which turned out to be real defects. Check the
+transcripts before re-running anything.
+
+**And cap the fan-out.** The same workflow spawned one verifier per finding with no
+limit (~24 agents, zero results). Verification is worth keeping — an auditor that
+reports a finding without opening the file is the failure mode — but batch it at a
+fixed cap (`MAX_VERIFIERS`) so agent count does not scale with how much the
+auditors happen to find, and run it on a cheaper model, since checking that a
+quoted line exists is mechanical.

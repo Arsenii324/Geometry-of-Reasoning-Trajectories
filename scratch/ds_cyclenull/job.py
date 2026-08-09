@@ -66,6 +66,25 @@ REVISION = "bb6621b65e90b6a4b9b29ef88dc83866d450470c"
 NUM_STEPS = 48
 UNTRAINED_SEEDS = (0, 1, 2)
 
+# BOTH ARMS RUN IN bfloat16, and that is a deliberate scientific choice, not a
+# shortcut. fp32 Huginn is ~14.0 GB and `from_config` peaks ~0.7 GB above it, which
+# does not fit a 14.75 GB T4 even with the GPU otherwise empty (three attempts:
+# host OOM, then GPU OOM twice). bf16 halves the resident model so both arms fit
+# comfortably and SEQUENTIALLY IN THE SAME PROCESS -- which is what makes the
+# comparison apples-to-apples.
+#
+# What bf16 costs, stated so no number is over-read: bf16 carries ~3 decimal
+# digits, so on a state of norm ~76 the absolute resolution is ~0.3. The per-block
+# CONVERGENCE RESIDUAL is 0.05-0.40 in fp32 (D98) and is therefore AT OR BELOW the
+# bf16 noise floor -- `sep_over_resid` and `residual_drop` are recorded but must
+# NOT be compared across arms here. The statistics that decide this control are
+# precision-robust by construction: pairwise vertex distance (~38, two orders
+# above the noise floor), `pairwise_over_norm` (dimensionless), `planarity`
+# (dimensionless, and D100 measured the random-4-point null at 0.676 +/- 0.0033),
+# and `pairwise_irregularity` (a ratio). Those are the four the verdict uses.
+ROBUST_STATS = ("pairwise_over_norm", "planarity", "pairwise_irregularity")
+PRECISION_SENSITIVE = ("sep_over_resid", "residual_drop", "final_block_residual")
+
 PROMPTS = [
     ("echo_digit", "Repeat this number exactly.\nNumber: 7"),
     ("add1", "What is 5 + 1? Answer with the number."),
@@ -188,15 +207,16 @@ def main():
                   flush=True)
         json.dump(rows, open(out_path, "w"))
 
-    if untrained_only:
-        print("\n=== UNTRAINED-ONLY MODE: skipping the trained arm so the GPU is "
-              "empty for the fp32 build ===", flush=True)
-    model = None if untrained_only else AutoModelForCausalLM.from_pretrained(
+    dtype = torch.bfloat16
+    print(f"\nBOTH ARMS IN {dtype} -- see the module header for why, and for which "
+          f"statistics remain comparable at this precision.", flush=True)
+
+    print("\n=== TRAINED ARM in bf16 (the matched reference for the control) ===",
+          flush=True)
+    model = AutoModelForCausalLM.from_pretrained(
         MODEL_ID, revision=REVISION, config=cfg, trust_remote_code=True,
-        torch_dtype=torch.float32, low_cpu_mem_usage=True).to("cuda").eval()
-    if model is not None:
-        print("\n=== TRAINED ARM (also an independent replication of D98) ===", flush=True)
-        sweep(model, "trained")
+        torch_dtype=dtype, low_cpu_mem_usage=True).to("cuda").eval()
+    sweep(model, "trained")
     # Keep the CLASS, never the instance: holding the model object here would pin
     # ~14 GB and OOM the untrained arm on the same 16 GB T4.
     # (the trained model is freed here; nothing holds a reference to the instance)
@@ -230,14 +250,19 @@ def main():
 
     def build_untrained(seed):
         torch.manual_seed(seed)
-        with torch.device("cuda"):
-            m = AutoModelForCausalLM.from_config(cfg, trust_remote_code=True)
+        prev = torch.get_default_dtype()
+        torch.set_default_dtype(dtype)          # so from_config allocates in bf16
+        try:
+            with torch.device("cuda"):
+                m = AutoModelForCausalLM.from_config(cfg, trust_remote_code=True)
+        finally:
+            torch.set_default_dtype(prev)
         return m
 
     report_mem("before untrained")
     for s in UNTRAINED_SEEDS:
         try:
-            m = build_untrained(s).to(torch.float32).eval()
+            m = build_untrained(s).eval()
             report_mem(f"seed {s} built")
             sweep(m, "untrained", seed=s)
             del m
@@ -256,15 +281,17 @@ def main():
     un = [r for r in rows if r["arm"] == "untrained" and r.get("ok")]
     from scipy.stats import mannwhitneyu
     verdicts = []
-    for stat in ("sep_over_resid", "residual_drop", "pairwise_over_norm",
-                 "planarity", "perimeter_over_travelled", "pairwise_irregularity"):
+    print("  (bf16: only the precision-robust statistics below decide the verdict; "
+          "residual-based ones are printed for the record only)", flush=True)
+    for stat in ROBUST_STATS + PRECISION_SENSITIVE:
         a = [r[stat] for r in tr if np.isfinite(r[stat])]
         b = [r[stat] for r in un if np.isfinite(r[stat])]
         if len(a) < 3 or len(b) < 3:
             continue
         u, p = mannwhitneyu(a, b)
         disj = (max(a) < min(b)) or (min(a) > max(b))
-        verdicts.append((stat, float(np.median(a)), float(np.median(b)), p, disj))
+        if stat in ROBUST_STATS:
+            verdicts.append((stat, float(np.median(a)), float(np.median(b)), p, disj))
         print(f"  {stat:>26}: trained {np.median(a):10.3f}  untrained {np.median(b):10.3f}"
               f"  p={p:.5f}{'  DISJOINT' if disj else ''}", flush=True)
     # A VERDICT MUST NEVER BE PRINTED OVER AN EMPTY COMPARISON. The first run of
