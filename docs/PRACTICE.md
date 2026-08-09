@@ -181,3 +181,63 @@ success, so nothing looked wrong.
 an `assert found` at the end. Both cost one line. I had been doing this on some edits
 and not others, which is the worst of both — the ones with the assert taught me to
 trust the ones without.
+
+## The two structures behind a day of errors
+
+*Written 2026-08-09 after the supervisor suggested asking "why" repeatedly. I think a
+linear why-chain is the wrong tool here — you can always manufacture a deeper why that
+sounds profound and is untestable. What was actually missing is that each error had been
+recorded individually and never compared across. Doing that, from the commit record rather
+than memory, the twelve are **two structures**, and they have different fixes.*
+
+### RC1 — a proxy substituted for the thing (9 of 12)
+
+The real check was available and cheap, and a cheaper signal stood in for it.
+
+| proxy trusted | the thing | cost |
+|---|---|---|
+| a local commit | the remote's contents | 2.5 h and 256 forwards (D125) |
+| `str.replace` not erroring | the edit landing | a thread reported closed for 2 h |
+| distinct keys | distinct prompts | D110: 42 "units" that were 36 |
+| peak accuracy > floor | the ladder having range | D118: a VOID run |
+| `pairs[:N]` | a sample | D108: 75% → 31% (D113) |
+| a printed verdict | the result | D110's degenerate p = 1.0000 |
+| reasoning about a file | opening it | retracted half of D105 (D124) |
+
+**Fix: assert.** `assert t.count(old) == 1` before replacing; key units on content not
+labels; gate on the property you need, not a weaker one that implies it; open the file.
+These are one line each and every one of them is now either a `rigor.py` guard or a
+`preflight.py` check.
+
+### RC2 — acted without consulting the existing record (the costlier ones)
+
+The knowledge was already in the repo. Nobody looked.
+
+- **B3** was listed *"Never done — the only route to a second estimate of ρ"* while
+  `ds_eigen` had measured the full operator a day earlier. **GPU was spent re-obtaining
+  corroboration that already existed** (D119).
+- **B4.8** was listed `open` in `directions.md` while `UNDERSTANDING.md` line 703 said
+  **CLOSED (D64)** — the contradiction was sitting in the repo. Acting on the stale row,
+  I overwrote the existing instrument and reinvented the isotropic surrogate the project
+  had explicitly replaced in July (D123).
+- **DR1 Stage 2** named the exact ladder the project needed and `PLAN.md` called it "the
+  one escape"; B4b built a different one, which went VOID (D118, D124).
+- **D106's "20.6% radial component"** was carried as a measurement for days when it is
+  |d|/(2R), an identity of the sphere (D122).
+
+**Why the index failed, specifically:** results are filed under RUN names
+(`geom-eigenplane`, `ds_eigen`) and threads are indexed under THREAD names (B3, B4.8).
+A grep for the thread name finds nothing and the row still reads `open`.
+
+**Fix: `scripts/preflight.py --prior "<topic>"`**, which searches the ledger,
+`directions.md`, `OPEN_THREADS`, `PLAN`, `UNDERSTANDING`, `related_work`, the DR reports
+**and `scratch/*/out/`** — the last because that is where the answer actually was, both
+times. Run it before building anything or calling any thread unrun. On "persistent
+homology" it returns the D64 CLOSED line in one command.
+
+### The asymmetry worth remembering
+
+RC1 errors were caught within minutes, by me, and cost little. **RC2 errors cost GPU
+money, destroyed a better instrument, and produced a VOID run — and every one of them was
+invisible until something external forced a look** (the supervisor saying "use git", a
+status summary needing a grep). Being careful does not catch RC2; only looking does.
