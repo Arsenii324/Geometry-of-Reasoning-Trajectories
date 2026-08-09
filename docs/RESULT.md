@@ -299,11 +299,18 @@ computation. On this model it traces the input and the clock. Concretely:
   between-item stratified result (61.0% vs 50.2%, p = 0.030) is untouched by that
   test and remains small, not pre-registered, carried by 2 of 3 strata, and
   unreplicated.
-- **Causal evidence is absent, not negative.** The one activation-patching run
-  built and validated its instrument (a no-op replay reproduced the original rank
-  curve exactly) but failed its own pre-registered supply gate — it needed 4 of 9
-  prompts to split on correctness and got 2 — and declared itself VOID rather than
-  null (D95). Nothing causal is claimed.
+- **Causal evidence is no longer absent — the instrument works (D108).** Patching
+  the *re-injected prelude output* `e` from a different prompt **flips which answer
+  the model prefers in 42 of 56 measurements (75%)**, moving the logit gap from
+  −2.763 to +1.211, a mean potency of **+3.97 nats**. The earlier patching null
+  (D95) was uninformative rather than negative: it patched the **state**,
+  same-prompt with a different random initialisation, which is inert at both ends
+  because donor and recipient share an attractor. `e` is the map's *parameter*, and
+  perturbing it moves the fixed point itself. The effect is **flat in the unroll at
+  which patching begins** — 87% of it is present with only 8 unrolls remaining —
+  so the map reaches its new fixed point almost immediately. What is *not* yet
+  shown: that the donor's answer becomes the global argmax, and any claim of
+  selectivity rather than potency.
 - **The binding constraint is now task supply, not instrumentation.** Two
   experiments have died on it. Tasks with clean difficulty knobs are synthetic and
   score near zero; tasks the model genuinely does (GSM8K 32.6%, ARC-E 69.9% at
