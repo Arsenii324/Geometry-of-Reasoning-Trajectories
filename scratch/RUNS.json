@@ -1,6 +1,11 @@
 [
   {
     "platform": "datasphere",
+    "id": "bt1i4qge4opib5adikll",
+    "what": "A18 implicit-diff attribution (DR3 Method 2, never started until now)"
+  },
+  {
+    "platform": "datasphere",
     "id": "bt1l8elecek91qtvkdcp",
     "what": "A19 does symbol diversity select the rotation? (D127's missing control)"
   },
