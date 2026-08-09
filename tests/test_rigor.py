@@ -170,3 +170,32 @@ def test_guards_are_cheap():
         require_resolvable_alpha(400, 0.00625)
         require_evidence(5, what="x")
     assert time.perf_counter() - t0 < 1.0
+
+
+# --- failure mode 6: a permutation null that cannot move the statistic (D110) ---
+
+def test_the_real_within_level_permutation_is_rejected():
+    """Spearman with tied x-groups is invariant to within-group permutation.
+
+    B4 pre-registered exactly that null and it reproduced the observed rho in
+    200/200 draws, returning p = 1.0 in BOTH directions -- which reads as a
+    decisive negative and is a non-test.
+    """
+    from traj_geom.rigor import require_null_can_move
+    observed = -0.2971
+    with pytest.raises(RigorError, match="DEGENERATE"):
+        require_null_can_move(observed, [observed] * 200, what="within-level null")
+
+
+def test_a_healthy_null_passes():
+    from traj_geom.rigor import require_null_can_move
+    import random
+    rng = random.Random(0)
+    require_null_can_move(-0.2971, [rng.uniform(-0.6, 0.6) for _ in range(200)])
+
+
+def test_a_null_that_is_mostly_but_not_entirely_flat_is_still_rejected():
+    from traj_geom.rigor import require_null_can_move
+    draws = [0.5] * 95 + [0.1, 0.2, 0.3, 0.4, 0.6]
+    with pytest.raises(RigorError):
+        require_null_can_move(0.5, draws)

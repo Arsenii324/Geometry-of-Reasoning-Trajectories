@@ -111,6 +111,37 @@ def require_exact_test_if_small(n_pairs: int, n_perm: int, *, what: str = "test"
         )
 
 
+def require_null_can_move(observed: float, null_draws: Sequence[float], *,
+                          what: str = "permutation null", min_distinct: int = 5) -> None:
+    """Raise if the permutation scheme cannot move the statistic it is testing.
+
+    A null that reproduces the observed value on every draw returns p = 1.0 in
+    BOTH directions and reads as a decisive negative. It is not one: it is a
+    non-test.
+
+    Occasion (D110): a within-level permutation was used to null
+    Spearman(level, best_depth). Spearman with tied x-groups depends only on the
+    MULTISET of y within each group, which within-group permutation preserves
+    exactly -- so the statistic was invariant and 200/200 draws reproduced it.
+    The fix was to permute across all units, breaking the association being
+    tested. Always ask: does this permutation break the specific association the
+    statistic measures?
+    """
+    draws = list(null_draws)
+    if not draws:
+        raise RigorError(f"{what}: no null draws")
+    distinct = len({round(float(d), 12) for d in draws})
+    identical = sum(1 for d in draws if abs(float(d) - float(observed)) < 1e-12)
+    if distinct < min_distinct or identical > 0.9 * len(draws):
+        raise RigorError(
+            f"{what}: the null is DEGENERATE -- {distinct} distinct value(s) over "
+            f"{len(draws)} draws, {identical} of them exactly equal to the observed "
+            f"statistic {observed:.6g}. This permutation cannot move the statistic, "
+            f"so its p-value is meaningless (it returns ~1.0 in both directions). "
+            f"Permute whatever breaks the association being tested."
+        )
+
+
 def independent_n(keys: Sequence[Any]) -> int:
     """Number of INDEPENDENT units behind a sequence of per-observation keys.
 
