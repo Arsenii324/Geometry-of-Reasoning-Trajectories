@@ -49,13 +49,15 @@ near-tautological for any convergent sequence; we do not do that.)
 Result over 16 prompts × 32 random initialisations, ~960 orbit pairs, reading the
 state at the last core block:
 
-- **median per-step factor ρ = 0.855**; per-prompt medians span 0.832–0.901.
+- **median per-step factor ρ = 0.855 raw; ≈0.82 after the +0.033 bias we diagnosed in this log-linear fit; the independent Arnoldi route gives 0.79–0.81**; per-prompt medians span 0.832–0.901.
 - **0.0% of pairs had ρ ≥ 1.** Not one loop, not one drift.
 - The residual gap two orbits settle to is **bounded away from zero** (median
   ~2e-2), i.e. different initialisations converge to *nearby but distinct*
   endpoints, not to one identical fixed point.
-- An independent estimator from a different route gave ρ ∈ [0.808, 0.920],
-  consistent.
+- The independent Arnoldi/JVP route gives ρ = 0.7935 / 0.8042 / 0.8083. Our own
+  work separately diagnosed a **+0.033 bias** in the log-linear fit above, so the
+  bias-corrected pair estimate (~0.82) agrees with it to about 0.02 — close, but
+  **not** the coincidence an earlier draft of this file claimed.
 
 We separately found the residual gap is ~100× larger for counting-type tasks than
 for arithmetic/comparison ones — unexplained.

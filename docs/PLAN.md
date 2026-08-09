@@ -13,9 +13,9 @@ ordered plan and the reasoning behind the order.*
 **THE HEADLINE HAS MOVED TWICE TODAY. Current position, in one place:**
 
 1. **H3 / G3 are measured.** The contraction rate, estimated the honest way
-   (two orbits of the same prompt from different h₀), is **ρ = 0.855 with 0 of
-   ~960 pairs at ρ ≥ 1** (D94), and its per-prompt range 0.832–0.901 sits
-   *inside* the [0.808, 0.920] obtained by a different estimator. G3's
+   (two orbits of the same prompt from different h₀), is **ρ = 0.855 raw, ≈0.82 after D58's
+   +0.033 bias correction, with 0 pairs at ρ ≥ 1 across 16 prompts** (D94;
+   n_eff = 16, not 960). The independent Arnoldi route (D31) gives 0.79–0.81. G3's
    "measure ρ(∂ₕR) on Huginn", long flagged as never done, closes with it.
 2. **G1 is done and was a negative control that PASSED** (D97). All 179 token
    positions across 12 prompts classify `settle`; content positions converge in

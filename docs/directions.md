@@ -791,3 +791,73 @@ uncontrolled difficulty.
 titration kernel in (1), over parametric generators with an explicit n, is the
 principled replacement for a fixed item pool and is the thing to build rather
 than re-running a wider census over the same hand-authored families.
+
+---
+
+## F. Audit findings, 2026-08-09 — recovered from a workflow whose verify stage never ran
+
+**Provenance and status.** A 5-agent audit of the D93-D102 work was launched, paused
+for an unbounded verifier fan-out, and its findings were then recovered directly from
+the agent transcripts at zero further agent cost. **These are UNVERIFIED auditor
+claims.** Each is either checked and actioned below, or left explicitly open. Do not
+treat any of them as established until its line says so.
+
+### F1. CHECKED AND ACTIONED
+
+- **F2.1 — CONFIRMED, and D96 is corrected.** Recomputed directly: pooled
+  rho = +0.750 / p = 2.4e-05; **item-clustered permutation p = 0.093**; within
+  A-B rho = +0.566 (p = 0.055); **within A-C rho = exactly 0.000**. The auditor
+  was right that the pooled figure is largely a between-contrast offset. D96(3b)
+  now carries this, and the net effect is that D96 becomes *more* inconclusive:
+  neither "QK tracks the computation" nor "QK tracks difficulty" is established.
+- **F2.11 — CONFIRMED, folded into D96(3c).** 0.00015 is below the exact floor
+  1/4096 of a 12-pair sign-flip test. No conclusion changes; the endpoint is not
+  attainable and the exact test should be used when the pattern space < N_PERM.
+- **F2.5 — CONFIRMED and WORSE than reported.** The auditor said 1 of 6 prompts
+  fall in the quoted 0.09-0.11 residual band; the true count is **0 of 6**
+  (actual range 0.052-0.402), and the reduction is **159x-1185x, median 384x**,
+  not "~600x". Root cause: I quoted `echo_digit`'s four PER-BLOCK residuals as
+  though they were the across-prompt range. Corrected in the ledger, RESULT.md
+  and UNDERSTANDING.md. **D98's conclusion survives** — the minimum
+  separation/residual ratio across prompts is 95.4.
+- **F2.2 — CONFIRMED, propagated.** The retracted D94 claims and the n = 960
+  figure were fixed in the ledger only. Now corrected in `UNDERSTANDING.md`,
+  `RESULT.md`, `PLAN.md`, and both research inquiries: rho is quoted raw (0.855)
+  with the +0.033 bias named and the ~0.82 corrected value, against D31's
+  independent 0.79-0.81, and n_eff is stated as 16 prompts.
+- **F2.3 — CONFIRMED, fixed.** `RESULT.md`'s second headline no longer says "no
+  loop or drift regime exists anywhere we have looked"; it is scoped to the
+  fixed-block map with the other two senses named.
+- **F2.6 — CONFIRMED, fixed.** `research_inquiry_3_interp.md` carried the
+  inverted attenuation direction; corrected, along with the deeper point that
+  same-prompt patching is inert at both ends by construction.
+
+**Guard added, because the pattern here is propagation rather than analysis:**
+when a ledger row is corrected, grep every other document for the retracted
+phrasing **in the same commit**. Four of the six items above existed only because
+that was not done.
+
+### F2. OPEN — highest consequence first
+
+| # | claim | file | why it matters |
+|---|---|---|---|
+| F2.1 | **`run_qk_analysis.py`'s confound test is pseudoreplicated.** The 24 observations are 12 items x 2 contrasts, and both members of a pair share the same `A` value, so they are not independent; scipy used df=22 rather than at most df=10. The auditor computes the clustered p as **0.095, not 2.4e-05**. | `scripts/run_qk_analysis.py` ~185; D96 | **This is the number D96 uses to demote the QK result to "confounded with difficulty".** If it does not hold, D96's verdict needs restating in EITHER direction — the confound may still be real but is not established at the quoted strength. Same error class as D94's. |
+| F2.2 | **The retracted D94 claims were fixed in the ledger row only.** `UNDERSTANDING.md`, `RESULT.md` and `PLAN.md` reportedly still assert "two unrelated instruments", "independently measured", and the un-caveated rho = 0.855, and still quote n = 960 rather than n_eff = 16. | `docs/UNDERSTANDING.md`, `docs/RESULT.md`, `docs/PLAN.md` | A correction that reaches the ledger and not the two documents CLAUDE.md section 6 designates as the current-state record is not a correction. **This is a process failure, not a typo.** |
+| F2.3 | **`RESULT.md` still says "no loop or drift regime exists anywhere we have looked"** — the exact absolute form the three-sense taxonomy retired, and which D98 (sense ii, present) and D55 (sense iii, present) contradict. | `docs/RESULT.md` | The argument document asserts an absolute negative that two of our own measurements refute. |
+| F2.4 | **The [0.808, 0.920] interval is misattributed.** The auditor says it is not D52's at all but the single-orbit self-convergence fit that `metrics/regime.py` documents as the near-tautological mistake `contraction_from_pair` exists to replace. | `docs/PLAN.md` section 1; D94(3) | If true, **D94(3)'s own correction identified the wrong source**, and the cross-method support for rho is weaker still: only one estimator family behind 0.855. |
+| F2.5 | **D98's per-block residual "0.09-0.11 / ~0.1" is not the data.** Only 1 of 6 prompts lands in that band; three sit 2-3.5x above it. The "~600x reduction" holds for one prompt (per-prompt ratios ~187x to ~1735x). | D98; `docs/RESULT.md`; `docs/UNDERSTANDING.md` | The conclusion survives (minimum separation/residual across prompts is 95) but the quoted numbers are a single prompt presented as the range. |
+| F2.6 | **`research_inquiry_3_interp.md` still states the attenuation direction backwards** — the error corrected in D95 and `RESULT.md` was never propagated to the inquiry, which was then sent to an external researcher. | `docs/research_inquiry_3_interp.md` | Asks outsiders how to adapt patching under inverted physics. Already returned, so no live harm, but the file is wrong in the repo. |
+| F2.7 | **`UNDERSTANDING.md`'s H3 line-attractor conclusion omits D31's own caveat** that it measured a sub-operator its author argues does not govern the orbit, and that the full operator was never measured. | `docs/UNDERSTANDING.md`; D31 | H3's strong mechanistic form ("no line attractor, so no running count") would rest on the spectrum of an operator our own ledger says is not the governing one. **This compounds with the D99/toy-model correction, which already narrowed that claim.** |
+| F2.8 | **`run_census_analysis.py`'s pooling justification may invert under a bimodal prior.** My simulation drew true accuracies from Uniform(0,1); this repo's items are mostly pinned near 0 or 1, where the "splits in 4 draws" condition is highly informative and the curse is larger. | `scripts/run_census_analysis.py`; `directions.md` E3 | **I already corrected this rule once, in the direction the auditor now questions.** The census has not returned, so the decision is not yet load-bearing — but re-run the simulation with a bimodal prior before using either estimator. |
+| F2.9 | **`split_stages` mis-assigns stage-2 draws to stage 1 whenever a screening draw failed**, corrupting the exact comparison the winner's-curse check rests on. | `scripts/run_census_analysis.py` 63-83 | Cheap fix, and it matters only if the census had failed forwards — check the census output for `ok: false` rows before trusting the printed curse block. |
+| F2.10 | **`run_h0_within.py`: alpha is Bonferroni over 8 windows while 25 tests are run**, and at the honest 24-test alpha the permutation resolution (1/401) makes significance unreachable. | `scripts/run_h0_within.py`; D93(5) | The pre-registered P5 verdict stands on its own terms; the SECONDARY multiplicity argument in D93(5) is vacuous rather than informative and should be restated. |
+| F2.11 | **A reported permutation p (0.00015) is below the exact floor of its own test** (12 sign-flip pairs give 2^-12 = 0.000244). Monte-Carlo artefact of `(hits+1)/(N+1)` with N=20000 over a space of 4096 patterns. | `scripts/run_qk_analysis.py` 85-102; D96 | No conclusion changes (all windows still clear alpha under the exact test) but the quoted endpoint is not an attainable p-value. **Use the exact test when the pattern space is smaller than N_PERM.** |
+| F2.12 | **`related_work.md` gives the same paper two contradictory verification statuses** and stretches [V] to cover a scouting read, which the doc's own key assigns to [U]. | `docs/related_work.md` | The verification ladder is what prevents a repeat of the Movahedi/Du citation failures; if [V] no longer means "I read the primary source myself", it has stopped discriminating. |
+| F2.13 | **The D89 wording amendment `PLAN.md` mandates was never applied** to `RESULT.md` or `UNDERSTANDING.md`: the capability axis behind the central null was first-token-scored for 8 of 21 families. | `docs/RESULT.md`, `docs/UNDERSTANDING.md` | D89 reports the null survives a tokenisation-free re-test, so the conclusion holds — but the independent variable is quoted as exact-match accuracy when it is not. |
+
+**The pattern worth naming.** Most of these are not analysis errors; they are
+**propagation failures** — a correction made in the ledger and not carried into the
+synthesis documents, or a number quoted from one prompt as though it were a range.
+That is a different failure mode from the four caught earlier today by reading raw
+output, and it needs a different guard: **when a ledger row is corrected, grep the
+other documents for the retracted phrasing in the same commit.**

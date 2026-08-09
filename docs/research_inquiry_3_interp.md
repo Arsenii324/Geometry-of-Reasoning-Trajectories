@@ -28,14 +28,19 @@ Properties that break standard assumptions:
   gives different trajectories and sometimes different answers.
 - **The prelude output is re-injected every iteration**, so information is
   continually re-supplied rather than only propagated.
-- Empirically the iteration is a **contraction** (per-step factor ≈ 0.855, no
-  exceptions found across ~960 orbit pairs). **A perturbation injected at
+- Empirically the iteration is a **contraction** (per-step factor ≈ 0.855 raw, ≈0.82
+  bias-corrected; no exceptions found, across 16 prompts — the ~960 pairs are
+  replicates of those 16, not independent units). **A perturbation injected at
   iteration r decays and is completely gone by iteration 32.**
 
-That last point is the practical crux: **activation patching late in the
-recurrence may be causally inert by construction**, because the contraction erases
-the intervention before the output head reads it. We observed exactly this — a
-patch changed the trajectory transiently and never changed the final answer.
+**CORRECTED 2026-08-09 — an earlier draft of this file had the direction backwards.**
+Since attenuation is ρ^(R−r), **late** interventions survive and **early** ones
+decay (≈1843× at r=16 against ≈12× at r=48, for R=64). The practical crux is
+different: perturbing the **state** *h* perturbs an initial condition a contraction
+erases, while the re-injected prelude output *e* is the map's **parameter**, so
+perturbing *e* moves the fixed point *h\*(e)* and persists. Our own patch was
+same-prompt/different-seed, which is inert at **both** ends by construction — the
+two runs share an attractor, so by late *r* there is nothing left to import.
 
 ## 2. What we have tried, and how it went
 
@@ -44,8 +49,9 @@ patch changed the trajectory transiently and never changed the final answer.
   *right*, sweeping r. Our implementation is validated (a no-op replay reproduces
   the original run exactly). The experiment nonetheless failed its
   pre-registered gate because too few prompts had outcomes that varied at all —
-  a *task supply* problem, not an implementation problem. Separately, the
-  patch effect decayed to nothing by iteration 32.
+  a *task supply* problem, not an implementation problem. The patch effect also
+  vanished by iteration 32, which we now read as donor and recipient having
+  already converged to a shared attractor, not as attenuation.
 - **Reading trajectory shape** to decode correctness: mostly null under properly
   stratified, permutation-tested analysis.
 - **A query–key alignment probe** at the answer position: running now.

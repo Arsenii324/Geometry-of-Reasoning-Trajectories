@@ -16,7 +16,7 @@ weak and not-yet-confirmed trace of whether the computation succeeded.**
 
 **And as of the 2026-08-09 evening pass, the contraction is no longer an assumption
 but a measurement, under two independent instruments: the map contracts at
-ρ ≈ 0.855 with 0 of ~960 orbit pairs at ρ ≥ 1 (D94), and 179 of 179 token
+ρ ≈ 0.855 raw / ≈0.82 bias-corrected, with 0 orbit pairs at ρ ≥ 1 across 16 prompts (D94; n_eff is the prompt, not the ~960 pairs), and 179 of 179 token
 positions classify as `settle` with zero loops or drift (D97).**
 
 **But both instruments read ONE block of the recurrent stack, and D98 shows that
@@ -274,7 +274,7 @@ and G2. Stated plainly, with what each rests on:
   actually about (D94).** `contraction_from_pair` needs two orbits of the *same*
   prompt from *different* h₀; no bank in this project satisfied that at depth
   until `geometry-h0bank` produced 16 prompts × 32 unseeded draws as a by-product.
-  Over ~960 pairs: **median ρ = 0.8550, and 0.0% of pairs at ρ ≥ 1.** Per-prompt
+  Over ~960 pairs: **median ρ = 0.8550 raw (≈0.82 after D58's +0.033 bias correction for this fit), and 0.0% of pairs at ρ ≥ 1 across 16 prompts.** Per-prompt
   medians span 0.832–0.901 — a range that sits *inside* D52's independently
   measured [0.808, 0.920]. Two unrelated instruments agreeing on the same physical
   quantity is the strongest convergent evidence this project has. The residual gap

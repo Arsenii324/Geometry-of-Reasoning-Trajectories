@@ -34,12 +34,16 @@ D92's between-item result is a different test and stands, still unreplicated.
 
 **A second claim, established the same day and independent of the first:**
 
-> **The iteration is a uniform contraction, and no loop or drift regime exists
-> anywhere we have looked.** The per-step contraction factor measured the honest
+> **The iteration is a uniform contraction at a fixed block, and the
+> non-contracting kind of loop is absent — though two other things the literature
+> calls a "loop" are present.** The per-step contraction factor measured the honest
 > way — between two orbits of the *same* prompt from *different* random
-> initialisations — is ρ = 0.855, with **0.0% of ~960 orbit pairs at ρ ≥ 1**
-> (D94), and its per-prompt range 0.832–0.901 sits *inside* the interval
-> [0.808, 0.920] obtained by a completely different estimator. Independently,
+> initialisations — is ρ = 0.855 raw — **≈0.82 once the +0.033 bias our own D58 diagnosed in this
+> log-linear fit is applied** — with **0.0% of orbit pairs at ρ ≥ 1** across
+> **16 prompts** (n_eff is the prompt, not the ~960 pairs, which are replicates;
+> by the rule of three that excludes a per-prompt rate above ~19%, no better).
+> The independent Arnoldi/JVP route (D31) gives 0.79–0.81, so the two agree to
+> about 0.02 rather than coinciding. Independently,
 > classifying every token position's own path with a settle/loop/drift
 > classifier gives **179 of 179 positions `settle`** (D97).
 
