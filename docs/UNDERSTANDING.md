@@ -190,6 +190,36 @@ predicts more that is not yet in. Two runs are in flight to test exactly that:
   parametric task ladder this project has never had (the battery's two ladders,
   `count4/8/16` and the Caesar family, are both floored or non-monotone, D89).
 
+### H3 has a sharper, mechanistic form — and our own data already answers it
+
+A sourced interpretability pass (2026-08-09) made the point that "is the spectral
+radius < 1" is the *weak* form of H3. The strong form, standard in the RNN
+fixed-point literature (Sussillo & Barak 2013; Maheswaranathan et al. 2019), is:
+
+> **How many Jacobian eigenvalues sit near 1?** A *line attractor* — a manifold of
+> near-unity eigendirections — is the mechanism by which a recurrent network
+> integrates or holds a running count. A strict contraction has none, and then
+> counting is impossible.
+
+That is a sharp, falsifiable prediction, and **D31 already measured the quantity
+it needs.** Implicitly-restarted Arnoldi on autodiff Jacobian-vector products
+gives top eigenvalues in complex-conjugate pairs at **0.808, 0.808, 0.802, 0.802,
+0.775, 0.775 …** across 3 prompts. Arnoldi returns the *largest* eigenvalues, so
+if the top modulus is 0.808 then **nothing is near 1: there is no line attractor
+and no integrator eigendirection.**
+
+So H3's mechanistic form is supported on this model — not by the contraction rate
+alone, but by the absence of the specific structure that would permit a running
+count. Two caveats travel with it: 3 prompts, and the Jacobian is evaluated at
+particular points along particular orbits, so this is a local statement about the
+region the orbits actually visit.
+
+**And the bounded-counter caveat is ours to state, because nobody else has.** The
+same pass found no published source drawing the distinction, so it is uncontested
+only because unstated: contraction to a limit *set* of small but nonzero diameter
+still permits a **bounded** counter. "Contraction ⇒ no running state" is sound
+only for *unbounded* registers, and any claim we make must be scoped that way.
+
 ### The hypotheses and goals, as of the 2026-08-09 evening pass
 
 Four results landed in one afternoon and they change the standing of H1, H3, G1
