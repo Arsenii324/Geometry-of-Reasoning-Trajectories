@@ -1,0 +1,22 @@
+name: fixedsum-orthogonal-ladder
+desc: >
+  B4b: the first difficulty ladder in this project whose ANSWER is independent of
+  its DIFFICULTY. Six addend slots, always six single digits, difficulty = number
+  of nonzero addends, gold = the sum held FIXED while difficulty varies. Every
+  gold in 5..9 has a composition into exactly k positive parts for every k in
+  1..5, so the design is fully crossed and rho(k, gold) = 0.027 by construction
+  where `addk` had +0.68 to +0.93. Token count constant (44 chars, one template),
+  gated in-kernel anyway. Tests whether D110's reversal -- harder problems reach
+  their best readout depth EARLIER -- is a fact about Huginn or about `addk`'s
+  collinearity. Pre-registered directional prediction: rho(k, best_depth) < 0.
+  Capability gate first: if accuracy floors at every level the run is VOID, not
+  null. The one confound that cannot be designed away (max_addend must fall as k
+  rises) is measured and stratified, with 5 strata spanning >= 3 difficulties.
+cmd: python job.py ${RESULT}
+outputs:
+  - fixedsum.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1

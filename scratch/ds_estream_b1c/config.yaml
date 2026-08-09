@@ -1,0 +1,18 @@
+name: estream-rho-across-recipients
+desc: >
+  B1c: does the CAUSAL contraction rate replicate across recipient prompts?
+  B1b gave rho = 0.822 from the decay of state-injection potency as rho^(R-r),
+  agreeing with D94's bias-corrected ~0.82 and D31's Arnoldi 0.79-0.81 -- but
+  its 8 pairs all shared ONE recipient (pairs[:N] off a loop whose outer index
+  is the recipient), so the rate described one fixed point. This stratifies over
+  16 distinct recipients with varied donors, VOIDs below 12, and fits |potency|
+  rather than the signed mean that cancelled and read as 'not detected'.
+  Pre-registered: median rho across recipients lands in 0.79-0.86.
+cmd: python job.py ${RESULT}
+outputs:
+  - estream.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
