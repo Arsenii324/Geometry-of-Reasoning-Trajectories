@@ -43,13 +43,22 @@ D92's between-item result is a different test and stands, still unreplicated.
 > classifying every token position's own path with a settle/loop/drift
 > classifier gives **179 of 179 positions `settle`** (D97).
 
-That second claim carries an explicit caveat we are testing rather than asserting:
-both instruments read the state at the *same* block of the recurrent stack. If
-"loop" in this literature means a cycle *across* the blocks within one iteration —
-each block converging to its own distinct fixed point — then every block converging
-is consistent with a cycle rather than evidence against one, and these results
-would need restating as "no loop in the iteration-to-iteration map at a fixed
-block". That test is running.
+That second claim carried an explicit caveat, we tested it, and **the caveat won.**
+Both instruments read the state at the *same* block of the recurrent stack. Hooking
+all four core blocks instead (D98): each converges tightly to its **own** fixed
+point (per-block residual 58–71 → ~0.1), and those four fixed points are separated
+by **~52% of the state norm** — a separation-to-residual ratio of **95–730** — with
+the cycle's perimeter **exceeding the entire distance travelled from initialisation
+to convergence by 60%**.
+
+> **There is a large, stable, period-4 cycle across the blocks, and reading one
+> block samples a single point of it forever.**
+
+Both statements are true of different objects: no loop *in the
+iteration-to-iteration map at a fixed block*, and a large loop *across blocks
+within an iteration*. The second claim is therefore scoped, not withdrawn — no
+number in D94 or D97 changes — and this independently reproduces on Huginn a
+published claim we previously held only at abstract-level confidence.
 
 ---
 

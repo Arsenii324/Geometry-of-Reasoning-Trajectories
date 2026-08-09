@@ -17,10 +17,19 @@ weak and not-yet-confirmed trace of whether the computation succeeded.**
 **And as of the 2026-08-09 evening pass, the contraction is no longer an assumption
 but a measurement, under two independent instruments: the map contracts at
 ρ ≈ 0.855 with 0 of ~960 orbit pairs at ρ ≥ 1 (D94), and 179 of 179 token
-positions classify as `settle` with zero loops or drift (D97). There is no
-loop/drift regime anywhere we have looked on this model.** The binding constraint
-on further progress is no longer instrumentation — it is finding tasks whose
-outcome varies at all.
+positions classify as `settle` with zero loops or drift (D97).**
+
+**But both instruments read ONE block of the recurrent stack, and D98 shows that
+choice was hiding the loop.** Hooking all four core blocks: each converges tightly
+to its *own* fixed point (residual 58-71 → ~0.1), and those four fixed points are
+separated by ~52% of the state norm — a separation/residual ratio of 95–730, with
+the cycle's perimeter exceeding the entire distance travelled from h₀ to
+convergence by 60%. **So there IS a large, stable, period-4 cycle in block-space,
+and a `core_block[-1]`-only read samples one point of it forever.** Both readings
+are true of different objects: no loop *in the iteration-to-iteration map at a
+fixed block*; a large loop *across blocks within an iteration*. D94 and D97 are
+scope-corrected, not retracted — no number in them changes. The binding constraint
+on further progress is task supply, not instrumentation.
 
 *(This sentence has been rewritten three times in one day, and the history is the
 evidence. It began as "…not of the input or of the computation". D84 refuted the
