@@ -142,12 +142,46 @@ def test_rejects_too_few_snapshots() -> None:
         dmd_eigenvalues(np.zeros((2, 5)))
 
 
-def test_precision_floor_is_zero_for_genuinely_fp32_data() -> None:
-    """It must not shorten a window that carries real fp32 signal."""
-    from traj_geom.metrics.dmd import precision_floor
+def test_precision_floor_does_not_shorten_a_live_fp32_window() -> None:
+    """fp32 data has a floor too -- ~32768x below bf16's -- and it must not bite
+    on a trajectory whose steps are far above it.
+
+    The first version of `precision_floor` returned 0.0 here, which was a real gap
+    rather than conservatism: an fp32 orbit run far enough to converge ends in a
+    stretch where the "direction" of a step is float32 quantisation, and the
+    tail-based floor alone admits it. What the fp32 branch must NOT do is shorten a
+    window carrying signal, which is what this asserts.
+    """
+    from traj_geom.metrics.dmd import pre_floor_window, precision_floor
     rng = np.random.default_rng(21)
     traj = np.cumsum(rng.normal(size=(40, 64)), axis=0)
-    assert precision_floor(traj) == 0.0
+    floor = precision_floor(traj)
+    steps = np.linalg.norm(np.diff(traj, axis=0), axis=1)
+    assert 0.0 < floor < steps.min() / 1000, (
+        f"fp32 floor {floor:.3e} is not far below the smallest live step "
+        f"{steps.min():.3e}")
+    assert pre_floor_window(traj)[1] - pre_floor_window(traj)[0] >= len(steps) - 2
+
+
+def test_precision_floor_catches_a_dead_fp32_tail() -> None:
+    """And it MUST bite where the steps really are float32 rounding.
+
+    Constructed to order: a decaying orbit whose tail steps are at the fp32
+    quantisation scale. Without the fp32 branch the tail-based floor admits them,
+    and a participation ratio computed there describes the arithmetic -- exactly
+    D28's failure mode, one precision down.
+    """
+    from traj_geom.metrics.dmd import pre_floor_window
+    rng = np.random.default_rng(3)
+    v = rng.normal(size=(1, 96))
+    v /= np.linalg.norm(v)
+    t = np.arange(60, dtype=np.float64)
+    traj = (76.0 * v + (v * 60.0) * (0.55 ** t)[:, None]).astype(np.float32)
+    lo, hi = pre_floor_window(traj.astype(np.float64))
+    steps = np.linalg.norm(np.diff(traj.astype(np.float64), axis=0), axis=1)
+    dead = int(np.flatnonzero(steps < 4e-06)[0])
+    assert hi <= dead + 4, (
+        f"window ends at {hi} but the steps reach the fp32 rounding scale at {dead}")
 
 
 def test_precision_floor_excludes_the_bf16_dead_regime() -> None:

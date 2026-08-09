@@ -20,6 +20,7 @@ import json
 import numpy as np
 import pytest
 from scripts.run_window_law import (
+    arm_contrast,
     collect,
     common_depth_range,
     depth_vs_prompt,
@@ -173,3 +174,102 @@ def test_depth_vs_prompt_is_reported_as_pooled_only(tmp_path) -> None:
     c = depth_vs_prompt(df, "pr")
     assert c["usable"] and c["ratio"] > 0
     assert "composition changes with depth" in report(df)
+
+
+def _diffusing(n_step=80, seed=0, scale=70.0, rho=0.71):
+    """A contraction with a FLAT spectrum: it shrinks without collapsing.
+
+    Every mode at the same modulus, so none comes to dominate. This is the
+    untrained arm's behaviour as D76(3) describes it -- effective dimension
+    tracking the sample count rather than saturating -- and it is the construction
+    that makes the trained/untrained contrast falsifiable: if the pipeline reported
+    a depth law here too, D80's arm contrast would be measuring the sliding window.
+    """
+    rng = np.random.default_rng(seed)
+    steps = rng.normal(size=(n_step, DIM))
+    steps /= np.linalg.norm(steps, axis=1, keepdims=True)
+    steps *= (scale * rho ** np.arange(n_step))[:, None]
+    return np.cumsum(steps, axis=0).astype(np.float32)
+
+
+def test_the_arm_contrast_separates_collapse_from_diffusion(tmp_path) -> None:
+    """THE CLAIM D80(7) RESTS ON, planted both ways.
+
+    Trained orbits are built to collapse onto a dominant mode; untrained ones are
+    built to shrink with a flat spectrum. The contrast must report a large paired
+    change for the first and a small one for the second, at MATCHED depths -- the
+    arms converge at different rates (D76(5): 104 unrolls against 39-43), so an
+    unmatched comparison would contrast two different stretches.
+    """
+    import json
+
+    out = tmp_path / "b"
+    out.mkdir(parents=True, exist_ok=True)
+    recs = []
+    for i in range(12):
+        np.save(out / f"tr{i:02d}.npy", _contracting(seed=i))
+        recs.append({"tag": f"tr{i:02d}", "family": "f", "arm": "trained",
+                     "correct": True, "n_tokens": 30, "ok": True})
+    for i in range(12):
+        np.save(out / f"un{i:02d}.npy", _diffusing(seed=100 + i))
+        recs.append({"tag": f"un{i:02d}", "family": "f", "arm": "untrained",
+                     "correct": False, "n_tokens": 30, "ok": True})
+    with open(out / "manifest.json", "w", encoding="utf-8") as fh:
+        json.dump(recs, fh)
+
+    df = collect((("bank", str(out), ".npy"),), arms=("trained", "untrained"))
+    assert set(df["arm"]) == {"trained", "untrained"}
+    txt = arm_contrast(df)
+    assert "TRAINED AGAINST UNTRAINED" in txt
+
+    shared = sorted(set(common_depth_range(df[df["arm"] == "trained"]))
+                    & set(common_depth_range(df[df["arm"] == "untrained"])))
+    tr = paired_depth_change(df[df["arm"] == "trained"], "pr", shared)
+    un = paired_depth_change(df[df["arm"] == "untrained"], "pr", shared)
+    assert abs(tr["median_delta"]) > 3 * abs(un["median_delta"]), (tr, un)
+
+
+def test_collect_returns_only_the_arms_asked_for(tmp_path) -> None:
+    """The default is trained-only, because every earlier analysis is trained-only
+    and silently widening it would change published numbers."""
+    import json
+
+    out = tmp_path / "c"
+    out.mkdir(parents=True, exist_ok=True)
+    recs = []
+    for arm, pre in (("trained", "tr"), ("untrained", "un")):
+        for i in range(10):
+            np.save(out / f"{pre}{i:02d}.npy", _contracting(seed=i + len(pre)))
+            recs.append({"tag": f"{pre}{i:02d}", "family": "f", "arm": arm,
+                         "correct": True, "n_tokens": 30, "ok": True})
+    with open(out / "manifest.json", "w", encoding="utf-8") as fh:
+        json.dump(recs, fh)
+    src = (("bank", str(out), ".npy"),)
+    assert set(collect(src)["arm"]) == {"trained"}
+    assert set(collect(src, arms=("trained", "untrained"))["arm"]) == {
+        "trained", "untrained"}
+
+
+def test_untrained_draws_are_kept_distinguishable(tmp_path) -> None:
+    """`ds_seeds` labels its arms untrained0..untrained4, one per weight draw.
+
+    Collapsing them to "untrained" is right for the contrast, but the draw has to
+    survive in `arm_raw` -- otherwise the claim "n=6 independent weight-sets" could
+    not be checked from the table, and D76(6) is the record of what one draw costs.
+    """
+    import json
+
+    out = tmp_path / "d"
+    out.mkdir(parents=True, exist_ok=True)
+    recs = []
+    for k in range(3):
+        for i in range(6):
+            np.save(out / f"u{k}_{i:02d}.npy", _diffusing(seed=k * 10 + i))
+            recs.append({"tag": f"u{k}_{i:02d}", "family": "f",
+                         "arm": f"untrained{k}", "correct": False,
+                         "n_tokens": 30, "ok": True})
+    with open(out / "manifest.json", "w", encoding="utf-8") as fh:
+        json.dump(recs, fh)
+    df = collect((("bank", str(out), ".npy"),), arms=("untrained",))
+    assert set(df["arm"]) == {"untrained"}
+    assert df["arm_raw"].nunique() == 3

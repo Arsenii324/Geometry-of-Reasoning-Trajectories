@@ -26,6 +26,17 @@ convergence it was measured*. This also dissolves an apparent conflict in our ow
 record: D74's "13.3 effective dimensions" and the asymptotic "2.3" are the same
 orbit at a ~21-unroll and a ~90-unroll window.
 
+**And that depth law is something training BUILDS.** Extended to the untrained arm
+— 84 orbits over **six independent weight draws**, on identical prompts, at the
+depths every orbit in both arms reaches — participation ratio falls 8.553 → 4.889
+trained (149/149 orbits) against 9.553 → 9.104 untrained: **the trained orbit sheds
+directions 8× faster**. The step cosine moves +0.438 trained and −0.013 untrained
+(p = 0.063, not significant); the untrained path does not straighten at all
+(D80(7)). Random weights *diffuse* at roughly constant effective dimension; the
+trained orbit *collapses* onto a dominant mode. Training installs the spectral
+structure that makes the recurrent orbit converge, and the depth profile is the
+clearest expression of it.
+
 **(b) The dynamics are linear enough for that to mean what it sounds like.** Held-out
 one-step prediction of the step directions recovers a median **91%** of what the
 fitted subspace can express, with a general operator beating a subspace-matched

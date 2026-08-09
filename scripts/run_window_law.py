@@ -51,6 +51,10 @@ SOURCES = (
     ("ds_bank", os.path.join("scratch", "ds_bank", "out"), "_last.npy"),
     ("b6bank", os.path.join("scratch", "kaggle_b6bank", "out"), ".npy"),
     ("geomcap", os.path.join("scratch", "kaggle_geomcap", "out"), ".npy"),
+    # The untrained arm, on identical prompts. `ds_seeds` carries five INDEPENDENT
+    # `from_config` draws, so "untrained" here is n=6 weight-sets rather than one --
+    # the standard D52 set and the one D76(8) had to be re-run to meet.
+    ("ds_seeds", os.path.join("scratch", "ds_seeds", "out"), "_last.npy"),
 )
 
 
@@ -89,22 +93,31 @@ def _iter_bank(name: str, path: str, suffix: str):
     with open(mpath, encoding="utf-8") as fh:
         recs = [r for r in json.load(fh) if r.get("ok")]
     for r in recs:
-        if r.get("arm") not in (None, "trained"):
-            continue                            # trained arm only; D76 owns the contrast
+        arm = r.get("arm")
         f = os.path.join(path, r["tag"] + suffix)
         if not os.path.exists(f):
             continue
         yield {"bank": name, "tag": r["tag"],
+               # `ds_seeds` labels its arms untrained0..untrained4, one per weight
+               # draw. Collapsing them to "untrained" for the contrast while keeping
+               # the draw in `arm_raw` is what lets the depth law be checked WITHIN
+               # a draw as well as across them.
+               "arm": ("trained" if arm in (None, "trained") else "untrained"),
+               "arm_raw": arm if arm is not None else "trained",
                "family": r.get("family") or r.get("task", "?"),
                "correct": bool(r.get("correct", r.get("correct_any_depth", False))),
                "n_tokens": int(r.get("n_tokens", 0))}, f
 
 
-def collect(sources=SOURCES, limit_per_bank: int | None = None) -> pd.DataFrame:
+def collect(sources=SOURCES, limit_per_bank: int | None = None,
+            arms: tuple[str, ...] = ("trained",)) -> pd.DataFrame:
+    """Sliding-window statistics for every orbit in `sources` whose arm is in `arms`."""
     rows = []
     for name, path, suffix in sources:
         n = 0
         for meta, f in _iter_bank(name, path, suffix):
+            if meta["arm"] not in arms:
+                continue
             if limit_per_bank is not None and n >= limit_per_bank:
                 break
             traj = np.load(f).astype(np.float64)
@@ -205,6 +218,62 @@ def family_profiles(df: pd.DataFrame, metric: str) -> pd.DataFrame:
     return piv.dropna(how="all")
 
 
+def arm_contrast(df: pd.DataFrame) -> str:
+    """Is the depth law something TRAINING builds, or does any contraction show it?
+
+    The question decides what D80 is a claim about. If untrained orbits show the
+    same profile, "trajectory geometry is a clock" is architectural and says nothing
+    about learning. D76(3) predicts otherwise -- untrained participation ratio tracks
+    the sample count (near-isotropic diffusion) while the trained one saturates --
+    and this measures it as a depth profile rather than as a window sweep.
+
+    Both arms are compared over the depth range EVERY orbit in EITHER arm reaches.
+    The arms converge at different rates (D76(5): pre-floor window 104 unrolls
+    trained against 39-43 untrained), so their natural ranges differ by ~2.5x and an
+    unmatched comparison would contrast two different stretches of two different
+    convergences.
+    """
+    if df["arm"].nunique() < 2:
+        return ""
+    ranges = [set(common_depth_range(s)) for _, s in df.groupby("arm")]
+    shared = sorted(set.intersection(*ranges))
+    if len(shared) < 2:
+        return "\n  arms share no common depth range; no matched contrast possible."
+    lines = ["", "  TRAINED AGAINST UNTRAINED, at the depths every orbit in both",
+             f"  arms reaches ({min(shared)} -> {max(shared)}).",
+             f"    {'arm':>10} {'orbits':>7} {'draws':>6} {'metric':>16} "
+             f"{'start':>8} {'end':>8} {'delta':>8} {'agree':>10} {'p':>9}"]
+    for m in ("pr", "cos_consecutive", "contraction"):
+        for arm, s in df.groupby("arm"):
+            c = paired_depth_change(s, m, shared)
+            if not c.get("usable"):
+                continue
+            lines.append(
+                f"    {arm:>10} {c['n_orbits']:>7} {s['arm_raw'].nunique():>6} "
+                f"{m:>16} {c['median_at_start']:>+8.3f} {c['median_at_end']:>+8.3f} "
+                f"{c['median_delta']:>+8.3f} "
+                f"{c['n_agreeing']:>4}/{c['n_orbits']:<5} {c['p_sign']:>9.1e}")
+        lines.append("")
+    tr = {m: paired_depth_change(df[df["arm"] == "trained"], m, shared)
+          for m in ("pr", "cos_consecutive")}
+    un = {m: paired_depth_change(df[df["arm"] == "untrained"], m, shared)
+          for m in ("pr", "cos_consecutive")}
+    if all(c.get("usable") for c in (*tr.values(), *un.values())):
+        rt = abs(tr["pr"]["median_delta"]) / max(1e-9, abs(un["pr"]["median_delta"]))
+        lines += [
+            f"  The trained orbit's participation ratio falls {rt:.1f}x further than "
+            f"the untrained one's",
+            f"  over the same depths, and its step cosine moves "
+            f"{tr['cos_consecutive']['median_delta']:+.3f} against "
+            f"{un['cos_consecutive']['median_delta']:+.3f}.",
+            "  So the collapse is not what any contraction does -- it is what TRAINING",
+            "  builds. Random weights diffuse at roughly constant effective dimension",
+            "  and constant (negative) step alignment, which is D76(3) seen as a",
+            "  depth profile instead of a window sweep.",
+        ]
+    return "\n".join(lines)
+
+
 def report(df: pd.DataFrame) -> str:
     lines = [
         "",
@@ -289,14 +358,15 @@ def main() -> None:
         print("no banked trajectories found in any of "
               + ", ".join(p for _, p, _ in SOURCES))
         return
-    df = collect(tuple(have))
+    df = collect(tuple(have), arms=("trained", "untrained"))
     if df.empty:
         print("banks present but no usable orbits")
         return
     save_table(OUT, df, kind="window_law", width=WIDTH, stride=STRIDE,
                banks=[n for n, _, _ in have])
     print(f"saved {OUT} ({len(df)} windows over {df['tag'].nunique()} orbits)")
-    print(report(df))
+    print(report(df[df["arm"] == "trained"]))
+    print(arm_contrast(df))
 
 
 if __name__ == "__main__":

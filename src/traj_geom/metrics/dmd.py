@@ -152,18 +152,32 @@ def precision_floor(traj: np.ndarray) -> float:
     unrolls and diverges past ~40 -- and the trained step norm crosses this floor
     at unroll 39. So the two agree exactly where this function says they should.
 
-    Returns 0.0 when the trajectory is not bf16-exact (i.e. genuinely fp32), in
-    which case only the tail-based floor applies.
+    GENUINELY-fp32 DATA HAS A FLOOR TOO, and returning 0.0 for it was a gap in the
+    first version of this function. fp32 carries 24 significand bits, so a state of
+    norm 76.4 rounds with an error of norm ~2.6e-06 and a STEP -- a difference of
+    two rounded states -- with ~3.7e-06. That is ~32768x below bf16's floor, which
+    is why it does not bite on the banked Huginn orbits: their step norms plateau at
+    ~9e-05, a factor of 14 above it (measured 2026-08-09 on `ds_bank`, and the
+    trained window is unchanged by this correction). It DOES bite on any trajectory
+    run far enough to converge, where the tail-based floor alone admits stretches in
+    which the "direction" of a step is float32 quantisation.
+
+    Returns the rounding scale of whichever dtype the data is exactly representable
+    in -- bf16 if it is bf16-exact, otherwise fp32.
     """
     import torch
     x = np.asarray(traj)
     t = torch.from_numpy(np.ascontiguousarray(x.astype(np.float32)))
-    if not torch.equal(t, t.to(torch.bfloat16).to(torch.float32)):
-        return 0.0
-    err = t.to(torch.bfloat16).to(torch.float32).numpy().astype(np.float64) - x.astype(np.float64)
-    scale = float(np.median(np.linalg.norm(
-        np.abs(x.astype(np.float64)) * 2.0**-9, axis=1)))
-    return max(scale, float(np.median(np.linalg.norm(err, axis=1))))
+    if torch.equal(t, t.to(torch.bfloat16).to(torch.float32)):
+        err = (t.to(torch.bfloat16).to(torch.float32).numpy().astype(np.float64)
+               - x.astype(np.float64))
+        scale = float(np.median(np.linalg.norm(
+            np.abs(x.astype(np.float64)) * 2.0**-9, axis=1)))
+        return max(scale, float(np.median(np.linalg.norm(err, axis=1))))
+    # fp32: half-ulp per coordinate is 2^-24 relative, and a step differences two
+    # independently-rounded states, hence the sqrt(2).
+    return float(np.median(np.linalg.norm(
+        np.abs(x.astype(np.float64)) * 2.0**-24, axis=1))) * np.sqrt(2.0)
 
 
 def pre_floor_window(traj: np.ndarray, floor_frac: float = 2.0,
