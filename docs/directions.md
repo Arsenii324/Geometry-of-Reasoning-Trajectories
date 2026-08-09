@@ -750,16 +750,29 @@ uncontrolled difficulty.
 
 **THE TRAPS, and one of them is already live in `geometry-census`.**
 
-- **Winner's curse / regression to the mean.** Selecting items because their
-  measured `frac_correct` looks balanced, on FEW draws, preferentially selects
-  items that got lucky; re-measuring them moves the estimate back toward the
-  extremes. **`geometry-census` as launched has this: `summarise` pools the 4
-  stage-1 screening draws with the 20 stage-2 draws for selected items, so its
-  printed `frac_correct` is contaminated by the very draws that caused
-  selection.** *Recoverable:* `census.json` stores `rows` in append order, and
-  each item's first 4 rows are its stage-1 draws, so the offline analysis MUST
-  compute the split fraction from **stage-2 draws only** and treat stage 1
-  purely as a selector. Do not quote the kernel's printed table in the ledger.
+- **Winner's curse / regression to the mean -- RAISED, THEN CHECKED, AND IT IS
+  SMALL. The rule first written here was wrong and is corrected in place.** The
+  concern was that `geometry-census`'s `summarise` pools the 4 stage-1 screening
+  draws with the 20 stage-2 draws, so items selected for looking balanced would
+  be re-scored using the very draws that selected them. That is a real mechanism,
+  so this entry originally required the offline analysis to use **stage-2 draws
+  only**. **Simulation refutes that requirement.** Over 4000 simulated items under
+  the kernel's own selection rule (both classes present in 4 screening draws):
+
+  | estimator | bias in apparent balance | mean \|estimate − truth\| |
+  |---|---|---|
+  | stage-2 only | −0.0180 | 0.0778 |
+  | **pooled** | **−0.0014** | **0.0698** |
+
+  Pooling wins on both. The selection condition is weak -- it excludes only items
+  pinned near 0 or 1 -- so it induces little curse, while discarding 4 of 24 draws
+  costs real precision; and the residual bias is dominated by noise passing
+  through the non-linear \|f − 0.5\| transform, which penalises the SMALLER
+  sample. `scripts/run_census_analysis.py` therefore reports the **pooled**
+  estimate as primary, prints the stage-2 estimate beside it, and prints the
+  measured gap so the curse's size is visible rather than asserted. *(The stage
+  split is still computed, because it is what makes the comparison possible at
+  all -- rows are stored in append order and each item's first 4 are stage 1.)*
 - **Circularity: selecting on the outcome, then predicting the outcome.** If
   items are chosen because correctness varies and we then ask whether geometry
   predicts correctness, the selection and the analysis share data. The correct
