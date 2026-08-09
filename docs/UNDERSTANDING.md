@@ -26,9 +26,19 @@ full-shape classifier, run within (family, gold) strata with its centring fitted
 inside each CV fold rather than on the pooled data, decodes correctness at 61.0%
 against a 50.2% null (p = 0.030, stable across CV seeds) — small, driven by 2 of 3
 strata, not pre-registered, but converging with an independently designed test
-(D91) that found the same qualitative thing at unrolls 6–24 specifically. Neither
-confirms it. `geometry-h0bank`, launched before D91/D92 existed, is the powered
-test that will.)*
+(D91) that found the same qualitative thing at unrolls 6–24 specifically. `geometry-h0bank`,
+launched before D91/D92 existed, was the powered, pre-registered test of D91's
+specific lead — and it came back NOT CONFIRMED (D93): best window 6–18 gives
+52.0% against a 46.8% null, p = 0.0125, missing the corrected 0.00625 by about 2x,
+with no far-tail window significant either. This is a trustworthy null, not an
+underpowered one — the test's own detection floor was found broken on first run
+(mathematically incapable of registering any effect at the corrected alpha, a
+40-permutation floor against a threshold that needs 400+), fixed, and re-run: it
+now catches a planted half-SD effect with 100% certainty at this n, several times
+smaller than D91's original signal. D91's specific transient-window mechanism is
+therefore ruled out, not merely unconfirmed. D92's result is a different test —
+between-item, stratified, no unroll sweep — and stands untouched by this: still
+small, still suggestive, still not independently confirmed.)*
 
 That is a claim with three legs, and each is measured rather than argued.
 

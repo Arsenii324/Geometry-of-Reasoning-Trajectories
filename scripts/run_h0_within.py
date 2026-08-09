@@ -272,7 +272,12 @@ def main() -> None:
     res = analyse(df, g) if g["passes"] else pd.DataFrame()
     timing = timing_only(df, g) if g["passes"] else {}
     rep = df[(df["block"] == "rep") & df["prompt"].isin(g["split_prompts"])]
-    floor = detection_floor(rep, "shape_12") if g["passes"] else pd.DataFrame()
+    # n_perm must be large enough that ALPHA is reachable at all: the minimum
+    # p-value with k permutations is 1/(k+1), and 1/41 = 0.024 > ALPHA = 0.00625,
+    # so the floor's own default (n_perm=40) can NEVER register a detection
+    # regardless of effect size -- caught 2026-08-09 when 1.0 sd read 0% detected.
+    # Match N_PERM so the floor's null is on the same footing as the main test's.
+    floor = detection_floor(rep, "shape_12", n_perm=N_PERM) if g["passes"] else pd.DataFrame()
     if len(res):
         save_table(OUT, res, kind="h0_within", gate=g, timing=timing,
                    floor=floor.to_dict("records"), starts=list(STARTS), width=WIDTH)

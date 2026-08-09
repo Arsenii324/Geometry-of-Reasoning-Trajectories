@@ -1,0 +1,84 @@
+{
+  "bytes": 2705,
+  "columns": [
+    "start",
+    "feature",
+    "arm",
+    "usable",
+    "n",
+    "balanced_accuracy",
+    "null_mean",
+    "null_p95",
+    "p",
+    "sig"
+  ],
+  "file": "h0_within.csv",
+  "floor": [
+    {
+      "detected": 0.0,
+      "effect_sd": 0.0
+    },
+    {
+      "detected": 0.15,
+      "effect_sd": 0.25
+    },
+    {
+      "detected": 1.0,
+      "effect_sd": 0.5
+    },
+    {
+      "detected": 1.0,
+      "effect_sd": 1.0
+    }
+  ],
+  "gate": {
+    "fix_all_identical": true,
+    "n_orbits_in_split": 320,
+    "n_prompts": 16,
+    "n_split": 10,
+    "passes": true,
+    "rep_all_distinct": true,
+    "split_prompts": [
+      "add1_i08",
+      "add1_i10",
+      "add_2d_i00",
+      "add_2d_i01",
+      "compare_i02",
+      "compare_i07",
+      "count16_i17",
+      "count_mod3_i02",
+      "echo_word_i03",
+      "echo_word_i10"
+    ]
+  },
+  "git_commit": "33432eb903b0b468a0b6921ada78884049fc00f0",
+  "git_dirty": true,
+  "kind": "h0_within",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 24,
+  "produced_by": "/Users/a2mogus/build-projs/barannikov-work/Geometry-of-Reasoning-Trajectories/scripts/run_h0_within.py",
+  "run_id": "20260809T095221Z-989f210f",
+  "sha256": "39b46b72f9f710b23b71180dd17e25b42c035ca7a06ac0f4dece9e666c6d4d9e",
+  "starts": [
+    0,
+    6,
+    12,
+    18,
+    24,
+    30,
+    36,
+    44
+  ],
+  "timing": {
+    "balanced_accuracy": 0.5038176033934253,
+    "n": 320,
+    "null_mean": 0.4996908801696713,
+    "null_p95": 0.501405090137858,
+    "p": 0.0399002493765586,
+    "sig": false,
+    "usable": true
+  },
+  "width": 12,
+  "written_utc": "2026-08-09T09:52:21.141149+00:00"
+}
