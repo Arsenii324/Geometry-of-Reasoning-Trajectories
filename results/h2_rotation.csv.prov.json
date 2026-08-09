@@ -1,0 +1,30 @@
+{
+  "bytes": 2761,
+  "columns": [
+    "arm",
+    "kind",
+    "n_ops",
+    "seed",
+    "rho",
+    "arg",
+    "turns",
+    "n_osc",
+    "lead_is_real",
+    "n_tokens",
+    "matvecs",
+    "secs"
+  ],
+  "eps": 0.01,
+  "file": "h2_rotation.csv",
+  "git_commit": "62936d0f203befa034ef2f0c59e5612db7061343",
+  "git_dirty": true,
+  "kind": "h2_rotation",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 28,
+  "produced_by": "/home/user/Geometry-of-Reasoning-Trajectories/scripts/run_h2_rotation.py",
+  "run_id": "20260809T003105Z-b63a542b",
+  "sha256": "469e8cf85678e43df86b2579ffecfcc59bd27495b615c1655e0e0333f435ec2b",
+  "source": "scratch/kaggle_h2rot/out/h2rot.json",
+  "written_utc": "2026-08-09T00:31:05.987190+00:00"
+}

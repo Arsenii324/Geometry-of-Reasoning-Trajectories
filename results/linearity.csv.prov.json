@@ -1,0 +1,39 @@
+{
+  "bytes": 142822,
+  "columns": [
+    "bank",
+    "tag",
+    "family",
+    "window",
+    "rank",
+    "rank_requested",
+    "rank_clamped",
+    "r2_linear",
+    "r2_scalar",
+    "r2_scalar_in_basis",
+    "r2_persistence",
+    "in_basis",
+    "rho",
+    "n_train",
+    "n_test",
+    "achieved"
+  ],
+  "file": "linearity.csv",
+  "git_commit": "62936d0f203befa034ef2f0c59e5612db7061343",
+  "git_dirty": true,
+  "kind": "linearity",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 760,
+  "produced_by": "/home/user/Geometry-of-Reasoning-Trajectories/scripts/run_linearity.py",
+  "ranks": [
+    2,
+    4,
+    8,
+    16,
+    32
+  ],
+  "run_id": "20260809T003027Z-855bdd00",
+  "sha256": "127360cc1dd9f6e5a29953e4cf0bd66fc1e35778f156abfd56d66b3834705ec0",
+  "written_utc": "2026-08-09T00:30:27.822421+00:00"
+}
