@@ -160,11 +160,19 @@ contractive — otherwise limit cycles and divergence are both available to it. 
 argument "loop and drift cannot persist" is *conditional on ρ<1*, and stating it as
 though it were architectural was an overclaim on my part.
 
-**Measured, 2026-08-09, over all 504 geomcap orbits at all five windows** (and
-independently re-derived from the same `results/geomcap.csv` after the machine
-switch, to the same digits): ρ ∈ **[0.808, 0.920]**, median 0.859, and **zero orbits
-at or above 0.98**, let alone 1.0. So on this task set the condition holds with a
-healthy margin, and the argument goes through. It does *not* establish ρ<1 for all
+**CORRECTED 2026-08-09 (second pass).** This section originally rested on the
+`contraction` column of `results/geomcap.csv`: ρ ∈ [0.808, 0.920], median 0.8573,
+zero orbits at or above 0.98. **That column is the SINGLE-ORBIT self-convergence
+fit, which `metrics/regime.py` documents as "near-tautological for any convergent
+sequence and was measured by mistake earlier in this project".** It cannot support
+the ρ<1 premise, because it is near-1-by-construction for anything that converges.
+
+The premise nevertheless HOLDS, on the right instrument: D94's pair-based estimator
+(two orbits of the same prompt from different h₀) gives median ρ = 0.855 raw,
+≈0.82 bias-corrected, with **0 of ~960 pairs at ρ ≥ 1 across 16 prompts** — n_eff
+is the prompt, so by the rule of three this excludes a per-prompt non-contraction
+rate above about 19%, no better. So the argument goes through, but on a smaller
+and differently-bounded evidence base than this section first claimed. It does *not* establish ρ<1 for all
 inputs — 21 synthetic families at one token position is not the space of prompts,
 and the supervisor's point stands that a regime where contraction is not imposed is
 a different question.
