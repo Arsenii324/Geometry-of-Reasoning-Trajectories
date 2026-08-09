@@ -1,0 +1,76 @@
+{
+  "bytes": 8202,
+  "columns": [
+    "metric",
+    "window_k",
+    "n_families",
+    "alpha",
+    "usable",
+    "capability_defined",
+    "length_defined",
+    "rho_capability",
+    "p_capability",
+    "rho_log_rank",
+    "p_log_rank",
+    "rho_length",
+    "p_length",
+    "rho_window",
+    "p_window",
+    "sig_capability",
+    "sig_length",
+    "sigma2_family",
+    "sigma2_within_family",
+    "sigma2_h0",
+    "sigma2_item",
+    "h0_share",
+    "reliability",
+    "ceiling",
+    "band_lo",
+    "band_hi",
+    "wide_lo",
+    "wide_hi",
+    "null_is_readable",
+    "why"
+  ],
+  "determinism": {
+    "fix_all_identical": true,
+    "fix_worst": 1,
+    "n_fix_prompts": 8,
+    "n_rep_prompts": 8,
+    "rep_all_distinct": true,
+    "rep_fewest_distinct": 10
+  },
+  "file": "geomcap_summary.csv",
+  "git_commit": "6ecbff72b62402269e7785008b91f612cdb3cd14",
+  "git_dirty": true,
+  "kind": "geomcap_summary",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 20,
+  "p1": {
+    "d75_range": [
+      0.0,
+      1.0
+    ],
+    "here_range": [
+      0.0,
+      1.0
+    ],
+    "n": 21,
+    "p": 4.576272010623042e-10,
+    "passes": true,
+    "rho": 0.9361033816598936,
+    "usable": true
+  },
+  "produced_by": "/home/user/Geometry-of-Reasoning-Trajectories/scripts/run_geomcap.py",
+  "run_id": "20260809T014027Z-e42bb0ec",
+  "sha256": "a75e2e339ac5bf655cf2ad924d558b9d0f5aa1bcf0a7b6efd56588c6bad478c3",
+  "source": "scratch/kaggle_geomcap/out",
+  "windows": [
+    10,
+    20,
+    30,
+    40
+  ],
+  "written_utc": "2026-08-09T01:40:27.443771+00:00"
+}

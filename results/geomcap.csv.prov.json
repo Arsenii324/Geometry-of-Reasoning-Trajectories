@@ -1,0 +1,42 @@
+{
+  "bytes": 460280,
+  "columns": [
+    "tag",
+    "block",
+    "family",
+    "item",
+    "gold",
+    "correct",
+    "best_rank",
+    "best_depth",
+    "n_tokens",
+    "h0_seed",
+    "state_sha",
+    "natural_window",
+    "log_rank",
+    "window_k",
+    "window",
+    "pr",
+    "cos_consecutive",
+    "contraction",
+    "settle"
+  ],
+  "file": "geomcap.csv",
+  "git_commit": "6ecbff72b62402269e7785008b91f612cdb3cd14",
+  "git_dirty": true,
+  "kind": "geomcap",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 3040,
+  "produced_by": "/home/user/Geometry-of-Reasoning-Trajectories/scripts/run_geomcap.py",
+  "run_id": "20260809T014027Z-e42bb0ec",
+  "sha256": "6db159f14b874e1ffe1253d41418763d0f861695c9d239daf3d1b1304c788662",
+  "source": "scratch/kaggle_geomcap/out",
+  "windows": [
+    10,
+    20,
+    30,
+    40
+  ],
+  "written_utc": "2026-08-09T01:40:27.397261+00:00"
+}

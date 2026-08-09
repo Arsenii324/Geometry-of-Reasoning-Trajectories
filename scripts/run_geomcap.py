@@ -406,19 +406,23 @@ def report(df: pd.DataFrame, res: pd.DataFrame, fam: pd.DataFrame, gate: dict,
     return "\n".join(lines)
 
 
-def window_law(df: pd.DataFrame) -> str:
-    """How each statistic moves with the window, pooled over all families.
+def window_sensitivity(df: pd.DataFrame) -> str:
+    """How each statistic moves as the window GROWS from the same start.
 
-    This is not a diagnostic tacked on -- it is the quantity that decides how any
-    of the numbers above may be read. Measured on the banked ds_bank orbits, the
-    SAME trajectories give participation ratio ~13 over 20 unrolls and ~2.3 over
-    90, and step cosine +0.20 against +0.95. If the spread across windows dwarfs
-    the spread across families at any one window, then "the geometry of the
-    trajectory" is mostly a statement about which stretch of the contraction was
-    measured, and family-level differences are a second-order effect on top.
+    NOT the same quantity as D80's, and conflating them would be an error. D80
+    SLIDES a fixed-width window along the unroll axis, holding the sample count
+    constant and moving the start, and finds participation ratio FALLING with depth.
+    This grows the window from a fixed start, so the sample count rises with it --
+    and participation ratio rises with sample count for any near-isotropic set, so
+    the two curves are expected to move in opposite directions. What this block
+    measures is the narrower thing it is needed for: whether the choice of window
+    moves a statistic more than the family does, i.e. whether reporting one window
+    would have been reporting the choice.
     """
     m = df[df["block"] == "main"]
-    lines = ["", "  THE WINDOW LAW -- how much of each statistic is just depth?",
+    lines = ["", "  WINDOW SENSITIVITY -- does the window move it more than the family?",
+             "  (window GROWS here; D80's separate sliding-window law holds the width",
+             "   fixed and moves the start, and the two necessarily differ in sign)",
              f"    {'K':>5} " + " ".join(f"{k:>16}" for k in METRICS)]
     for k in sorted(m["window_k"].dropna().unique()) + [None]:
         sub = m[m["window_k"].isna()] if k is None else m[m["window_k"] == k]
@@ -457,7 +461,7 @@ def main() -> None:
     print(f"saved {OUT} ({df['tag'].nunique()} orbits x "
           f"{df['window_k'].nunique(dropna=False)} windows) and {OUT_SUM}")
     print(report(df, res, fam, gate, det))
-    print(window_law(df))
+    print(window_sensitivity(df))
 
 
 if __name__ == "__main__":

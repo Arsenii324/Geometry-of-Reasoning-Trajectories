@@ -52,10 +52,15 @@ prediction score is low, the cause is a **gapless spectrum** — later steps ent
 directions earlier steps never spanned — which is what D74(4) independently found
 when DMD failed its stability gate on 80/80 orbits. Gapless is not nonlinear.
 
-**(c) And the shape does not track the computation.** At matched answer value,
-correct and incorrect trajectories do not differ in effective dimensionality, step
-cosine, contraction rate or settling time, powered to 1.5 within-stratum sd
-(D79). H2 — "more reasoning steps, more turning" — returns nothing on the one
+**(c) And the shape does not track the computation.** Across **21 task families
+spanning 0% to 100% accuracy**, no geometric statistic tracks capability at any of
+five windows — 0 of 18 usable cells — while 6 of 18 track prompt length on the same
+orbits. The run measures its own reliability at 0.95–1.00, so a perfect relation
+would have shown |ρ| in [0.80, 1.00] against an observed |ρ| ≤ 0.33: the null is
+readable, not merely observed (D85). At matched answer value, correct and incorrect
+trajectories do not differ in effective dimensionality, step cosine, contraction
+rate or settling time — in the one family D79 could test, and now in two more from
+the new bank (0 of 8 cells at α = 5.95e-04). H2 — "more reasoning steps, more turning" — returns nothing on the one
 design that escapes the length confound: the paired `track − local` contrast gives
 ρ = +0.543 at an exact p of 0.328 over 2048 arrangements (D83). With D28 (winding)
 and D74(6) (dimensionality), **every instrument this project has built for H2 now
@@ -96,13 +101,14 @@ generates it.
 The reading is not merely compatible with the nulls — it *predicts* them, and it
 predicts more that is not yet in. Two runs are in flight to test exactly that:
 
-- `geometry-geomcap` asks whether the geometry tracks capability **across** the 21
-  D75 families, and — the part that makes a null readable — measures its own
-  reliability ceiling from ten replicates of one prompt, which differ only in the
-  unseeded h₀ (D78). A null against a wide ceiling is a fact about the model; a
-  null against a narrow one is a fact about the instrument, and D70 is the
-  cautionary case where those were confused.
-- `geometry-depthacc` closes the gap D68(5) named itself: rank is not capability.
+- `geometry-geomcap` — **landed, D85.** Both gates passed: capability correlates
+  with D75's at ρ = +0.936, the fixed-seed replicates came back bit-identical
+  (h₀ is the only stochastic input) and the unseeded ones all differed (the ceiling
+  is measured, not manufactured). It also puts a number on the mechanism: **h₀
+  accounts for 0.39–1.42 of the within-family variance** in these statistics, so
+  what a single orbit's geometry shows is largely where it started.
+- `geometry-depthacc` — still running. Closes the gap D68(5) named itself: rank is
+  not capability.
 
 **The strongest objection I cannot yet answer.** Everything above is about
 statistics of the *path*. It does not show that no geometric description could

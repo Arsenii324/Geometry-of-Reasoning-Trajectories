@@ -23,7 +23,7 @@ from scripts.run_geomcap import (
     family_table,
     p1_gate,
     report,
-    window_law,
+    window_sensitivity,
 )
 
 
@@ -130,8 +130,13 @@ def test_the_window_changes_the_statistics_it_is_swept_over(flat_bank) -> None:
     a = m[m["window_k"] == 10]["pr"].median()
     b = m[m["window_k"] == 30]["pr"].median()
     assert a < b, f"PR did not grow with window: {a} vs {b}"
-    txt = window_law(df)
-    assert "THE WINDOW LAW" in txt
+    txt = window_sensitivity(df)
+    assert "WINDOW SENSITIVITY" in txt
+    # And it must SAY that it is not D80's sliding-window law: the two move in
+    # opposite directions by construction (sample count rises here, is held fixed
+    # there), so a reader comparing them without that note would see a
+    # contradiction that is not one.
+    assert "sliding-window law" in txt
 
 
 def test_a_planted_capability_relation_is_found(tmp_path) -> None:

@@ -29,7 +29,7 @@ live state without asking. Updated 2026-08-09.
 | run | where | question | status |
 |---|---|---|---|
 | `geometry-h2-rotation` | Kaggle T4 | B4.15 — H2 on arg(lambda), length-matched | **DONE -> D83.** Paired track−local vs n_ops: rho=+0.543, exact p=0.328 over 2048 arrangements. H2's last instrument returns nothing |
-| `geometry-geomcap` | Kaggle T4 | does trajectory geometry track capability ACROSS the 21 families — and what is its own reliability ceiling? | RUNNING (21 fam x 24 items + 10 replicates of 8 prompts + a fixed-seed determinism control) |
+| `geometry-geomcap` | Kaggle T4 | does trajectory geometry track capability ACROSS the 21 families — and what is its own reliability ceiling? | **DONE -> D85.** 608/608 banked. 0 of 18 (statistic, window) cells track capability; 6 track prompt length; reliability 0.95-1.00 so a perfect relation would have shown |rho| >= 0.80. Both determinism controls passed |
 | `geometry-depthacc` | Kaggle T4 | does the model SAY what its rank curve says it knows? closes D68(5) | RUNNING (5 depths x 2 formats x 21 families, generation AND teacher-forced rank from one run) |
 | `geometry-battery` | Kaggle T4 | 21-family capability screen, graded readout | **DONE -> D75.** 5 families >=50%, control at chance 21/21, and B6 unblocked |
 | `geom-eigenplane` | DataSphere g1.1, job `bt1mvf3juvrcjpl6kl1i` | does the orbit rotate at the rate the Jacobian predicts? | **DONE** -- no: 0.24x, and D74 explains why |
