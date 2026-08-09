@@ -85,7 +85,7 @@ def test_a_planted_within_family_effect_is_found() -> None:
     assert out["balanced_accuracy"] > 0.65, out
 
 
-def test_the_test_is_CALIBRATED_under_the_null() -> None:
+def test_the_test_is_calibrated_under_the_null() -> None:
     """Rejection rate near alpha over many seeds, NOT a null on one seed.
 
     The first version of this asserted p > 0.05 at seed 4 and failed at p = 0.0398,

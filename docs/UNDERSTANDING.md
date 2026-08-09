@@ -10,8 +10,9 @@ is what the D68/D69 work concluded at the time and the difference is informative
 ## 1. The synthesis, as of 2026-08-09
 
 **One sentence: the geometry of Huginn's latent trajectory is set by the weights,
-by how far the contraction has run, and by the input — down to a single token — but
-not by whether the computation succeeded.**
+by how far the contraction has run, and by the input — down to a single token,
+whether or not that token changes what the model computes — but not by whether the
+computation succeeded.**
 
 *(This sentence has been rewritten twice in one day, and the history is the
 evidence. It began as "…not of the input or of the computation". D84 refuted the
@@ -119,11 +120,12 @@ predicts more that is not yet in. Two runs are in flight to test exactly that:
   58.8% at r=4, and the link is gone by r=32. It also amends D69 — that row's
   0% → 83% was one trivial task; over 21 families the same instruction is worth
   +9.5 points at r=4 and ~0 elsewhere.
-- `geometry-marker` — running. The one control D87 still needs: three markers with
-  the rules defining A and C **identically** and B differently, so A-vs-C is one
-  token with the same computation and A-vs-B is one token with a different one.
-  Equal decodability means the shape reads the token; a gap means it reads the
-  computation.
+- `geometry-marker` — **landed, D88, and it refuted the reading I expected.** A-vs-C
+  (same computation, one token apart) decodes at 98.0–100% against A-vs-B's
+  96.0–100%. No gap: the shape reads the **token**, not the computation. D87 stands
+  as measured but narrows to single-token input sensitivity — which makes the main
+  dissociation cleaner, since the thing the shape tracks is now demonstrably the
+  input and the experiment that could have shown otherwise came back negative.
 
 **The strongest objection I cannot yet answer.** Everything above is about
 statistics of the *path*. It does not show that no geometric description could

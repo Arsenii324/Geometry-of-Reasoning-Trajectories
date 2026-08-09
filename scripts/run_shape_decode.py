@@ -48,7 +48,11 @@ from traj_geom.metrics.shape_code import gram_code, is_rotation_invariant, posit
 
 OUT = os.path.join("results", "shape_decode.csv")
 M = 20                 # steps per code; D80 puts this inside the live transient
-N_PERM = 200
+# 120, down from 200. The floor is 1/(N+1) = 0.0083, comfortably below every alpha
+# used here, and the run now spans four banks x two features x three targets x five
+# groups -- at 200 it took over an hour of CPU to sharpen p-values that are all
+# either at the floor or nowhere near it.
+N_PERM = 120
 SOURCES = (
     ("b6bank", os.path.join("scratch", "kaggle_b6bank", "out"), ".npy"),
     ("geomcap", os.path.join("scratch", "kaggle_geomcap", "out"), ".npy"),

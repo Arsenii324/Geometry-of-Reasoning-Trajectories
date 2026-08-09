@@ -52,7 +52,12 @@ from sklearn.preprocessing import StandardScaler
 from scripts.run_shape_decode import SOURCES, collect
 
 OUT = "results/correctness_decode.csv"
-MIN_PER_CLASS = 6
+# 3, not 6. Conditioning on (family, gold) rather than family alone is what removes
+# D72's confound, and it costs sample: at 6 per class only ONE stratum survives
+# anywhere in the banked data (31 orbits), at 4 three survive (52), at 3 five
+# survive (86). Three is the smallest value that leaves a testable design, and the
+# power curve reports what that buys rather than leaving it to be assumed.
+MIN_PER_CLASS = 3
 N_PERM = 400
 EFFECTS = (0.0, 0.25, 0.5, 1.0, 2.0)
 # 20 trials x 40 permutations per point. A power CURVE needs its shape, not three
