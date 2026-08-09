@@ -699,15 +699,36 @@ uncontrolled difficulty.
 
 **Five mining strategies, roughly in order of expected value.**
 
-1. **TITRATION rather than guessing (the big one, not yet built).** Stop
-   hand-picking difficulty. Define each family as a GENERATOR with an explicit
-   integer knob n (cipher rotations, prefix length, sequence length, number of
-   operations), then **binary-search n per family for the value where accuracy
-   crosses the 20-80% band**. ~8 forwards per family brackets a threshold. This
-   is an adaptive staircase, and it produces exactly what the supervisor asked
-   for -- difficulty-controlled families -- *by construction* rather than by
-   luck. It also adapts automatically if the model is better or worse than
-   assumed, which is where both failed runs went wrong.
+1. **A DIFFICULTY x DEPTH GRID, swept in one pass -- NOT a binary search.**
+   *(Design corrected 2026-08-09 after the supervisor pointed out the flaw in the
+   first version, which proposed binary-searching n for the accuracy threshold.
+   That was wrong: accuracy at a given n is a noisy Bernoulli estimate, so a
+   staircase that commits to a direction at each step chases its own noise, and
+   near the 20-80% band -- exactly where we want resolution -- the noise is
+   largest. It also throws away every level it steps past.)*
+
+   Instead: define each family as a GENERATOR with an explicit integer knob n,
+   and sweep **the whole n-grid at once with a small number of h_0 draws per
+   cell**, reporting the full accuracy surface rather than one threshold.
+
+   **The reason this is nearly free is a property of the harness that must not be
+   re-derived: one forward already yields correctness at EVERY depth.** The
+   read hook applies the D71-validated `coda_head` at each unroll of a single
+   continuous run (`rank_curve_only`, `bank_one`), so a forward at
+   `num_steps=48` returns the gold rank at all 48 depths. **Never re-run a
+   prompt per depth.** So the cost of the sweep is
+   `families x n-levels x h_0-draws` forwards, and the DEPTH axis comes for
+   free, giving a (difficulty x depth) accuracy surface at the price of a
+   difficulty-only scan.
+
+   Three things then fall out of the same data, which is why this design
+   dominates: (a) the n where accuracy enters the measurable band, per family;
+   (b) the depth at which each n becomes solvable -- directly the "more
+   reasoning steps for harder problems" object H2 is about, measured
+   behaviourally rather than geometrically; (c) the h_0 spread per cell, i.e.
+   the D90 confound, visible as the within-cell variance instead of being a
+   separate experiment. Small per-cell n is fine precisely because the grid is
+   dense and smooth in n -- neighbouring levels pool.
 2. **CLRS-Text, the rare intersection.** It is IN Huginn's training mixture
    (`tomg-group-umd/CLRS-Text-train`, confirmed in the model card) AND has a
    clean integer problem-size knob. That is the one place criteria 2 and 5 are
