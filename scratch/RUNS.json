@@ -1,6 +1,11 @@
 [
   {
     "platform": "datasphere",
+    "id": "bt1l8elecek91qtvkdcp",
+    "what": "A19 does symbol diversity select the rotation? (D127's missing control)"
+  },
+  {
+    "platform": "datasphere",
     "id": "bt16fuonalgnb2fldhpk",
     "what": "blockbank per-block states (A3 + D123 per-block + D98 at matched length)"
   },
