@@ -249,3 +249,26 @@ dropped the word from the message. The commit succeeded, so nothing looked wrong
 only symptom was `(eval): command not found`. **Write non-trivial commit messages to a
 file and use `-F`.** This is RC1 again in miniature: exit status 0 was trusted as a
 proxy for "the message is what I wrote".
+
+### The sharpest instance, made while writing the section above
+
+Minutes after documenting RC1 ("a proxy substituted for the thing"), I hit
+`INVALID_ARGUMENT: Instance types gt4.1 are not available for your community` on a
+second concurrent launch, retried once on `g4i.1`, got the same message, and wrote
+**"DataSphere runs ONE GPU job at a time"** into `runs_status.py`, `REMOTE_RUNS.md`
+and a message to the supervisor.
+
+The supervisor said he remembered parallel jobs. Checking the project's own job
+timestamps: **6 overlapping pairs, including a three-way overlap at 12:26-13:08.**
+Retrying the identical launch minutes later succeeded with the other job still
+EXECUTING. The refusal was transient capacity.
+
+**Two failed attempts felt like a pattern and were a sample of size two.** The rule
+that generalises: *a failed attempt is evidence about that attempt.* Before writing
+a platform limit into a tool other people will trust, either retry it or find the
+record that already answers it — here `datasphere job get` on 13 jobs settled it in
+one command, and that data existed the whole time.
+
+Worth noting what did NOT go wrong: the claim was written into the tooling, so it was
+correctable in one place. The failure mode to fear is the same inference made
+silently and acted on for a week.

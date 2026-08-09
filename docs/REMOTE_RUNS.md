@@ -174,12 +174,15 @@ from a template, so **write results incrementally rather than once at the end.**
   finally found by `git grep` over history. A neighbouring id, `bt14qn4u9t3n09nfjoqu`,
   appears in a sibling directory's launch command and returns PERMISSION_DENIED —
   it is not this account's.
-- **DataSphere runs ONE GPU job at a time on this community.** With a `gt4.1` job
-  EXECUTING, a second `job execute` is refused: `INVALID_ARGUMENT: Instance types
-  gt4.1 are not available for your community` -- and `g4i.1` is refused identically,
-  so the limit is concurrent GPU INSTANCES, not the type. Earlier notes in this repo
-  claiming DataSphere has 'no slot cap' are **wrong** and are corrected. Plan
-  batteries as a QUEUE, not as parallel launches.
+- **DataSphere DOES run jobs in parallel; a refusal is transient capacity.**
+  `INVALID_ARGUMENT: Instance types gt4.1 are not available for your community`
+  looks like an entitlement error and is not one: **retry it.** On 2026-08-09 the
+  identical launch was refused twice (gt4.1 and g4i.1) and then succeeded minutes
+  later with the other job still EXECUTING. The project's own job timestamps show
+  **6 overlapping pairs**, including a three-way overlap at 12:26-13:08. A previous
+  revision of this file concluded a structural concurrency cap from ONE refusal --
+  wrong, and worth keeping as the cautionary example: a single failed attempt is
+  evidence about that attempt, not about the platform.
 - **DataSphere's CLI IMPORTS your job.py locally** to analyse dependencies, so a
   module-level `import numpy` fails with `ModuleNotFoundError` in the pipx venv
   before anything uploads. **All third-party imports go inside `main()`, after the

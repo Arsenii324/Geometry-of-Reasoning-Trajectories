@@ -1,6 +1,11 @@
 [
   {
     "platform": "datasphere",
+    "id": "bt16fuonalgnb2fldhpk",
+    "what": "blockbank per-block states (A3 + D123 per-block + D98 at matched length)"
+  },
+  {
+    "platform": "datasphere",
     "id": "bt1t7ogigg1cm83pgdo1",
     "what": "A16 fixed-body binary-search ladder (DR1 Stage 2)"
   },
