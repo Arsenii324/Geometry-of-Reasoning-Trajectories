@@ -21,13 +21,45 @@ positions classify as `settle` with zero loops or drift (D97).**
 
 **A third instrument has now measured ρ *causally*, and it agrees.** Injecting a
 donor's state at unroll r and reading how much of the kick survives to the output
-gives a potency that decays as ρ^(R−r) across nearly three orders of magnitude,
-fitting **ρ = 0.822** (R² = 0.98, D111). Every earlier estimate was a passive fit to
-how fast an unperturbed orbit stops moving; this one perturbs the system and watches
-the perturbation die. It lands on D94's bias-corrected ≈0.82 and beside D31's
-Arnoldi 0.79–0.81. **D94's row should no longer be read as uncorroborated** — with
-the caveat that all of D111's pairs share ONE recipient prompt, so it is currently a
-rate measured at one fixed point; B1c is running the 16-recipient replication.
+gives a potency that decays as ρ^(R−r) across nearly three orders of magnitude
+(D111). Across **16 distinct recipient prompts** this fits **ρ = 0.8335, sd 0.028,
+with 14 of 16 inside the 0.79–0.86 bracket** the passive instruments had already
+set (D113). Every earlier estimate was a passive fit to how fast an unperturbed
+orbit stops moving; this one perturbs the system and watches the perturbation die.
+**D94's row should no longer be read as uncorroborated.**
+
+**But ρ is a property of the task family, not of the architecture.** Over 608
+banked orbits across **21 families**, the rate spans **0.8239 to 0.9181**, with
+between-family spread **4.2×** the within-family spread — and it survives length
+matching, which it had to, since the marginal length correlation is real
+(+0.56, p = 0.011): at an identical 29 tokens `nth_item` gives 0.8370 and
+`sort_min` 0.8910, a gap **7.5×** the within-family sd (D115). So D94's 0.855,
+D31's 0.79–0.81, D113's 0.8335 and D112's 0.911 are not competing estimates of one
+number; each should be read with its prompt family attached.
+
+**Three results now explain the whole run of H2 nulls, and they form a chain.**
+
+1. **Difficulty does not reach the dynamics.** Quadrupling the count in
+   `count4→count8→count16` moves ρ by 0.0033, under half the within-family sd,
+   while *task identity* moves the same quantity by 15× that at matched length
+   (D115). This is an H2 test on a *rate* rather than a duration, so D80's
+   clock-reading critique does not apply to it — and H2 still returns nothing.
+2. **The dynamics do not reach the readout.** Joining per-prompt ρ to per-prompt
+   `best_depth` gives ρ = +0.118, p = 0.65, against a detection floor that would
+   have caught a relationship three times smaller than the variation present
+   (D114).
+3. **Because the readout never waits for the fixed point.** On the orbits Huginn
+   actually solves, the answer is top-ranked at **median unroll 4**, when
+   **86.9% of the state's journey still lies ahead**; those same states do not
+   reach a residual below 0.01 until median unroll 44 (D112). The readout and the
+   latent are two clocks, and every H2 instrument built here has been reading the
+   one that difficulty does not drive.
+
+D112 also pins the slowest mode: on `lenmatch` prompts the late motion rotates
+exactly 60° per unroll, |h_t − h_{t+6}| < |h_t − h_{t+1}| in 124 of 188 orbits,
+decaying with **|λ| = 0.911 in 124 of 124** — a damped complex pair
+λ = 0.911·e^(±iπ/3). That refines D55 by fixing its argument and leaves D97's
+`settle` verdict untouched: a damped rotation still settles.
 
 **The same experiment turns the DEQ framing from an architectural argument into a
 measured fact.** `e` (the re-injected prelude output) is the map's PARAMETER and `h`
