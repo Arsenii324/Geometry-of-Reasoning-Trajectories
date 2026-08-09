@@ -1,0 +1,18 @@
+name: block-cycle-test
+desc: >
+  Tests the single largest interpretive risk to this project's H1 headline: if
+  "loop" in the looped-transformer literature means a cycle ACROSS the 4 core
+  blocks within one iteration, then D94 (rho=0.855, 0/960 pairs non-contracting)
+  and D97 (179/179 positions settle) read one point of that cycle and would be
+  answering the wrong question. Hooks ALL FOUR core blocks instead of only
+  core_block[-1] and measures whether the four per-block fixed points are far
+  apart relative to how tightly each converges. Designed to be able to embarrass
+  the project's own headline.
+cmd: python job.py ${RESULT}
+outputs:
+  - blockcycle.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
