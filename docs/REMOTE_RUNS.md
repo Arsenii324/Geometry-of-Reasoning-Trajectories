@@ -177,6 +177,14 @@ from a template, so **write results incrementally rather than once at the end.**
 - **Launch from the config's own directory.** `cmd: python job.py` is resolved
   relative to the CWD, so `-c scratch/foo/config.yaml` from the repo root dies with
   `FileNotFoundError: job.py` before contacting the API.
+- **Before a long Kaggle run, compute whether it CAN finish, from the first completed
+  stage.** CLRS: depth 4 took 6126s for 222 items, so depth 32 (8x the unrolls) needs
+  ~49005s and the run dies 3.4h short of finishing it. That was knowable the moment
+  depth 4 printed, at 6470s of a 43200s budget — 10 hours before the loss. The check is
+  one line of arithmetic against the first stage's wall time; do it then, not at hour 10.
+- **And write output INCREMENTALLY, per batch, not per stage.** A `json.dump` placed after
+  a whole depth completes saves nothing when the stage itself is what overruns. Kaggle
+  does not reliably preserve `/kaggle/working` on a timeout kill.
 - **The local CLI dying does NOT kill the job.** On 2026-08-09 `job execute` crashed
   locally with `AssertionError` in `auth.get_md` (`assert current_iam_token`) — an IAM
   token refresh failing in the attached client. The job stayed `EXECUTING` server-side
