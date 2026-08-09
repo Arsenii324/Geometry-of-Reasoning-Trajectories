@@ -134,6 +134,14 @@ def main():
     run("pip install -e .[model]")
     sys.path.insert(0, os.path.abspath("src"))
 
+    # IMPORT THE REPO GUARDS HERE, NOT IN THE ANALYSIS BLOCK. A4b died at
+    # `ImportError: require_null_can_move` after 2.5 h and 256 completed forwards,
+    # because the branch was 31 commits ahead of origin and remote jobs clone
+    # from GitHub. At the top this fails in 30 seconds instead.
+    from traj_geom.rigor import require_dynamic_range, require_units
+    print(f"repo guards imported OK: {require_dynamic_range.__name__}, "
+          f"{require_units.__name__}", flush=True)
+
     import numpy as np
     import torch
     from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
@@ -203,7 +211,6 @@ def main():
 
     from scipy.stats import spearmanr
 
-    from traj_geom.rigor import require_dynamic_range, require_units
 
     print("\n=== P3 TOKEN GATE (per fixed array) ===", flush=True)
     bad = []
