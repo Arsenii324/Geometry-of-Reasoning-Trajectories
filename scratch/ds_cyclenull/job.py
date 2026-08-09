@@ -186,17 +186,50 @@ def main():
         MODEL_ID, revision=REVISION, config=cfg, trust_remote_code=True,
         torch_dtype=torch.float32, low_cpu_mem_usage=True).to("cuda").eval()
     sweep(model, "trained")
+    # Keep the CLASS, never the instance: holding the model object here would pin
+    # ~14 GB and OOM the untrained arm on the same 16 GB T4.
+    trained_cls = type(model)
     del model
     gc.collect()
     torch.cuda.empty_cache()
 
     print("\n=== UNTRAINED ARM, three independent weight draws ===", flush=True)
+    # `from_config(..., trust_remote_code=True)` re-contacts the Hub for the remote
+    # modelling code. The first submission of this job died there on a transient
+    # `RemoteDisconnected` AFTER the trained arm had already succeeded, losing the
+    # whole control for a network blip. Retry, and fall back to the already-imported
+    # module class so a Hub outage cannot kill the run a second time.
+    def build_untrained(seed):
+        import time as _t
+        last = None
+        for attempt in range(5):
+            try:
+                torch.manual_seed(seed)
+                return AutoModelForCausalLM.from_config(cfg, trust_remote_code=True)
+            except Exception as exc:
+                last = exc
+                print(f"    from_config attempt {attempt + 1} failed: "
+                      f"{type(exc).__name__}: {exc}", flush=True)
+                _t.sleep(10 * (attempt + 1))
+        # Fallback: the trained model's own class is already imported in this
+        # process, so no Hub contact is needed to instantiate a fresh random one.
+        print("    falling back to the already-imported model class "
+              f"({trained_cls.__name__}) -- no Hub contact needed", flush=True)
+        torch.manual_seed(seed)
+        return trained_cls(cfg)
+
     for s in UNTRAINED_SEEDS:
-        torch.manual_seed(s)
-        m = AutoModelForCausalLM.from_config(cfg, trust_remote_code=True)
-        m = m.to(torch.float32).to("cuda").eval()
-        sweep(m, "untrained", seed=s)
-        del m
+        try:
+            m = build_untrained(s)
+            m = m.to(torch.float32).to("cuda").eval()
+            sweep(m, "untrained", seed=s)
+            del m
+        except Exception as exc:
+            import traceback
+            traceback.print_exc()
+            print(f"  UNTRAINED seed {s} FAILED: {type(exc).__name__}: {exc}", flush=True)
+            rows.append({"arm": "untrained", "seed": s, "ok": False,
+                         "why": f"{type(exc).__name__}: {exc}"})
         gc.collect()
         torch.cuda.empty_cache()
 
