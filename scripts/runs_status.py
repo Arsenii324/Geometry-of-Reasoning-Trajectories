@@ -149,12 +149,17 @@ def main() -> None:
     # "Maximum weekly GPU quota of 30.00 hours reached" while a slot was free -- so
     # "1/2 used" read as available when nothing could be launched at all. Occupancy
     # and entitlement are different questions and this line used to conflate them.
+    print("CAPACITY NOTE 2 (2026-08-09): DataSphere is NOT unlimited either. With one\n"
+          "  gt4.1 job EXECUTING, a second launch is refused with 'Instance types gt4.1\n"
+          "  are not available for your community' -- and g4i.1 is refused too, so the\n"
+          "  constraint is CONCURRENT GPU INSTANCES, not the type. An earlier revision of\n"
+          "  this line said 'NO SLOT CAP -- always launchable'; that was wrong.")
     print("CAPACITY NOTE: a free Kaggle SLOT does not mean Kaggle is usable -- the\n"
           "  weekly 30 h GPU quota is separate and, once spent, refuses every push.\n"
           "  Confirm with a real `kaggle kernels push` before planning around it.")
     print(f"\nCAPACITY  kaggle {kag_running}/2 used"
           f"{'  <-- FULL' if kag_running >= 2 else f'  ({2 - kag_running} FREE)'}"
-          f"   |   datasphere {ds_running} running, NO SLOT CAP -- always launchable "
+          f"   |   datasphere {ds_running} running, GPU CONCURRENCY LIMITED -- see note "
           f"(personal account, budget confirmed)")
     if kag_running >= 2 and ds_running == 0:
         print("  ! Kaggle is full and DataSphere is idle. Do not call this "
