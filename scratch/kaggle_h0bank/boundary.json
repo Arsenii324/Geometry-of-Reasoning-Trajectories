@@ -1,0 +1,82 @@
+[
+ {
+  "family": "add1",
+  "item": 8,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "add1",
+  "item": 10,
+  "geomcap_rank": 3
+ },
+ {
+  "family": "add_2d",
+  "item": 0,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "add_2d",
+  "item": 1,
+  "geomcap_rank": 3
+ },
+ {
+  "family": "caesar1_letter",
+  "item": 2,
+  "geomcap_rank": 3
+ },
+ {
+  "family": "caesar1_letter",
+  "item": 12,
+  "geomcap_rank": 3
+ },
+ {
+  "family": "compare",
+  "item": 2,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "compare",
+  "item": 7,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "count16",
+  "item": 17,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "count4",
+  "item": 1,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "count8",
+  "item": 21,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "count_mod3",
+  "item": 2,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "count_mod3",
+  "item": 4,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "echo_word",
+  "item": 3,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "echo_word",
+  "item": 10,
+  "geomcap_rank": 2
+ },
+ {
+  "family": "last_item",
+  "item": 0,
+  "geomcap_rank": 3
+ }
+]
