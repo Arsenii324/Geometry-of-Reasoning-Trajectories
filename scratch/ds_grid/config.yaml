@@ -1,0 +1,20 @@
+name: difficulty-depth-grid
+desc: >
+  Accuracy as a (difficulty x depth) SURFACE rather than a number, over six
+  parametric families with an explicit integer knob. Three are length-constant
+  by construction (caesar_k, addk, nth_item_k) -- difficulty rises while token
+  count does not, which is the hardest of this project's five task criteria to
+  satisfy and the one that makes geometry interpretable. The kernel CHECKS the
+  token-count claim rather than asserting it. The depth axis is free: one
+  forward yields the gold rank at all 48 unrolls. Answers (a) where the
+  measurable band is, the binding constraint after D47 and D95 both died on
+  task supply, (b) whether harder problems peak at greater depth -- the
+  behavioural version of H2, never run, and (c) the h_0 spread per cell.
+cmd: python job.py ${RESULT}
+outputs:
+  - grid.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
