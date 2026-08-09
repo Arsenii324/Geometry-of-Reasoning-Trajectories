@@ -1,6 +1,11 @@
 [
   {
     "platform": "datasphere",
+    "id": "bt1t7ogigg1cm83pgdo1",
+    "what": "A16 fixed-body binary-search ladder (DR1 Stage 2)"
+  },
+  {
+    "platform": "datasphere",
     "id": "bt1hh12jorfr1mat9r2p",
     "what": "A4b paired-marker h*: does the fixed point encode the ANSWER?"
   },
