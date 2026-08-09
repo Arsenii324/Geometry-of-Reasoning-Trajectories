@@ -77,6 +77,20 @@ def _git_last_commit_time(path: Path) -> int | None:
 # the check fire again) the moment its script changes for a reason that
 # might actually affect what gets computed.
 _REVIEWED_NON_SUBSTANTIVE_CHANGES: dict[str, str] = {
+    "manifold_null.csv": (
+        "2026-08-09: run_manifold_null.py's `participation_ratio` was renamed to "
+        "`azimuth_participation_ratio` and its shared math delegated to the "
+        "canonical traj_geom.metrics.dimension.participation_ratio. It was a NAME "
+        "COLLISION computing a DIFFERENT quantity (PR of the mean-centred azimuth "
+        "component vs PR of the rows handed in), so importing the wrong one "
+        "silently returned a different number. EVIDENCE, not judgement: re-run on "
+        "the real 140-trajectory data, every INFERENCE column (observed, "
+        "null_mean, null_std, obs_minus_null, z, p_value) is BIT-IDENTICAL across "
+        "all 280 rows; only pr_real and pr_null move, by at most 8.8e-16 relative "
+        "(~4 ULP in float64) from reordered floating-point operations -- the "
+        "delegated form computes tot**2/sum(s**2) where the original normalised "
+        "first. sha256 80ce0d27c0364c9f0297de0e..."
+    ),
     "h0_within.csv": (
         "2026-08-09: run_h0_within.py gained two `traj_geom.rigor` guards "
         "(require_resolvable_alpha on the P8 floor, require_units on its sample) "

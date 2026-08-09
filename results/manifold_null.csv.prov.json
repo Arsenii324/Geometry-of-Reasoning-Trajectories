@@ -1,5 +1,5 @@
 {
-  "bytes": 55954,
+  "bytes": 55984,
   "columns": [
     "file",
     "task",
@@ -18,7 +18,7 @@
   ],
   "experiment": "manifold_null",
   "file": "manifold_null.csv",
-  "git_commit": "fc6908dc110d40b47cdf0bb54f3d5629c8f897db",
+  "git_commit": "6653e50af9f8f8271ab0c1c77f325164857831d6",
   "git_dirty": true,
   "kind": "table",
   "model_id": "tomg-group-umd/huginn-0125",
@@ -28,7 +28,7 @@
   "note": "supersedes the subsample numbers in an earlier draft of rigor_audit section 17",
   "null": "on-manifold: sphere + radial profile + consecutive angular steps preserved",
   "produced_by": "/Users/a2mogus/build-projs/barannikov-work/Geometry-of-Reasoning-Trajectories/scripts/run_manifold_null.py",
-  "run_id": "20260725T212727Z-c1818632",
-  "sha256": "d7d97a756ded43a2f4869afaebbed9db4acf80bdb0056bf37523e38b8eb71895",
-  "written_utc": "2026-07-25T21:27:27.770195+00:00"
+  "run_id": "20260809T152713Z-6bfaf6a4",
+  "sha256": "80ce0d27c0364c9f0297de0e64c25def35034900c8c4f073a74fea45ba4519c9",
+  "written_utc": "2026-08-09T15:27:13.667187+00:00"
 }
