@@ -188,8 +188,9 @@ def test_the_real_within_level_permutation_is_rejected():
 
 
 def test_a_healthy_null_passes():
-    from traj_geom.rigor import require_null_can_move
     import random
+
+    from traj_geom.rigor import require_null_can_move
     rng = random.Random(0)
     require_null_can_move(-0.2971, [rng.uniform(-0.6, 0.6) for _ in range(200)])
 
@@ -199,3 +200,23 @@ def test_a_null_that_is_mostly_but_not_entirely_flat_is_still_rejected():
     draws = [0.5] * 95 + [0.1, 0.2, 0.3, 0.4, 0.6]
     with pytest.raises(RigorError):
         require_null_can_move(0.5, draws)
+
+
+# --- failure mode 7: a difficulty ladder with only one live level (D118) ---
+
+def test_the_real_fixedsum_ladder_is_rejected():
+    """B4b: 54.2% at k=1 and exactly 0.0% at k=2..5, yet the peak-accuracy gate passed."""
+    from traj_geom.rigor import require_dynamic_range
+    with pytest.raises(RigorError, match="VOID"):
+        require_dynamic_range({1: 0.542, 2: 0.0, 3: 0.0, 4: 0.0, 5: 0.0})
+
+
+def test_a_ladder_with_range_passes():
+    from traj_geom.rigor import require_dynamic_range
+    require_dynamic_range({1: 0.71, 2: 0.46, 3: 0.27, 4: 0.17})   # B4's addk, which was usable
+
+
+def test_an_all_dead_ladder_is_also_rejected():
+    from traj_geom.rigor import require_dynamic_range
+    with pytest.raises(RigorError):
+        require_dynamic_range({1: 0.0, 2: 0.0, 3: 0.0})

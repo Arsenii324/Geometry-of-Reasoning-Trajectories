@@ -142,6 +142,31 @@ def require_null_can_move(observed: float, null_draws: Sequence[float], *,
         )
 
 
+def require_dynamic_range(acc_by_level: dict, *, floor: float = 0.05,
+                          min_live_levels: int = 2, what: str = "difficulty ladder") -> None:
+    """Raise if a difficulty ladder has too few levels the model can actually do.
+
+    A gate asking "is ANY level above floor?" passes a ladder with one live level
+    and the rest at zero. That ladder has no difficulty axis: `best_depth` at the
+    dead levels is the argmin of a rank curve that never reaches 1, a different
+    quantity from "where it solved it". The result is VOID, not a null.
+
+    Occasion (D118): B4b's fixed-sum ladder returned accuracy 54.2% at k=1 and
+    EXACTLY 0.0% at k = 2, 3, 4, 5 -- the gold never reached rank 1 in any of 348
+    forwards. `FLOOR_ACC` passed because peak accuracy was 54.2%. The primary
+    statistic was then computed and printed over four dead levels.
+    """
+    live = [k for k, a in acc_by_level.items() if a >= floor]
+    if len(live) < min_live_levels:
+        raise RigorError(
+            f"{what}: only {len(live)} of {len(acc_by_level)} levels are above the "
+            f"{floor:.0%} floor ({dict(acc_by_level)}). A ladder needs at least "
+            f"{min_live_levels} live levels to HAVE a difficulty axis; below that, "
+            f"best_depth at the dead levels is the argmin of a rank curve that never "
+            f"reaches 1. Report VOID, not a null."
+        )
+
+
 def independent_n(keys: Sequence[Any]) -> int:
     """Number of INDEPENDENT units behind a sequence of per-observation keys.
 
