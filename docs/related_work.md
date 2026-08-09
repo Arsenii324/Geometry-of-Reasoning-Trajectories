@@ -62,4 +62,16 @@ sense (i) in a trained looped LM, so absence is the expected result.
 
 - "Du et al. (2025)" on correct-vs-incorrect trajectory separability — **no scout
   could locate it.** Dropped, not rebutted.
-- "Movahedi et al." — already recorded in this repo as unlocatable.
+- ~~"Movahedi et al." — already recorded in this repo as unlocatable.~~
+  **THIS NOTE WAS WRONG AND IS WITHDRAWN 2026-08-09.** The paper exists:
+  Movahedi, Milovanović, Feigin, Theus, Hofmann, Boeva, Rusch & Orvieto,
+  *Fixed-point reasoners: Stable and adaptive deep looped transformers*,
+  [arXiv:2606.18206](https://arxiv.org/abs/2606.18206) **[V]** — verified by a
+  sourced pass, and it is reference [6] of the supervisor's own proposal. FPRM:
+  pre-norm + residual scaling, fixed-point convergence as a halting mechanism,
+  evaluated on Sudoku/Maze/state-tracking/ARC-AGI; code at
+  `github.com/nilskiKonjIzDunava/fprm`. **Relevant to us because it contains an
+  explicit "mitigating oscillation through damping" treatment of complex λ with
+  Re λ < 1 — i.e. our sense (iii), which D55 measured on Huginn.** Recording an
+  unlocatable-citation note without re-checking it against the supervisor's own
+  reference list is the error to avoid repeating.

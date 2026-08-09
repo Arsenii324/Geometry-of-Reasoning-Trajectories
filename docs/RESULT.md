@@ -226,15 +226,23 @@ classifier's weak signal (D92) is a trace of it is exactly what remains open.
 The natural inference from a converging latent path is that its geometry traces the
 computation. On this model it traces the input and the clock. Concretely:
 
-0. **The iteration is a contraction, measured two ways, and that governs what any
-   intervention can do.** ρ = 0.855 between orbits of the same prompt from
-   different initialisations, 0 of ~960 pairs non-contracting (D94); 179 of 179
-   token positions classify as `settle` (D97). A perturbation injected at
-   iteration *r* is attenuated by ρ^(remaining steps) — about 150× by iteration 32
-   — so **causal interventions late in the recurrence are erased before the output
-   head reads them**, which is what a patching experiment observed directly before
-   failing its own supply gate (D95). Anyone planning activation patching on a
-   recurrent-depth model should expect this.
+0. **The iteration is a contraction, and that governs where an intervention can
+   act — but not in the direction we first stated.** ρ ≈ 0.855 (raw; ~0.82 after
+   the bias correction our own D58 diagnosed) between orbits of the same prompt
+   from different initialisations (D94); 179 of 179 token positions classify as
+   `settle` (D97). A perturbation injected at iteration *r* is attenuated by
+   ρ^(R−r), so the exponent *shrinks* as *r* grows: ~1843× at r=16 but only ~12×
+   at r=48 for R=64. **Late interventions survive; early ones decay** — the
+   opposite of what an earlier version of this document said.
+   The practical lesson is different and sharper: perturbing the **state** *h*
+   perturbs an initial condition of a contraction, while the re-injected prelude
+   output *e* is the map's **parameter**, so perturbing *e* moves the fixed point
+   *h\*(e)* itself and persists. And patching the same prompt from a different
+   random initialisation is **inert at both ends by construction** — the two runs
+   share an attractor, so at late *r* there is nothing left to import. Anyone
+   planning activation patching on a recurrent-depth model should patch the
+   injected stream across *different prompts*, and should build a potency-vs-*r*
+   calibration curve before interpreting any null.
 1. **Shape statistics are largely a depth readout.** Report the window or report
    nothing: the same orbits move ~3× more along depth than across prompts.
 2. **A geometric difference between conditions is a difference between INPUTS until
