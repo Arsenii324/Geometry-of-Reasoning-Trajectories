@@ -241,3 +241,11 @@ RC1 errors were caught within minutes, by me, and cost little. **RC2 errors cost
 money, destroyed a better instrument, and produced a VOID run — and every one of them was
 invisible until something external forced a look** (the supervisor saying "use git", a
 status summary needing a grep). Being careful does not catch RC2; only looking does.
+
+### A small one, found the same day: backticks in a `-m` message
+
+`git commit -m "... `correct` inherits ..."` ran `correct` as a command and silently
+dropped the word from the message. The commit succeeded, so nothing looked wrong; the
+only symptom was `(eval): command not found`. **Write non-trivial commit messages to a
+file and use `-F`.** This is RC1 again in miniature: exit status 0 was trusted as a
+proxy for "the message is what I wrote".
