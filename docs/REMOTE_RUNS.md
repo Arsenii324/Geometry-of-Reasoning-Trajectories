@@ -174,6 +174,10 @@ from a template, so **write results incrementally rather than once at the end.**
   finally found by `git grep` over history. A neighbouring id, `bt14qn4u9t3n09nfjoqu`,
   appears in a sibling directory's launch command and returns PERMISSION_DENIED —
   it is not this account's.
+- **DataSphere requires `if __name__ == '__main__':` in the main script.** A Kaggle
+  kernel ending in a bare `main()` is rejected before upload with
+  `ValueError: Main script must have line ...`. Costs seconds, but it is the first
+  thing to hit when porting a Kaggle kernel across.
 - **Launch from the config's own directory.** `cmd: python job.py` is resolved
   relative to the CWD, so `-c scratch/foo/config.yaml` from the repo root dies with
   `FileNotFoundError: job.py` before contacting the API.

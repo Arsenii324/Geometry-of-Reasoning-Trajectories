@@ -268,4 +268,6 @@ def main():
     print("DONE", flush=True)
 
 
-main()
+
+if __name__ == "__main__":
+    main()
