@@ -4,6 +4,23 @@ WHY A SEPARATE ANALYSIS EXISTS. `geometry-census` screens every (family, item)
 with SCREEN_DRAWS unseeded h_0 draws, then re-measures the ones that split -- or
 sit near the decision boundary -- with DEEPEN_DRAWS more. Its in-kernel
 `summarise()` pools BOTH stages, and the concern recorded in `docs/directions.md`
+PRIOR-ROBUSTNESS, ADDED 2026-08-09 (thread A6, now closed). The pooling choice was
+originally justified under a Uniform(0,1) prior on item difficulty, and this repo's
+items are not uniform -- the census's own stage-1 accuracies are strongly bimodal
+(five families at 0.000, three above 0.87). Re-simulated at 40k trials under three
+priors, with the real 4-draw screen and 20-draw deepen:
+
+      prior        pooled RMSE   stage-2 RMSE   pooled bias   stage-2 bias
+      uniform         0.0897        0.1000        -0.0002       +0.0001
+      Beta(.3,.3)     0.0859        0.0944        -0.0010       -0.0012
+      empirical       0.0869        0.0966        +0.0061       +0.0003
+
+POOLED WINS ON ERROR UNDER ALL THREE, by ~10%. The worry behind A6 was partly right:
+under the empirical prior the pooled estimator's bias grows ~20x (from -0.0002 to
++0.0061) because selection is more informative when items pin near 0 and 1. At 0.006
+on a 0-1 scale that is negligible against the band width used below, so pooling stays
+primary -- but the number is recorded rather than the choice being re-asserted.
+
 section E3 was that this is a **winner's curse**: an item enters stage 2 partly
 because its 4 screening draws happened to look balanced, so folding those draws
 back in should bias it toward looking more balanced than it is.
