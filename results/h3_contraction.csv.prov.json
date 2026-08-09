@@ -1,0 +1,27 @@
+{
+  "bytes": 2009,
+  "columns": [
+    "prompt",
+    "n_orbits",
+    "n_pairs_used",
+    "rho_median",
+    "rho_p05",
+    "rho_p95",
+    "rho_max",
+    "frac_pairs_rho_ge_1",
+    "floor_median"
+  ],
+  "file": "h3_contraction.csv",
+  "git_commit": "0a9ebe311beba91e22f15963988a6cfd50e85a8e",
+  "git_dirty": true,
+  "kind": "h3_contraction",
+  "max_pairs": 60,
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 16,
+  "produced_by": "/Users/a2mogus/build-projs/barannikov-work/Geometry-of-Reasoning-Trajectories/scripts/run_h3_contraction.py",
+  "run_id": "20260809T111536Z-a34c2ed7",
+  "seed": 0,
+  "sha256": "4271a01b828dbe2b86c7391c2ab5a64fce95e1684ba4181a9667b38fd1770121",
+  "written_utc": "2026-08-09T11:15:36.183554+00:00"
+}
