@@ -1,0 +1,20 @@
+name: diversity-selects-rotation
+desc: >
+  A19: does input SYMBOL DIVERSITY select D112's damped period-6 rotation? D127
+  showed rotation is all-or-nothing per prompt TEMPLATE -- 6 of 12 strata at 100%,
+  6 at 0%, none mixed -- and neither length nor task explains it. Pooled across
+  banks it falls monotonically with distinct symbols (100/98/77/68/3/0/0 for 1..7),
+  but that curve is UNTESTABLE on existing data: within every stratum either
+  rotation or diversity is constant. This is the one design that separates them:
+  ONE template, ONE sequence length, 22 orbits at each of 2..7 distinct symbols,
+  token count constant by construction and gated in-kernel. If rotation is flat
+  across all six levels, diversity is REFUTED and the property belongs to the fixed
+  text -- which is what D127's per-template determinism actually predicts.
+cmd: python job.py ${RESULT}
+outputs:
+  - diversity.tgz: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
