@@ -58,6 +58,20 @@ to convergence by 60%**.
 > **There is a large, stable, period-4 cycle across the blocks, and reading one
 > block samples a single point of it forever.**
 
+The cycle is real structure rather than an artefact of having four points, and the
+nulls that establish that come from a third measurement: **the state is confined to
+a sphere.** RMSNorm terminates every block, and on our banked data ‖h‖ = 76.386
+with per-orbit relative sd of median 5.0×10⁻⁵ over all 512 orbits (D99). That fixes
+the random baseline exactly — two random points on that sphere lie 108.03 ± 0.75
+apart — so the cycle's vertex separation of ~38 is **0.35× chance**, far closer
+than random, while its planarity of 0.933 sits **78 standard deviations above** the
+0.676 ± 0.003 expected of four random points in 5280 dimensions (D100).
+
+It also has a consequence for the hypothesis being tested: on a compact manifold,
+**unbounded drift is not an available asymptotic regime at all**, so the
+settle/loop/drift trichotomy is exhaustive rather than three guesses, and reduces
+to the sign of the top Lyapunov exponent.
+
 Both statements are true of different objects: no loop *in the
 iteration-to-iteration map at a fixed block*, and a large loop *across blocks
 within an iteration*. The second claim is therefore scoped, not withdrawn — no

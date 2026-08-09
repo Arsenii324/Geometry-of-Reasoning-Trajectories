@@ -444,9 +444,20 @@ from the paper's prose.
   training (log-normal-Poisson, mean 33) and chosen freely at inference.
 - **Prompt embeddings are re-injected every unroll** via an adapter on the
   *concatenation* `[h, e]`. This makes the core an autonomous map `h ← F_e(h)`.
-- **RMSNorm terminates every block**, so the state lives on a sphere,
-  `‖h‖ = 76.37 ± 0.007`. All dynamics are angular; there is no radial mode
-  (confirmed empirically — the orbit difference is 100% tangential, D58(3)).
+- **RMSNorm terminates every block**, so the state lives on a sphere.
+  **Measured on our own banked data (D99):** `‖h‖ = 76.386`, with per-orbit
+  relative sd **median 5.0e-05, max 1.6e-04 across all 512 h₀bank orbits**, and
+  1.3e-05 to 8.9e-05 per token across unrolls on the full per-token grids. So the
+  state is confined to S⁵²⁷⁹ of radius 76.386 to four significant figures. All
+  dynamics are angular; there is no radial mode (independently consistent with
+  D58(3), where the orbit difference is 100% tangential).
+  **Two consequences that are not decoration.** (a) **Unbounded DRIFT is not an
+  available asymptotic regime**, so H1's settle/loop/drift trichotomy is
+  *exhaustive* rather than three guesses, and reduces to the sign of the top
+  Lyapunov exponent. (b) It fixes the correct random baseline for any distance
+  between states: two random points on that sphere are **108.03 ± 0.75** apart
+  (= R·√2 exactly), which is what makes D98's cycle vertices at ~38 meaningful —
+  0.35× random, i.e. far *closer* than chance.
 - Init is Huginn's own, not an HF default: `std = √(2/5d)`, out-projections scaled
   by `1/√(2·d_eff)` with `d_eff = 132` — **depth-scaled for the unrolled depth**.
   So "random weights" here means Huginn at step 0, not a generic init.
