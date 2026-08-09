@@ -1,0 +1,19 @@
+name: wordswap-one-word-flips-the-regime
+desc: >
+  A20: does ONE WORD flip the recurrent map between settling and rotating? D129
+  found three templates whose rotation tracks the instruction noun and nothing
+  else measurable -- 'largest SYMBOL' rotates 32/32 and 132/132, 'largest ELEMENT'
+  rotates 0/22 -- at identical token count, identical task, identical sequence
+  length, and with symbol diversity already refuted as the selector. But the
+  substitution has never been varied INSIDE one run. This does that: 18 sequences,
+  each under symbol / element / item, both markers, interleaved in one job. A third
+  noun is included so the result cannot be a two-word coincidence. If both wordings
+  rotate equally the lead is dead, and the row will say so.
+cmd: python job.py ${RESULT}
+outputs:
+  - wordswap.tgz: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
