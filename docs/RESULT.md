@@ -32,6 +32,25 @@ fixed, and then shown to catch a planted 0.5 sd effect 100% of the time.** So D9
 specific transient-window mechanism is ruled out rather than merely unconfirmed;
 D92's between-item result is a different test and stands, still unreplicated.
 
+**AND THE SAME NOW HOLDS OF THE FIXED POINT, WHICH IS THE STRONGER VERSION OF THE
+CLAIM.** D109 found that the converged state h\* decodes the specific answer (0.647
+dimension-matched, 5 of 5 cells) while the path's shape sits at chance — a clean
+dissociation between the two objects. But in that design the answer is a *function of
+the input*, so "decodes the answer" and "encodes fine input detail" predict the same
+result. A paired-marker experiment separates them: the **same** sequence under two
+task markers requires **different** answers. Across 421 cross-marker pairs at a
+verified-constant token count, sharing the required ANSWER raises h\* similarity by
+**+0.00016 (z = +0.40, p = 0.70)** — nothing — while sharing the INPUT raises the same
+statistic on the same orbits by **+0.0034**. The answer effect is **4.3% of the input
+effect** (D125). So the title of this document is true of the trajectory's shape *and*
+of its endpoint: **what the latent carries is the input.**
+
+*(Limit, stated because it is the one that could overturn this: capability is low in
+that experiment — 35 of 225 orbits reach rank 1, one marker sits at 4.7% — so it
+cannot separate "the fixed point does not encode answers" from "no answer was
+computed to encode". The input effect is immune to that, since the input is present
+either way.)*
+
 **A second claim, established the same day and independent of the first:**
 
 > **The iteration is a uniform contraction at a fixed block, and the
@@ -77,6 +96,57 @@ iteration-to-iteration map at a fixed block*, and a large loop *across blocks
 within an iteration*. The second claim is therefore scoped, not withdrawn — no
 number in D94 or D97 changes — and this independently reproduces on Huginn a
 published claim we previously held only at abstract-level confidence.
+
+---
+
+## 0. Why the nulls happen — a chain, not a list
+
+The results above are mostly negatives, and a run of negatives invites the reading
+that the instruments are weak. Three measurements made on 2026-08-09 close that off
+by supplying the mechanism, and each is a *rate* or a *link* rather than another
+absence.
+
+**(a) Difficulty does not reach the dynamics.** Fitting the contraction rate per
+task family over 608 banked orbits across 21 families, ρ spans **0.8239 to 0.9181**
+with a between-family spread **4.2×** the within-family spread — and it survives
+length matching, which it had to, since the marginal length correlation is real
+(+0.56, p = 0.011): at an identical 29 tokens `nth_item` gives 0.8370 and `sort_min`
+0.8910, a gap **7.5×** the within-family sd. But on the one genuine difficulty
+ladder in the bank, `count4 → count8 → count16`, quadrupling the count moves ρ by
+**0.0033** — under half the within-family sd (D115). The rotation angle behaves the
+same way and is independent of the modulus (ρ = +0.11): task identity moves it
+38–83° across families, difficulty moves it nowhere (pooled ρ = −0.073, p = 0.62,
+with an *untrained control*) (D116). **This is an H2 test on a rate rather than a
+duration, so D80's clock critique cannot apply to it — and H2 still returns
+nothing, while task identity moves the same quantity by an order of magnitude
+more.**
+
+**(b) The dynamics do not reach the readout.** Joining the causal per-prompt
+contraction rate to the per-prompt depth at which the answer is best available gives
+ρ = **+0.118, p = 0.65**, against a floor that detects a relationship three times
+smaller than the variation actually present (D114).
+
+**(c) Because the readout never waits for the fixed point.** On the orbits Huginn
+actually solves, the answer is top-ranked at **median unroll 4**, when **86.9% of
+the state's journey still lies ahead**; those same states do not reach a residual
+below 0.01 until median unroll **44**. Replicated on an independent bank: 202 solved
+orbits across 21 families give unroll 4 and 82.9% remaining (D112). *This also
+reconciles our median-34 convergence depth with the published median-6 without
+needing the published number — the two are reading different objects at roughly the
+4–5× ratio the literature reports.*
+
+Read together: **difficulty does not move the dynamics, the dynamics do not move the
+readout, and the readout is finished long before the dynamics are.** Every H2
+instrument this project built measured the trajectory; the answer was already
+decided in the first few unrolls.
+
+One caution about our own numbers, since the same day retired two of them: the state
+lives on a sphere of radius 76.386, and that alone fixes quantities that read as
+measurements. The difference of two same-prompt orbits is orthogonal to their
+midpoint *by identity*, and D106's "20.6% radial component" is |d|/(2R) — a
+restatement of step length that would hold for a random walk (D122). D106's
+conclusion stands; "is this a coordinate artefact?" can no longer be tested by
+decomposing steps radially.
 
 ---
 
