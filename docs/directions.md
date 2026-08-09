@@ -1,7 +1,16 @@
 # Directions register
 
 **Purpose.** Anything recognised as worth doing goes here the moment it is
-recognised, not into working memory. Context gets compacted; this file does not.
+recognised, not into working memory.
+
+> **Read `OPEN_THREADS.md` first if you want to know what to DO next.** That file
+> is the one-line-per-thread, prioritised INDEX; this file is the store that holds
+> the reasoning, the evidence and the dead ends behind each entry. The index exists
+> because this file passed 800 lines, at which point "everything is written down"
+> stops meaning "anything is findable". **Neither supersedes the other**: a thread
+> with no line in the index is invisible; a thread with no detail here is a slogan.
+> `tests/test_docs_consistency.py` fails if the index references a section of this
+> file that does not exist. Context gets compacted; this file does not.
 A direction that exists only in a conversation is lost at the next compaction, and
 this project has already re-derived things it had previously noticed.
 

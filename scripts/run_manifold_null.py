@@ -69,20 +69,28 @@ _FNAME_RE = re.compile(
 )
 
 
-def participation_ratio(traj: np.ndarray) -> float:
-    """Effective dimensionality of a trajectory's azimuth directions.
+def azimuth_participation_ratio(traj: np.ndarray) -> float:
+    """Effective dimensionality of a trajectory's AZIMUTH directions.
 
-    PR = (sum eig)^2 / sum(eig^2). Equals k for k equally-weighted directions
-    and 1 for a single one. Used here because winding is measured after a 2-D
-    projection, so effective dimensionality is a confound for it.
+    RENAMED 2026-08-09. This was called `participation_ratio`, colliding with
+    `traj_geom.metrics.dimension.participation_ratio` while computing a DIFFERENT
+    quantity: that one takes the PR of the rows it is handed (used on unit step
+    directions), this one first takes the spherical decomposition and uses the
+    mean-centred azimuth component. Same functional form, different input, same
+    name, same repo -- so importing the wrong one silently returns a different
+    number. The name now says which quantity it is.
+
+    The shared math is delegated to the canonical implementation rather than
+    re-derived here; only the input preparation is local, which is the part that
+    actually differs. Used because winding is measured after a 2-D projection, so
+    effective dimensionality is a confound for it.
     """
+    from traj_geom.metrics.dimension import participation_ratio as _pr
     _, _, q, _ = spherical_decomposition(np.asarray(traj, dtype=np.float64))
-    ev = np.linalg.svd(q - q.mean(0), compute_uv=False) ** 2
-    total = ev.sum()
-    if total <= 0:
+    qc = q - q.mean(0)
+    if not np.any(qc):
         return float("nan")
-    ev = ev / total
-    return float((ev.sum() ** 2) / (ev**2).sum())
+    return _pr(qc)
 
 
 def _one_arm(observed_traj: np.ndarray, seed0: int) -> dict[str, float]:
@@ -93,7 +101,7 @@ def _one_arm(observed_traj: np.ndarray, seed0: int) -> dict[str, float]:
     for j in range(N_SURROGATES):
         s = manifold_matched_surrogate(observed_traj, np.random.default_rng(seed0 + j))
         vals[j] = abs(winding_of(s))
-        prs[j] = participation_ratio(s)
+        prs[j] = azimuth_participation_ratio(s)
     sd = float(vals.std())
     return {
         "observed": float(obs),
@@ -102,7 +110,7 @@ def _one_arm(observed_traj: np.ndarray, seed0: int) -> dict[str, float]:
         "obs_minus_null": float(obs - vals.mean()),
         "z": float((obs - vals.mean()) / sd) if sd > 0 else float("nan"),
         "p_value": float(np.mean(vals >= obs)),
-        "pr_real": participation_ratio(observed_traj),
+        "pr_real": azimuth_participation_ratio(observed_traj),
         "pr_null": float(prs.mean()),
     }
 
