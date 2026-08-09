@@ -877,3 +877,79 @@ synthesis documents, or a number quoted from one prompt as though it were a rang
 That is a different failure mode from the four caught earlier today by reading raw
 output, and it needs a different guard: **when a ledger row is corrected, grep the
 other documents for the retracted phrasing in the same commit.**
+
+---
+
+## G. Unmerged parallel work, and new hypotheses (2026-08-09 evening)
+
+### G1. `claude/geometry-remote-continued` is NOT merged and contains real results
+
+A parallel remote session halted with a handoff note
+(`../files/claude-files/9-aug-11_40-claude-halt.md`, read 2026-08-09 evening).
+Its branch carries commits `92600a2` and `44255b2`, confirmed **not ancestors of
+our HEAD**. It holds:
+
+- **A result we do not have:** *"depth does not compute the answer, it relocates
+  it"* — accuracy at the answer position peaks at unroll 5 (16.1%), flat at 6.2%
+  from unroll 8, identical across all 21 families from r=32 (family-paired sign
+  test 14/15, p = 9.8e-4), containment rising 29.4% → 42.9% while a
+  length-matched decoy falls 16.0% → 2.7%. With `docs/depth_profile.md`,
+  `scripts/run_depth_profile.py` (regenerates every number with no GPU) and 11
+  tests.
+- **The D103 defect**, which we have now independently replicated.
+- **A parsing hazard worth knowing:** Huginn leaks role markers with no
+  separator (`'4Huginn'`), which silently defeated a boundary-matched scorer on
+  exactly the low-depth blurts.
+- `scratch/kaggle_answerpos/` built, linted, tested, **not pushed**.
+
+**A LEDGER NUMBERING COLLISION EXISTS: that branch's D92–D94 are different claims
+from ours.** Merging requires renumbering one side. Deliberately deferred rather
+than attempted under deadline — but **the branch must not be lost**, and whoever
+merges must renumber, not overwrite.
+
+### G2. New hypotheses, formed from synthesising today's results
+
+Each is stated with the test that would kill it, and **all three of the first are
+runnable offline on already-banked data**, which matters because GPU is the
+current bottleneck.
+
+**G2.1 — The computation lives in the fixed point *h\*(e)*, not in the path.**
+Everything we measure about the *path* is dominated by the contraction's clock
+(D80) and by architecture (the period-4 cycle, D98/D100, invariant across tasks
+and difficulties). The task-relevant information enters through *e*, which is
+re-injected every unroll, and determines *where* the fixed point sits rather than
+*how* the path reaches it. This single hypothesis retro-explains: D88 (shape reads
+the input token — because *e* is a function of the token), the total absence of a
+geometric H2 signal (path shape is architecture plus clock), the weakness of
+correctness decoding from shape (D92/D93), and D32's positive result (a running
+count IS decodable — from the state, i.e. from *h\**).
+**Test, zero GPU:** on banked orbits, decode task variables from the FINAL state
+versus from the shape code, matched feature counts. The hypothesis predicts the
+final state wins substantially. **Killed if** shape matches or beats it.
+
+**G2.2 — The period-4 cycle is an architectural carrier; any task signal lives in
+deviations from it.** D100 found every cycle statistic invariant across tasks and
+difficulty — which is exactly what a carrier looks like. **Test, zero GPU on the
+block-resolved banks (6 prompts in `ds_blockcycle`, 12 in `ds_cyclegeom`):**
+compute the mean cycle across prompts, subtract it, and decode task identity from
+the residual. **Killed if** the residual decodes no better than chance.
+
+**G2.3 — The dynamics are ANGULAR, and every Euclidean statistic we have computed
+is a chord approximation.** D99 measured ‖h‖ constant to 1.3e-4, so the state
+moves on a sphere of radius 76.39. Participation ratio, step cosine, winding and
+inter-vertex distance are all ambient-space quantities on a curved manifold.
+**This is a candidate explanation for why every rotation/winding instrument
+failed** (D28, D74(6), D83): rotation on a sphere must be measured in the tangent
+space, not in ambient coordinates. **Test, zero GPU:** recompute the key
+statistics as geodesic/tangent-space quantities on the banked orbits and see
+whether anything sharpens. **Killed if** the geodesic versions track the Euclidean
+ones to within noise — which, given the tiny radius variation, is the honest prior.
+
+**G2.4 — Depth degrades the answer at the read position, and H2 should be asked
+about the PEAK.** D103 measures gold top-1 at 11% for the best fixed depth and
+0.7% at r=47. Combined with D86 (containment rises while exact-match collapses),
+the picture is that the answer becomes available early and is then buried. So the
+H2-shaped question is not "do harder problems need more depth" but "does the peak
+move later" — precisely D101's `best_depth`. **This makes D101 the right
+instrument rather than a consolation prize**, and a powered re-run of it on
+`nth_item_k` and `addk` alone is the highest-value H2 experiment available.
