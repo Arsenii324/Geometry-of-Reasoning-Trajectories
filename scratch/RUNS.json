@@ -1,6 +1,11 @@
 [
   {
     "platform": "datasphere",
+    "id": "bt1hh12jorfr1mat9r2p",
+    "what": "A4b paired-marker h*: does the fixed point encode the ANSWER?"
+  },
+  {
+    "platform": "datasphere",
     "id": "bt1tos7luo04f7370fpu",
     "what": "B4b fixed-sum ladder: difficulty orthogonal to answer"
   },
