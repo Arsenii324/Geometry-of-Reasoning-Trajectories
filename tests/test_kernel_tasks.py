@@ -512,3 +512,63 @@ def test_clrs_gates_the_decoder_before_reading_it() -> None:
     calls = [ast.unparse(n.func) for n in ast.walk(main) if isinstance(n, ast.Call)]
     assert "assert_generation_works" in calls
     assert calls.index("assert_generation_works") < calls.index("batched_generate")
+
+
+def test_answerpos_battery_is_byte_identical_to_depthacc() -> None:
+    """`geometry-answerpos` must generate the SAME items as `geometry-depthacc`.
+
+    The answer-position run exists to explain depthacc's containment curve, and the
+    two are compared cell by cell on (family, item, fmt, depth). If the batteries
+    drift -- a different `n`, a reordered WORDS tuple, a changed prompt string --
+    the join silently pairs different questions and the comparison is void. Checked
+    on the generated items rather than on the source text, so a harmless
+    reformatting does not fail while a changed RNG draw does.
+    """
+    ap = _load("kaggle_answerpos", "def rank_walk")
+    da = _load("kaggle_depthacc", "def normalise")
+    assert tuple(ap["TASKS"]) == tuple(da["TASKS"])
+    assert ap["N_ITEMS"] == da["N_ITEMS"]
+    for task in ap["TASKS"]:
+        assert ap["items"](task) == da["items"](task), task
+
+
+def test_answerpos_never_teacher_forces_the_gold() -> None:
+    """The walk must extend with the model's OWN argmax, never with a gold token.
+
+    The question is where the model chooses to emit the answer. Appending gold to
+    the context would make `first_top1_pos` a property of the forced prefix and
+    would answer a different question entirely -- and it is a one-line slip.
+    """
+    src = open(os.path.join(ROOT, "scratch", "kaggle_answerpos", "body.py"),
+               encoding="utf-8").read()
+    walk = next(n for n in ast.walk(ast.parse(src))
+                if isinstance(n, ast.FunctionDef) and n.name == "rank_walk")
+    cat = [n for n in ast.walk(walk)
+           if isinstance(n, ast.Call) and ast.unparse(n.func).endswith("cat")]
+    assert len(cat) == 1, "exactly one context extension expected"
+    appended = ast.unparse(cat[0])
+    assert "nxt" in appended
+    assert "g0" not in appended and "gold" not in appended
+
+
+def test_answerpos_missing_position_is_flagged_not_imputed() -> None:
+    """`first_top1_pos` must be -1 when gold is never top-1, not 0 and not MAX_NEW.
+
+    Q5. A cell where gold never reaches rank 1 has no position, and imputing one
+    would let differential missingness carry the paired depth test: depth 2 and
+    depth 32 miss at different rates, so imputing 0 would manufacture exactly the
+    effect the run is testing for.
+    """
+    ns = _load("kaggle_answerpos", "def main")
+    walk = next(n for n in ast.walk(ast.parse(open(
+        os.path.join(ROOT, "scratch", "kaggle_answerpos", "body.py"),
+        encoding="utf-8").read()))
+        if isinstance(n, ast.FunctionDef) and n.name == "rank_walk")
+    first1 = next(n for n in ast.walk(walk)
+                  if isinstance(n, ast.FunctionDef) and n.name == "first1")
+    ns2: dict = {}
+    exec(compile(ast.unparse(first1), "<first1>", "exec"), ns2)  # noqa: S102
+    assert ns2["first1"]([5, 3, 1, 2]) == 2
+    assert ns2["first1"]([1, 9, 9]) == 0
+    assert ns2["first1"]([4, 2, 7]) == -1
+    assert ns["MAX_NEW"] > 8, "depthacc's 8 tokens cannot hold a framed answer"

@@ -8,44 +8,69 @@ ordered plan and the reasoning behind the order.*
 
 ## STATE — read this first after any context loss
 
-*Last updated 2026-08-09 ~10:45 MSK. Deadline 21:00 MSK.*
+*Last updated 2026-08-09, after D92–D94. Deadline 21:00 MSK.*
+
+**THE HEADLINE, as of D92–D94** — this is now the project's spine, and it is
+measured on data that was already on disk. Full argument in `depth_profile.md`.
+
+> **Recurrent depth in Huginn does not compute the answer — it relocates it.**
+> Top-1 accuracy at the answer position peaks at **unroll 5 (16.1%)** and collapses
+> to a flat **6.2% by unroll 8**, identical across all 21 families from r=32 onward
+> (family-paired sign test, 14 of 15 discordant families, **p = 9.8e-4**). Yet the
+> answer's presence in the generated text **rises** 29.4% → 42.9% over the same
+> range while a length-matched decoy **falls** 16.0% → 2.7% (specificity 1.8× →
+> 15.9×). And `correct` — the label used project-wide — is `min_r rank_r == 1`, a
+> minimum over unrolls: **33.9%, against 16.1% for the best selectable depth.**
 
 **Running now**
-- `geometry-h0bank` — RUNNING, ~80 min. 16 boundary prompts × 32 unseeded h₀ draws
-  = 512 orbits. The powered, **pre-registered** test of D91's lead.
-  Analyse with `scripts/run_h0_within.py`, which was committed *before* the data
-  existed and fixes the window grid, statistic, null, threshold and decision rule.
+- `geometry-h0bank` — RUNNING. 16 boundary prompts × 32 unseeded h₀ draws.
+  The powered, **pre-registered** test of D91's lead. Analyse with
+  `scripts/run_h0_within.py`, committed *before* the data existed.
   **Do not change that file after the data lands.**
+- `geometry-clrs` — RUNNING. The CLRS-Text capability screen.
 
-**Built and queued, blocked only on a GPU slot** (Kaggle caps at 2 concurrent)
-- `scratch/kaggle_clrs/` — the CLRS-Text capability screen. Push with
-  `uv run kaggle kernels push -p scratch/kaggle_clrs`. Retry when h0bank finishes.
+**Built, tested and queued, blocked only on a GPU slot** (Kaggle caps at 2)
+- `scratch/kaggle_answerpos/` — **the decisive follow-up to D94.** Walks the model's
+  own greedy continuation and ranks gold at *every* generated position, so
+  "relocated" stops being an inference. Battery pinned byte-identical to
+  `depthacc` by test, so the two banks join on (family, item, fmt, depth).
+  Predictions pre-registered Q1–Q5 in the body docstring.
+  Push: `uv run kaggle kernels push -p scratch/kaggle_answerpos`.
 
-**The three findings from this session that a reader must not lose**
-- **D89** — `correct` scores only the FIRST TOKEN of gold; 8 of 21 battery families
-  have multi-token golds and 4 have them for every item, so `compare`'s 92% is
-  first-*digit* accuracy. D85's null survives a tokenisation-free re-test.
-- **D90** — h₀ alone decides the answer: gold rank varies in 6/8 prompts across h₀
-  (up to 6×), 3/8 split on correctness, and 0/8 vary when h₀ is seeded (p = 0.0023).
-  Every capability number in this project is a *distribution*, not a value.
-- **D91 — the lead, not a finding.** Correctness decodes at **68.4% (p = 0.010) at
-  unrolls 6–18** and 65.9% at 12–24, chance elsewhere out to 56. Does not survive
-  Bonferroni over 8 windows; n = 60. The location was predicted independently by
-  arXiv:2607.20594 (verified). `geometry-h0bank` is the powered replication.
+**Findings a reader must not lose**
+- **D92** — `correct` is an oracle over unrolls. 33.9% vs 16.1% best fixed depth vs
+  6.2% converged. **53% of the project's measured capability is unrealisable.**
+- **D93** — depth *degrades* next-token accuracy, and is done degrading by r=8.
+- **D94** — but containment *rises* and decoys *fall*, so the answer is relocated,
+  not lost. The framing mechanism I first proposed is **refuted** (median rank 7.0
+  framed vs 7.5 unframed at depth 32) and recorded as refuted.
+- **D90, CORRECTED by D92/D93.** h₀ does *not* decide the converged answer: the
+  last-unroll rank is a single integer across 10 draws in 7 of 8 prompts. h₀ moves
+  the transient minimum, which is what `correct` reads. The consequence for the
+  project stands and sharpens.
+- **D89** — `correct` scores only the FIRST TOKEN of gold; 8 of 21 families have
+  multi-token golds. This sits *on top of* D92, not instead of it.
+- **D91 — the lead.** Correctness decodes at 68.4% (p = 0.010) at unrolls 6–18,
+  chance out to 56; does not survive Bonferroni over 8 windows, n = 60. D93 now
+  explains *why* that window and no other: it is where answer content stops moving.
 
 **Next, in order**
-1. Analyse h0bank with the pre-registered script. If a transient window clears
+1. Push `answerpos` the moment a slot frees. It is the one run that converts D94's
+   central word ("relocates") from inference to measurement.
+2. Analyse h0bank with the pre-registered script. If a transient window clears
    α = 0.00625 and the far tail does not, D91 replicates and the correctness nulls
-   (D79/D84/D85) narrow to the *converged* region.
-2. Push and analyse the CLRS screen (§2).
-3. Activation patching on cells with real dynamic range (§4a).
-4. The QK probe (§4b) — the supervisor's own open item, still 0% done.
+   (D79/D84/D85) narrow to the *converged* region — which D93 independently says is
+   the region where nothing changes.
+3. Analyse the CLRS screen (§2).
+4. Activation patching (§4a); the QK probe (§4b), still 0% done.
 
 **Literature position** (`docs/related_work.md` for verification status). "Depth is a
-contraction" is scooped by Blayney et al. (verified title/abstract). What survives
-clean is **D88's same-computation control** and **D85's reliability-bounded null**.
-Several 2026 arXiv numbers reached me via scouting agents rather than PDFs and are
-marked unverified — **do not put them in the ledger without checking the PDF.**
+contraction" is scooped by Blayney et al. (verified title/abstract). D92–D94 are not:
+nothing found in that scouting pass measures accuracy against depth with a
+length-matched containment control, and the contraction papers do not ask whether the
+fixed point is the answer. Several 2026 arXiv numbers reached me via scouting agents
+rather than PDFs and are marked unverified — **do not put them in the ledger without
+checking the PDF.**
 
 ---
 
