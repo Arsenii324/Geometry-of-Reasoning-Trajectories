@@ -183,8 +183,14 @@ from a template, so **write results incrementally rather than once at the end.**
   depth 4 printed, at 6470s of a 43200s budget — 10 hours before the loss. The check is
   one line of arithmetic against the first stage's wall time; do it then, not at hour 10.
 - **And write output INCREMENTALLY, per batch, not per stage.** A `json.dump` placed after
-  a whole depth completes saves nothing when the stage itself is what overruns. Kaggle
-  does not reliably preserve `/kaggle/working` on a timeout kill.
+  a whole depth completes saves nothing when the stage itself is what overruns.
+- **What Kaggle does with output on an abnormal end is UNVERIFIED here.** Measured
+  2026-08-09: `kaggle kernels output <slug>` on a RUNNING kernel returns **zero files**,
+  so output is collected at the end of a run, not streamed. Whether a timeout kill or a
+  manual stop still collects `/kaggle/working` was **not** established — an earlier
+  revision of this file asserted it did not, which was inference stated as fact and is
+  retracted. Design so it does not matter: if a run's value depends on output surviving
+  an abnormal end, the run is already badly designed.
 - **The local CLI dying does NOT kill the job.** On 2026-08-09 `job execute` crashed
   locally with `AssertionError` in `auth.get_md` (`assert current_iam_token`) — an IAM
   token refresh failing in the attached client. The job stayed `EXECUTING` server-side

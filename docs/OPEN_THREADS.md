@@ -11,6 +11,13 @@ deprioritised.
 (with the ledger row that closed it) or *dropped* (with why). Never by being
 forgotten. Add a line the moment a thread is recognised, even one sentence.
 
+**And before calling a thread unrun, SWEEP `directions.md`'s run table and
+`scratch/*/out/` for it.** D119: B3 sat here as *"Never done"* for a day while the
+run answering it was banked in `scratch/ds_eigen/out/`, filed in `directions.md`
+under its run name (`geom-eigenplane`) rather than its thread name — and GPU was
+spent partly to obtain corroboration that already existed. Indexing by thread name
+alone is what made it invisible.
+
 *Updated 2026-08-09 evening. Status key: `open` · `running` · `blocked` · `done` · `dropped`.*
 
 ---
@@ -51,7 +58,7 @@ value-per-minute available.
 | B4b-orig | ~~a decollinearised difficulty ladder~~. D110's reversal is post-hoc on one family, and `addk`'s `gold = v + k` leaves only 2 d.o.f. `caesar_k` is clean but sits at ~0% accuracy (checked); `nth_item_k`'s generator makes items 0,2,4 the SAME prompt. A ladder with difficulty genuinely independent of the answer token does not yet exist. | build + 1 run | whether harder-answered-earlier is Huginn or `addk` | `open` |
 | ~~B1-orig~~ | **Cross-prompt e-stream patching + a potency-vs-r calibration curve.** Reuses the validated hook mechanism in `scratch/kaggle_patch/`; only donor selection changes. **D95(4b) and two independent deep-research passes all name this as the next step.** The calibration curve is an instrument null: do not interpret any patching result before it. | ~1 Kaggle run | whether this project has ANY working causal instrument — currently `RESULT.md` says causal evidence is absent | `open` |
 | B2 | **Jacobian eigenspectrum vs difficulty on the working ladder.** D31 swept 3 prompts and never against difficulty; `nth_item_k`/`addk` (D101) are the first length-constant ladders that make "does an eigenvalue approach 1 as difficulty grows" answerable. Reuses `scratch/kaggle_jacobian/`'s Arnoldi. | ~1 run, JVPs only | H3's line-attractor form, currently argued from 3 points | `open` |
-| B3 | **Measure the FULL operator, not the diagonal block.** D31's own row ends: *"NEXT: measure the FULL operator … which is the version whose spectrum should match the observed orbit decay."* Never done. | ~1 run | the only route to a second, valid estimate of ρ — D94 currently has NO independent corroboration | `open` |
+| ~~B3~~ | **CLOSED by D119 — and it was already done before this file called it unrun.** `ds_eigen` (job `bt1mvf3juvrcjpl6kl1i`, banked 2026-08-08) runs Arnoldi on the FULL unroll map (adapter + all four core blocks): **\|λ\| median 0.8098 (0.8011–0.8680)**, a fourth agreeing estimate, and **arg λ separates tasks** (`track` 61–63°, `local` 19.5–24.3°). It also retracts D116's naming of the step angle as arg λ — the orbit turns at a median **0.241×** the eigenvalue's rate. | — | — | `done` |
 | B4 | **Powered re-run of D101's best_depth** on `addk` FIRST (D107: it is the ladder that survives honest scoring at 38.1%; `nth_item_k` collapses to 4.2%), pre-registered, single statistic, length gate enforced, correct unit of independence built in. | ~1 run | the project's only positive H2 direction (ρ=+0.437, p=0.033, not clearing correction) | `open` |
 | B5 | **Implicit-differentiation attribution** via (I−J)⁻¹∂F/∂e as a Neumann series (~30–40 JVPs, geometric convergence from ρ≈0.85). Unclaimed in the literature per the DR pass. | ~1 run | exact input attribution without BPTT; cross-validates B1 | `open` |
 | B6 | **Permutation / group-composition task family (S₃–S₅, A₅).** Provably requires recurrence under TC⁰≠NC¹ — the one task class theory says *should* show H2 if anything will. Never built. | build + 1 run | H2 on the theoretically privileged task | `open` |
