@@ -1,0 +1,23 @@
+name: binsearch-fixed-body-ladder
+desc: >
+  A16 / DR1 Stage 2: the fixed-body binary-search ladder. Twelve fixed sorted
+  9-key arrays; within an array ONLY the target number changes, so prompts are
+  byte-identical but for one two-digit number and the token count is constant by
+  construction (verified per array in-kernel). Difficulty = binary-search
+  comparison depth, which is NOT monotone in position (midpoint depth 1,
+  extremes depth 4), so difficulty is decoupled from the answer -- the property
+  addk's gold = v + k could never give and B4b's fixed-sum design failed to
+  deliver (VOID, D118: Huginn cannot add two digits). Every answer is a single
+  token 1-9, so D89's multi-token defect cannot apply. Pre-registered:
+  rho(search depth, best_depth) < 0, carrying D110's direction. Capability gate
+  uses rigor.require_dynamic_range -- at least TWO depth levels must clear 5%,
+  else VOID not null. DR1 notes a flat result is itself a finding: it would mean
+  Huginn is shortcutting rather than iterating.
+cmd: python job.py ${RESULT}
+outputs:
+  - binsearch.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
