@@ -58,7 +58,19 @@ reconstruction process itself.
    with D92 as convergent supporting evidence either way.
 3. Score the CLRS screen; if any (algorithm, size) cell lands in 20–80%, bank
    trajectories there next.
-4. Activation patching on cells with real dynamic range (§4a).
+4. **`scratch/kaggle_patch/` is built, CPU-verified (8/8 dry-run tests against a
+   fake whose mechanism was checked directly — a hook-returned tensor really does
+   propagate to the next unroll) and waiting for a GPU slot.** It patches the
+   ANSWER-POSITION state at unroll r from a correct h₀-draw (donor) into an
+   incorrect h₀-draw (recipient) of the SAME prompt, sweeping r over
+   {0, 8, 16, 24, 32, 48}, and asks whether the flip rate is higher in D91's
+   window (8–24) than at the tail (0, 48) — the causal analogue of D91/D92's
+   correlational finding. This is the project's first non-void causal test (D47
+   was void: zero dynamic range in the outcome before any intervention; this
+   design checks real dynamic range in each cell BEFORE using it, by construction).
+   Push with `kaggle kernels push -p scratch/kaggle_patch` the moment a slot frees.
+   No offline analysis script yet — the kernel reports its own flip-rate table;
+   write `scripts/run_patch.py` once real data shows what schema is worth keeping.
 5. The QK probe (§4b) — the supervisor's own open item, still 0% done.
 
 **Literature position** (`docs/related_work.md` for verification status). "Depth is

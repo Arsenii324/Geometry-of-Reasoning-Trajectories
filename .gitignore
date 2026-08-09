@@ -62,6 +62,7 @@
 !/scratch/kaggle_marker/
 !/scratch/kaggle_h0bank/
 !/scratch/kaggle_clrs/
+!/scratch/kaggle_patch/
 # DataSphere bundle: template only, the real cfg.yaml is generated at submit time
 # with the WandB key injected and is deliberately NOT committed.
 !/scratch/ds_eigen/
