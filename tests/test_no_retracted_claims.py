@@ -32,7 +32,7 @@ DOCS = ROOT / "docs"
 ALLOWED_TO_QUOTE = {
     "claims_ledger.md",      # the corrections themselves live here
     "directions.md",         # the audit log, section F
-    "GUIDANCE_REVIEW.md",    # the retrospective
+    "PRACTICE.md",           # the practice doc, which quotes retractions as evidence
 }
 
 RETRACTED: list[tuple[str, str, str]] = [

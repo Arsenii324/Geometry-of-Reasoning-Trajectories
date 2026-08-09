@@ -77,6 +77,17 @@ def _git_last_commit_time(path: Path) -> int | None:
 # the check fire again) the moment its script changes for a reason that
 # might actually affect what gets computed.
 _REVIEWED_NON_SUBSTANTIVE_CHANGES: dict[str, str] = {
+    "h0_within.csv": (
+        "2026-08-09: run_h0_within.py gained two `traj_geom.rigor` guards "
+        "(require_resolvable_alpha on the P8 floor, require_units on its sample) "
+        "and its floor's n_perm default moved 40 -> N_PERM. The guards raise or "
+        "pass; they compute nothing. EVIDENCE, not judgement: the script was "
+        "re-run at the current revision and results/h0_within.csv is BYTE-IDENTICAL "
+        "(sha256 39b46b72f9f710b23b71180d...), verdict still NOT CONFIRMED with the "
+        "detection floor still 0/15/100/100% at 0/0.25/0.5/1.0 sd. As with "
+        "effective_dim.csv, a re-commit cannot clear this check because git records "
+        "no change for an unchanged file, so the sign-off is the mechanism."
+    ),
     "effective_dim.csv": (
         "2026-08-09 (3eba672): run_effective_dim.py extracted an inline f-string "
         "conditional into a `verdict` variable and reflowed one print, purely to "
