@@ -45,6 +45,8 @@ value-per-minute available.
 | A13 | **Dequeued unrun-again: does the readout lock in earlier for lookup tasks than computed ones?** Run once (ρ = −0.328, p = 0.266, n = 13 families with ≥5 solved orbits) and NOT supported, but the floor at n=13 is weaker than D117's already-modest one. Re-running on the same bank cannot settle it; it needs more families with high solve rates, which is what `geometry-census` is for. | blocked on census | whether early lock-in marks retrieval vs computation | `dropped for now` |
 | A12 | **D114's second arm at p = 0.080:** harder `addk` problems may contract FASTER (ρ = −0.453, n = 16). Underpowered, not a claim. B4b's fixed-sum ladder plus one more e-stream run would settle it. | ~1 GPU run | whether difficulty touches the dynamics at all, on a second ladder | `open` |
 
+| A14 | **`kaggle_eps_split` reports `rho_plain_ambient` and `rho_plain_tangent` as EXACTLY equal** — max \|diff\| = 0.0000 over 144 paired measurements. Across floating point that is a shared code path, not a coincidence, so the run's ambient-vs-tangent contrast probably never happened. Cheap to confirm by reading the kernel. Matters because it is the only banked check on whether ρ is coordinate-dependent. | ~15 min | whether ρ's coordinate-independence has ever actually been tested | `open` |
+
 ## B. GPU-light, high value
 
 | # | thread | cost | settles | status |
