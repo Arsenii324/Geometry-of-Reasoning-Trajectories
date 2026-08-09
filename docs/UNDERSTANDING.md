@@ -1,465 +1,103 @@
-# State of understanding — 2026-08-09
+# State of understanding — 2026-08-10
 
-Supersedes the 2026-08-08 revision, which predates D73–D83. Written to be read on
-its own; every number cites the ledger row that carries its evidence. §1 is the
-current synthesis; **§1-old below is the 2026-08-08 text, kept unedited** because it
-is what the D68/D69 work concluded at the time and the difference is informative.
+Rewritten, not appended (CLAUDE.md §6). §1 below is the current synthesis; the
+2026-08-09 text it replaces is kept from §1-old onward because the difference is
+itself evidence. Every figure cites the ledger row carrying its controls and limits.
+
+---
+
+## 1. The synthesis
+
+**One sentence.** *The latent trajectory encodes the input — its shape and its endpoint
+alike — while difficulty never reaches the dynamics, the dynamics never reach the
+readout, and the readout is finished long before the dynamics are.*
+
+### 1.1 What the latent carries
+
+The trajectory's **shape** identifies the input at ceiling, separating two prompts one
+token apart whether or not that token changes the computation (D84, D87, D88), and
+carries at most a weak, unreplicated trace of whether the computation succeeded
+(D92 positive, D93 not-confirmed under a floor that detects a planted 0.5 sd effect
+100% of the time).
+
+**The same is now true of the endpoint, which is the harder case.** D109 found the
+fixed point h\* decoding the specific answer while the shape sits at chance — but in
+that design the answer is a *function* of the input, so both readings predict it. A
+paired-marker experiment separates them: sharing the required **answer** moves h\*
+similarity by **+0.00016 (p = 0.70)**; sharing the **input** moves the same statistic
+on the same orbits by **+0.0034**. The answer effect is **4.3%** of the input effect
+(D125). The h\*-versus-shape dissociation stands; its interpretation narrows to
+*h\* encodes the input, from which the answer is recoverable.*
+
+And the topological signal behaves the same way: real, well-nulled, and outcome-blind
+(D123 positive, D126 null at matched answer value).
+
+### 1.2 Why H2 returns nothing — a chain, not a list
+
+1. **Difficulty does not reach the dynamics.** The contraction rate spans 0.824–0.918
+   across 21 families (between/within 4.2×, surviving length matching at 7.5×), yet
+   quadrupling the count in `count4→count8→count16` moves it **0.0033** (D115). The
+   rotation angle behaves identically, independently of the modulus, with an untrained
+   control (D116). Both are **rates, not durations**, so D80's clock-reading critique —
+   which explains away every earlier H2 instrument — cannot apply.
+2. **The dynamics do not reach the readout.** ρ(contraction rate, best_depth) =
+   **+0.118, p = 0.65**, against a floor detecting effects three times smaller than the
+   variation present (D114).
+3. **Because the readout never waits.** On solved orbits the answer is top-ranked at
+   **median unroll 4**, with **87% of the state's journey still ahead**; the state
+   reaches a 1% residual only at unroll 32–36 (D112, replicated across banks; threshold
+   dependence measured in D97's correction).
+
+Every H2 instrument this project built measured the trajectory. The answer was already
+decided in the first few unrolls.
+
+### 1.3 The map itself is well characterised, and it is a task-level object
+
+Four instruments of three kinds put the contraction rate in **0.79–0.87**: causal
+state-injection **0.8335 ± 0.028** over 16 recipients (D113), full-operator Arnoldi
+**0.8098** (D119), diagonal-block Arnoldi 0.79–0.81 (D31), passive orbit decay ≈0.82
+bias-corrected (D94). Training moves it from **0.7042 → 0.8582** with *total*
+separation, and is done by the earliest public checkpoint (D52, rediscovered and
+retracted as D120).
+
+**And a single word selects the qualitative regime.** *"largest **symbol**"* rotates
+36/36; *"largest **element**"* and *"largest **item**"* rotate 0/36 — same task, same
+sequences, **identical 53-token count**, flipping in **36 of 36** within-sequence cells
+(D132). Symbol diversity is refuted as the cause (D129). This has a mechanism already
+in the ledger: `e` is the map's **parameter** (D111, D113), and the spectrum at h\*(e)
+is task-dependent (D115, D116, D119) — D132 localises that dependence to one token.
+
+### 1.4 What the corrections did to the older record
+
+An independent audit on 2026-08-10 found that **three older positives all rest on one
+instrument**: `classify_shape`, whose loop branch D25(3) proved fires on straight lines,
+random walks and decaying spirals alike. B4 ("the project's cleanest positive result" —
+loops under a starved budget) is retracted: its settle test is the last step over the
+*largest* step, which truncation inflates by construction. D14's claim to validate the
+pipeline against Blayney's rate is withdrawn — a detector with an unknown false-positive
+rate cannot be validated by matching a published number. D100's "working difficulty
+ladder" is withdrawn (3 forwards per level; only 0/33/67/100 observable).
+
+Two more dissolved rather than resolved: D97 vs D30 is a **threshold**, not a
+disagreement (11→47 unrolls for 30%→0.1%); D100 vs D101 is two underpowered estimates.
+And D55's near-aliasing diagnosis is withdrawn — its samples-per-turn came from the
+diagonal-block operator D31(3) calls "the wrong operator"; the trajectory is sampled
+3–9× above Nyquist, not near it. **D55's third prompt, at 60.1°, was already reading the
+mode D112/D132 later characterised.**
+
+### 1.5 The strongest objection to all of it
+
+Capability. The census yields **31 usable items across 5 families** (D130), none of them
+natural-language reasoning; multi-term addition is at 0% (D118); binary-search depth runs
+*opposite* to Huginn's difficulty (D128); CLRS was never tested in the form its
+deep-research pass specified (D124). So every null here is a null *on synthetic,
+largely-OOD tasks*, and the D124 ambiguity — genuine OOD difficulty versus scoring
+artefact — is unresolved. The one experiment that would most sharpen the picture,
+D125's answer-versus-input test, is limited by exactly this: at 4.7% accuracy on one
+marker it cannot separate "no answer encoded" from "no answer computed."
 
 ---
 
-## 1. The synthesis, as of 2026-08-09
-
-**One sentence: the geometry of Huginn's latent trajectory is set by the weights,
-by how far the contraction has run, and by the input — down to a single token,
-whether or not that token changes what the model computes — and carries, at most, a
-weak and not-yet-confirmed trace of whether the computation succeeded.**
-
-**And as of the 2026-08-09 evening pass, the contraction is no longer an assumption
-but a measurement, under two independent instruments: the map contracts at
-ρ ≈ 0.855 raw / ≈0.82 bias-corrected, with 0 orbit pairs at ρ ≥ 1 across 16 prompts (D94; n_eff is the prompt, not the ~960 pairs), and 179 of 179 token
-positions classify as `settle` with zero loops or drift (D97).**
-
-**A third instrument has now measured ρ *causally*, and it agrees.** Injecting a
-donor's state at unroll r and reading how much of the kick survives to the output
-gives a potency that decays as ρ^(R−r) across nearly three orders of magnitude
-(D111). Across **16 distinct recipient prompts** this fits **ρ = 0.8335, sd 0.028,
-with 14 of 16 inside the 0.79–0.86 bracket** the passive instruments had already
-set (D113). Every earlier estimate was a passive fit to how fast an unperturbed
-orbit stops moving; this one perturbs the system and watches the perturbation die.
-**D94's row should no longer be read as uncorroborated.**
-
-**But ρ is a property of the task family, not of the architecture.** Over 608
-banked orbits across **21 families**, the rate spans **0.8239 to 0.9181**, with
-between-family spread **4.2×** the within-family spread — and it survives length
-matching, which it had to, since the marginal length correlation is real
-(+0.56, p = 0.011): at an identical 29 tokens `nth_item` gives 0.8370 and
-`sort_min` 0.8910, a gap **7.5×** the within-family sd (D115). So D94's 0.855,
-D31's 0.79–0.81, D113's 0.8335 and D112's 0.911 are not competing estimates of one
-number; each should be read with its prompt family attached.
-
-**Three results now explain the whole run of H2 nulls, and they form a chain.**
-
-1. **Difficulty does not reach the dynamics.** Quadrupling the count in
-   `count4→count8→count16` moves ρ by 0.0033, under half the within-family sd,
-   while *task identity* moves the same quantity by 15× that at matched length
-   (D115). This is an H2 test on a *rate* rather than a duration, so D80's
-   clock-reading critique does not apply to it — and H2 still returns nothing.
-2. **The dynamics do not reach the readout.** Joining per-prompt ρ to per-prompt
-   `best_depth` gives ρ = +0.118, p = 0.65, against a detection floor that would
-   have caught a relationship three times smaller than the variation present
-   (D114).
-3. **Because the readout never waits for the fixed point.** On the orbits Huginn
-   actually solves, the answer is top-ranked at **median unroll 4**, when
-   **86.9% of the state's journey still lies ahead**; those same states do not
-   reach a residual below 0.01 until median unroll 44 (D112). The readout and the
-   latent are two clocks, and every H2 instrument built here has been reading the
-   one that difficulty does not drive.
-
-D112 also pins the slowest mode: on `lenmatch` prompts the late motion rotates
-exactly 60° per unroll, |h_t − h_{t+6}| < |h_t − h_{t+1}| in 124 of 188 orbits,
-decaying with **|λ| = 0.911 in 124 of 124** — a damped rotation, which leaves D97's
-`settle` verdict untouched since a damped rotation still settles. *(D119: do not
-read that turning rate as arg λ. The full-operator Arnoldi's own gate puts the
-orbit's rotation at a median **0.241×** |arg λ|; the two coincide only when a single
-pair dominates.)*
-
-**Where the eigenvalue itself has been measured, it agrees and it is task-shaped.**
-`ds_eigen` runs Arnoldi on the complete unroll map (adapter + all four blocks):
-\|λ\| median **0.8098**, and **arg λ separates tasks cleanly** — `track` 61–63°
-across every difficulty, `local` 19.5–24.3° (D119). Four instruments of three
-unrelated kinds — passive orbit decay, diagonal-block Arnoldi, full-operator
-Arnoldi, and causal state injection — now put the contraction rate in **0.79–0.87**.
-
-**And the whole structure is learned, early.** Across 8 public training checkpoints
-and 4 random inits: untrained ρ = **0.7042** (sd 0.0091), trained ρ = **0.8582**
-(sd 0.0389), with **total separation** — the minimum trained value exceeds the
-maximum untrained value, so all 142 orbits are classified by ρ alone. Training
-pushes the map toward the edge of stability, **and it is done by step 6144**, the
-earliest checkpoint that exists (the next 35,584 steps move it only within noise,
-p = 0.194). Training also multiplies ρ's across-prompt spread **4.3×**, so the
-task-dependence above is something training *built* (D120). This is the quantitative
-partner to D116's finding that training replaces a near-orthogonal walk
-(110–115°/step) with coherent rotation (42–59°).
-
-**One caution about this project's own numbers.** The state lives on a sphere of
-radius 76.386 (D99), and that alone fixes several quantities that read as
-measurements: the difference of two same-prompt orbits is orthogonal to their
-midpoint *by identity*, so radial-vs-tangential comparisons of it are vacuous; and
-D106's "20.6% radial component" is |d|/(2R), a restatement of step length that would
-hold for a random walk (D122). D106's *conclusion* stands — the artefact's
-consequence is 4.2% of the effect it might have explained — but "is this a
-coordinate artefact?" can no longer be tested by decomposing steps radially.
-
-**The same experiment turns the DEQ framing from an architectural argument into a
-measured fact.** `e` (the re-injected prelude output) is the map's PARAMETER and `h`
-its STATE: patching `e` flips which answer the model prefers 6 of 8 times **at every
-injection depth, including r = 40 with 8 unrolls left**, and its potency is flat in
-r — because moving `e` moves the fixed point h\*(e) itself. Patching `h` never flips
-the answer (0 of 56) and decays at exactly the contraction rate, because it displaces
-an initial condition the contraction erases (D111).
-
-**H2's behavioural arm is now closed, and it closes against H2.** On `addk`, harder
-problems reach their best readout depth **earlier**, not later: ρ(k, best_depth) =
-−0.440 at the true problem unit, and the two stratifications that move the first
-operand in *opposite* directions both give ≈−0.5 while holding difficulty fixed
-gives +0.07 — so the driver is difficulty, not the answer token (D110). In H2's
-pre-registered positive direction p = 0.995. This also reconciles D101's +0.362,
-which came from a design where the answer was 93% collinear with difficulty. The
-effect is ~1 unroll in 48 and post-hoc on one family, so it is a direction, not yet a
-law — but it converges with the two results above: the fixed point arrives fast, and
-on harder problems the model settles sooner onto a worse answer.
-
-**But both instruments read ONE block of the recurrent stack, and D98 shows that
-choice was hiding the loop.** Hooking all four core blocks: each converges tightly
-to its *own* fixed point (residual 58-71 → ~0.1), and those four fixed points are
-separated by ~52% of the state norm — a separation/residual ratio of 95–730, with
-the cycle's perimeter exceeding the entire distance travelled from h₀ to
-convergence by 60%. **So there IS a large, stable, period-4 cycle in block-space,
-and a `core_block[-1]`-only read samples one point of it forever.** Both readings
-are true of different objects: no loop *in the iteration-to-iteration map at a
-fixed block*; a large loop *across blocks within an iteration*. D94 and D97 are
-scope-corrected, not retracted — no number in them changes. The binding constraint
-on further progress is task supply, not instrumentation.
-
-*(This sentence has been rewritten three times in one day, and the history is the
-evidence. It began as "…not of the input or of the computation". D84 refuted the
-first half — the shape identifies the input at ceiling — but could not separate task
-from prompt length, since no two families in any bank share a token count. D87 then
-settled that: at verified-identical token counts, with prompts differing in exactly
-one marker character, the shape separates two computations at 96.9–100%. The second
-half — "not by whether the computation succeeded" — held through D79/D84/D85's
-hand-picked-statistic and between-family tests, but D92 found that the SAME
-full-shape classifier, run within (family, gold) strata with its centring fitted
-inside each CV fold rather than on the pooled data, decodes correctness at 61.0%
-against a 50.2% null (p = 0.030, stable across CV seeds) — small, driven by 2 of 3
-strata, not pre-registered, but converging with an independently designed test
-(D91) that found the same qualitative thing at unrolls 6–24 specifically. `geometry-h0bank`,
-launched before D91/D92 existed, was the powered, pre-registered test of D91's
-specific lead — and it came back NOT CONFIRMED (D93): best window 6–18 gives
-52.0% against a 46.8% null, p = 0.0125, missing the corrected 0.00625 by about 2x,
-with no far-tail window significant either. This is a trustworthy null, not an
-underpowered one — the test's own detection floor was found broken on first run
-(mathematically incapable of registering any effect at the corrected alpha, a
-40-permutation floor against a threshold that needs 400+), fixed, and re-run: it
-now catches a planted half-SD effect with 100% certainty at this n, several times
-smaller than D91's original signal. D91's specific transient-window mechanism is
-therefore ruled out, not merely unconfirmed. D92's result is a different test —
-between-item, stratified, no unroll sweep — and stands untouched by this: still
-small, still suggestive, still not independently confirmed.)*
-
-That is a claim with three legs, and each is measured rather than argued.
-
-**(a) The path's shape is governed by how far the contraction has run.** Sliding a
-fixed-width window along the unroll axis over all 152 banked trained orbits,
-participation ratio falls 8.55 → 4.55 between unroll 0 and 28 — **down in 147 of
-147 orbits** — while the consecutive-step cosine rises +0.276 → +0.710, up in
-134/147. Each shift is about **3× the entire prompt-to-prompt spread** of the same
-statistic. The contraction *rate* does not move over that range (p = 0.32), which
-is the control that makes the other two specific rather than a generic drift
-(D80). So the single largest determinant of any shape statistic is *where in the
-convergence it was measured*. This also dissolves an apparent conflict in our own
-record: D74's "13.3 effective dimensions" and the asymptotic "2.3" are the same
-orbit at a ~21-unroll and a ~90-unroll window.
-
-**And that depth law is something training BUILDS.** Extended to the untrained arm
-— 84 orbits over **six independent weight draws**, on identical prompts, at the
-depths every orbit in both arms reaches — participation ratio falls 8.553 → 4.889
-trained (149/149 orbits) against 9.553 → 9.104 untrained: **the trained orbit sheds
-directions 8× faster**. The step cosine moves +0.438 trained and −0.013 untrained
-(p = 0.063, not significant); the untrained path does not straighten at all
-(D80(7)). Random weights *diffuse* at roughly constant effective dimension; the
-trained orbit *collapses* onto a dominant mode. Training installs the spectral
-structure that makes the recurrent orbit converge, and the depth profile is the
-clearest expression of it.
-
-**(b) The dynamics are linear enough for that to mean what it sounds like.** Held-out
-one-step prediction of the step directions recovers a median **91%** of what the
-fitted subspace can express, with a general operator beating a subspace-matched
-scalar rate in 148–152 of 152 orbits (D82). So D52's ρ and every Jacobian quantity
-stand, and the orbit really is a contraction collapsing onto its dominant mode
-rather than something a linear vocabulary merely approximates. Where the absolute
-prediction score is low, the cause is a **gapless spectrum** — later steps enter
-directions earlier steps never spanned — which is what D74(4) independently found
-when DMD failed its stability gate on 80/80 orbits. Gapless is not nonlinear.
-
-**(c) And the shape does not track the computation.** Across **21 task families
-spanning 0% to 100% accuracy**, no geometric statistic tracks capability at any of
-five windows — 0 of 18 usable cells — while 6 of 18 track prompt length on the same
-orbits. *(The independent variable here carries a defect worth stating where the
-claim is made, not only in the ledger: `correct` scores the FIRST TOKEN of the gold,
-and 8 of these 21 families have multi-token golds, 4 of them for every item — so
-`compare`'s 92% is first-digit accuracy. D89 re-ran the null against a
-tokenisation-free axis built from decoded strings and **the null survived**. The
-defect therefore weakens no conclusion here, but it does mean every capability
-number quoted from this axis is a first-token number.)* The run measures its own reliability at 0.95–1.00, so a perfect relation
-would have shown |ρ| in [0.80, 1.00] against an observed |ρ| ≤ 0.33: the null is
-readable, not merely observed (D85). At matched answer value, correct and incorrect
-trajectories do not differ in effective dimensionality, step cosine, contraction
-rate or settling time — in the one family D79 could test, and now in two more from
-the new bank (0 of 8 cells at α = 5.95e-04). H2 — "more reasoning steps, more turning" — returns nothing on the one
-design that escapes the length confound: the paired `track − local` contrast gives
-ρ = +0.543 at an exact p of 0.328 over 2048 arrangements (D83). With D28 (winding)
-and D74(6) (dimensionality), **every instrument this project has built for H2 now
-returns nothing**, and D80 explains why: they were all reading a clock.
-
-**(c′) — CORRECTED 2026-08-09 by D84, and the correction sharpens the claim.** An
-earlier draft of this section said the geometry is "the input it cannot see". That
-is wrong. Handing a classifier the *whole* shape — the rotation-, translation- and
-scale-invariant Gram matrix of unit step directions, a complete invariant of the
-path — decodes the **task family at 100% balanced accuracy within every bank**
-against permutation nulls of 25–33%. The shape identifies which prompt is being
-processed, at ceiling. What the same classifier on the same orbits cannot decode is
-**correctness: 55.3% balanced, p = 0.065** (D84). So the dissociation is not between
-weights and input. It is between **input and outcome**: the path tells you what the
-model is reading and not whether it got the answer right.
-
-Two caveats travel with that, both measured. The family result **cannot be
-attributed to the task**: no two families share a prompt length anywhere in the
-banked data — 0 of 6 pairs in one bank, 0 of 3 in the other — so task identity and
-sequence length are perfectly collinear, the same situation where D74(6)'s
-`partial_spearman` refused at ρ = −1.000. And the correctness null is "not linearly
-decodable at n = 128", not "absent".
-
-**What training does, by contrast, is unmissable.** ρ rises 0.7048 → 0.8577 across
-14 weight-sets with no overlap (D52); the step cosine *flips sign*, −0.379 →
-+0.541, with completely disjoint distributions across five independent untrained
-draws (D76, D76(8)); and rotation per unroll read off the operator falls from 1.892
-to 1.024 (D83(4)).
-
-**The most telling single number** is in D83(6): across `track`/`local` and n_ops
-4–32, the *measured* step cosine spans just **0.44–0.57**, while the Jacobian's
-leading oscillatory argument over the same prompts spans **0.37–1.10 rad**. The
-trajectory's turning is more uniform than the local spectrum that supposedly
-generates it.
-
-### What this predicts, and what is still open
-
-The reading is not merely compatible with the nulls — it *predicts* them, and it
-predicts more that is not yet in. Two runs are in flight to test exactly that:
-
-- `geometry-geomcap` — **landed, D85.** Both gates passed: capability correlates
-  with D75's at ρ = +0.936, the fixed-seed replicates came back bit-identical
-  (h₀ is the only stochastic input) and the unseeded ones all differed (the ceiling
-  is measured, not manufactured). It also puts a number on the mechanism: **h₀
-  accounts for 0.39–1.42 of the within-family variance** in these statistics, so
-  what a single orbit's geometry shows is largely where it started.
-- `geometry-depthacc` — **landed, D86.** Rank is capability only where the output is
-  still short. Exact-match accuracy hits 0% by r=8 while CONTAINMENT rises 13.5% →
-  33.3%, up in 9 of 10 families that moved (p = 0.0215): **depth does not destroy
-  the answer, it wraps it in prose.** Being top-1 raises P(exact) from 3.7% to
-  58.8% at r=4, and the link is gone by r=32. It also amends D69 — that row's
-  0% → 83% was one trivial task; over 21 families the same instruction is worth
-  +9.5 points at r=4 and ~0 elsewhere.
-- `geometry-marker` — **landed, D88, and it refuted the reading I expected.** A-vs-C
-  (same computation, one token apart) decodes at 98.0–100% against A-vs-B's
-  96.0–100%. No gap: the shape reads the **token**, not the computation. D87 stands
-  as measured but narrows to single-token input sensitivity — which makes the main
-  dissociation cleaner, since the thing the shape tracks is now demonstrably the
-  input and the experiment that could have shown otherwise came back negative.
-- **A stale-CSV bug surfaced a real signal, D92.** `run_correctness_decode.py` was
-  fixed (D88 commit) to stratify by (family, gold) and fit its centring inside each
-  CV fold, closing the D72-shaped confound its first draft had — but the committed
-  CSV was never re-generated, so it sat showing the pre-fix numbers until a machine
-  switch's staleness check caught it. The corrected run: shape decodes correctness
-  at **61.0% against a 50.2% null, p = 0.030**, stable 0.010–0.062 across six CV
-  seeds, driven by `nth_item` (93.8%, p = 0.005) and `local_last` (74.6%, p = 0.020)
-  with `parity8` flat. Position does WORSE (57.8%, n.s.) — evidence against pure
-  residual family leakage, since both features are centred identically. Converges
-  with D91 (below) from an unrelated design.
-- `geometry-h0bank` — **landed, D93, and D91's lead did NOT replicate.** The
-  powered pre-registered test (16 boundary prompts × 32 unseeded h₀ draws, 512
-  orbits, 10/16 prompts splitting so the P1 gate passed) returns **NOT
-  CONFIRMED**: best window (unrolls 6–18) gives 52.0% against a 46.8% null,
-  p = 0.0125, missing the corrected α = 0.00625 by about 2×, with no far-tail
-  window significant either. **The null is trustworthy because the instrument's
-  own detection floor was found broken and fixed first** — it used 40
-  permutations against α = 0.00625, whose minimum reachable p-value (1/41 ≈
-  0.024) can never clear that threshold, so it reported 0% detection at every
-  planted effect size including 1.0 sd. Re-run at 400 permutations it detects a
-  planted 0.5 sd effect **100%** of the time. So D91's transient-window mechanism
-  is *ruled out*, not merely unconfirmed. Its P6 timing control also shows
-  `best_depth` alone decodes correctness about as well as the best shape window,
-  so even the near-miss is confounded with *when* the answer peaks rather than
-  with shape.
-- `geometry-clrs` — **running.** Capability screen on CLRS-Text, which is IN
-  Huginn's training mixture and has a clean integer difficulty knob — the
-  parametric task ladder this project has never had (the battery's two ladders,
-  `count4/8/16` and the Caesar family, are both floored or non-monotone, D89).
-
-### H3 has a sharper, mechanistic form — and our own data already answers it
-
-A sourced interpretability pass (2026-08-09) made the point that "is the spectral
-radius < 1" is the *weak* form of H3. The strong form, standard in the RNN
-fixed-point literature (Sussillo & Barak 2013; Maheswaranathan et al. 2019), is:
-
-> **How many Jacobian eigenvalues sit near 1?** A *line attractor* — a manifold of
-> near-unity eigendirections — is the mechanism by which a recurrent network
-> integrates or holds a running count. A strict contraction has none, and then
-> counting is impossible.
-
-That is a sharp, falsifiable prediction, and **D31 already measured the quantity
-it needs.** Implicitly-restarted Arnoldi on autodiff Jacobian-vector products
-gives top eigenvalues in complex-conjugate pairs at **0.808, 0.808, 0.802, 0.802,
-0.775, 0.775 …** across 3 prompts. Arnoldi returns the *largest* eigenvalues, so
-if the top modulus is 0.808 then **nothing is near 1: there is no line attractor
-and no integrator eigendirection.**
-
-So **the state h carries no near-unity eigendirection** — no unbounded register
-lives in h. **Three caveats travel with that, and the third is the one an internal
-audit found missing (2026-08-09):**
-
-1. Three prompts only.
-2. The Jacobian is evaluated at particular points along particular orbits, so it
-   is a local statement about the region those orbits visit.
-3. **D31 measured the DIAGONAL BLOCK, not the operator that governs the orbit.**
-   Its own row ends: *"NEXT: measure the FULL operator (all positions perturbed
-   and read) rather than the diagonal block, which is the version whose spectrum
-   should match the observed orbit decay."* The full operator has never been
-   measured. So the "no line attractor" claim rests on the spectrum of a
-   sub-operator our own ledger says is not the governing one — and by the same
-   token, D94's comparison of the pair-based ρ against D31's 0.79–0.81 is not
-   quite a like-for-like comparison of the same object.
-
-**And our own data already contains a positive counterweight, which I had not
-connected to H3.** D32 probed Barannikov's Task a directly: after removing the
-linear dependence on position — the confound that makes a raw running-count probe
-worthless, since position alone explains 98.5% of a running count — the latent
-still predicts the count at **R² = +0.601 on residuals of sd 1.06 counts**, i.e.
-it tracks deviations of about ±1 from what position predicts. D32's own words:
-*"evidence that a running count is maintained, not merely that the model knows
-where it is in the string."* Task b (nesting depth) is cleaner still at R² = +0.590
-balanced / +0.718 unbalanced, where position explains only 0.160.
-
-**Taken together the H3 picture is now the opposite of a clean confirmation:** the
-scope argument says contraction need not forbid counting when the input is
-re-injected; the architecture says Huginn re-injects; and D32 says a running count
-*is* linearly decodable from the latents. The narrow surviving statement is only
-that no unbounded register is carried in h across iterations — and even that rests
-on a sub-operator's spectrum.
-
-**But it does NOT follow that Huginn cannot count, and the earlier version of this
-section said it did. Corrected 2026-08-09.** The Contraction Bottleneck Theorem's
-proof is about **forgetting h₀**: iterated contraction destroys dependence on the
-arbitrary starting point. It says nothing about dependence on an input that is
-**re-injected at every step** — and a contraction toward a fixed point still lets
-that fixed point *h\*(e)* depend arbitrarily on *e*. Huginn re-injects the prelude
-output every unroll, by deliberate design, precisely to buy path-independence. So
-the count need never survive *in h at all*; it can live in how *h\** depends on *e*,
-which the contraction does not touch.
-
-**What the correction rests on, in order of weight.** It is deliberately *not*
-built on the toy model, which is far too unlike Huginn to carry it:
-
-1. **A scope argument about the theorem, which needs no experiment.** The proof
-   (Banach fixed point, `T_max ≤ log(D/ε)/log(1/c)`) is correct and is about h₀.
-   §5's applied claim — "therefore N-state counting must fail under contraction" —
-   requires the N states to be encoded *as different h₀ values*. Nothing in the
-   proof establishes that. If the information instead enters as *e*, the fixed
-   point *h\*(e)* may depend on it arbitrarily and contraction never touches it.
-2. **A verified fact about Huginn's architecture**, read from
-   `raven_modeling_minimal.py` at the pinned revision: the prelude output is
-   re-injected through the adapter at **every** unroll, and `block_idx` reaches
-   only the KV-cache slot. So Huginn is exactly the re-injection case, by
-   deliberate design — Geiping et al. built it that way to buy path-independence.
-3. **Independent corroboration of the framing** from a 2026-08-09 interpretability
-   pass, which arrived at *e* = the map's **parameter** and *h* = its **state**
-   from the DEQ literature rather than from this project's notes.
-
-`h3_toy_model/` (imported 2026-07-22) is *suggestive only* and is cited last for a
-reason. It reports probe R² ≥ 0.996 under forced contraction in a depth-recurrent
-model against R² ≈ 0 in a time-recurrent RNN — but it has **no attention, a
-mean-pooled context that discards token order, a binary vocabulary, forced
-contraction via a loss term, and h₀ ≡ 0**. That last one matters most: with no h₀
-variation, it cannot test h₀-forgetting at all, so it demonstrates the *mechanism*
-(information arriving via re-injection is untouched by contraction) in a setting
-where re-injection is the only channel. **It argues the theorem's scope; it is not
-evidence about Huginn**, and its own README says as much.
-
-**So the defensible position is narrow:** *no unbounded register is maintained in
-the recurrent state h across iterations* (D31's spectrum, D94's rate). Whether
-Huginn can count is a question about *h\*(e)*, which none of our contraction
-measurements addresses. **And D90 is the reason this is not purely academic:**
-correctness on a fixed prompt varies with h₀ alone, which a fully path-independent
-contraction to a unique *h\*(e)* forbids — so at the depths we run, the transient
-still carries h₀ information and the attractor has not taken over.
-
-**And the bounded-counter caveat is ours to state, because nobody else has.** The
-same pass found no published source drawing the distinction, so it is uncontested
-only because unstated: contraction to a limit *set* of small but nonzero diameter
-still permits a **bounded** counter. "Contraction ⇒ no running state" is sound
-only for *unbounded* registers, and any claim we make must be scoped that way.
-
-### The hypotheses and goals, as of the 2026-08-09 evening pass
-
-Four results landed in one afternoon and they change the standing of H1, H3, G1
-and G2. Stated plainly, with what each rests on:
-
-- **H3 (contraction) — MEASURED, for the first time, with the estimator H3 is
-  actually about (D94).** `contraction_from_pair` needs two orbits of the *same*
-  prompt from *different* h₀; no bank in this project satisfied that at depth
-  until `geometry-h0bank` produced 16 prompts × 32 unseeded draws as a by-product.
-  Over ~960 pairs: **median ρ = 0.8550 raw (≈0.82 after D58's +0.033 bias correction for this fit), and 0.0% of pairs at ρ ≥ 1 across 16 prompts.** Per-prompt
-  medians span 0.832–0.901 — a range that sits *inside* D52's independently
-  measured [0.808, 0.920]. Two unrelated instruments agreeing on the same physical
-  quantity is the strongest convergent evidence this project has. The residual gap
-  between orbits is bounded away from zero everywhere (median 2e-2), so different
-  initialisations reach *nearby but distinct* endpoints — which is what makes
-  correctness h₀-dependent at all (D90).
-- **G3 (spectral radius on Huginn) — substantially closed by the same result.**
-  It was long flagged as never measured on the real model; the pair-based ρ is
-  that quantity, measured dynamically rather than by autograd.
-- **H1 (settle / loop / drift) — the empirical premise is now measured rather
-  than assumed (D94 + D97).** The concern on record was that the argument
-  "loop/drift cannot persist under a contraction" risks circularity by *assuming*
-  the contraction. Both conjuncts are now measured: the autonomous-map fact from
-  source (the iteration index reaches only the KV-cache slot, so there is no
-  timestep conditioning), and ρ ≈ 0.855 from data. **G1's per-token census (D97)
-  adds a second, independent instrument on a different object: 179 of 179 token
-  positions across 12 prompts classify as `settle`. Zero loop, zero drift.**
-- **G1 (each token's path at every depth) — DONE, and it is a negative control
-  that passed (D97).** This was the largest structural blind spot: every
-  instrument in this ledger reads *one* token position, and the live worry was
-  that per-token convergence is a wide mixture, making every null a claim about
-  an arbitrary phase of the clock D80 identified. It is not. Excluding the
-  trivial BOS position (which converges at unroll 4 in all 12 prompts), the 167
-  content positions converge with **median 34 and an interquartile range of just
-  31–36**; only 4.8% converge before unroll 24. Positions are *synchronised*, and
-  the answer position sits at a mean **30th percentile** of its own prompt's
-  distribution rather than at an extreme. **Single-position reading was not
-  misleading, which retroactively strengthens D79, D84, D85 and D93.** My own
-  pre-registered prediction of a wide spread was wrong and is recorded as wrong;
-  the cited contrary paper uses a different convergence criterion, so this is not
-  a refutation of it.
-- **G2 (query–key alignment) — measured at last, and INCONCLUSIVE (D96).** It
-  was 0% done. The probe's self-check earned its place immediately: the first
-  submission compared `core_block[-1]`'s reconstructed (q, k) against the
-  *prelude* block's ground truth, failed at an error of ~15, and halted before
-  producing a single number; after the fix it matches at exactly 0.0. The result
-  then **rejects its own pre-registered prediction** — A-vs-B (different
-  computation) separates 2.15× more than A-vs-C (same computation), significant
-  at all four windows. But B is simply an *easier* task (median best_rank 7
-  against 33.5 and 21), the rank-gap ratio is 2.88 against the QK-gap ratio 2.15,
-  and |Δlog rank| predicts |ΔQK| at Spearman **+0.750**, p = 2.4e-05. So a third
-  reading neither branch pre-registered — *QK tracks how well the computation is
-  going, not which computation it is* — explains the same numbers, and this design
-  cannot separate them. The control's own premise is also only partly met: in
-  4 of 12 items C behaves closer to B than to A.
-- **H2 — every GEOMETRIC instrument still returns nothing** (D28 winding, D74(6)
-  dimensionality, D83 the Jacobian argument). The *behavioural* version has never
-  been run and is now in flight: does the depth at which the answer first becomes
-  available rise with problem difficulty? The pre-registered prediction is **no**.
-
-**The binding constraint is no longer instrumentation — it is task supply.** Two
-experiments have now died on it rather than on method: D47, and D95, whose gate
-wanted 4 of 9 prompts to split on correctness and got 2 (the patching instrument
-itself validated cleanly — a no-op replay reproduced the original rank curve
-exactly). Tasks with clean difficulty knobs are synthetic and score ~0; tasks the
-model genuinely does well (GSM8K 32.6%, ARC-E 69.9%) are natural-language with
-uncontrolled difficulty and multi-token answers. `geometry-census` and the
-difficulty×depth grid are the two runs aimed squarely at this, and it is the
-subject of the first of three deep-research inquiries in `docs/`.
-
----
 
 ## 1-old. The 2026-08-08 synthesis, kept unedited
 
