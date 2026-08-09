@@ -831,6 +831,22 @@ treat any of them as established until its line says so.
 - **F2.6 — CONFIRMED, fixed.** `research_inquiry_3_interp.md` carried the
   inverted attenuation direction; corrected, along with the deeper point that
   same-prompt patching is inert at both ends by construction.
+- **F2.7 — CONFIRMED, and it goes further than the auditor said.** D31's row
+  ends: *"NEXT: measure the FULL operator (all positions perturbed and read)
+  rather than the diagonal block, which is the version whose spectrum should
+  match the observed orbit decay."* So the "no line attractor" claim rests on a
+  sub-operator our own ledger says is not the governing one, and the full
+  operator has still never been measured. Added as a third caveat in
+  `UNDERSTANDING.md`. **It also weakens D94 further:** comparing the pair-based
+  ρ against D31's 0.79–0.81 is not a like-for-like comparison of the same object.
+- **NEW, found while checking F2.7 — D32 is a positive counterweight on H3 that
+  no synthesis document cited.** After residualising out position (which alone
+  explains 98.5% of a running count, so the raw probe is worthless), the latent
+  still predicts the count at **R² = +0.601** on residuals of sd 1.06 — D32's own
+  reading: *"evidence that a running count is maintained."* Task b (nesting
+  depth) is cleaner: R² = +0.590 / +0.718 against position's 0.160. Now cited in
+  `UNDERSTANDING.md`'s H3 section, where it converges with the scope argument and
+  the re-injection architecture.
 
 **Guard added, because the pattern here is propagation rather than analysis:**
 when a ledger row is corrected, grep every other document for the retracted

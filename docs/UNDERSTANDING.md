@@ -209,9 +209,37 @@ if the top modulus is 0.808 then **nothing is near 1: there is no line attractor
 and no integrator eigendirection.**
 
 So **the state h carries no near-unity eigendirection** — no unbounded register
-lives in h. Two caveats travel with that: 3 prompts, and the Jacobian is evaluated
-at particular points along particular orbits, so it is a local statement about the
-region the orbits actually visit.
+lives in h. **Three caveats travel with that, and the third is the one an internal
+audit found missing (2026-08-09):**
+
+1. Three prompts only.
+2. The Jacobian is evaluated at particular points along particular orbits, so it
+   is a local statement about the region those orbits visit.
+3. **D31 measured the DIAGONAL BLOCK, not the operator that governs the orbit.**
+   Its own row ends: *"NEXT: measure the FULL operator (all positions perturbed
+   and read) rather than the diagonal block, which is the version whose spectrum
+   should match the observed orbit decay."* The full operator has never been
+   measured. So the "no line attractor" claim rests on the spectrum of a
+   sub-operator our own ledger says is not the governing one — and by the same
+   token, D94's comparison of the pair-based ρ against D31's 0.79–0.81 is not
+   quite a like-for-like comparison of the same object.
+
+**And our own data already contains a positive counterweight, which I had not
+connected to H3.** D32 probed Barannikov's Task a directly: after removing the
+linear dependence on position — the confound that makes a raw running-count probe
+worthless, since position alone explains 98.5% of a running count — the latent
+still predicts the count at **R² = +0.601 on residuals of sd 1.06 counts**, i.e.
+it tracks deviations of about ±1 from what position predicts. D32's own words:
+*"evidence that a running count is maintained, not merely that the model knows
+where it is in the string."* Task b (nesting depth) is cleaner still at R² = +0.590
+balanced / +0.718 unbalanced, where position explains only 0.160.
+
+**Taken together the H3 picture is now the opposite of a clean confirmation:** the
+scope argument says contraction need not forbid counting when the input is
+re-injected; the architecture says Huginn re-injects; and D32 says a running count
+*is* linearly decodable from the latents. The narrow surviving statement is only
+that no unbounded register is carried in h across iterations — and even that rests
+on a sub-operator's spectrum.
 
 **But it does NOT follow that Huginn cannot count, and the earlier version of this
 section said it did. Corrected 2026-08-09.** The Contraction Bottleneck Theorem's
