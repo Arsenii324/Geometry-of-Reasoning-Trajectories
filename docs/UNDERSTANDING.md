@@ -223,30 +223,41 @@ output every unroll, by deliberate design, precisely to buy path-independence. S
 the count need never survive *in h at all*; it can live in how *h\** depends on *e*,
 which the contraction does not touch.
 
-**This project measured exactly that in July and I had not read it.**
-`h3_toy_model/` (imported 2026-07-22, never cited in this document) sweeps a forced
-contraction over a recurrent-over-**depth** model with Huginn's re-injection
-topology and finds count information survives essentially intact: **linear-probe
-R² ≥ 0.996 at every β tested, including β=20 where ρ ≈ 0.25–0.33** — if anything
-*higher* under strong contraction. Its recurrent-over-**time** counterpart (a
-classic RNN, the architecture the theorem's own worked example assumes) collapses
-to R² ≈ 0. Its own `FINDINGS.md` states the diagnosis: §5 of the proof leaps from
-"h₀-dependence decays" to "therefore N-state counting must fail" by implicitly
-assuming the N states are encoded *as different h₀ values*, which nothing in the
-proof establishes.
+**What the correction rests on, in order of weight.** It is deliberately *not*
+built on the toy model, which is far too unlike Huginn to carry it:
 
-**Two independent routes now say the same thing**, which is why this is a
-correction rather than a caveat: the project's own toy model (July, empirical), and
-an external interpretability pass (2026-08-09) which framed *e* as the map's
-**parameter** and *h* as its **state**, noting that perturbing *h* perturbs an
-initial condition a contraction erases while perturbing *e* moves *h\*(e)* and
-persists. **H3's applied claim is therefore architecture-dependent, and Huginn's
-architecture is the case where it does not follow.** What remains defensible is the
-narrow statement: *no unbounded register is maintained in the recurrent state
-across iterations.* Whether Huginn counts is an empirical question about *h\*(e)*,
-not one the contraction settles — and the toy model's caveats (no attention,
-mean-pooled context, binary vocab, h₀=0, forced contraction) mean it argues the
-theorem's scope, not Huginn's behaviour.
+1. **A scope argument about the theorem, which needs no experiment.** The proof
+   (Banach fixed point, `T_max ≤ log(D/ε)/log(1/c)`) is correct and is about h₀.
+   §5's applied claim — "therefore N-state counting must fail under contraction" —
+   requires the N states to be encoded *as different h₀ values*. Nothing in the
+   proof establishes that. If the information instead enters as *e*, the fixed
+   point *h\*(e)* may depend on it arbitrarily and contraction never touches it.
+2. **A verified fact about Huginn's architecture**, read from
+   `raven_modeling_minimal.py` at the pinned revision: the prelude output is
+   re-injected through the adapter at **every** unroll, and `block_idx` reaches
+   only the KV-cache slot. So Huginn is exactly the re-injection case, by
+   deliberate design — Geiping et al. built it that way to buy path-independence.
+3. **Independent corroboration of the framing** from a 2026-08-09 interpretability
+   pass, which arrived at *e* = the map's **parameter** and *h* = its **state**
+   from the DEQ literature rather than from this project's notes.
+
+`h3_toy_model/` (imported 2026-07-22) is *suggestive only* and is cited last for a
+reason. It reports probe R² ≥ 0.996 under forced contraction in a depth-recurrent
+model against R² ≈ 0 in a time-recurrent RNN — but it has **no attention, a
+mean-pooled context that discards token order, a binary vocabulary, forced
+contraction via a loss term, and h₀ ≡ 0**. That last one matters most: with no h₀
+variation, it cannot test h₀-forgetting at all, so it demonstrates the *mechanism*
+(information arriving via re-injection is untouched by contraction) in a setting
+where re-injection is the only channel. **It argues the theorem's scope; it is not
+evidence about Huginn**, and its own README says as much.
+
+**So the defensible position is narrow:** *no unbounded register is maintained in
+the recurrent state h across iterations* (D31's spectrum, D94's rate). Whether
+Huginn can count is a question about *h\*(e)*, which none of our contraction
+measurements addresses. **And D90 is the reason this is not purely academic:**
+correctness on a fixed prompt varies with h₀ alone, which a fully path-independent
+contraction to a unique *h\*(e)* forbids — so at the depths we run, the transient
+still carries h₀ information and the attractor has not taken over.
 
 **And the bounded-counter caveat is ours to state, because nobody else has.** The
 same pass found no published source drawing the distinction, so it is uncontested
