@@ -29,7 +29,12 @@ def _load(bundle: str, cut: str) -> dict:
     if not os.path.exists(path):
         pytest.skip(f"{bundle}/body.py not present")
     src = open(path, encoding="utf-8").read()
-    head = src.split(cut)[0].replace("# @needs: run load_arm free_arm", "")
+    # Drop the build directive generically. It was matched as a literal string,
+    # which silently left a stray fragment behind for any bundle declaring a
+    # different block list -- an IndentationError that looked like a syntax error
+    # in the kernel rather than in this helper.
+    head = "\n".join(ln for ln in src.split(cut)[0].splitlines()
+                     if not ln.lstrip().startswith("# @needs:"))
     ns: dict = {}
     exec(compile(head, path, "exec"), ns)  # noqa: S102
     return ns
@@ -290,3 +295,80 @@ def test_geomcap_seeds_h0_only_when_asked() -> None:
     assert guards, "manual_seed is not inside a conditional"
     assert "h0_seed" in ast.unparse(guards[0].test), (
         f"manual_seed is guarded by {ast.unparse(guards[0].test)!r}, not by h0_seed")
+
+
+# --------------------------------------------------------------------------
+# depthacc: does the model SAY what its rank curve says it knows?
+# --------------------------------------------------------------------------
+
+
+def test_depthacc_items_match_the_battery() -> None:
+    """Same 21 families and the same item prefix, or D75 is not the comparison."""
+    bat = _load("kaggle_battery", "def coda_head")
+    dep = _load("kaggle_depthacc", "def normalise")
+    assert bat["TASKS"] == dep["TASKS"]
+    for task in bat["TASKS"]:
+        assert dep["items"](task, n=6) == bat["items"](task, n=6)[:6], task
+
+
+def test_depthacc_scorer_is_symmetric_between_prediction_and_gold() -> None:
+    """`normalise` must be applied to BOTH sides.
+
+    Stripping punctuation from the prediction only would let "7." score wrong
+    against "7" while "7" scored right against "7." -- an asymmetry that would
+    move accuracy in one direction across the whole table.
+    """
+    ns = _load("kaggle_depthacc", "def coda_head")
+    score, normalise = ns["score"], ns["normalise"]
+    assert score("7.", "7") == (True, True)
+    assert score("7", "7.") == (True, True)
+    assert normalise("The 7.") == normalise("7")
+
+
+def test_depthacc_containment_separates_the_discourse_failure() -> None:
+    """The gap between exact and contains IS the effect D68(3) describes.
+
+    "The number is 7" is scored wrong by exact match and right by containment. If
+    containment did not fire there, the run could not measure how much of the 0%
+    exact-match rate is a prose opener rather than a wrong answer.
+    """
+    score = _load("kaggle_depthacc", "def coda_head")["score"]
+    assert score("The number is 7", "7") == (False, True)
+    assert score("The number is 8", "7") == (False, False)
+    assert score("Subtract", "Add") == (False, False)
+
+
+def test_depthacc_containment_does_not_match_a_substring_of_another_word() -> None:
+    """Whole-word containment for single-token golds.
+
+    A naive `gold in pred` would score "Addition" as containing "Add", inflating
+    every `local_last` cell.
+    """
+    score = _load("kaggle_depthacc", "def coda_head")["score"]
+    assert score("Addition of terms", "Add")[1] is False
+    assert score("Add", "Add")[1] is True
+
+
+def test_depthacc_runs_the_decisive_depths_first() -> None:
+    """Kaggle kills at the wall clock with whatever has been written.
+
+    Every cell is persisted as it completes, so the ORDER of `DEPTHS` decides what
+    survives a timeout. D68 puts the contrast at r=4 against r=32, so those two
+    must not be last.
+    """
+    ns = _load("kaggle_depthacc", "def items")
+    assert ns["DEPTHS"][:2] == (4, 32), ns["DEPTHS"]
+    assert set(ns["DEPTHS"]) == {2, 4, 8, 16, 32}
+
+
+def test_depthacc_gates_the_decoder_before_reading_it() -> None:
+    """D62 printed a capability verdict over empty strings for want of this gate."""
+    src = open(os.path.join(ROOT, "scratch", "kaggle_depthacc", "body.py"),
+               encoding="utf-8").read()
+    tree = ast.parse(src)
+    main = next(n for n in ast.walk(tree)
+                if isinstance(n, ast.FunctionDef) and n.name == "main")
+    calls = [ast.unparse(n.func) for n in ast.walk(main) if isinstance(n, ast.Call)]
+    assert "assert_generation_works" in calls
+    assert calls.index("assert_generation_works") < calls.index("batched_generate"), (
+        "the decoder is used before it is gated")
