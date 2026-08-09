@@ -372,3 +372,88 @@ def test_depthacc_gates_the_decoder_before_reading_it() -> None:
     assert "assert_generation_works" in calls
     assert calls.index("assert_generation_works") < calls.index("batched_generate"), (
         "the decoder is used before it is gated")
+
+
+# --------------------------------------------------------------------------
+# lenmatch: two computations at an IDENTICAL token count -- D84's missing test.
+# --------------------------------------------------------------------------
+
+
+def test_lenmatch_prompts_differ_in_exactly_one_character() -> None:
+    """THE ENTIRE POINT OF THE RUN.
+
+    D84 could not attribute its 100% family decoding to the task, because no two
+    families in any bank share a prompt length -- 0 of 6 pairs in one, 0 of 3 in the
+    other. Here the two forms must be byte-identical apart from the trailing marker,
+    so that anything a classifier separates cannot be sequence length.
+    """
+    ns = _load("kaggle_lenmatch", "def coda_head")
+    forms: dict = {}
+    for pair, marker, prompt, _ in ns["pairs"](8):
+        forms.setdefault((pair, prompt[:-1]), {})[marker] = prompt
+    assert forms, "no prompts generated"
+    for (pair, _), f in forms.items():
+        assert set(f) == {"A", "B"}, pair
+        a, b = f["A"], f["B"]
+        assert len(a) == len(b), f"{pair}: {len(a)} vs {len(b)} characters"
+        diff = [i for i, (x, y) in enumerate(zip(a, b, strict=True)) if x != y]
+        assert diff == [len(a) - 1], f"{pair}: differs at {diff}, not only the marker"
+
+
+def test_lenmatch_tasks_actually_differ() -> None:
+    """A length-matched pair whose two golds always agree would test nothing.
+
+    The markers have to select genuinely different computations, or a classifier
+    finding no difference would be reporting that the model was asked one question
+    twice.
+    """
+    ns = _load("kaggle_lenmatch", "def coda_head")
+    golds: dict = {}
+    for pair, marker, prompt, gold in ns["pairs"](32):
+        golds.setdefault((pair, prompt[:-1]), {})[marker] = gold
+    by_pair: dict = {}
+    for (pair, _), g in golds.items():
+        by_pair.setdefault(pair, []).append(g["A"] != g["B"])
+    for pair, diffs in by_pair.items():
+        assert sum(diffs) / len(diffs) > 0.5, (
+            f"{pair}: the two markers give the same answer in "
+            f"{1 - sum(diffs) / len(diffs):.0%} of items")
+
+
+def test_lenmatch_gates_length_in_the_kernel_not_in_a_docstring() -> None:
+    """`make_variants` once ASSERTED length-matching and was wrong (this file's
+    own opening docstring records it). This run exists because of that failure, so
+    the property is measured per item and the drop count reported."""
+    src = open(os.path.join(ROOT, "scratch", "kaggle_lenmatch", "body.py"),
+               encoding="utf-8").read()
+    main = next(n for n in ast.walk(ast.parse(src))
+                if isinstance(n, ast.FunctionDef) and n.name == "main")
+    body = ast.unparse(main)
+    assert "dropped" in body and "la != lb" in body, (
+        "the identical-length check is not enforced inside main()")
+    assert body.index("dropped") < body.index("load_arm"), (
+        "the length gate must run BEFORE the model is loaded, so a failure is free")
+
+
+def test_lenmatch_pools_with_the_other_banks() -> None:
+    ns = _load("kaggle_lenmatch", "def coda_head")
+    assert ns["NUM_STEPS"] == _load("kaggle_b6bank", "def coda_head")["NUM_STEPS"]
+
+
+def test_lenmatch_readout_has_not_drifted_from_the_validated_one() -> None:
+    """Same D71 guard as every other bank."""
+    def body_of(src: str, name: str) -> str:
+        for node in ast.walk(ast.parse(src)):
+            if isinstance(node, ast.FunctionDef) and node.name == name:
+                node.body = [s for s in node.body
+                             if not (isinstance(s, ast.Expr)
+                                     and isinstance(s.value, ast.Constant)
+                                     and isinstance(s.value.value, str))]
+                return ast.unparse(node)
+        raise AssertionError(name)
+
+    a = open(os.path.join(ROOT, "scratch", "kaggle_battery", "body.py"),
+             encoding="utf-8").read()
+    b = open(os.path.join(ROOT, "scratch", "kaggle_lenmatch", "body.py"),
+             encoding="utf-8").read()
+    assert body_of(b, "coda_head") == body_of(a, "coda_head")

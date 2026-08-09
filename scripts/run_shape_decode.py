@@ -53,6 +53,11 @@ SOURCES = (
     ("b6bank", os.path.join("scratch", "kaggle_b6bank", "out"), ".npy"),
     ("geomcap", os.path.join("scratch", "kaggle_geomcap", "out"), ".npy"),
     ("ds_bank", os.path.join("scratch", "ds_bank", "out"), "_last.npy"),
+    # The only bank where task identity is NOT collinear with prompt length: both
+    # forms of every item are byte-identical apart from a trailing marker token,
+    # gate-verified per item to tokenise to the same count. This is the arm that
+    # decides whether D84's family decoding was about the task or about the length.
+    ("lenmatch", os.path.join("scratch", "kaggle_lenmatch", "out"), ".npy"),
 )
 
 
