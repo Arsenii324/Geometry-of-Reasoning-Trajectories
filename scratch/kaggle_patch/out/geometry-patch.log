@@ -1,0 +1,54 @@
+[{"stream_name":"stdout","time":1.9658689520000001,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":7.145663066,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.191780491,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 89.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.226395638,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 34.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.281761671,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 84.8 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":45.074333525,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stderr","time":152.179459956,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:17\u003c03:52, 77.40s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:17\u003c01:03, 31.99s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:17\u003c00:00, 19.40s/it]\n"}
+,{"stream_name":"stderr","time":152.389198587,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 49.29it/s]\n"}
+,{"stream_name":"stdout","time":175.818694271,"data":"              add1_i08: donor seed 1 (rank 1), recipient seed 0 (rank 2), found within 3 seeds\n"}
+,{"stream_name":"stdout","time":180.536403032,"data":"    P2 sanity (no-patch replay reproduces the original): PASS\n"}
+,{"stream_name":"stdout","time":185.335097691,"data":"      r=  0: flipped(post)=True best_rank_post=1\n"}
+,{"stream_name":"stdout","time":190.152353214,"data":"      r=  8: flipped(post)=False best_rank_post=4\n"}
+,{"stream_name":"stdout","time":195.007229476,"data":"      r= 16: flipped(post)=False best_rank_post=15\n"}
+,{"stream_name":"stdout","time":199.941430124,"data":"      r= 24: flipped(post)=False best_rank_post=15\n"}
+,{"stream_name":"stdout","time":204.933367966,"data":"      r= 32: flipped(post)=False best_rank_post=16\n"}
+,{"stream_name":"stdout","time":210.002853652,"data":"      r= 48: flipped(post)=False best_rank_post=16\n"}
+,{"stream_name":"stdout","time":220.335604807,"data":"              add1_i10: donor seed 1 (rank 1), recipient seed 0 (rank 3), found within 3 seeds\n"}
+,{"stream_name":"stdout","time":225.563245236,"data":"    P2 sanity (no-patch replay reproduces the original): PASS\n"}
+,{"stream_name":"stdout","time":230.866375825,"data":"      r=  0: flipped(post)=False best_rank_post=3\n"}
+,{"stream_name":"stdout","time":236.257206418,"data":"      r=  8: flipped(post)=False best_rank_post=4\n"}
+,{"stream_name":"stdout","time":241.756377069,"data":"      r= 16: flipped(post)=False best_rank_post=21\n"}
+,{"stream_name":"stdout","time":247.346949265,"data":"      r= 24: flipped(post)=False best_rank_post=22\n"}
+,{"stream_name":"stdout","time":253.046002388,"data":"      r= 32: flipped(post)=False best_rank_post=22\n"}
+,{"stream_name":"stdout","time":258.852172851,"data":"      r= 48: flipped(post)=False best_rank_post=22\n"}
+,{"stream_name":"stdout","time":392.867298962,"data":"    caesar1_letter_i02: no split within 20 seeds (donor MISSING, recipient found)\n"}
+,{"stream_name":"stdout","time":526.777354544,"data":"    caesar1_letter_i12: no split within 20 seeds (donor MISSING, recipient found)\n"}
+,{"stream_name":"stdout","time":662.537421972,"data":"            count4_i01: no split within 20 seeds (donor MISSING, recipient found)\n"}
+,{"stream_name":"stdout","time":798.047339688,"data":"            count8_i21: no split within 20 seeds (donor MISSING, recipient found)\n"}
+,{"stream_name":"stdout","time":1028.354512853,"data":"        count_mod3_i02: no split within 20 seeds (donor MISSING, recipient found)\n"}
+,{"stream_name":"stdout","time":1258.93328109,"data":"        count_mod3_i04: no split within 20 seeds (donor MISSING, recipient found)\n"}
+,{"stream_name":"stdout","time":1394.826077186,"data":"         last_item_i00: no split within 20 seeds (donor MISSING, recipient found)\n"}
+,{"stream_name":"stdout","time":1394.826989079,"data":"\n"}
+,{"stream_name":"stdout","time":1394.82702232,"data":"=== P1 GATE: 2/9 prompts split (wants \u003e= 4) ===\n"}
+,{"stream_name":"stdout","time":1394.827045422,"data":"  VOID, not null, per D47's lesson: too few prompts had real dynamic range in the outcome for a patching effect to be visible even if one exists.\n"}
+,{"stream_name":"stdout","time":1394.827159202,"data":"\n"}
+,{"stream_name":"stdout","time":1394.827171623,"data":"=== flip rate by patch unroll (post-patch ranks only) ===\n"}
+,{"stream_name":"stdout","time":1394.827233245,"data":"  r=  0: 1/2 flipped (50%)\n"}
+,{"stream_name":"stdout","time":1394.828027337,"data":"  r=  8: 0/2 flipped (0%)\n"}
+,{"stream_name":"stdout","time":1394.828047935,"data":"  r= 16: 0/2 flipped (0%)\n"}
+,{"stream_name":"stdout","time":1394.828052057,"data":"  r= 24: 0/2 flipped (0%)\n"}
+,{"stream_name":"stdout","time":1394.828072621,"data":"  r= 32: 0/2 flipped (0%)\n"}
+,{"stream_name":"stdout","time":1394.828076205,"data":"  r= 48: 0/2 flipped (0%)\n"}
+,{"stream_name":"stdout","time":1407.553321397,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":1408.457225276,"data":"  purged /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":1408.457265385,"data":"\n"}
+,{"stream_name":"stdout","time":1408.45732026,"data":"=== done in 20.7 min ===\n"}
+,{"stream_name":"stdout","time":1408.457344075,"data":"DONE\n"}
+,{"stream_name":"stderr","time":1418.335140596,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1418.335177282,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1418.781636898,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1418.78166598,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1419.760461484,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1421.085810304,"data":"[NbConvertApp] Writing 358316 bytes to __results__.html\n"}
+]
