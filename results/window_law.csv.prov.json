@@ -1,0 +1,34 @@
+{
+  "banks": [
+    "ds_bank",
+    "b6bank"
+  ],
+  "bytes": 244368,
+  "columns": [
+    "bank",
+    "tag",
+    "family",
+    "correct",
+    "n_tokens",
+    "start",
+    "depth_frac",
+    "pr",
+    "cos_consecutive",
+    "contraction",
+    "step_norm",
+    "pre_floor"
+  ],
+  "file": "window_law.csv",
+  "git_commit": "803b0cb94117905cf61bbf36d0c0fea4f8b5d951",
+  "git_dirty": true,
+  "kind": "window_law",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 1728,
+  "produced_by": "/home/user/Geometry-of-Reasoning-Trajectories/scripts/run_window_law.py",
+  "run_id": "20260809T001557Z-fe078447",
+  "sha256": "626faad0cfda1cf5b484b2bb9367064432978b2a673d6fe151510ea42a71c169",
+  "stride": 4,
+  "width": 12,
+  "written_utc": "2026-08-09T00:15:57.153433+00:00"
+}

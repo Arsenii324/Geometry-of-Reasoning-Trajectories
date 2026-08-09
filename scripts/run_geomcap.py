@@ -56,6 +56,18 @@ BATTERY = os.path.join("results", "battery.csv")
 METRICS = ("pr", "cos_consecutive", "contraction", "settle")
 P1_MIN_RHO = 0.7
 
+# WINDOW LENGTH IS NOT A DETAIL AND MUST NOT BE LEFT TO `pre_floor_window` ALONE.
+# Measured on the banked ds_bank orbits: over the first ~20 unrolls participation
+# ratio reads ~13 and the step cosine ~+0.20 (D74), while over the FULL pre-floor
+# window of 89-107 unrolls the same orbits read PR ~2.3 and cos ~+0.95. Those are
+# not two estimates of one quantity -- they are the transient and the asymptote of a
+# contraction, and a statistic reported at one window says nothing about the other.
+# Reporting a single window here would have made the headline a function of a
+# choice nobody pre-registered, which is D28's failure mode exactly (winding's sign
+# flipped with `num_steps`). So every correlation is computed at each window and the
+# verdict must hold across them.
+WINDOWS = (10, 20, 30, 40)
+
 
 def contraction_and_settle(traj: np.ndarray, lo: int, hi: int) -> tuple[float, float]:
     """Geometric decay rate of the step norm, and the unroll it reaches 1% of peak.
@@ -73,27 +85,33 @@ def contraction_and_settle(traj: np.ndarray, lo: int, hi: int) -> tuple[float, f
     return float(np.exp(slope)), float(below[0] if len(below) else len(d))
 
 
-def collect(path: str = BANK) -> pd.DataFrame:
+def collect(path: str = BANK, windows: tuple[int, ...] = WINDOWS) -> pd.DataFrame:
+    """One row per (orbit, window). `window_k` is None for the natural window."""
     with open(os.path.join(path, "manifest.json"), encoding="utf-8") as fh:
         recs = [r for r in json.load(fh) if r.get("ok")]
     rows = []
     for r in recs:
         traj = np.load(os.path.join(path, r["tag"] + ".npy")).astype(np.float64)
         lo, hi = pre_floor_window(traj)
-        dim = effective_dimension(traj, lo=lo, hi=hi, n_null=20)
-        if not dim.get("ok"):
-            continue
-        rho, settle = contraction_and_settle(traj, lo, hi)
-        rows.append({
+        base = {
             "tag": r["tag"], "block": r["block"], "family": r["family"],
             "item": r["item"], "gold": r["gold"], "correct": bool(r["correct"]),
             "best_rank": r["best_rank"], "best_depth": r["best_depth"],
             "n_tokens": r["n_tokens"], "h0_seed": r.get("h0_seed"),
-            "state_sha": r.get("state_sha"), "window": hi - lo,
+            "state_sha": r.get("state_sha"), "natural_window": hi - lo,
             "log_rank": float(np.log10(r["best_rank"])),
-            "pr": dim["pr"], "cos_consecutive": dim["cos_consecutive"],
-            "contraction": rho, "settle": settle,
-        })
+        }
+        for k in (*windows, None):
+            b = min(hi, lo + k) if k is not None else hi
+            if b - lo < 6:
+                continue
+            dim = effective_dimension(traj, lo=lo, hi=b, n_null=20)
+            if not dim.get("ok"):
+                continue
+            rho, settle = contraction_and_settle(traj, lo, b)
+            rows.append({**base, "window_k": k, "window": b - lo,
+                         "pr": dim["pr"], "cos_consecutive": dim["cos_consecutive"],
+                         "contraction": rho, "settle": settle})
     return pd.DataFrame(rows)
 
 
@@ -106,8 +124,11 @@ def determinism_verdict(df: pd.DataFrame) -> dict:
     the ceiling is built from, and every reliability number below would be a
     tautology reading 1.0.
     """
-    fix = df[df["block"] == "fix"]
-    rep = df[df["block"] == "rep"]
+    # One row per ORBIT: `collect` emits several windows per orbit and `state_sha`
+    # is a property of the orbit, so counting rows would multiply every tally.
+    one = df.drop_duplicates("tag")
+    fix = one[one["block"] == "fix"]
+    rep = one[one["block"] == "rep"]
     per_fix = fix.groupby("family")["state_sha"].nunique()
     per_rep = rep.groupby("family")["state_sha"].nunique()
     rep_n = rep.groupby("family").size()
@@ -121,9 +142,15 @@ def determinism_verdict(df: pd.DataFrame) -> dict:
     }
 
 
-def family_table(df: pd.DataFrame) -> pd.DataFrame:
-    """One row per family: capability, geometry means, and the length covariate."""
+def family_table(df: pd.DataFrame, window_k: int | None = None) -> pd.DataFrame:
+    """One row per family at ONE window: capability, geometry, length covariate.
+
+    Every geometric column is a function of the window it was measured over, so the
+    window is selected here rather than averaged across -- pooling would mix the
+    transient with the asymptote and produce a family mean that describes neither.
+    """
     m = df[df["block"] == "main"]
+    m = m[m["window_k"].isna()] if window_k is None else m[m["window_k"] == window_k]
     agg = {"acc": ("correct", "mean"), "log_rank": ("log_rank", "mean"),
            "n_tokens": ("n_tokens", "mean"), "window": ("window", "mean"),
            "n": ("correct", "size")}
@@ -200,15 +227,33 @@ def _rho(fam: pd.DataFrame, ok: pd.Series, ycol: str,
 
 
 def analyse(df: pd.DataFrame, n_boot: int = 400) -> pd.DataFrame:
+    """Every statistic at every window. One row per (window, metric).
+
+    The window loop is not thoroughness for its own sake: the same orbits read PR
+    ~13 over 20 unrolls and ~2.3 over 90, so a conclusion drawn at one window is a
+    conclusion about that window until it is shown to hold at the others.
+    """
+    ks = sorted({k for k in df["window_k"].dropna().unique()}) + [None]
+    return pd.concat([_analyse_at(df, k, n_boot) for k in ks], ignore_index=True)
+
+
+def _analyse_at(df: pd.DataFrame, window_k: int | None,
+                n_boot: int = 400) -> pd.DataFrame:
     """Per statistic: capability correlation, length correlation, and the ceiling."""
-    fam = family_table(df)
-    main, rep = df[df["block"] == "main"], df[df["block"] == "rep"]
+    fam = family_table(df, window_k)
+    sel = (df["window_k"].isna() if window_k is None else df["window_k"] == window_k)
+    main, rep = df[sel & (df["block"] == "main")], df[sel & (df["block"] == "rep")]
     n_lev = int(len(fam))
+    if n_lev < 4:
+        return pd.DataFrame()
     # Bonferroni over the PRE-REGISTERED tests only: capability (P2/P3) and prompt
     # length (P5), one of each per statistic. `log_rank` and `window` are reported
     # as description, not tested, so they do not enlarge the correction -- counting
     # exploratory columns into alpha would penalise the pre-registered tests for
-    # curiosity exercised after the fact.
+    # curiosity exercised after the fact. The WINDOW sweep does not enlarge it
+    # either: the windows are four views of one orbit, not four experiments, and
+    # the verdict rule below requires agreement across them rather than a hit in
+    # any one of them.
     alpha = 0.05 / (len(METRICS) * 2)
     rows = []
     for k in METRICS:
@@ -218,8 +263,8 @@ def analyse(df: pd.DataFrame, n_boot: int = 400) -> pd.DataFrame:
         rho_len, p_len, def_len = _rho(fam, ok, k, "n_tokens")
         rho_win, p_win, _ = _rho(fam, ok, k, "window")
         if not (def_cap or def_len):
-            rows.append({"metric": k, "n_families": n_lev, "alpha": alpha,
-                         "usable": False,
+            rows.append({"metric": k, "window_k": window_k, "n_families": n_lev,
+                         "alpha": alpha, "usable": False,
                          "why": (f"{k} takes {fam.loc[ok, k].nunique()} distinct "
                                  f"values over {int(ok.sum())} families; no "
                                  f"correlation is defined, which is not the same as "
@@ -234,7 +279,8 @@ def analyse(df: pd.DataFrame, n_boot: int = 400) -> pd.DataFrame:
                       m=int(main.loc[good].groupby("family").size().median()),
                       n_levels=n_lev, n_boot=n_boot)
         rows.append({
-            "metric": k, "n_families": n_lev, "alpha": alpha, "usable": True,
+            "metric": k, "window_k": window_k, "n_families": n_lev,
+            "alpha": alpha, "usable": True,
             "capability_defined": def_cap, "length_defined": def_len,
             "rho_capability": rho_cap, "p_capability": p_cap,
             "rho_log_rank": rho_rank, "p_log_rank": p_rank,
@@ -300,12 +346,13 @@ def report(df: pd.DataFrame, res: pd.DataFrame, fam: pd.DataFrame, gate: dict,
         lines.append(f"    {key:>16}: rho = {rho:+.3f} (p = {p:.2g}){note}")
 
     lines += ["",
-              f"  {'metric':>16} {'rho~acc':>8} {'rho~len':>8} {'h0 share':>9} "
-              f"{'rel':>6} {'perfect relation would show':>28}  verdict"]
+              f"  {'K':>5} {'metric':>16} {'rho~acc':>8} {'rho~len':>8} {'h0 sh':>6} "
+              f"{'rel':>5} {'perfect relation shows':>24}  verdict"]
     for _, r in res.iterrows():
+        kk = "nat" if pd.isna(r.get("window_k")) else f"{int(r['window_k'])}"
         if not r.get("usable", True):
-            lines.append(f"  {r['metric']:>16} {'--':>8} {'--':>8} {'--':>9} "
-                         f"{'--':>6} {'--':>28}  REFUSED: {r['why']}")
+            lines.append(f"  {kk:>5} {r['metric']:>16} {'--':>8} {'--':>8} {'--':>6} "
+                         f"{'--':>5} {'--':>24}  REFUSED: {r['why']}")
             continue
         band = (f"[{r['wide_lo']:+.2f}, {r['wide_hi']:+.2f}]"
                 if np.isfinite(r["wide_lo"]) else "n/a")
@@ -317,15 +364,32 @@ def report(df: pd.DataFrame, res: pd.DataFrame, fam: pd.DataFrame, gate: dict,
             verdict = "flat, and the design had the power"
         else:
             verdict = "flat, but so is the instrument -- unreadable"
-        lines.append(f"  {r['metric']:>16} {r['rho_capability']:>+8.3f} "
-                     f"{r['rho_length']:>+8.3f} {r['h0_share']:>9.2f} "
-                     f"{r['reliability']:>6.2f} {band:>28}  {verdict}")
+        lines.append(f"  {kk:>5} {r['metric']:>16} {r['rho_capability']:>+8.3f} "
+                     f"{r['rho_length']:>+8.3f} {r['h0_share']:>6.2f} "
+                     f"{r['reliability']:>5.2f} {band:>24}  {verdict}")
 
     ok = res[res.get("usable", True).astype(bool)] if "usable" in res else res
     live = ok[ok["null_is_readable"] | ok["sig_capability"]]
-    lines += ["", f"  {int(ok['sig_capability'].sum())} of {len(ok)} usable statistics "
-                  f"track capability; {int(ok['sig_length'].sum())} track prompt "
-                  f"length; {len(live)} of {len(ok)} are readable either way."]
+    n_win = int(ok["window_k"].nunique(dropna=False)) if "window_k" in ok else 1
+    lines += ["", f"  {int(ok['sig_capability'].sum())} of {len(ok)} usable "
+                  f"(statistic, window) cells track capability across {n_win} "
+                  f"windows; {int(ok['sig_length'].sum())} track prompt length; "
+                  f"{len(live)} of {len(ok)} are readable either way."]
+    # A statistic that tracks capability at ONE window and not the others is a
+    # window effect, not a capability effect -- D28's failure, where winding's sign
+    # flipped with the recording budget alone. Anything reported as tracking
+    # capability has to do so at a majority of the windows it is defined at.
+    if len(ok) and "window_k" in ok:
+        per = ok.groupby("metric")["sig_capability"].agg(["sum", "size"])
+        robust = per[per["sum"] > per["size"] / 2]
+        fragile = per[(per["sum"] > 0) & (per["sum"] <= per["size"] / 2)]
+        if len(robust):
+            lines.append("    tracks capability at a MAJORITY of windows: "
+                         + ", ".join(f"{m} ({int(r['sum'])}/{int(r['size'])})"
+                                     for m, r in robust.iterrows()))
+        for m, r in fragile.iterrows():
+            lines.append(f"    {m} hits at only {int(r['sum'])}/{int(r['size'])} "
+                         f"windows -- a window effect, not a capability effect")
     # P6 needs all three legs, and the first is the one that is easy to lose: a
     # capability axis with no spread makes "nothing tracks capability" vacuously
     # true. `capability_defined` is checked before the absence of hits is read as
@@ -342,6 +406,41 @@ def report(df: pd.DataFrame, res: pd.DataFrame, fam: pd.DataFrame, gate: dict,
     return "\n".join(lines)
 
 
+def window_law(df: pd.DataFrame) -> str:
+    """How each statistic moves with the window, pooled over all families.
+
+    This is not a diagnostic tacked on -- it is the quantity that decides how any
+    of the numbers above may be read. Measured on the banked ds_bank orbits, the
+    SAME trajectories give participation ratio ~13 over 20 unrolls and ~2.3 over
+    90, and step cosine +0.20 against +0.95. If the spread across windows dwarfs
+    the spread across families at any one window, then "the geometry of the
+    trajectory" is mostly a statement about which stretch of the contraction was
+    measured, and family-level differences are a second-order effect on top.
+    """
+    m = df[df["block"] == "main"]
+    lines = ["", "  THE WINDOW LAW -- how much of each statistic is just depth?",
+             f"    {'K':>5} " + " ".join(f"{k:>16}" for k in METRICS)]
+    for k in sorted(m["window_k"].dropna().unique()) + [None]:
+        sub = m[m["window_k"].isna()] if k is None else m[m["window_k"] == k]
+        if not len(sub):
+            continue
+        lbl = "nat" if k is None else f"{int(k)}"
+        lines.append(f"    {lbl:>5} " + " ".join(
+            f"{sub[c].median():>16.3f}" for c in METRICS))
+    lines.append("")
+    for c in METRICS:
+        across = m.groupby("window_k", dropna=False)[c].median()
+        within = m[m["window_k"] == m["window_k"].dropna().min()].groupby("family")[c].mean()
+        if across.notna().sum() < 2 or within.notna().sum() < 2:
+            continue
+        spread_w = float(across.max() - across.min())
+        spread_f = float(within.max() - within.min())
+        ratio = spread_w / spread_f if spread_f > 0 else float("inf")
+        lines.append(f"    {c:>16}: window moves it by {spread_w:8.3f}, family by "
+                     f"{spread_f:8.3f}  ({ratio:6.1f}x)")
+    return "\n".join(lines)
+
+
 def main() -> None:
     from traj_geom.provenance import save_table
 
@@ -349,14 +448,16 @@ def main() -> None:
         print(f"no banked states in {BANK} -- pull the geometry-geomcap output first.")
         return
     df = collect()
-    fam = family_table(df)
+    fam = family_table(df)                  # natural window, for the axes and gate
     res = analyse(df)
     gate, det = p1_gate(fam), determinism_verdict(df)
-    save_table(OUT, df, kind="geomcap", source=BANK)
+    save_table(OUT, df, kind="geomcap", source=BANK, windows=list(WINDOWS))
     save_table(OUT_SUM, res, kind="geomcap_summary", source=BANK,
-               p1=gate, determinism=det)
-    print(f"saved {OUT} ({len(df)} orbits) and {OUT_SUM}")
+               p1=gate, determinism=det, windows=list(WINDOWS))
+    print(f"saved {OUT} ({df['tag'].nunique()} orbits x "
+          f"{df['window_k'].nunique(dropna=False)} windows) and {OUT_SUM}")
     print(report(df, res, fam, gate, det))
+    print(window_law(df))
 
 
 if __name__ == "__main__":

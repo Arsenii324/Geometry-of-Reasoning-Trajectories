@@ -23,7 +23,13 @@ from scripts.run_geomcap import (
     family_table,
     p1_gate,
     report,
+    window_law,
 )
+
+
+def collect_small(path):
+    """Two windows instead of five: these tests exercise logic, not the sweep."""
+    return collect(path, windows=(10, 20))
 
 N_FAM, N_ITEM, N_STEP, DIM = 12, 10, 64, 40
 
@@ -101,11 +107,31 @@ def flat_bank(tmp_path_factory):
 
 
 def test_collect_reads_every_banked_orbit(flat_bank) -> None:
-    df = collect(flat_bank)
-    assert len(df) == N_FAM * N_ITEM + 3 * 10 + 3 * 3
+    """One row per (orbit, window), and every orbit present at every window."""
+    df = collect(flat_bank, windows=(10, 20))
+    n_orbits = N_FAM * N_ITEM + 3 * 10 + 3 * 3
+    assert df["tag"].nunique() == n_orbits
     assert set(df["block"]) == {"main", "rep", "fix"}
+    assert set(df["window_k"].dropna()) == {10, 20}
+    assert df["window_k"].isna().any(), "the natural window must also be emitted"
+    assert len(df) == n_orbits * 3
     for col in ("pr", "cos_consecutive", "contraction", "settle", "log_rank"):
         assert df.loc[df["block"] == "main", col].notna().all(), f"{col} has NaNs"
+
+
+def test_the_window_changes_the_statistics_it_is_swept_over(flat_bank) -> None:
+    """WHY THE SWEEP EXISTS. Measured on the real ds_bank orbits, participation
+    ratio reads ~13 over 20 unrolls and ~2.3 over 90 on the SAME trajectories --
+    the transient and the asymptote of a contraction, not two estimates of one
+    number. A pipeline that reported one window would be reporting a choice, which
+    is D28's failure (winding's sign flipped with the recording budget alone)."""
+    df = collect(flat_bank, windows=(10, 30))
+    m = df[df["block"] == "main"]
+    a = m[m["window_k"] == 10]["pr"].median()
+    b = m[m["window_k"] == 30]["pr"].median()
+    assert a < b, f"PR did not grow with window: {a} vs {b}"
+    txt = window_law(df)
+    assert "THE WINDOW LAW" in txt
 
 
 def test_a_planted_capability_relation_is_found(tmp_path) -> None:
@@ -119,7 +145,7 @@ def test_a_planted_capability_relation_is_found(tmp_path) -> None:
     rho_by = {f: 0.80 + 0.015 * i for i, f in enumerate(fams)}
     path = _bank(tmp_path, rho_by_family=rho_by, rep_families=("fam00", "fam11"),
                  fix_families=("fam00",), seed=2)
-    res = analyse(collect(path), n_boot=100)
+    res = analyse(collect(path, windows=(10, 20)), n_boot=100)
     row = res[res["metric"] == "contraction"].iloc[0]
     assert abs(row["rho_capability"]) > 0.8, row.to_dict()
     assert row["sig_capability"], row.to_dict()
@@ -132,7 +158,7 @@ def test_a_flat_geometry_gives_a_readable_null(flat_bank) -> None:
     full range, so the correlation must be ~0 AND the design must be shown to have
     had the power to see one.
     """
-    res = analyse(collect(flat_bank), n_boot=200)
+    res = analyse(collect(flat_bank, windows=(10, 20)), n_boot=200)
     assert not res["sig_capability"].any(), res[["metric", "rho_capability"]]
 
 
@@ -153,7 +179,7 @@ def test_prompt_length_is_the_positive_control_it_is_meant_to_be(tmp_path) -> No
                  acc_by_family={f: float(shuffled[i]) / (N_FAM - 1)
                                 for i, f in enumerate(fams)},
                  rep_families=("fam00",), fix_families=("fam00",), seed=3)
-    res = analyse(collect(path), n_boot=100)
+    res = analyse(collect(path, windows=(10, 20)), n_boot=100)
     row = res[res["metric"] == "contraction"].iloc[0]
     assert row["capability_defined"] and row["length_defined"]
     assert abs(row["rho_length"]) > 0.8
@@ -175,7 +201,7 @@ def test_determinism_control_catches_a_seeded_block_that_did_not_reproduce(tmp_p
     """
     path = _bank(tmp_path, fix_families=("fam00", "fam05"), fix_identical=False,
                  rep_families=("fam00",), seed=4)
-    det = determinism_verdict(collect(path))
+    det = determinism_verdict(collect_small(path))
     assert det["fix_all_identical"] is False
     assert det["fix_worst"] > 1
 
@@ -189,7 +215,7 @@ def test_determinism_control_catches_a_ceiling_that_would_be_a_tautology(tmp_pat
     """
     path = _bank(tmp_path, rep_families=("fam00", "fam05"), rep_identical=True,
                  fix_families=("fam00",), seed=5)
-    det = determinism_verdict(collect(path))
+    det = determinism_verdict(collect_small(path))
     assert det["rep_all_distinct"] is False
     assert det["rep_fewest_distinct"] == 1
 
@@ -200,7 +226,7 @@ def test_p1_gate_refuses_an_unrelated_accuracy_axis(tmp_path, monkeypatch) -> No
 
     fams = [f"fam{i:02d}" for i in range(N_FAM)]
     path = _bank(tmp_path, seed=6)
-    fam = family_table(collect(path))
+    fam = family_table(collect_small(path))
     # A battery whose family ordering is REVERSED: same families, opposite axis.
     csv = tmp_path / "battery.csv"
     pd.DataFrame({"arm": "trained", "family": fams,
@@ -216,7 +242,7 @@ def test_p1_gate_passes_a_matching_axis(tmp_path) -> None:
 
     fams = [f"fam{i:02d}" for i in range(N_FAM)]
     path = _bank(tmp_path, seed=7)
-    fam = family_table(collect(path))
+    fam = family_table(collect_small(path))
     csv = tmp_path / "battery.csv"
     pd.DataFrame({"arm": "trained", "family": fams,
                   "correct_best": [i / (N_FAM - 1) for i in range(N_FAM)]}
@@ -240,7 +266,7 @@ def test_report_states_p6_only_when_both_halves_hold(tmp_path) -> None:
     # as tracking capability, which is the thing this test asserts cannot happen.
     shuffled = np.random.default_rng(5).permutation(N_FAM)
     acc = {f: float(shuffled[i]) / (N_FAM - 1) for i, f in enumerate(fams)}
-    df = collect(_bank(
+    df = collect_small(_bank(
         tmp_path, rho_by_family={f: 0.80 + 0.015 * i for i, f in enumerate(fams)},
         n_tokens_by_family={f: 20 + 4 * i for i, f in enumerate(fams)},
         acc_by_family=acc, rep_families=("fam00",), fix_families=("fam00",), seed=8))
@@ -251,7 +277,7 @@ def test_report_states_p6_only_when_both_halves_hold(tmp_path) -> None:
 
     # Same capability axis, but the geometry now tracks NOTHING -- no length
     # relation, so the capability null cannot be attributed to the model.
-    flat = collect(_bank(tmp_path / "b", acc_by_family=acc,
+    flat = collect_small(_bank(tmp_path / "b", acc_by_family=acc,
                          rep_families=("fam00",), fix_families=("fam00",), seed=9))
     txt2 = report(flat, analyse(flat, n_boot=100), family_table(flat),
                   {"usable": False, "why": "no battery"}, determinism_verdict(flat))
@@ -259,7 +285,7 @@ def test_report_states_p6_only_when_both_halves_hold(tmp_path) -> None:
 
     # And a capability axis with NO SPREAD must not let P6 fire either, however
     # strong the length relation is: "nothing tracks capability" is vacuous there.
-    const = collect(_bank(
+    const = collect_small(_bank(
         tmp_path / "c", rho_by_family={f: 0.80 + 0.015 * i for i, f in enumerate(fams)},
         n_tokens_by_family={f: 20 + 4 * i for i, f in enumerate(fams)},
         acc_by_family=dict.fromkeys(fams, 0.5),
@@ -271,7 +297,7 @@ def test_report_states_p6_only_when_both_halves_hold(tmp_path) -> None:
 
 
 def test_report_survives_a_missing_battery(flat_bank) -> None:
-    df = collect(flat_bank)
+    df = collect(flat_bank, windows=(10, 20))
     txt = report(df, analyse(df, n_boot=50), family_table(df),
                  {"usable": False, "why": "results/battery.csv absent"},
                  determinism_verdict(df))
@@ -284,9 +310,11 @@ def test_h0_share_is_reported_from_the_replicate_block(flat_bank) -> None:
     The whole design rests on that separation: `main` confounds item choice with
     h_0, and only the replicate block can tell them apart.
     """
-    res = analyse(collect(flat_bank), n_boot=50)
-    assert res["sigma2_h0"].notna().all()
-    assert ((res["h0_share"] >= 0) & (res["h0_share"] <= 1.5)).all(), res["h0_share"]
+    res = analyse(collect(flat_bank, windows=(10, 20)), n_boot=50)
+    live = res[res["usable"].astype(bool)]
+    assert len(live)
+    assert live["sigma2_h0"].notna().all()
+    assert ((live["h0_share"] >= 0) & (live["h0_share"] <= 1.5)).all(), live["h0_share"]
 
 
 def test_a_constant_metric_is_refused_not_filed_as_a_null(tmp_path) -> None:
@@ -301,7 +329,7 @@ def test_a_constant_metric_is_refused_not_filed_as_a_null(tmp_path) -> None:
     fams = [f"fam{i:02d}" for i in range(N_FAM)]
     path = _bank(tmp_path, acc_by_family={f: i / (N_FAM - 1) for i, f in enumerate(fams)},
                  rep_families=("fam00",), fix_families=("fam00",), seed=21)
-    df = collect(path)
+    df = collect(path, windows=(10, 20))
     df["contraction"] = 0.88                       # a metric with no spread at all
     res = analyse(df, n_boot=50)
     row = res[res["metric"] == "contraction"].iloc[0]
@@ -311,7 +339,11 @@ def test_a_constant_metric_is_refused_not_filed_as_a_null(tmp_path) -> None:
     txt = report(df, res, family_table(df), {"usable": False, "why": "n/a"},
                  determinism_verdict(df))
     assert "REFUSED" in txt
-    assert "of 3 usable statistics" in txt, "a refused metric still counted as usable"
+    n_usable = int(res["usable"].astype(bool).sum())
+    n_refused = len(res) - n_usable
+    assert n_refused >= res["window_k"].nunique(dropna=False), (
+        "every window's `contraction` cell should have been refused")
+    assert f"of {n_usable} usable" in txt, "a refused cell still counted as usable"
 
 
 def test_covariate_structure_warns_when_length_is_capability(tmp_path) -> None:
@@ -323,7 +355,7 @@ def test_covariate_structure_warns_when_length_is_capability(tmp_path) -> None:
     fails, the report has to say the finding was unavailable rather than absent.
     """
     fams = [f"fam{i:02d}" for i in range(N_FAM)]
-    df = collect(_bank(
+    df = collect_small(_bank(
         tmp_path,
         n_tokens_by_family={f: 20 + 4 * i for i, f in enumerate(fams)},
         acc_by_family={f: i / (N_FAM - 1) for i, f in enumerate(fams)},
@@ -340,7 +372,7 @@ def test_covariate_structure_stays_quiet_when_the_axes_are_separable(tmp_path) -
     """Non-suppression: the warning must not fire on the design geomcap actually has."""
     fams = [f"fam{i:02d}" for i in range(N_FAM)]
     shuffled = np.random.default_rng(5).permutation(N_FAM)   # Spearman 0.0 vs index
-    df = collect(_bank(
+    df = collect_small(_bank(
         tmp_path,
         n_tokens_by_family={f: 20 + 4 * i for i, f in enumerate(fams)},
         acc_by_family={f: float(shuffled[i]) / (N_FAM - 1) for i, f in enumerate(fams)},
