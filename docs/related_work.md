@@ -66,8 +66,22 @@ sense (i) in a trained looped LM, so absence is the expected result.
   **THIS NOTE WAS WRONG AND IS WITHDRAWN 2026-08-09.** The paper exists:
   Movahedi, Milovanović, Feigin, Theus, Hofmann, Boeva, Rusch & Orvieto,
   *Fixed-point reasoners: Stable and adaptive deep looped transformers*,
-  [arXiv:2606.18206](https://arxiv.org/abs/2606.18206) **[V]** — verified by a
-  sourced pass, and it is reference [6] of the supervisor's own proposal. FPRM:
+  [arXiv:2606.18206](https://arxiv.org/abs/2606.18206) **[V]** — **provenance corrected
+  2026-08-09 (thread A8):** this was tagged [V] on the strength of a *sourced pass*,
+  which is agent-mediated and is [U] by this file's own key. It has now been fetched
+  directly: title, all eight authors (Movahedi, Milovanović, Feigin, Theus, Hofmann,
+  Boeva, Rusch, Orvieto) and the abstract's substantive claims — pre-norm + residual
+  scaling, fixed-point convergence as an end-to-end halting mechanism, evaluated on
+  Sudoku / Maze / state-tracking / ARC-AGI — all match what is recorded here, so [V]
+  is now earned rather than assumed. It is also reference [6] of the supervisor's own
+  proposal.
+  **AND IT BEARS ON H2, WHICH THIS ENTRY DID NOT PREVIOUSLY NOTE.** The abstract's own
+  claim is that *"fixed-point halting allows FPRM to adapt its compute to task
+  difficulty"* — i.e. difficulty-adaptive compute is presented as something the
+  architecture has to be MODIFIED to obtain. That is the direction of this project's
+  H2 nulls (D115: quadrupling a counting task moves ρ by 0.0033; D116: difficulty does
+  not move the rotation angle either): an unmodified weight-tied loop is not expected
+  to spend more compute on harder inputs, and Huginn is unmodified. FPRM:
   pre-norm + residual scaling, fixed-point convergence as a halting mechanism,
   evaluated on Sudoku/Maze/state-tracking/ARC-AGI; code at
   `github.com/nilskiKonjIzDunava/fprm`. **Relevant to us because it contains an
