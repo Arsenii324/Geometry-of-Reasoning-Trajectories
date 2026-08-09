@@ -1,0 +1,22 @@
+name: gmres-implicit-attribution
+desc: >
+  A21: re-solve DR3 Method 2's adjoint with GMRES instead of plain Neumann. D131
+  voided itself on its own convergence gate -- 1 of 24 prompts reached 1e-3, the
+  median exhausting a 120-term cap, implied per-iteration decay 0.9735 against
+  measured contraction rates of 0.810-0.911. The identity is not in question (it was
+  validated in closed form before launch, relative error 7e-4); the solver is.
+  Neumann converges at ||J^k||, which for a strongly NON-NORMAL operator far exceeds
+  rho^k at practical k, and Huginn's Jacobian is non-normal by three of this
+  project's own measurements. GMRES minimises the residual over a Krylov subspace
+  instead. P4 (brute-force per-position ablation as ground truth) and P5 (token
+  gate) are IMPLEMENTED this time -- D131 declared both and wrote neither. If GMRES
+  also fails, the obstacle is the operator and Method 2 should be recorded as
+  unusable on Huginn rather than retried again.
+cmd: python job.py ${RESULT}
+outputs:
+  - gmres.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
