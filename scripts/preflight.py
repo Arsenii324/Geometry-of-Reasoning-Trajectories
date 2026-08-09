@@ -135,6 +135,25 @@ def check_prior(terms: list[str]) -> int:
         for b in banked:
             print(f"  BANKED OUTPUT  scratch/{b}/out/  <- results already exist")
             hits += 1
+            # AND SEARCH THE DOCS UNDER THE RUN NAME, NOT ONLY THE DIRECTORY NAME.
+            # This is the blind spot that made D120 duplicate D52: the directory is
+            # `kaggle_rho_ckpt_a`, the ledger cites `geometry-rho-ckpt-a`, and a
+            # directory-name grep finds nothing. Strip the platform prefix and try
+            # the run-name forms the ledger actually uses.
+            stem = re.sub(r"^(kaggle|ds)_", "", b)
+            for alias in {stem, stem.replace("_", "-"),
+                          "geometry-" + stem.replace("_", "-"),
+                          "geom-" + stem.replace("_", "-")}:
+                apat = re.compile(re.escape(alias), re.I)
+                for rel in SEARCH:
+                    fp = ROOT / rel
+                    if not fp.exists():
+                        continue
+                    for i, ln in enumerate(fp.read_text().split("\n"), 1):
+                        if apat.search(ln):
+                            print(f"    ALIAS {alias!r} -> {rel}:{i}  "
+                                  f"{ln.strip()[:110]}")
+                            hits += 1
     print(f"\n{hits} prior references. Read them BEFORE building "
           f"(D119, D123, D124 were all this).")
     return 0

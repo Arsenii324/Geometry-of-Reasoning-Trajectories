@@ -229,6 +229,16 @@ The knowledge was already in the repo. Nobody looked.
 (`geom-eigenplane`, `ds_eigen`) and threads are indexed under THREAD names (B3, B4.8).
 A grep for the thread name finds nothing and the row still reads `open`.
 
+**CORRECTION 2026-08-10, and it is the sharpest lesson of the two days.** I wrote below that
+the sweep 'paid for itself on first use'. It did not. Its first use produced **D120, which
+duplicates D52** — same runs, same numbers to three decimals, same conclusion, four days apart.
+The sweep missed it because I searched the DIRECTORY name (`kaggle_rho_ckpt_a`) and the ledger
+cites the RUN name (`geometry-rho-ckpt-a`). **That is the identical run-name-versus-thread-name
+failure the tool was built to prevent, reproduced by the tool itself** — because I encoded the
+lesson's example rather than its shape. A fix that only handles the instance you were burned by
+is not a fix. `preflight.py` now strips platform prefixes and searches alias forms, and it
+returns D52 in one command.
+
 **Fix: `scripts/preflight.py --prior "<topic>"`**, which searches the ledger,
 `directions.md`, `OPEN_THREADS`, `PLAN`, `UNDERSTANDING`, `related_work`, the DR reports
 **and `scratch/*/out/`** — the last because that is where the answer actually was, both
