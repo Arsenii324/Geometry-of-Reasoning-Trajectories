@@ -188,40 +188,46 @@ def main():
     sweep(model, "trained")
     # Keep the CLASS, never the instance: holding the model object here would pin
     # ~14 GB and OOM the untrained arm on the same 16 GB T4.
-    trained_cls = type(model)
+    # (the trained model is freed here; nothing holds a reference to the instance)
     del model
     gc.collect()
     torch.cuda.empty_cache()
 
     print("\n=== UNTRAINED ARM, three independent weight draws ===", flush=True)
-    # `from_config(..., trust_remote_code=True)` re-contacts the Hub for the remote
-    # modelling code. The first submission of this job died there on a transient
-    # `RemoteDisconnected` AFTER the trained arm had already succeeded, losing the
-    # whole control for a network blip. Retry, and fall back to the already-imported
-    # module class so a Hub outage cannot kill the run a second time.
-    def build_untrained(seed):
-        import time as _t
-        last = None
-        for attempt in range(5):
-            try:
-                torch.manual_seed(seed)
-                return AutoModelForCausalLM.from_config(cfg, trust_remote_code=True)
-            except Exception as exc:
-                last = exc
-                print(f"    from_config attempt {attempt + 1} failed: "
-                      f"{type(exc).__name__}: {exc}", flush=True)
-                _t.sleep(10 * (attempt + 1))
-        # Fallback: the trained model's own class is already imported in this
-        # process, so no Hub contact is needed to instantiate a fresh random one.
-        print("    falling back to the already-imported model class "
-              f"({trained_cls.__name__}) -- no Hub contact needed", flush=True)
-        torch.manual_seed(seed)
-        return trained_cls(cfg)
+    # WHY THIS IS NOT A PLAIN from_config CALL. The first submission
+    # (`bt102roip8snofu5kosh`) was killed by the Linux OOM killer -- `bash: Killed`,
+    # SIGKILL, i.e. HOST RAM, not GPU (a CUDA OOM raises a Python exception and
+    # never appears as "Killed"). The cause: the trained arm loads with
+    # `low_cpu_mem_usage=True`, which streams shards straight to the GPU, but
+    # `from_config` has no such path -- it materialises a fresh 3.5B model in
+    # float32 ON CPU first, ~14 GB, which this pod cannot take.
+    # (A `RemoteDisconnected` also appears in that log and is a RED HERRING: it was
+    # retried and succeeded one line later. Do not "fix" the network.)
+    # Fix: construct the model directly on the GPU with a device context, so the
+    # host-RAM copy never exists. The model's own `_init_weights` still runs under
+    # `post_init`, so the untrained arm keeps Huginn's real initialisation scheme
+    # rather than uninitialised memory -- which matters, since D52/D76's untrained
+    # controls used that scheme too.
+    def report_mem(tag):
+        try:
+            import subprocess as sp
+            out = sp.check_output(["free", "-g"]).decode().splitlines()[1].split()
+            print(f"    [{tag}] host RAM total {out[1]}G used {out[2]}G avail {out[-1]}G | "
+                  f"GPU alloc {torch.cuda.memory_allocated()/2**30:.1f}G", flush=True)
+        except Exception:
+            pass
 
+    def build_untrained(seed):
+        torch.manual_seed(seed)
+        with torch.device("cuda"):
+            m = AutoModelForCausalLM.from_config(cfg, trust_remote_code=True)
+        return m
+
+    report_mem("before untrained")
     for s in UNTRAINED_SEEDS:
         try:
-            m = build_untrained(s)
-            m = m.to(torch.float32).to("cuda").eval()
+            m = build_untrained(s).to(torch.float32).eval()
+            report_mem(f"seed {s} built")
             sweep(m, "untrained", seed=s)
             del m
         except Exception as exc:
@@ -232,6 +238,7 @@ def main():
                          "why": f"{type(exc).__name__}: {exc}"})
         gc.collect()
         torch.cuda.empty_cache()
+        report_mem(f"seed {s} freed")
 
     print("\n=== PRE-REGISTERED COMPARISON ===", flush=True)
     tr = [r for r in rows if r["arm"] == "trained" and r.get("ok")]

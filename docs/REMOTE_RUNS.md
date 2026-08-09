@@ -128,6 +128,40 @@ sys.path.insert(0, os.path.abspath("src"))   # after os.chdir into the clone
 Only jobs that import the project package hit this; one that uses nothing but
 torch/transformers will pass and give false confidence that the install works.
 
+**`Killed` in the log means the OOM killer, and the traceback above it may be a red
+herring.** A control run died with a HuggingFace `RemoteDisconnected` visible in stderr
+— but the very next lines showed `Retrying in 1s [Retry 1/5]` and then a successful
+download. The disconnect was **not** the cause. The cause was three lines later:
+
+```
+bash: line 1:   109 Killed                  ( python job.py /job/result_gwx )
+```
+
+`Killed` is SIGKILL from the Linux OOM killer, i.e. **host RAM**. A *GPU* OOM raises a
+Python `torch.cuda.OutOfMemoryError` with a traceback and never appears as `Killed`.
+Diagnosing this as a network failure cost one wasted relaunch.
+
+The specific trap: `AutoModelForCausalLM.from_pretrained(..., low_cpu_mem_usage=True)`
+streams shards directly to the GPU, but **`from_config` has no such path** — it
+materialises the whole model in float32 **on CPU** first (~14 GB for 3.5B), which the
+pod cannot take. Build directly on the device instead:
+
+```python
+with torch.device("cuda"):
+    m = AutoModelForCausalLM.from_config(cfg, trust_remote_code=True)
+```
+
+The model's own `_init_weights` still runs under `post_init`, so a randomly-initialised
+control keeps the architecture's real initialisation scheme rather than uninitialised
+memory. Print `free -g` and `torch.cuda.memory_allocated()` around each load so the next
+OOM is diagnosable from the log alone.
+
+**Partial results survive an errored job — check before re-running.** DataSphere collected
+the declared `outputs:` file even though the job ended in ERROR, because the script wrote
+it incrementally after each arm. The completed arm's data was fully recoverable. There is
+no resume: `job attach` only works on a *running* job and `job fork` starts a fresh run
+from a template, so **write results incrementally rather than once at the end.**
+
 **CLI gotchas on this Mac.**
 
 - `GRPC_DNS_RESOLVER=native` is REQUIRED on every `datasphere` invocation. The
