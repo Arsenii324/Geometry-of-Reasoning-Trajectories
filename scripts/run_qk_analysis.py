@@ -48,10 +48,13 @@ import numpy as np
 import pandas as pd
 from scipy.stats import wilcoxon
 
+from traj_geom.rigor import independent_n, require_exact_test_if_small
+
 SRC = os.path.join("scratch", "ds_qkprobe", "out", "qk_probe.json")
 OUT = os.path.join("results", "qk_probe.csv")
 WINDOWS = ((0, 12), (12, 24), (24, 36), (36, 48))
 N_PERM = 20000
+EXACT_MAX_PAIRS = 16      # 2**16 = 65536 enumerations, still instant
 SEED = 0
 
 
@@ -92,6 +95,21 @@ def _paired_perm(a: np.ndarray, b: np.ndarray, rng) -> float:
     """
     obs = float(np.mean(a) - np.mean(b))
     n = len(a)
+    # EXACT when the space is small enough to enumerate, which it always is here.
+    # With n sign-flip pairs there are only 2**n distinct outcomes; sampling
+    # N_PERM=20000 from a 4096-point space once produced p = 0.00015, BELOW the
+    # exact floor 1/4096 = 0.000244 -- resolution that does not exist. Enumerating
+    # removes the artefact instead of documenting it (`rigor.require_exact_test_if_small`
+    # now refuses the sampled version, so this branch is not optional).
+    if n <= EXACT_MAX_PAIRS:
+        import itertools
+        ge = 0
+        for mask in itertools.product((False, True), repeat=n):
+            m = np.array(mask)
+            if float(np.mean(np.where(m, b, a)) - np.mean(np.where(m, a, b))) >= obs:
+                ge += 1
+        return ge / (2 ** n)          # exact one-sided p, no +1 correction needed
+    require_exact_test_if_small(n_pairs=n, n_perm=N_PERM, what="paired sign-flip null")
     hits = 0
     for _ in range(N_PERM):
         flip = rng.random(n) < 0.5
@@ -182,10 +200,19 @@ def confound_and_premise(d: dict, lo: int = 24, hi: int = 36) -> dict:
     dq_ab, dq_ac = (q["A"] - q["B"]).abs(), (q["A"] - q["C"]).abs()
     lr = np.log10(rk)
     dr_ab, dr_ac = (lr["A"] - lr["B"]).abs(), (lr["A"] - lr["C"]).abs()
+    # POOLING THE TWO CONTRASTS IS PSEUDOREPLICATION: both members of a pair
+    # share the same A value, so scipy's df is ~2x what is available. The pooled
+    # figure was once quoted as rho=+0.750, p=2.4e-05; an item-clustered
+    # permutation gives p = 0.093. Both are reported; the clustered one decides.
+    pooled_keys = list(q.index) * 2
+    n_units = independent_n(pooled_keys)
     rho, p = spearmanr(np.concatenate([dr_ab, dr_ac]),
                        np.concatenate([dq_ab, dq_ac]))
     closer_to_b = int((( lr["C"] - lr["B"]).abs() < (lr["C"] - lr["A"]).abs()).sum())
-    return {"rank_gap_ratio": float(dr_ab.mean() / dr_ac.mean()),
+    return {"n_observations_pooled": int(2 * len(q)),
+            "n_independent_units": int(n_units),
+            "pooled_p_IS_PSEUDOREPLICATED": float(p),
+            "rank_gap_ratio": float(dr_ab.mean() / dr_ac.mean()),
             "qk_gap_ratio": float(dq_ab.mean() / dq_ac.mean()),
             "spearman_rankgap_qkgap": float(rho), "p": float(p),
             "premise_mean_abs_dlog10rank_AC": float(dr_ac.mean()),

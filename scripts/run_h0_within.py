@@ -58,6 +58,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 from traj_geom.metrics.shape_code import gram_code, position_code
+from traj_geom.rigor import require_resolvable_alpha, require_units
 
 BANK = os.path.join("scratch", "kaggle_h0bank", "out")
 OUT = os.path.join("results", "h0_within.csv")
@@ -159,11 +160,17 @@ def decode(df: pd.DataFrame, col: str, extra: np.ndarray | None = None,
 
 
 def detection_floor(df: pd.DataFrame, col: str, effects=EFFECTS, n_trials: int = 20,
-                    n_perm: int = 40, seed: int = 0) -> pd.DataFrame:
+                    n_perm: int = N_PERM, seed: int = 0) -> pd.DataFrame:
     """P8. Planted on WITHIN-PROMPT-PERMUTED labels, so the curve is the design's
     reach and not the signal already present -- the correction D85's first draft
     needed."""
+    # The default was once n_perm=40 against ALPHA=0.00625, whose exact floor
+    # 1/41 can never clear it -- so the floor reported 0% at every effect size
+    # including 1.0 sd, which read as a hopeless design and was an arithmetic
+    # impossibility. The guard makes that unmissable rather than plausible.
+    require_resolvable_alpha(n_perm, ALPHA, what="P8 planted-effect detection floor")
     keys = df["prompt"].to_numpy()
+    require_units(keys, min_units=MIN_SPLIT, what="P8 floor sample")
     x0 = _centre(np.stack(df[col].to_numpy()).astype(np.float64), keys)
     y = df["correct"].to_numpy().astype(int)
     sd = x0.std(axis=0)

@@ -1,5 +1,5 @@
 {
-  "bytes": 502,
+  "bytes": 475,
   "columns": [
     "window",
     "n_items",
@@ -10,8 +10,11 @@
     "p_wilcoxon"
   ],
   "confound": {
+    "n_independent_units": 12,
     "n_items": 12,
+    "n_observations_pooled": 24,
     "p": 2.40429140157371e-05,
+    "pooled_p_IS_PSEUDOREPLICATED": 2.40429140157371e-05,
     "premise_items_C_closer_to_B": 4,
     "premise_mean_abs_dlog10rank_AC": 0.21550381102709706,
     "qk_gap_ratio": 2.1529558187172095,
@@ -19,7 +22,7 @@
     "spearman_rankgap_qkgap": 0.7504347826086956
   },
   "file": "qk_probe.csv",
-  "git_commit": "1930c1fed80a1bca7b0e76289c8a40e2145d78e9",
+  "git_commit": "830740065cd5fe0b5b337dd93b6165200539894a",
   "git_dirty": true,
   "kind": "qk_probe",
   "model_id": "tomg-group-umd/huginn-0125",
@@ -57,13 +60,13 @@
     }
   ],
   "produced_by": "/Users/a2mogus/build-projs/barannikov-work/Geometry-of-Reasoning-Trajectories/scripts/run_qk_analysis.py",
-  "run_id": "20260809T121011Z-29e801f5",
+  "run_id": "20260809T143653Z-cc63bced",
   "self_check": {
     "k_err": 0.0,
     "passed": true,
     "q_err": 0.0
   },
-  "sha256": "1ce985c244ac10cfb056f0e54147ddc73ce1aef707caa5f905e9f4ddcd9ca1b0",
+  "sha256": "ebf249fb6e678d67d364ec42f84c7c61235d56870fa2529a1317b14ec7ee50a5",
   "windows": [
     [
       0,
@@ -82,5 +85,5 @@
       48
     ]
   ],
-  "written_utc": "2026-08-09T12:10:11.943722+00:00"
+  "written_utc": "2026-08-09T14:36:53.145213+00:00"
 }
