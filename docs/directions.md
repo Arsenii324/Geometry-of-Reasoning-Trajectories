@@ -28,12 +28,31 @@ live state without asking. Updated 2026-08-09.
 
 | run | where | question | status |
 |---|---|---|---|
-| `geometry-h2-rotation` | Kaggle T4 | B4.15 — H2 on arg(lambda), length-matched | RUNNING |
+| `geometry-h2-rotation` | Kaggle T4 | B4.15 — H2 on arg(lambda), length-matched | **DONE -> D83.** Paired track−local vs n_ops: rho=+0.543, exact p=0.328 over 2048 arrangements. H2's last instrument returns nothing |
+| `geometry-geomcap` | Kaggle T4 | does trajectory geometry track capability ACROSS the 21 families — and what is its own reliability ceiling? | RUNNING (21 fam x 24 items + 10 replicates of 8 prompts + a fixed-seed determinism control) |
+| `geometry-depthacc` | Kaggle T4 | does the model SAY what its rank curve says it knows? closes D68(5) | RUNNING (5 depths x 2 formats x 21 families, generation AND teacher-forced rank from one run) |
 | `geometry-battery` | Kaggle T4 | 21-family capability screen, graded readout | **DONE -> D75.** 5 families >=50%, control at chance 21/21, and B6 unblocked |
 | `geom-eigenplane` | DataSphere g1.1, job `bt1mvf3juvrcjpl6kl1i` | does the orbit rotate at the rate the Jacobian predicts? | **DONE** -- no: 0.24x, and D74 explains why |
 | `geom-bank` | DataSphere g1.1, job `bt1hd3oqb17690amgolg` | B14 -- bank raw states for BOTH arms; the untrained control D74 needs | **DONE -> D76.** Training flips the step cosine -0.379 -> +0.541, disjoint at every window |
 | `geom-seeds` | DataSphere g1.1 | closes D76's one-draw limit | **DONE.** Five draws agree (cos -0.339..-0.389); trained/untrained completely disjoint, p=1.05e-12 |
 | `geometry-b6-bank` | Kaggle T4 | **B6 re-run** | **DONE -> D79.** Bounded null: no geometric difference at matched answer, powered to 1.5 sd, in the 1 family of 4 that the design could test |
+
+**Answered offline since, with no GPU, from data already on disk.**
+
+- **D80 — the shape statistics are mostly a clock.** Sliding a fixed-width window
+  along the unroll axis over all 152 banked trained orbits: participation ratio
+  falls 8.55 → 4.55 between unroll 0 and 28 (down in 147/147), the step cosine
+  rises +0.276 → +0.710 (up in 134/147), and the contraction rate does not move
+  (p = 0.32). Each shift is ~3× the entire prompt-to-prompt spread. This resolves
+  the apparent conflict between D74 (PR 13.3 at a ~21-unroll window) and the
+  asymptotic values (PR 2.3 at ~90), and it means **any shape statistic quoted
+  without its window is uninterpretable**.
+- **D81/D82 — the map is linear where it matters, so D52 stands.** Held-out
+  one-step prediction recovers a median 91% of what the fitted subspace can
+  express. A spectrum-built surrogate reproduces the dimensional collapse (5/7
+  prompts) but not the rotation rate (2/7); D82 shows that is about which modes
+  Arnoldi returned, not about linearity, since a gapless spectrum makes later
+  steps leave the earlier span without any nonlinearity being involved.
 
 **Premises checked and FALSE — do not re-derive these.** Each cost minutes to check
 and would have cost hours to discover downstream.

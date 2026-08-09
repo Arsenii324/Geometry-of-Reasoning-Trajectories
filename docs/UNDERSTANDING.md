@@ -1,11 +1,93 @@
-# State of understanding — 2026-08-08
+# State of understanding — 2026-08-09
 
-Supersedes the 2026-08-05 revision, which predates D66–D69. Written to be read on
-its own; every number cites the ledger row that carries its evidence.
+Supersedes the 2026-08-08 revision, which predates D73–D83. Written to be read on
+its own; every number cites the ledger row that carries its evidence. §1 is the
+current synthesis; **§1-old below is the 2026-08-08 text, kept unedited** because it
+is what the D68/D69 work concluded at the time and the difference is informative.
 
 ---
 
-## 1. The one-paragraph version
+## 1. The synthesis, as of 2026-08-09
+
+**One sentence: the geometry of Huginn's latent trajectory is a signature of the
+weights and of depth, not of the input or of the computation.**
+
+That is a claim with three legs, and each is measured rather than argued.
+
+**(a) The path's shape is governed by how far the contraction has run.** Sliding a
+fixed-width window along the unroll axis over all 152 banked trained orbits,
+participation ratio falls 8.55 → 4.55 between unroll 0 and 28 — **down in 147 of
+147 orbits** — while the consecutive-step cosine rises +0.276 → +0.710, up in
+134/147. Each shift is about **3× the entire prompt-to-prompt spread** of the same
+statistic. The contraction *rate* does not move over that range (p = 0.32), which
+is the control that makes the other two specific rather than a generic drift
+(D80). So the single largest determinant of any shape statistic is *where in the
+convergence it was measured*. This also dissolves an apparent conflict in our own
+record: D74's "13.3 effective dimensions" and the asymptotic "2.3" are the same
+orbit at a ~21-unroll and a ~90-unroll window.
+
+**(b) The dynamics are linear enough for that to mean what it sounds like.** Held-out
+one-step prediction of the step directions recovers a median **91%** of what the
+fitted subspace can express, with a general operator beating a subspace-matched
+scalar rate in 148–152 of 152 orbits (D82). So D52's ρ and every Jacobian quantity
+stand, and the orbit really is a contraction collapsing onto its dominant mode
+rather than something a linear vocabulary merely approximates. Where the absolute
+prediction score is low, the cause is a **gapless spectrum** — later steps enter
+directions earlier steps never spanned — which is what D74(4) independently found
+when DMD failed its stability gate on 80/80 orbits. Gapless is not nonlinear.
+
+**(c) And the shape does not track the computation.** At matched answer value,
+correct and incorrect trajectories do not differ in effective dimensionality, step
+cosine, contraction rate or settling time, powered to 1.5 within-stratum sd
+(D79). H2 — "more reasoning steps, more turning" — returns nothing on the one
+design that escapes the length confound: the paired `track − local` contrast gives
+ρ = +0.543 at an exact p of 0.328 over 2048 arrangements (D83). With D28 (winding)
+and D74(6) (dimensionality), **every instrument this project has built for H2 now
+returns nothing**, and D80 explains why: they were all reading a clock.
+
+**What training does, by contrast, is unmissable.** ρ rises 0.7048 → 0.8577 across
+14 weight-sets with no overlap (D52); the step cosine *flips sign*, −0.379 →
++0.541, with completely disjoint distributions across five independent untrained
+draws (D76, D76(8)); and rotation per unroll read off the operator falls from 1.892
+to 1.024 (D83(4)). The geometry is highly sensitive — to the weights. It is the
+input it cannot see.
+
+**The most telling single number** is in D83(6): across `track`/`local` and n_ops
+4–32, the *measured* step cosine spans just **0.44–0.57**, while the Jacobian's
+leading oscillatory argument over the same prompts spans **0.37–1.10 rad**. The
+trajectory's turning is more uniform than the local spectrum that supposedly
+generates it.
+
+### What this predicts, and what is still open
+
+The reading is not merely compatible with the nulls — it *predicts* them, and it
+predicts more that is not yet in. Two runs are in flight to test exactly that:
+
+- `geometry-geomcap` asks whether the geometry tracks capability **across** the 21
+  D75 families, and — the part that makes a null readable — measures its own
+  reliability ceiling from ten replicates of one prompt, which differ only in the
+  unseeded h₀ (D78). A null against a wide ceiling is a fact about the model; a
+  null against a narrow one is a fact about the instrument, and D70 is the
+  cautionary case where those were confused.
+- `geometry-depthacc` closes the gap D68(5) named itself: rank is not capability.
+
+**The strongest objection I cannot yet answer.** Everything above is about
+statistics of the *path*. It does not show that no geometric description could
+encode the computation — only that the four this project can justify do not, at
+the scales and windows measured, on this model. A representation living in a
+direction none of these functionals is sensitive to would be invisible here, and
+D79(5) says so explicitly.
+
+**The second-strongest.** All of (a)–(c) is the trained arm at one token position on
+synthetic tasks. D76 supplies the untrained contrast for the geometry but not for
+the capability axis, and no natural-language reasoning benchmark has been run
+end-to-end with this instrumentation.
+
+---
+
+## 1-old. The 2026-08-08 synthesis, kept unedited
+
+### The one-paragraph version (as of 2026-08-08)
 
 The project asked whether latent-trajectory *geometry* in Huginn-3.5B encodes
 reasoning depth. It does not, in the form originally proposed. The 2026-08-05
