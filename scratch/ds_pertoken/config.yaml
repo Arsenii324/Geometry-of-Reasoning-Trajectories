@@ -1,0 +1,16 @@
+name: pertoken-shape-census
+desc: >
+  G1 (project_plan.md), 0% done before this: record EVERY token's path at every
+  depth and classify each position's shape regime with the project's own
+  validated settle/loop/drift classifier. Every prior instrument in this project
+  reads ONE position; the published per-token convergence results say that is a
+  mixture. The headline number is the count of positions returning loop or drift
+  -- the first direct evidence for H1's other regimes if any appear.
+cmd: python job.py ${RESULT}
+outputs:
+  - pertoken.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1

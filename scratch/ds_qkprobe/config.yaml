@@ -1,0 +1,17 @@
+name: qk-alignment-probe-powered
+desc: >
+  POWERED QK-alignment probe with the D88 marker control (project_plan.md G2).
+  Arm 1 is the D83 paired track/local sweep at 10 seeds (80 forwards). Arm 2 is
+  the marker A/B/C control (36 forwards) where A and C select the SAME
+  computation and B a different one, every prompt one character apart at an
+  identical token count -- the control that decides whether any QK difference
+  tracks the COMPUTATION or merely the input TOKEN (D87/D88). Self-checks its
+  own (q, k) extraction against ground truth and halts if it fails.
+cmd: python job.py ${RESULT}
+outputs:
+  - qk_probe.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1

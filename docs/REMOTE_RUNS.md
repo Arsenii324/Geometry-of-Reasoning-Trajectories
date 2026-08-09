@@ -132,6 +132,28 @@ Verify `torch.cuda.is_available()` and print the device name before real work.
   GPU" claim has its producing code on disk; `docs/rigor_audit.md` records what
   happened when they were not.
 
+### Pushing the raw states back to GitHub
+
+Banks run to hundreds of MB (`kaggle_geomcap` 788 MB, `kaggle_h0bank` 705 MB) and a
+single push of that size fails over HTTPS:
+
+```
+error: RPC failed; curl 55 Send failure: Broken pipe
+send-pack: unexpected disconnect while reading sideband packet
+```
+
+The commit is safe locally when this happens — only the transfer failed. Fix:
+
+```bash
+git config http.postBuffer 524288000   # 500 MB
+git config http.version HTTP/1.1       # HTTP/2 is the usual culprit
+git push --no-progress
+```
+
+Run it backgrounded; 700 MB takes many minutes and will blow a foreground timeout.
+Commit the documents in a SEPARATE commit from the raw states where possible, so a
+failed data push does not also hold up the ledger.
+
 ---
 
 ## 3. Design the run wide, not the fleet parallel
