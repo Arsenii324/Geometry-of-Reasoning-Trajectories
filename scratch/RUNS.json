@@ -1,6 +1,11 @@
 [
   {
     "platform": "datasphere",
+    "id": "bt1tos7luo04f7370fpu",
+    "what": "B4b fixed-sum ladder: difficulty orthogonal to answer"
+  },
+  {
+    "platform": "datasphere",
     "id": "bt1j30cub5aifduql4fl",
     "what": "B1c rho across 16 distinct recipients (D111(3) fix)"
   },

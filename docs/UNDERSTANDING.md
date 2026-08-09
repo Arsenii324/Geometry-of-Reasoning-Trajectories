@@ -124,7 +124,13 @@ when DMD failed its stability gate on 80/80 orbits. Gapless is not nonlinear.
 **(c) And the shape does not track the computation.** Across **21 task families
 spanning 0% to 100% accuracy**, no geometric statistic tracks capability at any of
 five windows — 0 of 18 usable cells — while 6 of 18 track prompt length on the same
-orbits. The run measures its own reliability at 0.95–1.00, so a perfect relation
+orbits. *(The independent variable here carries a defect worth stating where the
+claim is made, not only in the ledger: `correct` scores the FIRST TOKEN of the gold,
+and 8 of these 21 families have multi-token golds, 4 of them for every item — so
+`compare`'s 92% is first-digit accuracy. D89 re-ran the null against a
+tokenisation-free axis built from decoded strings and **the null survived**. The
+defect therefore weakens no conclusion here, but it does mean every capability
+number quoted from this axis is a first-token number.)* The run measures its own reliability at 0.95–1.00, so a perfect relation
 would have shown |ρ| in [0.80, 1.00] against an observed |ρ| ≤ 0.33: the null is
 readable, not merely observed (D85). At matched answer value, correct and incorrect
 trajectories do not differ in effective dimensionality, step cosine, contraction

@@ -223,7 +223,14 @@ The trajectory's hand-picked statistics are blind to the outcome, and its full
 shape mostly is too (§3); the *readout* carries it clearly.
 
 - Capability spans **0% to 100%** across the 21 families (D75, D85), so there is a
-  computation to track.
+  computation to track. **Caveat carried from D89, and it applies to the central
+  null's independent variable, not to a side result:** that axis is scored on the
+  FIRST TOKEN of the gold, and **8 of the 21 families have multi-token golds — 4 of
+  them for every item**, so `compare`'s 92% is first-*digit* accuracy. The null was
+  re-tested against a tokenisation-free axis (decoded strings from
+  `geometry-depthacc`) and **survived**: no metric tracks capability at any window
+  after the correction. So the defect does not overturn the null — but every number
+  quoted from the first-token axis is a first-token number and should be read as one.
 - **Depth does not destroy the answer — it wraps it in prose.** On decoded strings
   across 21 families, exact-match accuracy peaks shallow and reaches **0.0% by r=8**,
   while containment rises **13.5% → 33.3%** from r=4 to r=32, up in 9 of 10 families
