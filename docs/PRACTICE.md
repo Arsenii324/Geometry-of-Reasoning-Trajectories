@@ -161,3 +161,23 @@ than intended:
 | §2 code: be minimal | don't build tooling | governs *analysis* code; observability code is judged by errors prevented |
 | §3 don't touch others' work | don't read their branch | don't *overwrite* or silently amend; read and cite and merge-with-renumbering |
 | §6 three documents only | don't write anything down | the cap is right; but a correction must propagate, and archived ≠ superseded |
+
+## A doc edit that prints success is not a doc edit that happened
+
+**Occasion, 2026-08-09.** I closed thread B4 with a script whose body was
+`t = t.replace(old, new)` followed by `print("OPEN_THREADS updated")`. The pattern
+did not match, `replace` silently returned the string unchanged, the script printed
+success, and the commit message said the thread was closed. **The stale open row
+survived for two hours while I reported it as done** — and a second, redundant row
+(`B4b-orig`) accumulated beside it. Found only by grepping the file to write a status
+summary, not by any check at the time.
+
+This is the same failure as `SELF_REVIEW.md` §1: reporting the state I last believed
+rather than the state I last checked. It is worse here because the tool reported
+success, so nothing looked wrong.
+
+**The rule: every scripted edit to a document asserts its own precondition.**
+`assert t.count(old) == 1` before replacing, or build the new file line-by-line with
+an `assert found` at the end. Both cost one line. I had been doing this on some edits
+and not others, which is the worst of both — the ones with the assert taught me to
+trust the ones without.
