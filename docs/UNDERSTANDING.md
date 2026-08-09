@@ -57,9 +57,38 @@ number; each should be read with its prompt family attached.
 
 D112 also pins the slowest mode: on `lenmatch` prompts the late motion rotates
 exactly 60° per unroll, |h_t − h_{t+6}| < |h_t − h_{t+1}| in 124 of 188 orbits,
-decaying with **|λ| = 0.911 in 124 of 124** — a damped complex pair
-λ = 0.911·e^(±iπ/3). That refines D55 by fixing its argument and leaves D97's
-`settle` verdict untouched: a damped rotation still settles.
+decaying with **|λ| = 0.911 in 124 of 124** — a damped rotation, which leaves D97's
+`settle` verdict untouched since a damped rotation still settles. *(D119: do not
+read that turning rate as arg λ. The full-operator Arnoldi's own gate puts the
+orbit's rotation at a median **0.241×** |arg λ|; the two coincide only when a single
+pair dominates.)*
+
+**Where the eigenvalue itself has been measured, it agrees and it is task-shaped.**
+`ds_eigen` runs Arnoldi on the complete unroll map (adapter + all four blocks):
+\|λ\| median **0.8098**, and **arg λ separates tasks cleanly** — `track` 61–63°
+across every difficulty, `local` 19.5–24.3° (D119). Four instruments of three
+unrelated kinds — passive orbit decay, diagonal-block Arnoldi, full-operator
+Arnoldi, and causal state injection — now put the contraction rate in **0.79–0.87**.
+
+**And the whole structure is learned, early.** Across 8 public training checkpoints
+and 4 random inits: untrained ρ = **0.7042** (sd 0.0091), trained ρ = **0.8582**
+(sd 0.0389), with **total separation** — the minimum trained value exceeds the
+maximum untrained value, so all 142 orbits are classified by ρ alone. Training
+pushes the map toward the edge of stability, **and it is done by step 6144**, the
+earliest checkpoint that exists (the next 35,584 steps move it only within noise,
+p = 0.194). Training also multiplies ρ's across-prompt spread **4.3×**, so the
+task-dependence above is something training *built* (D120). This is the quantitative
+partner to D116's finding that training replaces a near-orthogonal walk
+(110–115°/step) with coherent rotation (42–59°).
+
+**One caution about this project's own numbers.** The state lives on a sphere of
+radius 76.386 (D99), and that alone fixes several quantities that read as
+measurements: the difference of two same-prompt orbits is orthogonal to their
+midpoint *by identity*, so radial-vs-tangential comparisons of it are vacuous; and
+D106's "20.6% radial component" is |d|/(2R), a restatement of step length that would
+hold for a random walk (D122). D106's *conclusion* stands — the artefact's
+consequence is 4.2% of the effect it might have explained — but "is this a
+coordinate artefact?" can no longer be tested by decomposing steps radially.
 
 **The same experiment turns the DEQ framing from an architectural argument into a
 measured fact.** `e` (the re-injected prelude output) is the map's PARAMETER and `h`
