@@ -8,28 +8,66 @@ ordered plan and the reasoning behind the order.*
 
 ## STATE — read this first after any context loss
 
-*Last updated 2026-08-09 ~11:20 MSK. Deadline 21:00 MSK.*
+*Last updated 2026-08-09 ~15:50 MSK. Deadline 21:00 MSK.*
 
-**A machine switch happened mid-session** (cloud sandbox → local Mac). The old
-session's final commit (`6395693`) landed on the remote just before it was cut off,
-carrying this STATE block, the §1 ρ correction, `docs/related_work.md`, the
-`scratch/kaggle_clrs/` bundle and its test guards — so nothing was actually lost,
-though it was not visible from the fresh local checkout until `git fetch` and a
-merge. Independently reconstructed from conversation context in the meantime and
-**re-verified against ground truth rather than retyped** (the ρ range recomputed
-fresh from `results/geomcap.csv`; `scratch/kaggle_clrs/main.py` diffed byte-for-byte
-against `kaggle kernels pull` on the kernel actually running) — both landed on
-identical numbers to the original, which is worth recording as confidence in the
-reconstruction process itself.
+**THE HEADLINE HAS MOVED TWICE TODAY. Current position, in one place:**
 
-**Running now**
-- `geometry-h0bank` — RUNNING. 16 boundary prompts × 32 unseeded h₀ draws = 512
-  orbits. The powered, **pre-registered** test of D91's lead.
-  Analyse with `scripts/run_h0_within.py`, committed *before* the data existed,
-  fixing the window grid, statistic, null, threshold and decision rule.
-  **Do not change that file after the data lands.**
-- `geometry-clrs` — RUNNING. The CLRS-Text capability screen (§2). Kaggle's 2-slot
-  cap means these two occupy both; nothing else can launch until one finishes.
+1. **H3 / G3 are measured.** The contraction rate, estimated the honest way
+   (two orbits of the same prompt from different h₀), is **ρ = 0.855 with 0 of
+   ~960 pairs at ρ ≥ 1** (D94), and its per-prompt range 0.832–0.901 sits
+   *inside* the [0.808, 0.920] obtained by a different estimator. G3's
+   "measure ρ(∂ₕR) on Huginn", long flagged as never done, closes with it.
+2. **G1 is done and was a negative control that PASSED** (D97). All 179 token
+   positions across 12 prompts classify `settle`; content positions converge in
+   a tight 31–36 interquartile band and the answer position sits at a mean 30th
+   percentile. **Single-position reading was not misleading** — this
+   retroactively strengthens D79/D84/D85/D93.
+3. **D91's lead is RULED OUT** (D93), by a powered pre-registered test whose own
+   detection floor was found broken (40 permutations against α = 0.00625 — it
+   could never fire), fixed, and shown to catch a planted 0.5 sd effect 100% of
+   the time.
+4. **G2 is measured and INCONCLUSIVE** (D96). It rejects its own pre-registered
+   prediction, but the effect is confounded with task difficulty
+   (Spearman +0.750 between the rank gap and the QK gap).
+5. **D98 — THE LOOP EXISTS, and every instrument here was blind to it.** Hooking
+   all four core blocks: each converges to its **own** fixed point, and the four
+   sit ~52% of a state norm apart (separation/residual 95–730; cycle perimeter
+   1.6× the whole distance travelled from h₀). **D94 and D97 are scope-corrected
+   to "no loop in the iteration-to-iteration map AT A FIXED BLOCK"** — no number
+   in them changes. **D98 is NOT yet citable as evidence about training** until
+   its untrained control returns (below).
+
+**Running now** — four jobs, two platforms.
+
+| job | where | question | why it matters |
+|---|---|---|---|
+| `geometry-census` | Kaggle | 21 families × 12 items × 4 h₀ draws, then +20 on splitters | the task-supply asset; analyse with `scripts/run_census_analysis.py` |
+| `geometry-clrs` | Kaggle | CLRS-Text capability screen | in Huginn's training mixture; scores the post-`\|` scalar (verified correct) |
+| `bt1vgfjlofgu7sut7kb1` | DataSphere | difficulty × depth grid, 6 parametric families | where the measurable band is + behavioural H2 |
+| `bt17gufvdcnlp777c5cg` | DataSphere | **cycle geometry vs difficulty** | H2 asked about D98's object, on length-constant ladders |
+| `bt102roip8snofu5kosh` | DataSphere | **D98's untrained control** | decides whether the cycle is learned or architectural |
+
+**THE ONE THING TO DO FIRST IF CONTEXT IS LOST:** pull `bt102roip8snofu5kosh`.
+If no statistic separates trained from untrained, **D98 must be restated as an
+architectural observation** and the H2-on-the-cycle follow-up loses its
+motivation. D98's ledger row carries this dependency explicitly.
+
+**The binding constraint is TASK SUPPLY, not instrumentation.** Two experiments
+have died on it (D47; D95, whose gate wanted 4 of 9 splitting prompts and got 2
+— its patching instrument validated cleanly, so the method is fine). Tasks with
+clean difficulty knobs are synthetic and score ~0; tasks Huginn genuinely does
+(GSM8K 32.6%, ARC-E 69.9% at r=32) are natural-language with uncontrolled
+difficulty and multi-token answers. Deep research (`files/deep_research_battery/
+DR_1_tasks.md`) named the one escape: **fixed-body binary search** — hold a
+sorted list constant, vary only the target, so prompts are byte-identical while
+the required comparison depth varies. Implemented in `scratch/ds_cyclegeom/`
+and verified at exactly 96 characters for every prompt. It also warns that
+independent work measures Huginn at 0.19 on one-digit composite arithmetic and
+GSM8K saturating at 4.9% without CoT — **our near-zero families may be genuine**.
+
+**Three deep-research inquiries are written** (`docs/research_inquiry_{1,2,3}_*.md`);
+#1 has returned, #2 (regimes — partly pre-empted by D98) and #3 (causal methods
+for weight-tied models) have not.
 
 **The findings from this session a reader must not lose**
 - **D89** — `correct` scores only the FIRST TOKEN of gold; 8 of 21 battery families
