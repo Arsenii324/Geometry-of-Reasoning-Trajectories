@@ -8,16 +8,19 @@ ordered plan and the reasoning behind the order.*
 
 ## STATE — read this first after any context loss
 
-*Last updated 2026-08-09 ~10:56 MSK. Deadline 21:00 MSK.*
+*Last updated 2026-08-09 ~11:20 MSK. Deadline 21:00 MSK.*
 
-**A machine switch happened mid-session** (cloud sandbox → local Mac) and lost
-everything that had not yet been committed: this STATE block, the §1 ρ correction
-above, `docs/related_work.md`, the `scratch/kaggle_clrs/` bundle, and its
-`tests/test_kernel_tasks.py` guards. All have been reconstructed from conversation
-context and **re-verified against ground truth, not just retyped**: the ρ range was
-recomputed fresh from `results/geomcap.csv`, and `scratch/kaggle_clrs/main.py` was
-diffed byte-for-byte against `kaggle kernels pull` on the kernel actually running —
-identical. Commit early and often from here; a second loss should not require this.
+**A machine switch happened mid-session** (cloud sandbox → local Mac). The old
+session's final commit (`6395693`) landed on the remote just before it was cut off,
+carrying this STATE block, the §1 ρ correction, `docs/related_work.md`, the
+`scratch/kaggle_clrs/` bundle and its test guards — so nothing was actually lost,
+though it was not visible from the fresh local checkout until `git fetch` and a
+merge. Independently reconstructed from conversation context in the meantime and
+**re-verified against ground truth rather than retyped** (the ρ range recomputed
+fresh from `results/geomcap.csv`; `scratch/kaggle_clrs/main.py` diffed byte-for-byte
+against `kaggle kernels pull` on the kernel actually running) — both landed on
+identical numbers to the original, which is worth recording as confidence in the
+reconstruction process itself.
 
 **Running now**
 - `geometry-h0bank` — RUNNING. 16 boundary prompts × 32 unseeded h₀ draws = 512
@@ -28,7 +31,7 @@ identical. Commit early and often from here; a second loss should not require th
 - `geometry-clrs` — RUNNING. The CLRS-Text capability screen (§2). Kaggle's 2-slot
   cap means these two occupy both; nothing else can launch until one finishes.
 
-**The three findings from this session a reader must not lose**
+**The findings from this session a reader must not lose**
 - **D89** — `correct` scores only the FIRST TOKEN of gold; 8 of 21 battery families
   have multi-token golds and 4 have them for every item, so `compare`'s 92% is
   first-*digit* accuracy. D85's null survives a tokenisation-free re-test.
@@ -39,13 +42,20 @@ identical. Commit early and often from here; a second loss should not require th
   unrolls 6–18** and 65.9% at 12–24, chance elsewhere out to 56. Does not survive
   Bonferroni over 8 windows; n = 60. The location was predicted independently by
   arXiv:2607.20594 (verified). `geometry-h0bank` is the powered replication.
+- **D92 — converges with D91, from a different design.** Re-running
+  `run_correctness_decode.py` after finding its committed CSV predated the D88 fix
+  (family+gold stratification, CV-fold-fit centring) surfaced a real, reproducible
+  signal: shape decodes correctness at **61.0% against a 50.2% null, p = 0.030**,
+  stable across six CV seeds, driven by 2 of 3 strata. Small, not pre-registered,
+  but qualitatively the same answer as D91 from an unrelated design.
 
 **Next, in order**
 1. Poll `geometry-h0bank` / `geometry-clrs`; pull and analyse whichever finishes
    first with its already-written script (`run_h0_within.py` / the CLRS scorer).
 2. Analyse h0bank with the pre-registered script exactly as written. If a
    transient window clears α = 0.00625 and the far tail does not, D91 replicates
-   and the correctness nulls (D79/D84/D85) narrow to the *converged* region.
+   and the correctness nulls (D79/D84/D85) narrow to the *converged* region —
+   with D92 as convergent supporting evidence either way.
 3. Score the CLRS screen; if any (algorithm, size) cell lands in 20–80%, bank
    trajectories there next.
 4. Activation patching on cells with real dynamic range (§4a).
@@ -100,13 +110,14 @@ contractive — otherwise limit cycles and divergence are both available to it. 
 argument "loop and drift cannot persist" is *conditional on ρ<1*, and stating it as
 though it were architectural was an overclaim on my part.
 
-**Measured, 2026-08-09, over all 504 geomcap orbits at all five windows (re-verified
-against `results/geomcap.csv` after the machine switch):** ρ ∈ **[0.808, 0.920]**,
-median 0.859, and **zero orbits at or above 0.98**, let alone 1.0. So on this task
-set the condition holds with a healthy margin, and the argument goes through. It does
-*not* establish ρ<1 for all inputs — 21 synthetic families at one token position is
-not the space of prompts, and the supervisor's point stands that a regime where
-contraction is not imposed is a different question.
+**Measured, 2026-08-09, over all 504 geomcap orbits at all five windows** (and
+independently re-derived from the same `results/geomcap.csv` after the machine
+switch, to the same digits): ρ ∈ **[0.808, 0.920]**, median 0.859, and **zero orbits
+at or above 0.98**, let alone 1.0. So on this task set the condition holds with a
+healthy margin, and the argument goes through. It does *not* establish ρ<1 for all
+inputs — 21 synthetic families at one token position is not the space of prompts,
+and the supervisor's point stands that a regime where contraction is not imposed is
+a different question.
 
 Two things follow that the first draft of this section got wrong:
 
