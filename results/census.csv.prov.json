@@ -1,0 +1,37 @@
+{
+  "band": [
+    0.2,
+    0.8
+  ],
+  "bytes": 11038,
+  "columns": [
+    "family",
+    "item",
+    "n_draws",
+    "n_correct",
+    "median_best_rank",
+    "min_best_rank",
+    "max_best_rank",
+    "best_depth_min",
+    "best_depth_max",
+    "multi_token_gold",
+    "gold",
+    "frac_correct",
+    "splits",
+    "rank_spread"
+  ],
+  "file": "census.csv",
+  "git_commit": "bebc73598b10f99c51ea58952158f3c28a708e12",
+  "git_dirty": true,
+  "kind": "census_pooled_primary",
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_items_screened": 252,
+  "n_rows": 193,
+  "note": "pooled estimate is primary; simulation showed the winner's curse is small and pooling wins on bias and error",
+  "produced_by": "scripts/run_census_analysis.py",
+  "run_id": "20260809T213012Z-524b7b2a",
+  "screen_draws": 4,
+  "sha256": "fd3c5c1e8465799736a0db4a0b793bfabe22063afc7cd6375029e4568096b875",
+  "written_utc": "2026-08-09T21:30:12.601862+00:00"
+}

@@ -1,0 +1,92 @@
+[{"stream_name":"stdout","time":1.320951037,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.799755799,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.844957584,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 89.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.878354457,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 33.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.926741977,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 98.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":35.1568255,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stderr","time":128.575264131,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:10\u003c03:30, 70.18s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:10\u003c00:00, 17.54s/it]\n"}
+,{"stream_name":"stderr","time":128.728809859,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 63.77it/s]\n"}
+,{"stream_name":"stdout","time":141.285790812,"data":"=== STAGE 1: screen 21 families x 12 items x 4 draws ===\n"}
+,{"stream_name":"stdout","time":386.84316465,"data":"        echo_digit: acc 100.0%  splitting items 0/12  [   352s]\n"}
+,{"stream_name":"stdout","time":639.158624495,"data":"         echo_word: acc 87.5%  splitting items 1/12  [   604s]\n"}
+,{"stream_name":"stdout","time":904.527924271,"data":"          nth_item: acc 27.1%  splitting items 4/12  [   869s]\n"}
+,{"stream_name":"stdout","time":1169.469893971,"data":"         last_item: acc  8.3%  splitting items 0/12  [  1134s]\n"}
+,{"stream_name":"stdout","time":1409.088813732,"data":"              add1: acc 79.2%  splitting items 7/12  [  1374s]\n"}
+,{"stream_name":"stdout","time":1649.626372693,"data":"              sub1: acc 56.2%  splitting items 4/12  [  1614s]\n"}
+,{"stream_name":"stdout","time":1899.710247218,"data":"            add_2d: acc 31.2%  splitting items 6/12  [  1865s]\n"}
+,{"stream_name":"stdout","time":2159.098056098,"data":"           compare: acc 91.7%  splitting items 2/12  [  2124s]\n"}
+,{"stream_name":"stdout","time":2424.897016616,"data":"            count4: acc 12.5%  splitting items 1/12  [  2390s]\n"}
+,{"stream_name":"stdout","time":2691.637252154,"data":"            count8: acc  0.0%  splitting items 0/12  [  2656s]\n"}
+,{"stream_name":"stdout","time":3142.218397495,"data":"           count16: acc 10.4%  splitting items 2/12  [  3107s]\n"}
+,{"stream_name":"stdout","time":3594.762106996,"data":"        count_mod3: acc 52.1%  splitting items 1/12  [  3560s]\n"}
+,{"stream_name":"stdout","time":4048.350361621,"data":"           parity8: acc 29.2%  splitting items 3/12  [  4013s]\n"}
+,{"stream_name":"stdout","time":4500.959125718,"data":"       track_total: acc 33.3%  splitting items 0/12  [  4466s]\n"}
+,{"stream_name":"stdout","time":4954.491825752,"data":"        local_last: acc 25.0%  splitting items 5/12  [  4919s]\n"}
+,{"stream_name":"stdout","time":5406.071811456,"data":"           max_run: acc  0.0%  splitting items 0/12  [  5371s]\n"}
+,{"stream_name":"stdout","time":5672.183734577,"data":"          sort_min: acc 60.4%  splitting items 5/12  [  5637s]\n"}
+,{"stream_name":"stdout","time":5928.387169349,"data":"       succ_letter: acc  2.1%  splitting items 1/12  [  5893s]\n"}
+,{"stream_name":"stdout","time":6191.995320242,"data":"    caesar1_letter: acc  4.2%  splitting items 1/12  [  6157s]\n"}
+,{"stream_name":"stdout","time":6458.870183255,"data":"      caesar1_word: acc  0.0%  splitting items 0/12  [  6424s]\n"}
+,{"stream_name":"stdout","time":6722.849374687,"data":"        rot13_word: acc  0.0%  splitting items 0/12  [  6688s]\n"}
+,{"stream_name":"stdout","time":6722.883963243,"data":"\n"}
+,{"stream_name":"stdout","time":6722.883984206,"data":"=== STAGE 2: deepen 193 candidate items x 20 more draws ===\n"}
+,{"stream_name":"stdout","time":31996.126416849,"data":"\n"}
+,{"stream_name":"stdout","time":31996.126819854,"data":"=== CENSUS RESULT: 76/252 items split (193 measured deeply) ===\n"}
+,{"stream_name":"stdout","time":31996.126845042,"data":"            family item draws frac_cor med_rank  spread multi_tok\n"}
+,{"stream_name":"stdout","time":31996.126850734,"data":"        local_last    1    24     0.50      1.5    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.126855884,"data":"          nth_item   11    24     0.50      1.5    4.00     False\n"}
+,{"stream_name":"stdout","time":31996.126860999,"data":"           parity8    2    24     0.50      1.5    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.126866492,"data":"           count16    5    24     0.54      1.0    2.00      True\n"}
+,{"stream_name":"stdout","time":31996.126983301,"data":"          nth_item    9    24     0.54      1.0    5.00     False\n"}
+,{"stream_name":"stdout","time":31996.127064874,"data":"              sub1    0    24     0.54      1.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.127075274,"data":"            add_2d    9    24     0.46      2.0    3.00      True\n"}
+,{"stream_name":"stdout","time":31996.127080469,"data":"              sub1    4    24     0.46      2.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.127174406,"data":"          sort_min    9    24     0.42      2.0    2.00      True\n"}
+,{"stream_name":"stdout","time":31996.127265689,"data":"              add1    4    24     0.58      1.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.127340901,"data":"            add_2d    5    24     0.58      1.0    3.00      True\n"}
+,{"stream_name":"stdout","time":31996.127382757,"data":"           parity8    0    24     0.58      1.0    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.127564485,"data":"              add1   10    24     0.38      2.0    4.00     False\n"}
+,{"stream_name":"stdout","time":31996.127589435,"data":"            add_2d    8    24     0.38      2.0    4.00      True\n"}
+,{"stream_name":"stdout","time":31996.127670653,"data":"        local_last    3    24     0.62      1.0    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.127729876,"data":"        local_last   10    24     0.62      1.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.127778238,"data":"           parity8    1    24     0.38      2.0    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.127824981,"data":"           parity8    4    24     0.62      1.0    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.127907828,"data":"              sub1    2    24     0.62      1.0    4.00     False\n"}
+,{"stream_name":"stdout","time":31996.127952422,"data":"              add1    2    24     0.67      1.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.128000281,"data":"              add1    8    24     0.67      1.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.128098698,"data":"           count16    4    24     0.67      1.0    2.00      True\n"}
+,{"stream_name":"stdout","time":31996.12816649,"data":"            count4    7    24     0.67      1.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.128283299,"data":"       succ_letter    8    24     0.67      1.0    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.128430449,"data":"              add1    1    24     0.71      1.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.12844537,"data":"              add1    9    24     0.71      1.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.128450611,"data":"            add_2d    7    24     0.71      1.0    3.00      True\n"}
+,{"stream_name":"stdout","time":31996.12849198,"data":"    caesar1_letter    4    24     0.71      1.0    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.128526836,"data":"           compare    1    24     0.71      1.0    3.00      True\n"}
+,{"stream_name":"stdout","time":31996.12862224,"data":"        local_last    9    24     0.71      1.0    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.128630777,"data":"          nth_item    3    24     0.71      1.0    4.00     False\n"}
+,{"stream_name":"stdout","time":31996.128697988,"data":"              add1    7    24     0.75      1.0    4.00     False\n"}
+,{"stream_name":"stdout","time":31996.128704168,"data":"            add_2d    2    24     0.75      1.0    2.00      True\n"}
+,{"stream_name":"stdout","time":31996.128778155,"data":"           compare    2    24     0.25      2.0    3.00      True\n"}
+,{"stream_name":"stdout","time":31996.128862227,"data":"         echo_word    3    24     0.25      2.0    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.128957963,"data":"           parity8    6    24     0.25      2.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.12896519,"data":"           parity8    8    24     0.75      1.0    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.129090526,"data":"          sort_min    6    24     0.75      1.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.129095817,"data":"          sort_min   11    24     0.25      2.0    2.00     False\n"}
+,{"stream_name":"stdout","time":31996.129177058,"data":"              sub1    3    24     0.25      2.0    3.00     False\n"}
+,{"stream_name":"stdout","time":31996.129181894,"data":"\n"}
+,{"stream_name":"stdout","time":31996.129185348,"data":"  PRE-REGISTERED CHECKS\n"}
+,{"stream_name":"stdout","time":31996.129264258,"data":"    (1) splitting rate = 76/252 = 30.2%\n"}
+,{"stream_name":"stdout","time":31996.129596498,"data":"    (2) splitting items' median_best_rank: min 1.0 med 1.0 max 4.0 (predicted to cluster in 1-8)\n"}
+,{"stream_name":"stdout","time":31996.129711407,"data":"    (3) add1 present: True; splitting families: ['add1', 'add_2d', 'caesar1_letter', 'compare', 'count16', 'count4', 'count_mod3', 'echo_digit', 'echo_word', 'last_item', 'local_last', 'nth_item', 'parity8', 'sort_min', 'sub1', 'succ_letter', 'track_total']\n"}
+,{"stream_name":"stdout","time":31996.272704116,"data":"\n"}
+,{"stream_name":"stdout","time":31996.272757865,"data":"wrote census.json  [31961s]\n"}
+,{"stream_name":"stdout","time":32008.992093579,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":32009.894460449,"data":"  purged /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":32009.89449298,"data":"DONE\n"}
+,{"stream_name":"stderr","time":32017.573856924,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":32017.573918977,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":32017.879659311,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":32017.879723134,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":32018.622683482,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":32019.768151166,"data":"[NbConvertApp] Writing 381216 bytes to __results__.html\n"}
+]
