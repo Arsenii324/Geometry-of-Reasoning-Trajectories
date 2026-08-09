@@ -43,7 +43,13 @@ And the topological signal behaves the same way: real, well-nulled, and outcome-
 2. **The dynamics do not reach the readout.** ρ(contraction rate, best_depth) =
    **+0.118, p = 0.65**, against a floor detecting effects three times smaller than the
    variation present (D114).
-3. **Because the readout never waits.** On solved orbits the answer is top-ranked at
+3. **A causally manipulated regime change produces no behavioural difference.** In
+   D132's paired design — same sequence, same marker, same required answer, only the
+   instruction's noun differing — the rotating arm and its settling counterparts differ
+   in neither the depth at which the answer is best available (16.0 vs 14.5, p = 0.156)
+   nor the best rank reached (6.5 vs 7.0, p = 0.880). This is the strongest of the three
+   because it manipulates rather than correlates.
+4. **Because the readout never waits.** On solved orbits the answer is top-ranked at
    **median unroll 4**, with **87% of the state's journey still ahead**; the state
    reaches a 1% residual only at unroll 32–36 (D112, replicated across banks; threshold
    dependence measured in D97's correction).
