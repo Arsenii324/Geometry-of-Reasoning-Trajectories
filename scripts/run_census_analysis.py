@@ -88,11 +88,17 @@ def split_stages(rows: list, screen_draws: int) -> pd.DataFrame:
     out = []
     seen: dict[tuple, int] = {}
     for r in rows:
-        if not r.get("ok"):
-            continue
         key = (r["family"], r["item"])
         i = seen.get(key, 0)
+        # THE COUNTER MUST ADVANCE ON FAILED ROWS TOO (thread A7). These kernels
+        # append a row for every attempt, `{"ok": False, "why": ...}` on exception,
+        # so position in the list IS the draw index. Skipping a failed row before
+        # incrementing would shift every later draw of that item down one slot and
+        # tag a stage-2 draw as stage 1 -- silently, and only for items that had a
+        # failure, i.e. exactly the items most likely to be odd in other ways.
         seen[key] = i + 1
+        if not r.get("ok"):
+            continue
         out.append({**{k: r[k] for k in
                        ("family", "item", "best_rank", "best_depth", "correct",
                         "final_rank", "n_tokens", "multi_token_gold", "gold")},
