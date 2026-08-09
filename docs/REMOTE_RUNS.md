@@ -211,6 +211,40 @@ from a template, so **write results incrementally rather than once at the end.**
   revision of this file asserted it did not, which was inference stated as fact and is
   retracted. Design so it does not matter: if a run's value depends on output surviving
   an abnormal end, the run is already badly designed.
+## Cutting the ~650 s per-job startup (measured 2026-08-10, on the CHEAPEST tier)
+
+Every GPU job pays ~262-282 s downloading the model and ~390 s on pip before any compute.
+A probe agent tested the options on `c1.4` (no GPU spend) against the CLI's own config
+parser, not the docs:
+
+| mechanism | supported | note |
+|---|---|---|
+| `env.docker: {image: ...}` | **yes** | works on GPU tiers here — job `bt1hd3oqb17690amgolg` ran `nvidia/cuda:12.2.2` on g1.1 |
+| `datasets: [<id>: VAR]` | **yes** | read-only mount at `/job/datasets/<id>`; full create→mount round trip verified |
+| `flags: [attach-project-disk]` | **yes** | writable, **persists across jobs**, but only **10.74 GB** — too small for the 15.65 GB of weights |
+| cached/named python env | **NO — does not exist** | a fresh venv per job (`/job/.job_python_venv_*` differs every run); the docs' caching claim is about INPUT FILES |
+
+**The validity check that made the cheap tier usable:** pip resolves on platform tags, not
+GPU presence, so `c1.4` downloaded **3005.8 MB** for `torch==2.5.1` against the GPU job's
+**3006.0 MB** — the bytes transfer, so mechanism and volume are testable there. The SECONDS
+do not: PyPI measured 8.3 MB/s from `c1.4` against ~55 MB/s on the GPU pod. Never quote a
+cheap-tier duration as a GPU-tier saving.
+
+**Recommended, unambiguous:** put the weights in a dataset and mount them — removes the whole
+262-282 s phase, and `snapshot_download` into an `output-datasets:` entry can be built by a
+`c1.4` job with no GPU. The dataset ID is **not printed by `job get`**; it lives only in the
+Job proto's `output_datasets[].id`.
+
+**A genuine choice, not made here (CLAUDE.md section 8):** the pip phase. Docker Hub's
+`pytorch/pytorch:2.5.1-cuda12.4-cudnn9-runtime` carries the identical CUDA stack with zero pip,
+but is 3.34 GB and measured a **204-219 s cold pull**; a wheel cache on the project disk still
+pays **155.4 s** to install. Both beat ~390 s, neither is free, and a custom image on Yandex
+Container Registry would likely beat both (in-cloud pull, and it could bake in `transformers`,
+which the pytorch image lacks) — untested, and creating a registry is an account change.
+
+*Left behind by the probe: dataset `bt1glucd0h22vcddas9t` (1 GB marker) and two small files on
+the project disk, both safe to delete.*
+
 - **PUSH BEFORE YOU LAUNCH.** Remote jobs `git clone` the branch from GitHub, so a
   kernel importing anything added locally fails on the REMOTE's older copy. On
   2026-08-09 A4b died at `ImportError: cannot import name 'require_null_can_move'`
