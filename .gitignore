@@ -59,6 +59,7 @@
 !/scratch/kaggle_geomcap/
 !/scratch/kaggle_depthacc/
 !/scratch/kaggle_lenmatch/
+!/scratch/kaggle_marker/
 # DataSphere bundle: template only, the real cfg.yaml is generated at submit time
 # with the WandB key injected and is deliberately NOT committed.
 !/scratch/ds_eigen/

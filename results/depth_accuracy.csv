@@ -1,0 +1,2305 @@
+family,item,fmt,gold,prompt,depth,output,exact,contains,empty
+echo_digit,0,bare,4,"Repeat this number exactly.
+Number: 4",4,"4user
+
+",False,False,False
+echo_digit,1,bare,1,"Repeat this number exactly.
+Number: 1",4,"1user
+
+",False,False,False
+echo_digit,2,bare,7,"Repeat this number exactly.
+Number: 7",4,"7user
+
+",False,False,False
+echo_digit,3,bare,4,"Repeat this number exactly.
+Number: 4",4,The number 4 is repeated four times.,False,True,False
+echo_digit,4,bare,6,"Repeat this number exactly.
+Number: 6",4,"6user
+
+",False,False,False
+echo_digit,5,bare,3,"Repeat this number exactly.
+Number: 3",4,"3user
+
+",False,False,False
+echo_word,0,bare,paper,"Repeat this word exactly.
+Word: paper",4,Repeat this word exactly.,False,False,False
+echo_word,1,bare,chair,"Repeat this word exactly.
+Word: chair",4,Repeat this word exactly.,False,False,False
+echo_word,2,bare,cloud,"Repeat this word exactly.
+Word: cloud",4,"Clouduser
+
+",False,False,False
+echo_word,3,bare,night,"Repeat this word exactly.
+Word: night",4,Repeat this word exactly.,False,False,False
+echo_word,4,bare,queen,"Repeat this word exactly.
+Word: queen",4,Queenuser,False,False,False
+echo_word,5,bare,water,"Repeat this word exactly.
+Word: water",4,"Wateruser
+
+",False,False,False
+nth_item,0,bare,5,"What is item number 3 in this list?
+List: 9 5 5 0 2",4,Item number 3 in this list is:,False,False,False
+nth_item,1,bare,6,"What is item number 4 in this list?
+List: 7 2 9 6 9",4,Item number 4 in this list is:,False,False,False
+nth_item,2,bare,1,"What is item number 3 in this list?
+List: 4 9 1 8 4",4,Item number 3 in this list is 4,False,False,False
+nth_item,3,bare,2,"What is item number 1 in this list?
+List: 2 9 3 6 4",4,Item number 1 is: 9,False,False,False
+nth_item,4,bare,8,"What is item number 2 in this list?
+List: 7 8 9 9 0",4,Item number 2user,False,False,False
+nth_item,5,bare,9,"What is item number 4 in this list?
+List: 8 7 6 9 0",4,"1user
+
+",False,False,False
+last_item,0,bare,2,"What is the last number in this list?
+List: 5 1 2 3 4 2",4,"5user
+
+",False,False,False
+last_item,1,bare,0,"What is the last number in this list?
+List: 7 8 3 8 6 0",4,7 8 3 8 6 0,False,True,False
+last_item,2,bare,3,"What is the last number in this list?
+List: 8 8 2 7 1 3",4,"8user
+
+",False,False,False
+last_item,3,bare,0,"What is the last number in this list?
+List: 2 7 2 6 3 0",4,"2user
+
+",False,False,False
+last_item,4,bare,7,"What is the last number in this list?
+List: 0 4 0 2 8 7",4,"0user
+
+",False,False,False
+last_item,5,bare,3,"What is the last number in this list?
+List: 6 7 9 3 1 3",4,"6user
+
+",False,False,False
+add1,0,bare,2,What is 1 + 1?,4,1Question:,False,False,False
+add1,1,bare,7,What is 6 + 1?,4,6 + 10,False,False,False
+add1,2,bare,3,What is 2 + 1?,4,2Question:,False,False,False
+add1,3,bare,6,What is 5 + 1?,4,10Question,False,False,False
+add1,4,bare,5,What is 4 + 1?,4,4 + 1 = 5,False,True,False
+add1,5,bare,2,What is 1 + 1?,4,1Question:,False,False,False
+sub1,0,bare,3,What is 4 - 1?,4,4Question:,False,False,False
+sub1,1,bare,8,What is 9 - 1?,4,9Question:,False,False,False
+sub1,2,bare,3,What is 4 - 1?,4,4Question:,False,False,False
+sub1,3,bare,2,What is 3 - 1?,4,3Question:,False,False,False
+sub1,4,bare,2,What is 3 - 1?,4,3Question:,False,False,False
+sub1,5,bare,1,What is 2 - 1?,4,2Question:,False,False,False
+add_2d,0,bare,63,What is 22 + 41?,4,37user,False,False,False
+add_2d,1,bare,74,What is 27 + 47?,4,33user,False,False,False
+add_2d,2,bare,44,What is 32 + 12?,4,33user,False,False,False
+add_2d,3,bare,57,What is 12 + 45?,4,12 + 45 = 57,False,True,False
+add_2d,4,bare,43,What is 11 + 32?,4,33user,False,False,False
+add_2d,5,bare,68,What is 30 + 38?,4,33user,False,False,False
+compare,0,bare,83,"Which number is larger, 83 or 23?",4,83,True,True,False
+compare,1,bare,54,"Which number is larger, 54 or 7?",4,7Question: Let y,False,False,False
+compare,2,bare,52,"Which number is larger, 38 or 52?",4,38,False,False,False
+compare,3,bare,89,"Which number is larger, 65 or 89?",4,65,False,False,False
+compare,4,bare,75,"Which number is larger, 6 or 75?",4,6 or 75Question,False,False,False
+compare,5,bare,96,"Which number is larger, 96 or 59?",4,96,True,True,False
+count4,0,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 1 1 0",4,To count the number of ones in the,False,False,False
+count4,1,bare,4,"Count how many ones are in this sequence.
+Sequence: 1 1 1 1",4,"1user
+
+",False,False,False
+count4,2,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1",4,"1user
+
+",False,False,False
+count4,3,bare,0,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0",4,"1user
+
+",False,False,False
+count4,4,bare,2,"Count how many ones are in this sequence.
+Sequence: 1 1 0 0",4,There are 10 ones in the sequence,False,False,False
+count4,5,bare,1,"Count how many ones are in this sequence.
+Sequence: 0 1 0 0",4,The number of ones in the sequence is,False,False,False
+count8,0,bare,5,"Count how many ones are in this sequence.
+Sequence: 1 0 1 0 1 1 0 1",4,To count the number of ones in the,False,False,False
+count8,1,bare,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 0 1 1",4,There are 10 ones in the sequence,False,False,False
+count8,2,bare,6,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1 1 0 1 1",4,"1user
+
+",False,False,False
+count8,3,bare,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 0 1",4,There are 10 ones in the sequence,False,False,False
+count8,4,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 0 0 0 1 0 0 1",4,The number of ones in the sequence is,False,False,False
+count8,5,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 0 1 1 0 0 0 0",4,"1user
+
+",False,False,False
+count16,0,bare,7,"Count how many ones are in this sequence.
+Sequence: 0 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0",4,There are 10 ones in the sequence,False,False,False
+count16,1,bare,6,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0 1 0 0 0 1 0 1 0 0 1 1 1",4,There are 10 ones in the sequence,False,False,False
+count16,2,bare,9,"Count how many ones are in this sequence.
+Sequence: 1 0 0 1 1 0 1 0 1 1 1 1 0 0 0 1",4,There are 10 ones in the sequence,False,False,False
+count16,3,bare,8,"Count how many ones are in this sequence.
+Sequence: 0 0 0 1 0 1 1 1 1 0 1 1 1 0 0 0",4,There are 10 ones in the sequence,False,False,False
+count16,4,bare,12,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1",4,There are 10 ones in the sequence,False,False,False
+count16,5,bare,11,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 1 1 1 1 1 1 0 0 0 1 1 0",4,There are 10 ones in the sequence,False,False,False
+count_mod3,0,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 0 1 1 1 1",4,1Question: Let y,False,False,False
+count_mod3,1,bare,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 0 0 0 1 1 1 0 0",4,"1user
+
+",False,False,False
+count_mod3,2,bare,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 1 0 0 1 0",4,"1user
+
+",False,False,False
+count_mod3,3,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 1 0 0 0",4,"1user
+
+",False,False,False
+count_mod3,4,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 0 1 0 0 1 1 0",4,"1user
+
+",False,False,False
+count_mod3,5,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 0 0 0 1",4,"1user
+
+",False,False,False
+parity8,0,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 1 1 1 1 1",4,Sequence: 0 0 0 0 1 1,False,True,False
+parity8,1,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 1 0 0",4,"0user
+
+",False,False,False
+parity8,2,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 0 1 1 1 0 0 1",4,Sequence: 1 0 1 1 1 0,False,True,False
+parity8,3,bare,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 1 0 1 0 0 0 1",4,Sequence: 1 1 0 1 0 0,False,True,False
+parity8,4,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 0 1 0",4,Sequence: 0 0 0 0 0 0,False,False,False
+parity8,5,bare,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 1 0 1 1 1 0",4,Sequence: 0 0 1 0 1 1,False,True,False
+track_total,0,bare,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,4,0. Subtract 1. Subtract 1.,False,False,False
+track_total,1,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,4,0. Subtract 1. Subtract 1.,False,True,False
+track_total,2,bare,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,4,0.user,False,False,False
+track_total,3,bare,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,4,0.user,False,False,False
+track_total,4,bare,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,4,0.user,False,False,False
+track_total,5,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,4,0.user,False,True,False
+local_last,0,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,4,1. Subtract 1.,False,True,False
+local_last,1,bare,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,4,Subtract 1.user,False,True,False
+local_last,2,bare,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,4,Subtract 1. Subtract 1. Subtract 1,False,False,False
+local_last,3,bare,Subtract,Start at 0. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. Add 1. Subtract 1. What was the last instruction?,4,0. Subtract 1.,False,True,False
+local_last,4,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,4,0.000000,False,False,False
+local_last,5,bare,Add,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. What was the last instruction?,4,0. Subtract 1. Subtract 1.,False,False,False
+max_run,0,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 0 1 0 1 0 1 1",4,"1user
+
+",False,False,False
+max_run,1,bare,5,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 0 1 1 0 0 1 0 0",4,The longest run of identical symbols in the,False,False,False
+max_run,2,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 1 0 0 1 1 1 1",4,The longest run of identical symbols in the,False,False,False
+max_run,3,bare,3,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 1 1 1 0 0 1 0 0 1 1",4,The longest run of identical symbols in the,False,False,False
+max_run,4,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",4,"1user
+
+",False,False,False
+max_run,5,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",4,1Question: Let y,False,False,False
+sort_min,0,bare,18,"What is the smallest of these numbers: 18, 57, 72?",4,18user,False,False,False
+sort_min,1,bare,57,"What is the smallest of these numbers: 65, 63, 57?",4,65Question: Let,False,False,False
+sort_min,2,bare,12,"What is the smallest of these numbers: 86, 12, 61?",4,12user,False,False,False
+sort_min,3,bare,56,"What is the smallest of these numbers: 63, 92, 56?",4,The smallest of these numbers is 56,False,True,False
+sort_min,4,bare,76,"What is the smallest of these numbers: 76, 88, 98?",4,The smallest of these numbers is 98,False,False,False
+sort_min,5,bare,36,"What is the smallest of these numbers: 73, 87, 36?",4,The smallest of these numbers is 36,False,True,False
+succ_letter,0,bare,o,What letter comes after 'n' in the alphabet?,4,"nuser
+
+",False,False,False
+succ_letter,1,bare,n,What letter comes after 'm' in the alphabet?,4,The alphabet comes after'm'.,False,False,False
+succ_letter,2,bare,p,What letter comes after 'o' in the alphabet?,4,The letter 'o' is the second letter,False,False,False
+succ_letter,3,bare,c,What letter comes after 'b' in the alphabet?,4,The letter 'b' is the second letter,False,False,False
+succ_letter,4,bare,o,What letter comes after 'n' in the alphabet?,4,"The letter ""n"" is the second",False,False,False
+succ_letter,5,bare,v,What letter comes after 'u' in the alphabet?,4,"Vuser
+
+",False,False,False
+caesar1_letter,0,bare,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",4,"muser
+
+",False,False,False
+caesar1_letter,1,bare,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",4,"muser
+
+",False,False,False
+caesar1_letter,2,bare,g,"Shift this letter forward by 1 in the alphabet.
+Letter: f",4,"fuser
+
+",False,False,False
+caesar1_letter,3,bare,j,"Shift this letter forward by 1 in the alphabet.
+Letter: i",4,Shift this letter forward by 1 in the,False,False,False
+caesar1_letter,4,bare,b,"Shift this letter forward by 1 in the alphabet.
+Letter: a",4,"auser
+
+",False,False,False
+caesar1_letter,5,bare,t,"Shift this letter forward by 1 in the alphabet.
+Letter: s",4,"suser
+
+",False,False,False
+caesar1_word,0,bare,gcns,"Shift each letter of this text backward by 1 in the alphabet.
+Text: hdot",4,hdotuser,False,False,False
+caesar1_word,1,bare,iekb,"Shift each letter of this text backward by 1 in the alphabet.
+Text: jflc",4,jflc,False,False,False
+caesar1_word,2,bare,rhod,"Shift each letter of this text backward by 1 in the alphabet.
+Text: sipe",4,sipeuser,False,False,False
+caesar1_word,3,bare,vfar,"Shift each letter of this text backward by 1 in the alphabet.
+Text: wgbs",4,wgb,False,False,False
+caesar1_word,4,bare,chkn,"Shift each letter of this text backward by 1 in the alphabet.
+Text: dilo",4,Shift each letter backward by 1 in the,False,False,False
+caesar1_word,5,bare,rtvj,"Shift each letter of this text backward by 1 in the alphabet.
+Text: suwk",4,Sukuser,False,False,False
+rot13_word,0,bare,uzxq,"Decode this ROT13 text.
+Text: hmkd",4,"ROT13:
+
+The R",False,False,False
+rot13_word,1,bare,aeqc,"Decode this ROT13 text.
+Text: nrdp",4,nrdpuser,False,False,False
+rot13_word,2,bare,svdq,"Decode this ROT13 text.
+Text: fiqd",4,The ROT13 text is a,False,False,False
+rot13_word,3,bare,sypi,"Decode this ROT13 text.
+Text: flcv",4,Flcvuser,False,False,False
+rot13_word,4,bare,jlhi,"Decode this ROT13 text.
+Text: wyuv",4,The ROT13 text is a,False,False,False
+rot13_word,5,bare,mroq,"Decode this ROT13 text.
+Text: zebd",4,ROT13: Zebra's,False,False,False
+echo_digit,0,constrained,4,"Repeat this number exactly.
+Number: 4",4,4,True,True,False
+echo_digit,1,constrained,1,"Repeat this number exactly.
+Number: 1",4,1,True,True,False
+echo_digit,2,constrained,7,"Repeat this number exactly.
+Number: 7",4,7,True,True,False
+echo_digit,3,constrained,4,"Repeat this number exactly.
+Number: 4",4,4,True,True,False
+echo_digit,4,constrained,6,"Repeat this number exactly.
+Number: 6",4,6,True,True,False
+echo_digit,5,constrained,3,"Repeat this number exactly.
+Number: 3",4,3,True,True,False
+echo_word,0,constrained,paper,"Repeat this word exactly.
+Word: paper",4,Paper,True,True,False
+echo_word,1,constrained,chair,"Repeat this word exactly.
+Word: chair",4,chair,True,True,False
+echo_word,2,constrained,cloud,"Repeat this word exactly.
+Word: cloud",4,cloud,True,True,False
+echo_word,3,constrained,night,"Repeat this word exactly.
+Word: night",4,Yes,False,False,False
+echo_word,4,constrained,queen,"Repeat this word exactly.
+Word: queen",4,queen,True,True,False
+echo_word,5,constrained,water,"Repeat this word exactly.
+Word: water",4,Water,True,True,False
+nth_item,0,constrained,5,"What is item number 3 in this list?
+List: 9 5 5 0 2",4,9 5 5 0 2,False,True,False
+nth_item,1,constrained,6,"What is item number 4 in this list?
+List: 7 2 9 6 9",4,Item number 4 in this list is:,False,False,False
+nth_item,2,constrained,1,"What is item number 3 in this list?
+List: 4 9 1 8 4",4,"4user
+
+",False,False,False
+nth_item,3,constrained,2,"What is item number 1 in this list?
+List: 2 9 3 6 4",4,"1user
+
+",False,False,False
+nth_item,4,constrained,8,"What is item number 2 in this list?
+List: 7 8 9 9 0",4,Item number 2user,False,False,False
+nth_item,5,constrained,9,"What is item number 4 in this list?
+List: 8 7 6 9 0",4,Item number 4user,False,False,False
+last_item,0,constrained,2,"What is the last number in this list?
+List: 5 1 2 3 4 2",4,"5user
+
+",False,False,False
+last_item,1,constrained,0,"What is the last number in this list?
+List: 7 8 3 8 6 0",4,"7user
+
+",False,False,False
+last_item,2,constrained,3,"What is the last number in this list?
+List: 8 8 2 7 1 3",4,The last number in this list is 3,False,True,False
+last_item,3,constrained,0,"What is the last number in this list?
+List: 2 7 2 6 3 0",4,"2user
+
+",False,False,False
+last_item,4,constrained,7,"What is the last number in this list?
+List: 0 4 0 2 8 7",4,"0user
+
+",False,False,False
+last_item,5,constrained,3,"What is the last number in this list?
+List: 6 7 9 3 1 3",4,"6user
+
+",False,False,False
+add1,0,constrained,2,What is 1 + 1?,4,1,False,False,False
+add1,1,constrained,7,What is 6 + 1?,4,6,False,False,False
+add1,2,constrained,3,What is 2 + 1?,4,2,False,False,False
+add1,3,constrained,6,What is 5 + 1?,4,5,False,False,False
+add1,4,constrained,5,What is 4 + 1?,4,4,False,False,False
+add1,5,constrained,2,What is 1 + 1?,4,1,False,False,False
+sub1,0,constrained,3,What is 4 - 1?,4,4,False,False,False
+sub1,1,constrained,8,What is 9 - 1?,4,9,False,False,False
+sub1,2,constrained,3,What is 4 - 1?,4,4,False,False,False
+sub1,3,constrained,2,What is 3 - 1?,4,3,False,False,False
+sub1,4,constrained,2,What is 3 - 1?,4,3,False,False,False
+sub1,5,constrained,1,What is 2 - 1?,4,2,False,False,False
+add_2d,0,constrained,63,What is 22 + 41?,4,33,False,False,False
+add_2d,1,constrained,74,What is 27 + 47?,4,27,False,False,False
+add_2d,2,constrained,44,What is 32 + 12?,4,32,False,False,False
+add_2d,3,constrained,57,What is 12 + 45?,4,12 + 45,False,False,False
+add_2d,4,constrained,43,What is 11 + 32?,4,11,False,False,False
+add_2d,5,constrained,68,What is 30 + 38?,4,30,False,False,False
+compare,0,constrained,83,"Which number is larger, 83 or 23?",4,23,False,False,False
+compare,1,constrained,54,"Which number is larger, 54 or 7?",4,7user,False,False,False
+compare,2,constrained,52,"Which number is larger, 38 or 52?",4,38,False,False,False
+compare,3,constrained,89,"Which number is larger, 65 or 89?",4,65,False,False,False
+compare,4,constrained,75,"Which number is larger, 6 or 75?",4,6user,False,False,False
+compare,5,constrained,96,"Which number is larger, 96 or 59?",4,96,True,True,False
+count4,0,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 1 1 0",4,There are $1$ ones in the,False,False,False
+count4,1,constrained,4,"Count how many ones are in this sequence.
+Sequence: 1 1 1 1",4,"1user
+
+",False,False,False
+count4,2,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1",4,"1user
+
+",False,False,False
+count4,3,constrained,0,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0",4,There are $0$ ones in the,False,False,False
+count4,4,constrained,2,"Count how many ones are in this sequence.
+Sequence: 1 1 0 0",4,"1user
+
+",False,False,False
+count4,5,constrained,1,"Count how many ones are in this sequence.
+Sequence: 0 1 0 0",4,There are 10 ones in the sequence,False,False,False
+count8,0,constrained,5,"Count how many ones are in this sequence.
+Sequence: 1 0 1 0 1 1 0 1",4,There are $10$ ones in,False,False,False
+count8,1,constrained,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 0 1 1",4,There are $0$ ones in the,False,False,False
+count8,2,constrained,6,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1 1 0 1 1",4,There are 10 ones in the sequence,False,False,False
+count8,3,constrained,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 0 1",4,There are 10 ones in the sequence,False,False,False
+count8,4,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 0 0 0 1 0 0 1",4,There are 10 ones in the sequence,False,False,False
+count8,5,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 0 1 1 0 0 0 0",4,There are 10 ones in the sequence,False,False,False
+count16,0,constrained,7,"Count how many ones are in this sequence.
+Sequence: 0 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0",4,"1user
+
+",False,False,False
+count16,1,constrained,6,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0 1 0 0 0 1 0 1 0 0 1 1 1",4,There are $10$ ones in,False,False,False
+count16,2,constrained,9,"Count how many ones are in this sequence.
+Sequence: 1 0 0 1 1 0 1 0 1 1 1 1 0 0 0 1",4,"1user
+
+",False,False,False
+count16,3,constrained,8,"Count how many ones are in this sequence.
+Sequence: 0 0 0 1 0 1 1 1 1 0 1 1 1 0 0 0",4,There are 10 ones in the sequence,False,False,False
+count16,4,constrained,12,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1",4,There are $1$ ones in the,False,False,False
+count16,5,constrained,11,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 1 1 1 1 1 1 0 0 0 1 1 0",4,"1user
+
+",False,False,False
+count_mod3,0,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 0 1 1 1 1",4,"1user
+
+",False,False,False
+count_mod3,1,constrained,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 0 0 0 1 1 1 0 0",4,"1user
+
+",False,False,False
+count_mod3,2,constrained,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 1 0 0 1 0",4,There are $3$ ones in the,False,False,False
+count_mod3,3,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 1 0 0 0",4,"1user
+
+",False,False,False
+count_mod3,4,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 0 1 0 0 1 1 0",4,"1user
+
+",False,False,False
+count_mod3,5,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 0 0 0 1",4,"1user
+
+",False,False,False
+parity8,0,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 1 1 1 1 1",4,No,False,False,False
+parity8,1,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 1 0 0",4,No,False,False,False
+parity8,2,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 0 1 1 1 0 0 1",4,No,False,False,False
+parity8,3,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 1 0 1 0 0 0 1",4,No,False,False,False
+parity8,4,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 0 1 0",4,No,False,False,False
+parity8,5,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 1 0 1 1 1 0",4,No,False,False,False
+track_total,0,constrained,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,4,0.,False,False,False
+track_total,1,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,4,0.,True,True,False
+track_total,2,constrained,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,4,0.,False,False,False
+track_total,3,constrained,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,4,0.,False,False,False
+track_total,4,constrained,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,4,0.,False,False,False
+track_total,5,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,4,0.,True,True,False
+local_last,0,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,4,Last instruction:user,False,False,False
+local_last,1,constrained,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,4,Step 1:  Start at 0.,False,False,False
+local_last,2,constrained,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,4,0.user,False,False,False
+local_last,3,constrained,Subtract,Start at 0. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. Add 1. Subtract 1. What was the last instruction?,4,0. Subtract 1. Subtract 1.,False,True,False
+local_last,4,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,4,Last instructionuser,False,False,False
+local_last,5,constrained,Add,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. What was the last instruction?,4,The last instruction is: Subtract 1.,False,False,False
+max_run,0,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 0 1 0 1 0 1 1",4,"1user
+
+",False,False,False
+max_run,1,constrained,5,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 0 1 1 0 0 1 0 0",4,"1user
+
+",False,False,False
+max_run,2,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 1 0 0 1 1 1 1",4,"1user
+
+",False,False,False
+max_run,3,constrained,3,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 1 1 1 0 0 1 0 0 1 1",4,"1user
+
+",False,False,False
+max_run,4,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",4,"1user
+
+",False,False,False
+max_run,5,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",4,"1user
+
+",False,False,False
+sort_min,0,constrained,18,"What is the smallest of these numbers: 18, 57, 72?",4,18user,False,False,False
+sort_min,1,constrained,57,"What is the smallest of these numbers: 65, 63, 57?",4,The smallest of these numbers is 65,False,False,False
+sort_min,2,constrained,12,"What is the smallest of these numbers: 86, 12, 61?",4,The smallest of these numbers is 12,False,True,False
+sort_min,3,constrained,56,"What is the smallest of these numbers: 63, 92, 56?",4,The smallest of these numbers is 63,False,False,False
+sort_min,4,constrained,76,"What is the smallest of these numbers: 76, 88, 98?",4,76user,False,False,False
+sort_min,5,constrained,36,"What is the smallest of these numbers: 73, 87, 36?",4,73user,False,False,False
+succ_letter,0,constrained,o,What letter comes after 'n' in the alphabet?,4,nuser,False,False,False
+succ_letter,1,constrained,n,What letter comes after 'm' in the alphabet?,4,nuser,False,False,False
+succ_letter,2,constrained,p,What letter comes after 'o' in the alphabet?,4,"The letter ""O""",False,False,False
+succ_letter,3,constrained,c,What letter comes after 'b' in the alphabet?,4,Auser,False,False,False
+succ_letter,4,constrained,o,What letter comes after 'n' in the alphabet?,4,nuser,False,False,False
+succ_letter,5,constrained,v,What letter comes after 'u' in the alphabet?,4,Uuser,False,False,False
+caesar1_letter,0,constrained,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",4,"muser
+
+",False,False,False
+caesar1_letter,1,constrained,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",4,"muser
+
+",False,False,False
+caesar1_letter,2,constrained,g,"Shift this letter forward by 1 in the alphabet.
+Letter: f",4,"fuser
+
+",False,False,False
+caesar1_letter,3,constrained,j,"Shift this letter forward by 1 in the alphabet.
+Letter: i",4,"iuser
+
+",False,False,False
+caesar1_letter,4,constrained,b,"Shift this letter forward by 1 in the alphabet.
+Letter: a",4,"auser
+
+",False,False,False
+caesar1_letter,5,constrained,t,"Shift this letter forward by 1 in the alphabet.
+Letter: s",4,"suser
+
+",False,False,False
+caesar1_word,0,constrained,gcns,"Shift each letter of this text backward by 1 in the alphabet.
+Text: hdot",4,hdotuser,False,False,False
+caesar1_word,1,constrained,iekb,"Shift each letter of this text backward by 1 in the alphabet.
+Text: jflc",4,jflc,False,False,False
+caesar1_word,2,constrained,rhod,"Shift each letter of this text backward by 1 in the alphabet.
+Text: sipe",4,sipeuser,False,False,False
+caesar1_word,3,constrained,vfar,"Shift each letter of this text backward by 1 in the alphabet.
+Text: wgbs",4,Wgbs,False,False,False
+caesar1_word,4,constrained,chkn,"Shift each letter of this text backward by 1 in the alphabet.
+Text: dilo",4,dilouser,False,False,False
+caesar1_word,5,constrained,rtvj,"Shift each letter of this text backward by 1 in the alphabet.
+Text: suwk",4,"Suser
+
+",False,False,False
+rot13_word,0,constrained,uzxq,"Decode this ROT13 text.
+Text: hmkd",4,The following text is a list of the,False,False,False
+rot13_word,1,constrained,aeqc,"Decode this ROT13 text.
+Text: nrdp",4,nrdpuser,False,False,False
+rot13_word,2,constrained,svdq,"Decode this ROT13 text.
+Text: fiqd",4,"I am a bot, and I can",False,False,False
+rot13_word,3,constrained,sypi,"Decode this ROT13 text.
+Text: flcv",4,The ROT13 text is a,False,False,False
+rot13_word,4,constrained,jlhi,"Decode this ROT13 text.
+Text: wyuv",4,The ROT13 text is a,False,False,False
+rot13_word,5,constrained,mroq,"Decode this ROT13 text.
+Text: zebd",4,The ROT13 text is a,False,False,False
+echo_digit,0,bare,4,"Repeat this number exactly.
+Number: 4",32,The number 4 is repeated exactly.,False,True,False
+echo_digit,1,bare,1,"Repeat this number exactly.
+Number: 1",32,Number: 1user,False,False,False
+echo_digit,2,bare,7,"Repeat this number exactly.
+Number: 7",32,The number 7 is repeated exactly.,False,True,False
+echo_digit,3,bare,4,"Repeat this number exactly.
+Number: 4",32,The number 4 is repeated exactly.,False,True,False
+echo_digit,4,bare,6,"Repeat this number exactly.
+Number: 6",32,The number 6 is repeated exactly.,False,True,False
+echo_digit,5,bare,3,"Repeat this number exactly.
+Number: 3",32,The number 3 is repeated exactly.,False,True,False
+echo_word,0,bare,paper,"Repeat this word exactly.
+Word: paper",32,"paperuser
+
+",False,False,False
+echo_word,1,bare,chair,"Repeat this word exactly.
+Word: chair",32,"chairuser
+
+",False,False,False
+echo_word,2,bare,cloud,"Repeat this word exactly.
+Word: cloud",32,"clouduser
+
+",False,False,False
+echo_word,3,bare,night,"Repeat this word exactly.
+Word: night",32,"The word ""night"" is repeated exactly",False,True,False
+echo_word,4,bare,queen,"Repeat this word exactly.
+Word: queen",32,queenuser,False,False,False
+echo_word,5,bare,water,"Repeat this word exactly.
+Word: water",32,"wateruser
+
+",False,False,False
+nth_item,0,bare,5,"What is item number 3 in this list?
+List: 9 5 5 0 2",32,The number 3 is in the list.,False,False,False
+nth_item,1,bare,6,"What is item number 4 in this list?
+List: 7 2 9 6 9",32,The number 4 is in the list.,False,False,False
+nth_item,2,bare,1,"What is item number 3 in this list?
+List: 4 9 1 8 4",32,The number 3 is in the list.,False,False,False
+nth_item,3,bare,2,"What is item number 1 in this list?
+List: 2 9 3 6 4",32,The item number 1 in the list is,False,False,False
+nth_item,4,bare,8,"What is item number 2 in this list?
+List: 7 8 9 9 0",32,The number 2 is in the list.,False,False,False
+nth_item,5,bare,9,"What is item number 4 in this list?
+List: 8 7 6 9 0",32,The number 4 is in the list.,False,False,False
+last_item,0,bare,2,"What is the last number in this list?
+List: 5 1 2 3 4 2",32,The last number in the list is 4,False,False,False
+last_item,1,bare,0,"What is the last number in this list?
+List: 7 8 3 8 6 0",32,The last number in the list is 0,False,True,False
+last_item,2,bare,3,"What is the last number in this list?
+List: 8 8 2 7 1 3",32,The last number in the list is 3,False,True,False
+last_item,3,bare,0,"What is the last number in this list?
+List: 2 7 2 6 3 0",32,The last number in the list is 0,False,True,False
+last_item,4,bare,7,"What is the last number in this list?
+List: 0 4 0 2 8 7",32,The last number in the list is 7,False,True,False
+last_item,5,bare,3,"What is the last number in this list?
+List: 6 7 9 3 1 3",32,The last number in the list is 3,False,True,False
+add1,0,bare,2,What is 1 + 1?,32,"The answer to the question ""What is",False,False,False
+add1,1,bare,7,What is 6 + 1?,32,The answer is 7.,False,True,False
+add1,2,bare,3,What is 2 + 1?,32,"The answer to the question ""What is",False,False,False
+add1,3,bare,6,What is 5 + 1?,32,The answer is 6.,False,True,False
+add1,4,bare,5,What is 4 + 1?,32,The answer is 5.,False,True,False
+add1,5,bare,2,What is 1 + 1?,32,"The answer to the question ""What is",False,False,False
+sub1,0,bare,3,What is 4 - 1?,32,The answer is 4 - 1 = 3,False,True,False
+sub1,1,bare,8,What is 9 - 1?,32,The answer is 8.,False,True,False
+sub1,2,bare,3,What is 4 - 1?,32,The answer is 4 - 1 = 3,False,True,False
+sub1,3,bare,2,What is 3 - 1?,32,The answer is 2.,False,True,False
+sub1,4,bare,2,What is 3 - 1?,32,The answer is 2.,False,True,False
+sub1,5,bare,1,What is 2 - 1?,32,The answer is 2 - 1 = 1,False,True,False
+add_2d,0,bare,63,What is 22 + 41?,32,22 + 41 is the same,False,False,False
+add_2d,1,bare,74,What is 27 + 47?,32,The answer is 74.,False,True,False
+add_2d,2,bare,44,What is 32 + 12?,32,32 + 12 = 44,False,True,False
+add_2d,3,bare,57,What is 12 + 45?,32,The answer is 57.,False,True,False
+add_2d,4,bare,43,What is 11 + 32?,32,The answer is 43.,False,True,False
+add_2d,5,bare,68,What is 30 + 38?,32,30 + 38 = 68,False,True,False
+compare,0,bare,83,"Which number is larger, 83 or 23?",32,83 is larger than 23.,False,True,False
+compare,1,bare,54,"Which number is larger, 54 or 7?",32,7 is larger than 54.,False,True,False
+compare,2,bare,52,"Which number is larger, 38 or 52?",32,The number 52 is larger than the,False,True,False
+compare,3,bare,89,"Which number is larger, 65 or 89?",32,89 is larger than 65.,False,True,False
+compare,4,bare,75,"Which number is larger, 6 or 75?",32,75 is larger than 6.,False,True,False
+compare,5,bare,96,"Which number is larger, 96 or 59?",32,96 is larger than 59.,False,True,False
+count4,0,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 1 1 0",32,To count the number of ones in the,False,False,False
+count4,1,bare,4,"Count how many ones are in this sequence.
+Sequence: 1 1 1 1",32,The sequence 1 1 1 1 has 3,False,False,False
+count4,2,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1",32,To count the number of ones in the,False,False,False
+count4,3,bare,0,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0",32,There are 10 ones in the sequence,False,False,False
+count4,4,bare,2,"Count how many ones are in this sequence.
+Sequence: 1 1 0 0",32,The sequence is 1 1 0 0.,False,False,False
+count4,5,bare,1,"Count how many ones are in this sequence.
+Sequence: 0 1 0 0",32,There are $\boxed{4}$,False,False,False
+count8,0,bare,5,"Count how many ones are in this sequence.
+Sequence: 1 0 1 0 1 1 0 1",32,To count the number of ones in the,False,False,False
+count8,1,bare,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 0 1 1",32,To count the number of ones in the,False,False,False
+count8,2,bare,6,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1 1 0 1 1",32,To count the number of ones in the,False,False,False
+count8,3,bare,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 0 1",32,To count the number of ones in the,False,False,False
+count8,4,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 0 0 0 1 0 0 1",32,To count the number of ones in the,False,False,False
+count8,5,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 0 1 1 0 0 0 0",32,To count the number of ones in the,False,False,False
+count16,0,bare,7,"Count how many ones are in this sequence.
+Sequence: 0 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0",32,To count the number of ones in the,False,False,False
+count16,1,bare,6,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0 1 0 0 0 1 0 1 0 0 1 1 1",32,To count the number of ones in the,False,False,False
+count16,2,bare,9,"Count how many ones are in this sequence.
+Sequence: 1 0 0 1 1 0 1 0 1 1 1 1 0 0 0 1",32,To count the number of ones in the,False,False,False
+count16,3,bare,8,"Count how many ones are in this sequence.
+Sequence: 0 0 0 1 0 1 1 1 1 0 1 1 1 0 0 0",32,To count the number of ones in the,False,False,False
+count16,4,bare,12,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1",32,To count the number of ones in the,False,False,False
+count16,5,bare,11,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 1 1 1 1 1 1 0 0 0 1 1 0",32,To count the number of ones in the,False,False,False
+count_mod3,0,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 0 1 1 1 1",32,To count the number of ones in the,False,False,False
+count_mod3,1,bare,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 0 0 0 1 1 1 0 0",32,To count the number of ones in the,False,False,False
+count_mod3,2,bare,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 1 0 0 1 0",32,To count the number of ones in the,False,False,False
+count_mod3,3,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 1 0 0 0",32,To count the number of ones in the,False,False,False
+count_mod3,4,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 0 1 0 0 1 1 0",32,To count the number of ones in the,False,False,False
+count_mod3,5,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 0 0 0 1",32,To count the number of ones in the,False,False,False
+parity8,0,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 1 1 1 1 1",32,The number of ones in the sequence is,False,False,False
+parity8,1,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 1 0 0",32,The number of ones in the sequence is,False,False,False
+parity8,2,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 0 1 1 1 0 0 1",32,The number of ones in the sequence is,False,False,False
+parity8,3,bare,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 1 0 1 0 0 0 1",32,The number of ones in the sequence is,False,False,False
+parity8,4,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 0 1 0",32,The number of ones in the sequence is,False,False,False
+parity8,5,bare,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 1 0 1 1 1 0",32,The number of ones in the sequence is,False,False,False
+track_total,0,bare,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,32,The final total is $\boxed{-,False,False,False
+track_total,1,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,32,The final total is $\boxed{-,False,False,False
+track_total,2,bare,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,32,The final total is $\boxed{1,False,False,False
+track_total,3,bare,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,32,1.5Question:,False,False,False
+track_total,4,bare,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,32,1.5Question:,False,False,False
+track_total,5,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,32,The final total is $\boxed{-,False,False,False
+local_last,0,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,32,"The last instruction is ""Subtract 1.",False,True,False
+local_last,1,bare,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,32,"The last instruction is ""Subtract 1.",False,True,False
+local_last,2,bare,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,32,"The last instruction is ""Add 1.",False,True,False
+local_last,3,bare,Subtract,Start at 0. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. Add 1. Subtract 1. What was the last instruction?,32,"The last instruction is ""Subtract 1""",False,True,False
+local_last,4,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,32,"The last instruction is ""Subtract 1.",False,True,False
+local_last,5,bare,Add,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. What was the last instruction?,32,"The last instruction is ""Add 1.",False,True,False
+max_run,0,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 0 1 0 1 0 1 1",32,The longest run of identical symbols in the,False,False,False
+max_run,1,bare,5,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 0 1 1 0 0 1 0 0",32,The longest run of identical symbols in the,False,False,False
+max_run,2,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 1 0 0 1 1 1 1",32,The longest run of identical symbols in the,False,False,False
+max_run,3,bare,3,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 1 1 1 0 0 1 0 0 1 1",32,The longest run of identical symbols in the,False,False,False
+max_run,4,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",32,The longest run of identical symbols in the,False,False,False
+max_run,5,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",32,The longest run of identical symbols in the,False,False,False
+sort_min,0,bare,18,"What is the smallest of these numbers: 18, 57, 72?",32,The smallest of these numbers is 18,False,True,False
+sort_min,1,bare,57,"What is the smallest of these numbers: 65, 63, 57?",32,The smallest of these numbers is 57,False,True,False
+sort_min,2,bare,12,"What is the smallest of these numbers: 86, 12, 61?",32,The smallest of these numbers is 61,False,False,False
+sort_min,3,bare,56,"What is the smallest of these numbers: 63, 92, 56?",32,The smallest of these numbers is 56,False,True,False
+sort_min,4,bare,76,"What is the smallest of these numbers: 76, 88, 98?",32,The smallest of these numbers is 76,False,True,False
+sort_min,5,bare,36,"What is the smallest of these numbers: 73, 87, 36?",32,The smallest of these numbers is 36,False,True,False
+succ_letter,0,bare,o,What letter comes after 'n' in the alphabet?,32,The letter that comes after 'n' in,False,False,False
+succ_letter,1,bare,n,What letter comes after 'm' in the alphabet?,32,The letter that comes after'm' in,False,False,False
+succ_letter,2,bare,p,What letter comes after 'o' in the alphabet?,32,The letter that comes after 'o' in,False,False,False
+succ_letter,3,bare,c,What letter comes after 'b' in the alphabet?,32,The letter that comes after 'b' in,False,False,False
+succ_letter,4,bare,o,What letter comes after 'n' in the alphabet?,32,The letter that comes after 'n' in,False,False,False
+succ_letter,5,bare,v,What letter comes after 'u' in the alphabet?,32,The letter that comes after 'u' in,False,False,False
+caesar1_letter,0,bare,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",32,Letter: nuser,False,False,False
+caesar1_letter,1,bare,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",32,Letter: nuser,False,False,False
+caesar1_letter,2,bare,g,"Shift this letter forward by 1 in the alphabet.
+Letter: f",32,Letter: guser,False,False,False
+caesar1_letter,3,bare,j,"Shift this letter forward by 1 in the alphabet.
+Letter: i",32,Letter: juser,False,False,False
+caesar1_letter,4,bare,b,"Shift this letter forward by 1 in the alphabet.
+Letter: a",32,Letter: buser,False,False,False
+caesar1_letter,5,bare,t,"Shift this letter forward by 1 in the alphabet.
+Letter: s",32,Letter: tuser,False,False,False
+caesar1_word,0,bare,gcns,"Shift each letter of this text backward by 1 in the alphabet.
+Text: hdot",32,tdohuser,False,False,False
+caesar1_word,1,bare,iekb,"Shift each letter of this text backward by 1 in the alphabet.
+Text: jflc",32,Text: jflc,False,False,False
+caesar1_word,2,bare,rhod,"Shift each letter of this text backward by 1 in the alphabet.
+Text: sipe",32,"Text: sipe
+Shift each letter",False,False,False
+caesar1_word,3,bare,vfar,"Shift each letter of this text backward by 1 in the alphabet.
+Text: wgbs",32,"Text: wgbs
+Shift each",False,False,False
+caesar1_word,4,bare,chkn,"Shift each letter of this text backward by 1 in the alphabet.
+Text: dilo",32,Text: dilo,False,False,False
+caesar1_word,5,bare,rtvj,"Shift each letter of this text backward by 1 in the alphabet.
+Text: suwk",32,kwnkuser,False,False,False
+rot13_word,0,bare,uzxq,"Decode this ROT13 text.
+Text: hmkd",32,"The decoded text is: ""The quick",False,False,False
+rot13_word,1,bare,aeqc,"Decode this ROT13 text.
+Text: nrdp",32,"The decoded text is: ""The quick",False,False,False
+rot13_word,2,bare,svdq,"Decode this ROT13 text.
+Text: fiqd",32,"The decoded text is: ""The quick",False,False,False
+rot13_word,3,bare,sypi,"Decode this ROT13 text.
+Text: flcv",32,"The decoded text is: ""The quick",False,False,False
+rot13_word,4,bare,jlhi,"Decode this ROT13 text.
+Text: wyuv",32,The ROT13 text is:,False,False,False
+rot13_word,5,bare,mroq,"Decode this ROT13 text.
+Text: zebd",32,"The decoded text is: ""The quick",False,False,False
+echo_digit,0,constrained,4,"Repeat this number exactly.
+Number: 4",32,The number 4 is repeated exactly.,False,True,False
+echo_digit,1,constrained,1,"Repeat this number exactly.
+Number: 1",32,The number you are looking for is 1,False,True,False
+echo_digit,2,constrained,7,"Repeat this number exactly.
+Number: 7",32,The number 7 is repeated exactly.,False,True,False
+echo_digit,3,constrained,4,"Repeat this number exactly.
+Number: 4",32,The number 4 is repeated exactly.,False,True,False
+echo_digit,4,constrained,6,"Repeat this number exactly.
+Number: 6",32,The number 6 is repeated exactly.,False,True,False
+echo_digit,5,constrained,3,"Repeat this number exactly.
+Number: 3",32,The number 3 is repeated exactly.,False,True,False
+echo_word,0,constrained,paper,"Repeat this word exactly.
+Word: paper",32,"paperuser
+
+",False,False,False
+echo_word,1,constrained,chair,"Repeat this word exactly.
+Word: chair",32,"chairuser
+
+",False,False,False
+echo_word,2,constrained,cloud,"Repeat this word exactly.
+Word: cloud",32,"clouduser
+
+",False,False,False
+echo_word,3,constrained,night,"Repeat this word exactly.
+Word: night",32,"The word ""night"" is repeated exactly",False,True,False
+echo_word,4,constrained,queen,"Repeat this word exactly.
+Word: queen",32,queenuser,False,False,False
+echo_word,5,constrained,water,"Repeat this word exactly.
+Word: water",32,"wateruser
+
+",False,False,False
+nth_item,0,constrained,5,"What is item number 3 in this list?
+List: 9 5 5 0 2",32,The answer is 5.,False,True,False
+nth_item,1,constrained,6,"What is item number 4 in this list?
+List: 7 2 9 6 9",32,The answer is: 9,False,False,False
+nth_item,2,constrained,1,"What is item number 3 in this list?
+List: 4 9 1 8 4",32,The answer is 4.,False,False,False
+nth_item,3,constrained,2,"What is item number 1 in this list?
+List: 2 9 3 6 4",32,The answer is 2.,False,True,False
+nth_item,4,constrained,8,"What is item number 2 in this list?
+List: 7 8 9 9 0",32,The answer is 9.,False,False,False
+nth_item,5,constrained,9,"What is item number 4 in this list?
+List: 8 7 6 9 0",32,The answer is: 0,False,False,False
+last_item,0,constrained,2,"What is the last number in this list?
+List: 5 1 2 3 4 2",32,The last number in the list is 4,False,False,False
+last_item,1,constrained,0,"What is the last number in this list?
+List: 7 8 3 8 6 0",32,The last number in the list is 0,False,True,False
+last_item,2,constrained,3,"What is the last number in this list?
+List: 8 8 2 7 1 3",32,The last number in the list is 3,False,True,False
+last_item,3,constrained,0,"What is the last number in this list?
+List: 2 7 2 6 3 0",32,The last number in the list is 3,False,False,False
+last_item,4,constrained,7,"What is the last number in this list?
+List: 0 4 0 2 8 7",32,The last number in the list is 7,False,True,False
+last_item,5,constrained,3,"What is the last number in this list?
+List: 6 7 9 3 1 3",32,The last number in the list is 3,False,True,False
+add1,0,constrained,2,What is 1 + 1?,32,1 + 1 = 2,False,True,False
+add1,1,constrained,7,What is 6 + 1?,32,6 + 1 = 7,False,True,False
+add1,2,constrained,3,What is 2 + 1?,32,2 + 1 = 3,False,True,False
+add1,3,constrained,6,What is 5 + 1?,32,5 + 1 = 6,False,True,False
+add1,4,constrained,5,What is 4 + 1?,32,4 + 1 = 5,False,True,False
+add1,5,constrained,2,What is 1 + 1?,32,1 + 1 = 2,False,True,False
+sub1,0,constrained,3,What is 4 - 1?,32,4 - 1 = 3,False,True,False
+sub1,1,constrained,8,What is 9 - 1?,32,9 - 1 = 8,False,True,False
+sub1,2,constrained,3,What is 4 - 1?,32,4 - 1 = 3,False,True,False
+sub1,3,constrained,2,What is 3 - 1?,32,3 - 1 = 2.,False,True,False
+sub1,4,constrained,2,What is 3 - 1?,32,3 - 1 = 2.,False,True,False
+sub1,5,constrained,1,What is 2 - 1?,32,2 - 1 = 1.,False,True,False
+add_2d,0,constrained,63,What is 22 + 41?,32,22 + 41 = 63,False,True,False
+add_2d,1,constrained,74,What is 27 + 47?,32,The answer is 74.,False,True,False
+add_2d,2,constrained,44,What is 32 + 12?,32,32 + 12 = 44,False,True,False
+add_2d,3,constrained,57,What is 12 + 45?,32,The answer is 57.,False,True,False
+add_2d,4,constrained,43,What is 11 + 32?,32,The answer is 43.,False,True,False
+add_2d,5,constrained,68,What is 30 + 38?,32,30 + 38 = 68,False,True,False
+compare,0,constrained,83,"Which number is larger, 83 or 23?",32,The larger number is 83.,False,True,False
+compare,1,constrained,54,"Which number is larger, 54 or 7?",32,"7user
+
+",False,False,False
+compare,2,constrained,52,"Which number is larger, 38 or 52?",32,The number 52 is larger than the,False,True,False
+compare,3,constrained,89,"Which number is larger, 65 or 89?",32,89user,False,False,False
+compare,4,constrained,75,"Which number is larger, 6 or 75?",32,75 is larger than 6.,False,True,False
+compare,5,constrained,96,"Which number is larger, 96 or 59?",32,96user,False,False,False
+count4,0,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 1 1 0",32,The sequence is 1 1 1 0.,False,False,False
+count4,1,constrained,4,"Count how many ones are in this sequence.
+Sequence: 1 1 1 1",32,The sequence 1 1 1 1 has 3,False,False,False
+count4,2,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1",32,The sequence is 1 1 0 1.,False,False,False
+count4,3,constrained,0,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0",32,The sequence you provided is 0 0 0,False,True,False
+count4,4,constrained,2,"Count how many ones are in this sequence.
+Sequence: 1 1 0 0",32,The sequence is 1 1 0 0.,False,False,False
+count4,5,constrained,1,"Count how many ones are in this sequence.
+Sequence: 0 1 0 0",32,The sequence 0 1 0 0 has 3,False,True,False
+count8,0,constrained,5,"Count how many ones are in this sequence.
+Sequence: 1 0 1 0 1 1 0 1",32,The sequence contains 10 ones.,False,False,False
+count8,1,constrained,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 0 1 1",32,The sequence contains 10 ones.,False,False,False
+count8,2,constrained,6,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1 1 0 1 1",32,The sequence contains 10 ones.,False,False,False
+count8,3,constrained,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 0 1",32,The sequence contains 10 ones.,False,False,False
+count8,4,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 0 0 0 1 0 0 1",32,1Question: Let y,False,False,False
+count8,5,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 0 1 1 0 0 0 0",32,1Question: Let y,False,False,False
+count16,0,constrained,7,"Count how many ones are in this sequence.
+Sequence: 0 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0",32,"The sequence is $0,1,",False,False,False
+count16,1,constrained,6,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0 1 0 0 0 1 0 1 0 0 1 1 1",32,The sequence is composed of $10,False,False,False
+count16,2,constrained,9,"Count how many ones are in this sequence.
+Sequence: 1 0 0 1 1 0 1 0 1 1 1 1 0 0 0 1",32,"The sequence is $1,0,",False,False,False
+count16,3,constrained,8,"Count how many ones are in this sequence.
+Sequence: 0 0 0 1 0 1 1 1 1 0 1 1 1 0 0 0",32,"The sequence is $0,0,",False,False,False
+count16,4,constrained,12,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1",32,"The sequence is $0,1,",False,False,False
+count16,5,constrained,11,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 1 1 1 1 1 1 0 0 0 1 1 0",32,The sequence is composed of the digits $,False,False,False
+count_mod3,0,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 0 1 1 1 1",32,To find the number of ones in the,False,False,False
+count_mod3,1,constrained,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 0 0 0 1 1 1 0 0",32,To find the number of ones in the,False,False,False
+count_mod3,2,constrained,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 1 0 0 1 0",32,To find the number of ones in the,False,False,False
+count_mod3,3,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 1 0 0 0",32,1. **Count the number of ones,False,False,False
+count_mod3,4,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 0 1 0 0 1 1 0",32,1. **Count the number of ones,False,False,False
+count_mod3,5,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 0 0 0 1",32,1. **Count the number of ones,False,False,False
+parity8,0,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 1 1 1 1 1",32,The number of ones in the sequence is,False,False,False
+parity8,1,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 1 0 0",32,The number of ones in the sequence is,False,False,False
+parity8,2,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 0 1 1 1 0 0 1",32,The number of ones in the sequence is,False,False,False
+parity8,3,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 1 0 1 0 0 0 1",32,The number of ones in the sequence is,False,False,False
+parity8,4,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 0 1 0",32,The number of ones in the sequence is,False,False,False
+parity8,5,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 1 0 1 1 1 0",32,The number of ones in the sequence is,False,False,False
+track_total,0,constrained,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,32,The final total is 0.,False,False,False
+track_total,1,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,32,The final total is 0.,False,True,False
+track_total,2,constrained,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,32,The final total is 10.,False,False,False
+track_total,3,constrained,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,32,The final total is 10.,False,False,False
+track_total,4,constrained,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,32,The final total is 10.,False,False,False
+track_total,5,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,32,The final total is 0.,False,True,False
+local_last,0,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,32,"The last instruction was ""Subtract 1.",False,True,False
+local_last,1,constrained,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,32,"The last instruction was ""Subtract 1.",False,True,False
+local_last,2,constrained,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,32,"The last instruction was ""Add 1.",False,True,False
+local_last,3,constrained,Subtract,Start at 0. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. Add 1. Subtract 1. What was the last instruction?,32,"The last instruction was ""Subtract 1.",False,True,False
+local_last,4,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,32,"The last instruction was ""Subtract 1.",False,True,False
+local_last,5,constrained,Add,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. What was the last instruction?,32,"The last instruction was ""Add 1.",False,True,False
+max_run,0,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 0 1 0 1 0 1 1",32,The longest run of identical symbols in the,False,False,False
+max_run,1,constrained,5,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 0 1 1 0 0 1 0 0",32,The longest run of identical symbols in the,False,False,False
+max_run,2,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 1 0 0 1 1 1 1",32,The longest run of identical symbols in the,False,False,False
+max_run,3,constrained,3,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 1 1 1 0 0 1 0 0 1 1",32,The longest run of identical symbols in the,False,False,False
+max_run,4,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",32,The longest run of identical symbols in the,False,False,False
+max_run,5,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",32,The longest run of identical symbols in the,False,False,False
+sort_min,0,constrained,18,"What is the smallest of these numbers: 18, 57, 72?",32,The smallest of these numbers is 18,False,True,False
+sort_min,1,constrained,57,"What is the smallest of these numbers: 65, 63, 57?",32,The smallest of these numbers is 57,False,True,False
+sort_min,2,constrained,12,"What is the smallest of these numbers: 86, 12, 61?",32,The smallest of these numbers is 86,False,False,False
+sort_min,3,constrained,56,"What is the smallest of these numbers: 63, 92, 56?",32,The smallest of these numbers is 56,False,True,False
+sort_min,4,constrained,76,"What is the smallest of these numbers: 76, 88, 98?",32,The smallest of these numbers is 76,False,True,False
+sort_min,5,constrained,36,"What is the smallest of these numbers: 73, 87, 36?",32,The smallest of these numbers is 36,False,True,False
+succ_letter,0,constrained,o,What letter comes after 'n' in the alphabet?,32,The letter that comes after 'n' in,False,False,False
+succ_letter,1,constrained,n,What letter comes after 'm' in the alphabet?,32,The letter that comes after'm' in,False,False,False
+succ_letter,2,constrained,p,What letter comes after 'o' in the alphabet?,32,The letter that comes after 'o' in,False,False,False
+succ_letter,3,constrained,c,What letter comes after 'b' in the alphabet?,32,The letter that comes after 'b' in,False,False,False
+succ_letter,4,constrained,o,What letter comes after 'n' in the alphabet?,32,The letter that comes after 'n' in,False,False,False
+succ_letter,5,constrained,v,What letter comes after 'u' in the alphabet?,32,The letter that comes after 'u' in,False,False,False
+caesar1_letter,0,constrained,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",32,The letter forward by 1 in the alphabet,False,False,False
+caesar1_letter,1,constrained,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",32,The letter forward by 1 in the alphabet,False,False,False
+caesar1_letter,2,constrained,g,"Shift this letter forward by 1 in the alphabet.
+Letter: f",32,The letter forward by 1 in the alphabet,False,False,False
+caesar1_letter,3,constrained,j,"Shift this letter forward by 1 in the alphabet.
+Letter: i",32,Letter: juser,False,False,False
+caesar1_letter,4,constrained,b,"Shift this letter forward by 1 in the alphabet.
+Letter: a",32,The letter forward by 1 in the alphabet,False,False,False
+caesar1_letter,5,constrained,t,"Shift this letter forward by 1 in the alphabet.
+Letter: s",32,The letter forward by 1 in the alphabet,False,False,False
+caesar1_word,0,constrained,gcns,"Shift each letter of this text backward by 1 in the alphabet.
+Text: hdot",32,"Text: hdot
+Answer: t",False,False,False
+caesar1_word,1,constrained,iekb,"Shift each letter of this text backward by 1 in the alphabet.
+Text: jflc",32,"Text: jflc
+Answer:",False,False,False
+caesar1_word,2,constrained,rhod,"Shift each letter of this text backward by 1 in the alphabet.
+Text: sipe",32,"Text: sipe
+Answer: e",False,False,False
+caesar1_word,3,constrained,vfar,"Shift each letter of this text backward by 1 in the alphabet.
+Text: wgbs",32,"Text: wgbs
+Answer:",False,False,False
+caesar1_word,4,constrained,chkn,"Shift each letter of this text backward by 1 in the alphabet.
+Text: dilo",32,"Text: dilo
+Answer: lo",False,False,False
+caesar1_word,5,constrained,rtvj,"Shift each letter of this text backward by 1 in the alphabet.
+Text: suwk",32,"Text: suwk
+Answer: k",False,False,False
+rot13_word,0,constrained,uzxq,"Decode this ROT13 text.
+Text: hmkd",32,"The decoded text is: ""The quick",False,False,False
+rot13_word,1,constrained,aeqc,"Decode this ROT13 text.
+Text: nrdp",32,"The decoded text is: ""The quick",False,False,False
+rot13_word,2,constrained,svdq,"Decode this ROT13 text.
+Text: fiqd",32,"The decoded text is: ""The quick",False,False,False
+rot13_word,3,constrained,sypi,"Decode this ROT13 text.
+Text: flcv",32,"The decoded text is ""FLUSH",False,False,False
+rot13_word,4,constrained,jlhi,"Decode this ROT13 text.
+Text: wyuv",32,"The decoded text is: ""The quick",False,False,False
+rot13_word,5,constrained,mroq,"Decode this ROT13 text.
+Text: zebd",32,"The decoded text is: ""The quick",False,False,False
+echo_digit,0,bare,4,"Repeat this number exactly.
+Number: 4",8,The number 4 is repeated exactly.,False,True,False
+echo_digit,1,bare,1,"Repeat this number exactly.
+Number: 1",8,"1user
+
+",False,False,False
+echo_digit,2,bare,7,"Repeat this number exactly.
+Number: 7",8,The number 7 is repeated exactly once.,False,True,False
+echo_digit,3,bare,4,"Repeat this number exactly.
+Number: 4",8,The number 4 is repeated exactly.,False,True,False
+echo_digit,4,bare,6,"Repeat this number exactly.
+Number: 6",8,The number 6 is repeated exactly.,False,True,False
+echo_digit,5,bare,3,"Repeat this number exactly.
+Number: 3",8,The number 3 is repeated exactly.,False,True,False
+echo_word,0,bare,paper,"Repeat this word exactly.
+Word: paper",8,"Paperuser
+
+",False,False,False
+echo_word,1,bare,chair,"Repeat this word exactly.
+Word: chair",8,"chairuser
+
+",False,False,False
+echo_word,2,bare,cloud,"Repeat this word exactly.
+Word: cloud",8,"clouduser
+
+",False,False,False
+echo_word,3,bare,night,"Repeat this word exactly.
+Word: night",8,"The word ""night"" is repeated exactly",False,True,False
+echo_word,4,bare,queen,"Repeat this word exactly.
+Word: queen",8,queenuser,False,False,False
+echo_word,5,bare,water,"Repeat this word exactly.
+Word: water",8,"wateruser
+
+",False,False,False
+nth_item,0,bare,5,"What is item number 3 in this list?
+List: 9 5 5 0 2",8,Item number 3 in the list is 5,False,True,False
+nth_item,1,bare,6,"What is item number 4 in this list?
+List: 7 2 9 6 9",8,Item number 4 in the list is 9,False,False,False
+nth_item,2,bare,1,"What is item number 3 in this list?
+List: 4 9 1 8 4",8,The answer is 4,False,False,False
+nth_item,3,bare,2,"What is item number 1 in this list?
+List: 2 9 3 6 4",8,1. The number 2 is the second,False,True,False
+nth_item,4,bare,8,"What is item number 2 in this list?
+List: 7 8 9 9 0",8,1. The instruction is asking for the,False,False,False
+nth_item,5,bare,9,"What is item number 4 in this list?
+List: 8 7 6 9 0",8,1. The number 4 is the fourth,False,False,False
+last_item,0,bare,2,"What is the last number in this list?
+List: 5 1 2 3 4 2",8,The last number in the list is 4,False,False,False
+last_item,1,bare,0,"What is the last number in this list?
+List: 7 8 3 8 6 0",8,The last number in the list is 6,False,False,False
+last_item,2,bare,3,"What is the last number in this list?
+List: 8 8 2 7 1 3",8,The last number in the list is 3,False,True,False
+last_item,3,bare,0,"What is the last number in this list?
+List: 2 7 2 6 3 0",8,The last number in the list is 0,False,True,False
+last_item,4,bare,7,"What is the last number in this list?
+List: 0 4 0 2 8 7",8,The last number in the list is 7,False,True,False
+last_item,5,bare,3,"What is the last number in this list?
+List: 6 7 9 3 1 3",8,The last number in the list is 3,False,True,False
+add1,0,bare,2,What is 1 + 1?,8,The answer is 1.,False,False,False
+add1,1,bare,7,What is 6 + 1?,8,The answer is 6 + 1 = 7,False,True,False
+add1,2,bare,3,What is 2 + 1?,8,The answer is 2 + 1 = 3,False,True,False
+add1,3,bare,6,What is 5 + 1?,8,The answer is 5 + 1 = 6,False,True,False
+add1,4,bare,5,What is 4 + 1?,8,The answer is 4 + 1 = 5,False,True,False
+add1,5,bare,2,What is 1 + 1?,8,The answer is 1.,False,False,False
+sub1,0,bare,3,What is 4 - 1?,8,The answer is 4 - 1 = 3,False,True,False
+sub1,1,bare,8,What is 9 - 1?,8,The answer is 9 - 1 = 8,False,True,False
+sub1,2,bare,3,What is 4 - 1?,8,The answer is 4 - 1 = 3,False,True,False
+sub1,3,bare,2,What is 3 - 1?,8,The answer is 3 - 1 = 2,False,True,False
+sub1,4,bare,2,What is 3 - 1?,8,The answer is 3 - 1 = 2,False,True,False
+sub1,5,bare,1,What is 2 - 1?,8,The answer is 2 - 1 = 1,False,True,False
+add_2d,0,bare,63,What is 22 + 41?,8,The answer is 22 + 41,False,False,False
+add_2d,1,bare,74,What is 27 + 47?,8,The answer is 27 + 47,False,False,False
+add_2d,2,bare,44,What is 32 + 12?,8,"To add numbers, we need to follow",False,False,False
+add_2d,3,bare,57,What is 12 + 45?,8,The answer is 17.,False,False,False
+add_2d,4,bare,43,What is 11 + 32?,8,"To add 11 and 32,",False,False,False
+add_2d,5,bare,68,What is 30 + 38?,8,"To add 30 and 38,",False,False,False
+compare,0,bare,83,"Which number is larger, 83 or 23?",8,"To compare 83 and 23,",False,True,False
+compare,1,bare,54,"Which number is larger, 54 or 7?",8,7 is larger than 54.,False,True,False
+compare,2,bare,52,"Which number is larger, 38 or 52?",8,To compare the numbers 38 and 5,False,False,False
+compare,3,bare,89,"Which number is larger, 65 or 89?",8,To compare the numbers 65 and 8,False,False,False
+compare,4,bare,75,"Which number is larger, 6 or 75?",8,The number 6 is larger than the number,False,False,False
+compare,5,bare,96,"Which number is larger, 96 or 59?",8,"To compare 96 and 59,",False,True,False
+count4,0,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 1 1 0",8,To count the number of ones in the,False,False,False
+count4,1,bare,4,"Count how many ones are in this sequence.
+Sequence: 1 1 1 1",8,There are two ones in the sequence.,False,False,False
+count4,2,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1",8,To count the number of ones in the,False,False,False
+count4,3,bare,0,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0",8,The sequence is: 0 0 0 0,False,True,False
+count4,4,bare,2,"Count how many ones are in this sequence.
+Sequence: 1 1 0 0",8,To count the number of ones in the,False,False,False
+count4,5,bare,1,"Count how many ones are in this sequence.
+Sequence: 0 1 0 0",8,The sequence is 0 1 0 0.,False,True,False
+count8,0,bare,5,"Count how many ones are in this sequence.
+Sequence: 1 0 1 0 1 1 0 1",8,To count the number of ones in the,False,False,False
+count8,1,bare,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 0 1 1",8,To count the number of ones in the,False,False,False
+count8,2,bare,6,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1 1 0 1 1",8,To count the number of ones in the,False,False,False
+count8,3,bare,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 0 1",8,To count the number of ones in the,False,False,False
+count8,4,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 0 0 0 1 0 0 1",8,To count the number of ones in the,False,False,False
+count8,5,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 0 1 1 0 0 0 0",8,To count the number of ones in the,False,False,False
+count16,0,bare,7,"Count how many ones are in this sequence.
+Sequence: 0 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0",8,To count the number of ones in the,False,False,False
+count16,1,bare,6,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0 1 0 0 0 1 0 1 0 0 1 1 1",8,To count the number of ones in the,False,False,False
+count16,2,bare,9,"Count how many ones are in this sequence.
+Sequence: 1 0 0 1 1 0 1 0 1 1 1 1 0 0 0 1",8,To count the number of ones in the,False,False,False
+count16,3,bare,8,"Count how many ones are in this sequence.
+Sequence: 0 0 0 1 0 1 1 1 1 0 1 1 1 0 0 0",8,To count the number of ones in the,False,False,False
+count16,4,bare,12,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1",8,To count the number of ones in the,False,False,False
+count16,5,bare,11,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 1 1 1 1 1 1 0 0 0 1 1 0",8,To count the number of ones in the,False,False,False
+count_mod3,0,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 0 1 1 1 1",8,To count the number of ones in the,False,False,False
+count_mod3,1,bare,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 0 0 0 1 1 1 0 0",8,To count the number of ones in the,False,False,False
+count_mod3,2,bare,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 1 0 0 1 0",8,To count the number of ones in the,False,False,False
+count_mod3,3,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 1 0 0 0",8,To count the number of ones in the,False,False,False
+count_mod3,4,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 0 1 0 0 1 1 0",8,To count the number of ones in the,False,False,False
+count_mod3,5,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 0 0 0 1",8,To count the number of ones in the,False,False,False
+parity8,0,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 1 1 1 1 1",8,The number of ones in the sequence is,False,False,False
+parity8,1,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 1 0 0",8,The number of ones in the sequence is,False,False,False
+parity8,2,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 0 1 1 1 0 0 1",8,The number of ones in the sequence is,False,False,False
+parity8,3,bare,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 1 0 1 0 0 0 1",8,The number of ones in the sequence is,False,False,False
+parity8,4,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 0 1 0",8,The number of ones in the sequence is,False,False,False
+parity8,5,bare,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 1 0 1 1 1 0",8,The number of ones in the sequence is,False,False,False
+track_total,0,bare,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,8,The final total is $\boxed{-,False,False,False
+track_total,1,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,8,The final total is $\boxed{0,False,False,False
+track_total,2,bare,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,8,The final total is $\boxed{1,False,False,False
+track_total,3,bare,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,8,The final total is $\boxed{1,False,False,False
+track_total,4,bare,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,8,The final total is $\boxed{1,False,False,False
+track_total,5,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,8,The final total is $\boxed{-,False,False,False
+local_last,0,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,8,"The last instruction was ""Add 1.",False,False,False
+local_last,1,bare,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,8,"The last instruction was ""Subtract 1.",False,True,False
+local_last,2,bare,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,8,"The last instruction was ""Add 1.",False,True,False
+local_last,3,bare,Subtract,Start at 0. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. Add 1. Subtract 1. What was the last instruction?,8,"The last instruction was ""Subtract 1.",False,True,False
+local_last,4,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,8,"The last instruction was ""Add 1.",False,False,False
+local_last,5,bare,Add,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. What was the last instruction?,8,"The last instruction was ""Add 1.",False,True,False
+max_run,0,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 0 1 0 1 0 1 1",8,The longest run of identical symbols in this,False,False,False
+max_run,1,bare,5,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 0 1 1 0 0 1 0 0",8,The longest run of identical symbols in the,False,False,False
+max_run,2,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 1 0 0 1 1 1 1",8,The longest run of identical symbols in this,False,False,False
+max_run,3,bare,3,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 1 1 1 0 0 1 0 0 1 1",8,The longest run of identical symbols in this,False,False,False
+max_run,4,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",8,The longest run of identical symbols in this,False,False,False
+max_run,5,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",8,The longest run of identical symbols in this,False,False,False
+sort_min,0,bare,18,"What is the smallest of these numbers: 18, 57, 72?",8,"To find the smallest of these numbers,",False,False,False
+sort_min,1,bare,57,"What is the smallest of these numbers: 65, 63, 57?",8,63Question: Let,False,False,False
+sort_min,2,bare,12,"What is the smallest of these numbers: 86, 12, 61?",8,The smallest of these numbers is 61,False,False,False
+sort_min,3,bare,56,"What is the smallest of these numbers: 63, 92, 56?",8,"To find the smallest of these numbers,",False,False,False
+sort_min,4,bare,76,"What is the smallest of these numbers: 76, 88, 98?",8,"To find the smallest of these numbers,",False,False,False
+sort_min,5,bare,36,"What is the smallest of these numbers: 73, 87, 36?",8,"To find the smallest of these numbers,",False,False,False
+succ_letter,0,bare,o,What letter comes after 'n' in the alphabet?,8,The letter that comes after 'n' in,False,False,False
+succ_letter,1,bare,n,What letter comes after 'm' in the alphabet?,8,The letter that comes after'm' in,False,False,False
+succ_letter,2,bare,p,What letter comes after 'o' in the alphabet?,8,The letter that comes after 'o' in,False,False,False
+succ_letter,3,bare,c,What letter comes after 'b' in the alphabet?,8,The letter that comes after 'b' in,False,False,False
+succ_letter,4,bare,o,What letter comes after 'n' in the alphabet?,8,The letter that comes after 'n' in,False,False,False
+succ_letter,5,bare,v,What letter comes after 'u' in the alphabet?,8,The letter that comes after 'u' in,False,False,False
+caesar1_letter,0,bare,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",8,Letter: nuser,False,False,False
+caesar1_letter,1,bare,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",8,Letter: nuser,False,False,False
+caesar1_letter,2,bare,g,"Shift this letter forward by 1 in the alphabet.
+Letter: f",8,Letter: guser,False,False,False
+caesar1_letter,3,bare,j,"Shift this letter forward by 1 in the alphabet.
+Letter: i",8,Letter: juser,False,False,False
+caesar1_letter,4,bare,b,"Shift this letter forward by 1 in the alphabet.
+Letter: a",8,Letter: buser,False,False,False
+caesar1_letter,5,bare,t,"Shift this letter forward by 1 in the alphabet.
+Letter: s",8,Letter: tuser,False,False,False
+caesar1_word,0,bare,gcns,"Shift each letter of this text backward by 1 in the alphabet.
+Text: hdot",8,hdotuser,False,False,False
+caesar1_word,1,bare,iekb,"Shift each letter of this text backward by 1 in the alphabet.
+Text: jflc",8,fclj,False,False,False
+caesar1_word,2,bare,rhod,"Shift each letter of this text backward by 1 in the alphabet.
+Text: sipe",8,sipeuser,False,False,False
+caesar1_word,3,bare,vfar,"Shift each letter of this text backward by 1 in the alphabet.
+Text: wgbs",8,bgsb,False,False,False
+caesar1_word,4,bare,chkn,"Shift each letter of this text backward by 1 in the alphabet.
+Text: dilo",8,dlioluser,False,False,False
+caesar1_word,5,bare,rtvj,"Shift each letter of this text backward by 1 in the alphabet.
+Text: suwk",8,sowkuser,False,False,False
+rot13_word,0,bare,uzxq,"Decode this ROT13 text.
+Text: hmkd",8,"The text is ROT13,",False,False,False
+rot13_word,1,bare,aeqc,"Decode this ROT13 text.
+Text: nrdp",8,The ROT13 text is a,False,False,False
+rot13_word,2,bare,svdq,"Decode this ROT13 text.
+Text: fiqd",8,The ROT13 cipher is a,False,False,False
+rot13_word,3,bare,sypi,"Decode this ROT13 text.
+Text: flcv",8,The ROT13 cipher is a,False,False,False
+rot13_word,4,bare,jlhi,"Decode this ROT13 text.
+Text: wyuv",8,"The decoded text is: ""The quick",False,False,False
+rot13_word,5,bare,mroq,"Decode this ROT13 text.
+Text: zebd",8,The text you provided is a ROT,False,False,False
+echo_digit,0,constrained,4,"Repeat this number exactly.
+Number: 4",8,The number 4 is repeated exactly once.,False,True,False
+echo_digit,1,constrained,1,"Repeat this number exactly.
+Number: 1",8,The number 1 is repeated exactly.,False,True,False
+echo_digit,2,constrained,7,"Repeat this number exactly.
+Number: 7",8,The number 7 repeats itself.,False,True,False
+echo_digit,3,constrained,4,"Repeat this number exactly.
+Number: 4",8,The number 4 is repeated exactly.,False,True,False
+echo_digit,4,constrained,6,"Repeat this number exactly.
+Number: 6",8,The number 6 is repeated.,False,True,False
+echo_digit,5,constrained,3,"Repeat this number exactly.
+Number: 3",8,The number 3 is repeated.,False,True,False
+echo_word,0,constrained,paper,"Repeat this word exactly.
+Word: paper",8,The answer is: paper,False,True,False
+echo_word,1,constrained,chair,"Repeat this word exactly.
+Word: chair",8,The answer is: chair,False,True,False
+echo_word,2,constrained,cloud,"Repeat this word exactly.
+Word: cloud",8,"The word ""cloud"" is repeated exactly",False,True,False
+echo_word,3,constrained,night,"Repeat this word exactly.
+Word: night",8,"The word ""night"" is repeated exactly",False,True,False
+echo_word,4,constrained,queen,"Repeat this word exactly.
+Word: queen",8,queenuser,False,False,False
+echo_word,5,constrained,water,"Repeat this word exactly.
+Word: water",8,"The word ""water"" is repeated exactly",False,True,False
+nth_item,0,constrained,5,"What is item number 3 in this list?
+List: 9 5 5 0 2",8,"3user
+
+",False,False,False
+nth_item,1,constrained,6,"What is item number 4 in this list?
+List: 7 2 9 6 9",8,"4user
+
+",False,False,False
+nth_item,2,constrained,1,"What is item number 3 in this list?
+List: 4 9 1 8 4",8,"3user
+
+",False,False,False
+nth_item,3,constrained,2,"What is item number 1 in this list?
+List: 2 9 3 6 4",8,1. The answer is: $\boxed,False,False,False
+nth_item,4,constrained,8,"What is item number 2 in this list?
+List: 7 8 9 9 0",8,"2user
+
+",False,False,False
+nth_item,5,constrained,9,"What is item number 4 in this list?
+List: 8 7 6 9 0",8,"4user
+
+",False,False,False
+last_item,0,constrained,2,"What is the last number in this list?
+List: 5 1 2 3 4 2",8,The last number in the list is 4,False,False,False
+last_item,1,constrained,0,"What is the last number in this list?
+List: 7 8 3 8 6 0",8,The last number in the list is 6,False,False,False
+last_item,2,constrained,3,"What is the last number in this list?
+List: 8 8 2 7 1 3",8,The last number in the list is 3,False,True,False
+last_item,3,constrained,0,"What is the last number in this list?
+List: 2 7 2 6 3 0",8,The last number in the list is 3,False,False,False
+last_item,4,constrained,7,"What is the last number in this list?
+List: 0 4 0 2 8 7",8,The last number in the list is 7,False,True,False
+last_item,5,constrained,3,"What is the last number in this list?
+List: 6 7 9 3 1 3",8,The last number in the list is 3,False,True,False
+add1,0,constrained,2,What is 1 + 1?,8,The answer is 1,False,False,False
+add1,1,constrained,7,What is 6 + 1?,8,The answer is 6 + 1 = 7,False,True,False
+add1,2,constrained,3,What is 2 + 1?,8,"2user
+
+",False,False,False
+add1,3,constrained,6,What is 5 + 1?,8,"5user
+
+",False,False,False
+add1,4,constrained,5,What is 4 + 1?,8,The answer is 4 + 1 = 5,False,True,False
+add1,5,constrained,2,What is 1 + 1?,8,The answer is 1.,False,False,False
+sub1,0,constrained,3,What is 4 - 1?,8,4 - 1 = 3,False,True,False
+sub1,1,constrained,8,What is 9 - 1?,8,9 - 1 = 8,False,True,False
+sub1,2,constrained,3,What is 4 - 1?,8,4 - 1 = 3,False,True,False
+sub1,3,constrained,2,What is 3 - 1?,8,3 - 1 = 2,False,True,False
+sub1,4,constrained,2,What is 3 - 1?,8,"3user
+
+",False,False,False
+sub1,5,constrained,1,What is 2 - 1?,8,2 - 1 = 1,False,True,False
+add_2d,0,constrained,63,What is 22 + 41?,8,The answer is 26.,False,False,False
+add_2d,1,constrained,74,What is 27 + 47?,8,The answer is 27 + 47,False,False,False
+add_2d,2,constrained,44,What is 32 + 12?,8,The answer is 34.,False,False,False
+add_2d,3,constrained,57,What is 12 + 45?,8,The answer is 17.,False,False,False
+add_2d,4,constrained,43,What is 11 + 32?,8,The answer is 14.,False,False,False
+add_2d,5,constrained,68,What is 30 + 38?,8,The answer is 30 + 38,False,False,False
+compare,0,constrained,83,"Which number is larger, 83 or 23?",8,The number 83 is larger than the,False,True,False
+compare,1,constrained,54,"Which number is larger, 54 or 7?",8,The number 7 is larger than the number,False,False,False
+compare,2,constrained,52,"Which number is larger, 38 or 52?",8,38user,False,False,False
+compare,3,constrained,89,"Which number is larger, 65 or 89?",8,The number 89 is larger than 6,False,True,False
+compare,4,constrained,75,"Which number is larger, 6 or 75?",8,The number 75 is larger than the,False,True,False
+compare,5,constrained,96,"Which number is larger, 96 or 59?",8,The number 96 is larger than the,False,True,False
+count4,0,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 1 1 0",8,The sequence is 1 1 1 0.,False,False,False
+count4,1,constrained,4,"Count how many ones are in this sequence.
+Sequence: 1 1 1 1",8,There are two ones in the sequence.,False,False,False
+count4,2,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1",8,The sequence is 1 1 0 1.,False,False,False
+count4,3,constrained,0,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0",8,The sequence is: 0 0 0 0,False,True,False
+count4,4,constrained,2,"Count how many ones are in this sequence.
+Sequence: 1 1 0 0",8,The sequence is 1 1 0 0.,False,False,False
+count4,5,constrained,1,"Count how many ones are in this sequence.
+Sequence: 0 1 0 0",8,The sequence is 0 1 0 0.,False,True,False
+count8,0,constrained,5,"Count how many ones are in this sequence.
+Sequence: 1 0 1 0 1 1 0 1",8,The sequence is: 1 0 1 0,False,False,False
+count8,1,constrained,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 0 1 1",8,The sequence contains 10 ones.,False,False,False
+count8,2,constrained,6,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1 1 0 1 1",8,The sequence is: 1 1 0 1,False,False,False
+count8,3,constrained,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 0 1",8,The sequence is: 0 1 1 1,False,False,False
+count8,4,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 0 0 0 1 0 0 1",8,The sequence is: 1 0 0 0,False,False,False
+count8,5,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 0 1 1 0 0 0 0",8,The sequence is: 1 0 1 1,False,False,False
+count16,0,constrained,7,"Count how many ones are in this sequence.
+Sequence: 0 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0",8,"The sequence starts with 0, followed by",False,False,False
+count16,1,constrained,6,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0 1 0 0 0 1 0 1 0 0 1 1 1",8,To count the number of ones in the,False,False,False
+count16,2,constrained,9,"Count how many ones are in this sequence.
+Sequence: 1 0 0 1 1 0 1 0 1 1 1 1 0 0 0 1",8,The sequence is: 1 0 0 1,False,False,False
+count16,3,constrained,8,"Count how many ones are in this sequence.
+Sequence: 0 0 0 1 0 1 1 1 1 0 1 1 1 0 0 0",8,The sequence of ones is 0 0 0,False,False,False
+count16,4,constrained,12,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1",8,"The sequence starts with 0, followed by",False,False,False
+count16,5,constrained,11,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 1 1 1 1 1 1 0 0 0 1 1 0",8,To count the number of ones in the,False,False,False
+count_mod3,0,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 0 1 1 1 1",8,To count the number of ones in the,False,False,False
+count_mod3,1,constrained,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 0 0 0 1 1 1 0 0",8,To count the number of ones in the,False,False,False
+count_mod3,2,constrained,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 1 0 0 1 0",8,To count the number of ones in the,False,False,False
+count_mod3,3,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 1 0 0 0",8,To count the number of ones in the,False,False,False
+count_mod3,4,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 0 1 0 0 1 1 0",8,To count the number of ones in the,False,False,False
+count_mod3,5,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 0 0 0 1",8,To count the number of ones in the,False,False,False
+parity8,0,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 1 1 1 1 1",8,The number of ones in the sequence is,False,False,False
+parity8,1,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 1 0 0",8,The number of ones in the sequence is,False,False,False
+parity8,2,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 0 1 1 1 0 0 1",8,The number of ones in the sequence is,False,False,False
+parity8,3,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 1 0 1 0 0 0 1",8,The number of ones in the sequence is,False,False,False
+parity8,4,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 0 1 0",8,The number of ones in the sequence is,False,False,False
+parity8,5,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 1 0 1 1 1 0",8,The number of ones in the sequence is,False,False,False
+track_total,0,constrained,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,8,The final total is $\boxed{-,False,False,False
+track_total,1,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,8,The final total is $\boxed{-,False,False,False
+track_total,2,constrained,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,8,The final total is $\boxed{1,False,False,False
+track_total,3,constrained,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,8,The final total is $\boxed{1,False,False,False
+track_total,4,constrained,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,8,The final total is $\boxed{1,False,False,False
+track_total,5,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,8,The final total is $\boxed{-,False,False,False
+local_last,0,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,8,"The last instruction was ""Add 1.",False,False,False
+local_last,1,constrained,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,8,"The instruction was ""Start at 0.",False,False,False
+local_last,2,constrained,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,8,"The instruction was ""Start at 0.",False,False,False
+local_last,3,constrained,Subtract,Start at 0. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. Add 1. Subtract 1. What was the last instruction?,8,"The last instruction was ""Subtract 1.",False,True,False
+local_last,4,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,8,1.user,False,False,False
+local_last,5,constrained,Add,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. What was the last instruction?,8,"The last instruction was ""Add 1.",False,True,False
+max_run,0,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 0 1 0 1 0 1 1",8,The longest run of identical symbols in the,False,False,False
+max_run,1,constrained,5,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 0 1 1 0 0 1 0 0",8,The longest run of identical symbols in the,False,False,False
+max_run,2,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 1 0 0 1 1 1 1",8,The longest run of identical symbols in the,False,False,False
+max_run,3,constrained,3,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 1 1 1 0 0 1 0 0 1 1",8,The longest run of identical symbols in the,False,False,False
+max_run,4,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",8,The longest run of identical symbols in the,False,False,False
+max_run,5,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",8,The longest run of identical symbols in the,False,False,False
+sort_min,0,constrained,18,"What is the smallest of these numbers: 18, 57, 72?",8,The smallest of these numbers is 72,False,False,False
+sort_min,1,constrained,57,"What is the smallest of these numbers: 65, 63, 57?",8,The smallest of these numbers is 63,False,False,False
+sort_min,2,constrained,12,"What is the smallest of these numbers: 86, 12, 61?",8,The smallest of these numbers is 61,False,False,False
+sort_min,3,constrained,56,"What is the smallest of these numbers: 63, 92, 56?",8,The smallest of these numbers is 56,False,True,False
+sort_min,4,constrained,76,"What is the smallest of these numbers: 76, 88, 98?",8,The smallest of these numbers is 88,False,False,False
+sort_min,5,constrained,36,"What is the smallest of these numbers: 73, 87, 36?",8,The smallest of these numbers is 87,False,False,False
+succ_letter,0,constrained,o,What letter comes after 'n' in the alphabet?,8,The letter that comes after 'n' in,False,False,False
+succ_letter,1,constrained,n,What letter comes after 'm' in the alphabet?,8,The letter that comes after'm' in,False,False,False
+succ_letter,2,constrained,p,What letter comes after 'o' in the alphabet?,8,The letter that comes after 'o' in,False,False,False
+succ_letter,3,constrained,c,What letter comes after 'b' in the alphabet?,8,The letter that comes after 'b' in,False,False,False
+succ_letter,4,constrained,o,What letter comes after 'n' in the alphabet?,8,The letter that comes after 'n' in,False,False,False
+succ_letter,5,constrained,v,What letter comes after 'u' in the alphabet?,8,The letter that comes after 'u' in,False,False,False
+caesar1_letter,0,constrained,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",8,The answer is: m,False,False,False
+caesar1_letter,1,constrained,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",8,The letter that shifts forward by 1 in,False,False,False
+caesar1_letter,2,constrained,g,"Shift this letter forward by 1 in the alphabet.
+Letter: f",8,"fuser
+
+",False,False,False
+caesar1_letter,3,constrained,j,"Shift this letter forward by 1 in the alphabet.
+Letter: i",8,The answer is: i,False,False,False
+caesar1_letter,4,constrained,b,"Shift this letter forward by 1 in the alphabet.
+Letter: a",8,"auser
+
+",False,False,False
+caesar1_letter,5,constrained,t,"Shift this letter forward by 1 in the alphabet.
+Letter: s",8,Letter: suser,False,False,False
+caesar1_word,0,constrained,gcns,"Shift each letter of this text backward by 1 in the alphabet.
+Text: hdot",8,hdotQuestion: Let,False,False,False
+caesar1_word,1,constrained,iekb,"Shift each letter of this text backward by 1 in the alphabet.
+Text: jflc",8,jflc,False,False,False
+caesar1_word,2,constrained,rhod,"Shift each letter of this text backward by 1 in the alphabet.
+Text: sipe",8,sipeQuestion: Let,False,False,False
+caesar1_word,3,constrained,vfar,"Shift each letter of this text backward by 1 in the alphabet.
+Text: wgbs",8,gbs,False,False,False
+caesar1_word,4,constrained,chkn,"Shift each letter of this text backward by 1 in the alphabet.
+Text: dilo",8,dilouser,False,False,False
+caesar1_word,5,constrained,rtvj,"Shift each letter of this text backward by 1 in the alphabet.
+Text: suwk",8,"Text: sowk
+Reply",False,False,False
+rot13_word,0,constrained,uzxq,"Decode this ROT13 text.
+Text: hmkd",8,The answer is: hmkd,False,False,False
+rot13_word,1,constrained,aeqc,"Decode this ROT13 text.
+Text: nrdp",8,The answer is: nrdp,False,False,False
+rot13_word,2,constrained,svdq,"Decode this ROT13 text.
+Text: fiqd",8,The answer is: fiqd,False,False,False
+rot13_word,3,constrained,sypi,"Decode this ROT13 text.
+Text: flcv",8,The answer is: flcv,False,False,False
+rot13_word,4,constrained,jlhi,"Decode this ROT13 text.
+Text: wyuv",8,The answer is: ROT13,False,False,False
+rot13_word,5,constrained,mroq,"Decode this ROT13 text.
+Text: zebd",8,The answer is: zebd,False,False,False
+echo_digit,0,bare,4,"Repeat this number exactly.
+Number: 4",16,The number 4 is repeated exactly.,False,True,False
+echo_digit,1,bare,1,"Repeat this number exactly.
+Number: 1",16,"1user
+
+",False,False,False
+echo_digit,2,bare,7,"Repeat this number exactly.
+Number: 7",16,"7user
+
+",False,False,False
+echo_digit,3,bare,4,"Repeat this number exactly.
+Number: 4",16,The number 4 is repeated exactly.,False,True,False
+echo_digit,4,bare,6,"Repeat this number exactly.
+Number: 6",16,The number 6 is repeated exactly.,False,True,False
+echo_digit,5,bare,3,"Repeat this number exactly.
+Number: 3",16,The number you have repeated is 3.,False,True,False
+echo_word,0,bare,paper,"Repeat this word exactly.
+Word: paper",16,"paperuser
+
+",False,False,False
+echo_word,1,bare,chair,"Repeat this word exactly.
+Word: chair",16,"chairuser
+
+",False,False,False
+echo_word,2,bare,cloud,"Repeat this word exactly.
+Word: cloud",16,"clouduser
+
+",False,False,False
+echo_word,3,bare,night,"Repeat this word exactly.
+Word: night",16,"The word ""night"" is repeated exactly",False,True,False
+echo_word,4,bare,queen,"Repeat this word exactly.
+Word: queen",16,queenuser,False,False,False
+echo_word,5,bare,water,"Repeat this word exactly.
+Word: water",16,"wateruser
+
+",False,False,False
+nth_item,0,bare,5,"What is item number 3 in this list?
+List: 9 5 5 0 2",16,The number 3 is in the list.,False,False,False
+nth_item,1,bare,6,"What is item number 4 in this list?
+List: 7 2 9 6 9",16,The number 4 is in the list.,False,False,False
+nth_item,2,bare,1,"What is item number 3 in this list?
+List: 4 9 1 8 4",16,The number 3 is in the list.,False,False,False
+nth_item,3,bare,2,"What is item number 1 in this list?
+List: 2 9 3 6 4",16,The item number 1 in the list is,False,False,False
+nth_item,4,bare,8,"What is item number 2 in this list?
+List: 7 8 9 9 0",16,The number 2 is in the list.,False,False,False
+nth_item,5,bare,9,"What is item number 4 in this list?
+List: 8 7 6 9 0",16,The number 4 is in the list.,False,False,False
+last_item,0,bare,2,"What is the last number in this list?
+List: 5 1 2 3 4 2",16,The last number in the list is 4,False,False,False
+last_item,1,bare,0,"What is the last number in this list?
+List: 7 8 3 8 6 0",16,The last number in the list is 0,False,True,False
+last_item,2,bare,3,"What is the last number in this list?
+List: 8 8 2 7 1 3",16,The last number in the list is 3,False,True,False
+last_item,3,bare,0,"What is the last number in this list?
+List: 2 7 2 6 3 0",16,The last number in the list is 0,False,True,False
+last_item,4,bare,7,"What is the last number in this list?
+List: 0 4 0 2 8 7",16,The last number in the list is 7,False,True,False
+last_item,5,bare,3,"What is the last number in this list?
+List: 6 7 9 3 1 3",16,The last number in the list is 3,False,True,False
+add1,0,bare,2,What is 1 + 1?,16,"The answer to the question ""What is",False,False,False
+add1,1,bare,7,What is 6 + 1?,16,The answer is 6 + 1 = 7,False,True,False
+add1,2,bare,3,What is 2 + 1?,16,The answer is 2 + 1 = 3,False,True,False
+add1,3,bare,6,What is 5 + 1?,16,The answer is 5 + 1 = 6,False,True,False
+add1,4,bare,5,What is 4 + 1?,16,The answer is 4 + 1 = 5,False,True,False
+add1,5,bare,2,What is 1 + 1?,16,"The answer to the question ""What is",False,False,False
+sub1,0,bare,3,What is 4 - 1?,16,The answer is 4 - 1 = 3,False,True,False
+sub1,1,bare,8,What is 9 - 1?,16,The answer is 9 - 1 = 8,False,True,False
+sub1,2,bare,3,What is 4 - 1?,16,The answer is 4 - 1 = 3,False,True,False
+sub1,3,bare,2,What is 3 - 1?,16,The answer is 3 - 1 = 2,False,True,False
+sub1,4,bare,2,What is 3 - 1?,16,The answer is 3 - 1 = 2,False,True,False
+sub1,5,bare,1,What is 2 - 1?,16,The answer is 2 - 1 = 1,False,True,False
+add_2d,0,bare,63,What is 22 + 41?,16,The answer is 63.,False,True,False
+add_2d,1,bare,74,What is 27 + 47?,16,The answer is 74.,False,True,False
+add_2d,2,bare,44,What is 32 + 12?,16,32 + 12 = 44,False,True,False
+add_2d,3,bare,57,What is 12 + 45?,16,The answer is 17.,False,False,False
+add_2d,4,bare,43,What is 11 + 32?,16,The answer is 53.,False,False,False
+add_2d,5,bare,68,What is 30 + 38?,16,30 + 38 = 68,False,True,False
+compare,0,bare,83,"Which number is larger, 83 or 23?",16,83 is larger than 23.,False,True,False
+compare,1,bare,54,"Which number is larger, 54 or 7?",16,7 is larger than 54.,False,True,False
+compare,2,bare,52,"Which number is larger, 38 or 52?",16,The number 52 is larger than the,False,True,False
+compare,3,bare,89,"Which number is larger, 65 or 89?",16,89 is larger than 65.,False,True,False
+compare,4,bare,75,"Which number is larger, 6 or 75?",16,75 is larger than 6.,False,True,False
+compare,5,bare,96,"Which number is larger, 96 or 59?",16,96 is larger than 59.,False,True,False
+count4,0,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 1 1 0",16,To count the number of ones in the,False,False,False
+count4,1,bare,4,"Count how many ones are in this sequence.
+Sequence: 1 1 1 1",16,To count the number of ones in the,False,False,False
+count4,2,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1",16,To count the number of ones in the,False,False,False
+count4,3,bare,0,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0",16,The sequence you provided is 0 0 0,False,True,False
+count4,4,bare,2,"Count how many ones are in this sequence.
+Sequence: 1 1 0 0",16,To count the number of ones in the,False,False,False
+count4,5,bare,1,"Count how many ones are in this sequence.
+Sequence: 0 1 0 0",16,To count the number of ones in the,False,False,False
+count8,0,bare,5,"Count how many ones are in this sequence.
+Sequence: 1 0 1 0 1 1 0 1",16,To count the number of ones in the,False,False,False
+count8,1,bare,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 0 1 1",16,To count the number of ones in the,False,False,False
+count8,2,bare,6,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1 1 0 1 1",16,To count the number of ones in the,False,False,False
+count8,3,bare,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 0 1",16,To count the number of ones in the,False,False,False
+count8,4,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 0 0 0 1 0 0 1",16,To count the number of ones in the,False,False,False
+count8,5,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 0 1 1 0 0 0 0",16,To count the number of ones in the,False,False,False
+count16,0,bare,7,"Count how many ones are in this sequence.
+Sequence: 0 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0",16,To count the number of ones in the,False,False,False
+count16,1,bare,6,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0 1 0 0 0 1 0 1 0 0 1 1 1",16,To count the number of ones in the,False,False,False
+count16,2,bare,9,"Count how many ones are in this sequence.
+Sequence: 1 0 0 1 1 0 1 0 1 1 1 1 0 0 0 1",16,To count the number of ones in the,False,False,False
+count16,3,bare,8,"Count how many ones are in this sequence.
+Sequence: 0 0 0 1 0 1 1 1 1 0 1 1 1 0 0 0",16,To count the number of ones in the,False,False,False
+count16,4,bare,12,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1",16,To count the number of ones in the,False,False,False
+count16,5,bare,11,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 1 1 1 1 1 1 0 0 0 1 1 0",16,To count the number of ones in the,False,False,False
+count_mod3,0,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 0 1 1 1 1",16,To count the number of ones in the,False,False,False
+count_mod3,1,bare,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 0 0 0 1 1 1 0 0",16,To count the number of ones in the,False,False,False
+count_mod3,2,bare,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 1 0 0 1 0",16,To count the number of ones in the,False,False,False
+count_mod3,3,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 1 0 0 0",16,To count the number of ones in the,False,False,False
+count_mod3,4,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 0 1 0 0 1 1 0",16,To count the number of ones in the,False,False,False
+count_mod3,5,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 0 0 0 1",16,To count the number of ones in the,False,False,False
+parity8,0,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 1 1 1 1 1",16,The number of ones in the sequence is,False,False,False
+parity8,1,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 1 0 0",16,The number of ones in the sequence is,False,False,False
+parity8,2,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 0 1 1 1 0 0 1",16,The number of ones in the sequence is,False,False,False
+parity8,3,bare,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 1 0 1 0 0 0 1",16,The number of ones in the sequence is,False,False,False
+parity8,4,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 0 1 0",16,The number of ones in the sequence is,False,False,False
+parity8,5,bare,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 1 0 1 1 1 0",16,The number of ones in the sequence is,False,False,False
+track_total,0,bare,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,16,The final total is $\boxed{-,False,False,False
+track_total,1,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,16,1.0Question:,False,False,False
+track_total,2,bare,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,16,1.5Question:,False,False,False
+track_total,3,bare,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,16,1.5Question:,False,False,False
+track_total,4,bare,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,16,1.5Question:,False,False,False
+track_total,5,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,16,1.0Question:,False,False,False
+local_last,0,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,16,"The last instruction is ""Subtract 1.",False,True,False
+local_last,1,bare,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,16,"The last instruction is ""Subtract 1.",False,True,False
+local_last,2,bare,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,16,"The last instruction is ""Add 1.",False,True,False
+local_last,3,bare,Subtract,Start at 0. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. Add 1. Subtract 1. What was the last instruction?,16,"The last instruction was ""Subtract 1""",False,True,False
+local_last,4,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,16,"The last instruction is ""Subtract 1.",False,True,False
+local_last,5,bare,Add,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. What was the last instruction?,16,"The last instruction was ""Add 1.",False,True,False
+max_run,0,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 0 1 0 1 0 1 1",16,The longest run of identical symbols in the,False,False,False
+max_run,1,bare,5,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 0 1 1 0 0 1 0 0",16,The longest run of identical symbols in the,False,False,False
+max_run,2,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 1 0 0 1 1 1 1",16,The longest run of identical symbols in the,False,False,False
+max_run,3,bare,3,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 1 1 1 0 0 1 0 0 1 1",16,The longest run of identical symbols in the,False,False,False
+max_run,4,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",16,The longest run of identical symbols in the,False,False,False
+max_run,5,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",16,The longest run of identical symbols in the,False,False,False
+sort_min,0,bare,18,"What is the smallest of these numbers: 18, 57, 72?",16,The smallest of these numbers is 18,False,True,False
+sort_min,1,bare,57,"What is the smallest of these numbers: 65, 63, 57?",16,The smallest of these numbers is 57,False,True,False
+sort_min,2,bare,12,"What is the smallest of these numbers: 86, 12, 61?",16,The smallest of these numbers is 61,False,False,False
+sort_min,3,bare,56,"What is the smallest of these numbers: 63, 92, 56?",16,The smallest of these numbers is 56,False,True,False
+sort_min,4,bare,76,"What is the smallest of these numbers: 76, 88, 98?",16,The smallest of these numbers is 76,False,True,False
+sort_min,5,bare,36,"What is the smallest of these numbers: 73, 87, 36?",16,The smallest of these numbers is 36,False,True,False
+succ_letter,0,bare,o,What letter comes after 'n' in the alphabet?,16,The letter that comes after 'n' in,False,False,False
+succ_letter,1,bare,n,What letter comes after 'm' in the alphabet?,16,The letter that comes after'm' in,False,False,False
+succ_letter,2,bare,p,What letter comes after 'o' in the alphabet?,16,The letter that comes after 'o' in,False,False,False
+succ_letter,3,bare,c,What letter comes after 'b' in the alphabet?,16,The letter that comes after 'b' in,False,False,False
+succ_letter,4,bare,o,What letter comes after 'n' in the alphabet?,16,The letter that comes after 'n' in,False,False,False
+succ_letter,5,bare,v,What letter comes after 'u' in the alphabet?,16,The letter that comes after 'u' in,False,False,False
+caesar1_letter,0,bare,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",16,Letter: nuser,False,False,False
+caesar1_letter,1,bare,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",16,Letter: nuser,False,False,False
+caesar1_letter,2,bare,g,"Shift this letter forward by 1 in the alphabet.
+Letter: f",16,Letter: guser,False,False,False
+caesar1_letter,3,bare,j,"Shift this letter forward by 1 in the alphabet.
+Letter: i",16,Letter: juser,False,False,False
+caesar1_letter,4,bare,b,"Shift this letter forward by 1 in the alphabet.
+Letter: a",16,Letter: buser,False,False,False
+caesar1_letter,5,bare,t,"Shift this letter forward by 1 in the alphabet.
+Letter: s",16,Letter: tuser,False,False,False
+caesar1_word,0,bare,gcns,"Shift each letter of this text backward by 1 in the alphabet.
+Text: hdot",16,tdohuser,False,False,False
+caesar1_word,1,bare,iekb,"Shift each letter of this text backward by 1 in the alphabet.
+Text: jflc",16,kmn,False,False,False
+caesar1_word,2,bare,rhod,"Shift each letter of this text backward by 1 in the alphabet.
+Text: sipe",16,Text: sipe,False,False,False
+caesar1_word,3,bare,vfar,"Shift each letter of this text backward by 1 in the alphabet.
+Text: wgbs",16,Text: wgbs,False,False,False
+caesar1_word,4,bare,chkn,"Shift each letter of this text backward by 1 in the alphabet.
+Text: dilo",16,Text: dilo,False,False,False
+caesar1_word,5,bare,rtvj,"Shift each letter of this text backward by 1 in the alphabet.
+Text: suwk",16,ksuwuser,False,False,False
+rot13_word,0,bare,uzxq,"Decode this ROT13 text.
+Text: hmkd",16,The ROT13 text is:,False,False,False
+rot13_word,1,bare,aeqc,"Decode this ROT13 text.
+Text: nrdp",16,The ROT13 text is:,False,False,False
+rot13_word,2,bare,svdq,"Decode this ROT13 text.
+Text: fiqd",16,Text: FYJQ,False,False,False
+rot13_word,3,bare,sypi,"Decode this ROT13 text.
+Text: flcv",16,Text: FLUFFY,False,False,False
+rot13_word,4,bare,jlhi,"Decode this ROT13 text.
+Text: wyuv",16,The ROT13 text is:,False,False,False
+rot13_word,5,bare,mroq,"Decode this ROT13 text.
+Text: zebd",16,The ROT13 text is:,False,False,False
+echo_digit,0,constrained,4,"Repeat this number exactly.
+Number: 4",16,The number 4 is repeated exactly.,False,True,False
+echo_digit,1,constrained,1,"Repeat this number exactly.
+Number: 1",16,"1user
+
+",False,False,False
+echo_digit,2,constrained,7,"Repeat this number exactly.
+Number: 7",16,"7user
+
+",False,False,False
+echo_digit,3,constrained,4,"Repeat this number exactly.
+Number: 4",16,The number 4 is repeated exactly.,False,True,False
+echo_digit,4,constrained,6,"Repeat this number exactly.
+Number: 6",16,The number 6 is repeated exactly.,False,True,False
+echo_digit,5,constrained,3,"Repeat this number exactly.
+Number: 3",16,The number 3 is repeated exactly.,False,True,False
+echo_word,0,constrained,paper,"Repeat this word exactly.
+Word: paper",16,"paperuser
+
+",False,False,False
+echo_word,1,constrained,chair,"Repeat this word exactly.
+Word: chair",16,"chairuser
+
+",False,False,False
+echo_word,2,constrained,cloud,"Repeat this word exactly.
+Word: cloud",16,"clouduser
+
+",False,False,False
+echo_word,3,constrained,night,"Repeat this word exactly.
+Word: night",16,"The word ""night"" is repeated exactly",False,True,False
+echo_word,4,constrained,queen,"Repeat this word exactly.
+Word: queen",16,queenuser,False,False,False
+echo_word,5,constrained,water,"Repeat this word exactly.
+Word: water",16,"The word ""water"" is repeated exactly",False,True,False
+nth_item,0,constrained,5,"What is item number 3 in this list?
+List: 9 5 5 0 2",16,The answer is 5.,False,True,False
+nth_item,1,constrained,6,"What is item number 4 in this list?
+List: 7 2 9 6 9",16,The answer is: 9,False,False,False
+nth_item,2,constrained,1,"What is item number 3 in this list?
+List: 4 9 1 8 4",16,The answer is 4.,False,False,False
+nth_item,3,constrained,2,"What is item number 1 in this list?
+List: 2 9 3 6 4",16,The answer is 2.,False,True,False
+nth_item,4,constrained,8,"What is item number 2 in this list?
+List: 7 8 9 9 0",16,The answer is 9.,False,False,False
+nth_item,5,constrained,9,"What is item number 4 in this list?
+List: 8 7 6 9 0",16,The answer is 0.,False,False,False
+last_item,0,constrained,2,"What is the last number in this list?
+List: 5 1 2 3 4 2",16,The last number in the list is 4,False,False,False
+last_item,1,constrained,0,"What is the last number in this list?
+List: 7 8 3 8 6 0",16,The last number in the list is 0,False,True,False
+last_item,2,constrained,3,"What is the last number in this list?
+List: 8 8 2 7 1 3",16,The last number in the list is 3,False,True,False
+last_item,3,constrained,0,"What is the last number in this list?
+List: 2 7 2 6 3 0",16,The last number in the list is 3,False,False,False
+last_item,4,constrained,7,"What is the last number in this list?
+List: 0 4 0 2 8 7",16,The last number in the list is 7,False,True,False
+last_item,5,constrained,3,"What is the last number in this list?
+List: 6 7 9 3 1 3",16,The last number in the list is 3,False,True,False
+add1,0,constrained,2,What is 1 + 1?,16,The answer is 2.,False,True,False
+add1,1,constrained,7,What is 6 + 1?,16,6 + 1 = 7,False,True,False
+add1,2,constrained,3,What is 2 + 1?,16,2 + 1 = 3,False,True,False
+add1,3,constrained,6,What is 5 + 1?,16,5 + 1 = 6,False,True,False
+add1,4,constrained,5,What is 4 + 1?,16,4 + 1 = 5,False,True,False
+add1,5,constrained,2,What is 1 + 1?,16,The answer is 2.,False,True,False
+sub1,0,constrained,3,What is 4 - 1?,16,4 - 1 = 3,False,True,False
+sub1,1,constrained,8,What is 9 - 1?,16,9 - 1 = 8,False,True,False
+sub1,2,constrained,3,What is 4 - 1?,16,4 - 1 = 3,False,True,False
+sub1,3,constrained,2,What is 3 - 1?,16,3 - 1 = 2,False,True,False
+sub1,4,constrained,2,What is 3 - 1?,16,3 - 1 = 2,False,True,False
+sub1,5,constrained,1,What is 2 - 1?,16,2 - 1 = 1,False,True,False
+add_2d,0,constrained,63,What is 22 + 41?,16,22 + 41 = 63,False,True,False
+add_2d,1,constrained,74,What is 27 + 47?,16,27 + 47 = 74,False,True,False
+add_2d,2,constrained,44,What is 32 + 12?,16,32 + 12 = 44,False,True,False
+add_2d,3,constrained,57,What is 12 + 45?,16,12 + 45 = 57,False,True,False
+add_2d,4,constrained,43,What is 11 + 32?,16,143user,False,False,False
+add_2d,5,constrained,68,What is 30 + 38?,16,30 + 38 = 68,False,True,False
+compare,0,constrained,83,"Which number is larger, 83 or 23?",16,83,True,True,False
+compare,1,constrained,54,"Which number is larger, 54 or 7?",16,"7user
+
+",False,False,False
+compare,2,constrained,52,"Which number is larger, 38 or 52?",16,38,False,False,False
+compare,3,constrained,89,"Which number is larger, 65 or 89?",16,89,True,True,False
+compare,4,constrained,75,"Which number is larger, 6 or 75?",16,75user,False,False,False
+compare,5,constrained,96,"Which number is larger, 96 or 59?",16,96,True,True,False
+count4,0,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 1 1 0",16,1Question: Let y,False,False,False
+count4,1,constrained,4,"Count how many ones are in this sequence.
+Sequence: 1 1 1 1",16,There are $\boxed{4}$,False,False,False
+count4,2,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1",16,"The sequence is 1, 1, 0",False,False,False
+count4,3,constrained,0,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0",16,The sequence you provided is 0 0 0,False,True,False
+count4,4,constrained,2,"Count how many ones are in this sequence.
+Sequence: 1 1 0 0",16,The sequence is 1 1 0 0.,False,False,False
+count4,5,constrained,1,"Count how many ones are in this sequence.
+Sequence: 0 1 0 0",16,The sequence 0 1 0 0 has 3,False,True,False
+count8,0,constrained,5,"Count how many ones are in this sequence.
+Sequence: 1 0 1 0 1 1 0 1",16,1. The instruction is asking for the,False,False,False
+count8,1,constrained,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 0 1 1",16,The sequence is: 0 1 1 1,False,False,False
+count8,2,constrained,6,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1 1 0 1 1",16,1. The instruction is asking for the,False,False,False
+count8,3,constrained,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 0 1",16,The sequence contains 10 ones.,False,False,False
+count8,4,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 0 0 0 1 0 0 1",16,1Question: Let y,False,False,False
+count8,5,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 0 1 1 0 0 0 0",16,1. The instruction is asking for the,False,False,False
+count16,0,constrained,7,"Count how many ones are in this sequence.
+Sequence: 0 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0",16,1. The instruction is asking for the,False,False,False
+count16,1,constrained,6,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0 1 0 0 0 1 0 1 0 0 1 1 1",16,1. The instruction is asking for the,False,False,False
+count16,2,constrained,9,"Count how many ones are in this sequence.
+Sequence: 1 0 0 1 1 0 1 0 1 1 1 1 0 0 0 1",16,1. The instruction is asking for the,False,False,False
+count16,3,constrained,8,"Count how many ones are in this sequence.
+Sequence: 0 0 0 1 0 1 1 1 1 0 1 1 1 0 0 0",16,1. The instruction is asking for the,False,False,False
+count16,4,constrained,12,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1",16,1. The instruction is asking for the,False,False,False
+count16,5,constrained,11,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 1 1 1 1 1 1 0 0 0 1 1 0",16,1. The instruction is asking for the,False,False,False
+count_mod3,0,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 0 1 1 1 1",16,To find the number of ones in the,False,False,False
+count_mod3,1,constrained,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 0 0 0 1 1 1 0 0",16,To find the number of ones in the,False,False,False
+count_mod3,2,constrained,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 1 0 0 1 0",16,To find the number of ones in the,False,False,False
+count_mod3,3,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 1 0 0 0",16,To find the number of ones in the,False,False,False
+count_mod3,4,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 0 1 0 0 1 1 0",16,To find the number of ones in the,False,False,False
+count_mod3,5,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 0 0 0 1",16,1. The instruction is asking for the,False,False,False
+parity8,0,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 1 1 1 1 1",16,The number of ones in the sequence is,False,False,False
+parity8,1,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 1 0 0",16,The number of ones in the sequence is,False,False,False
+parity8,2,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 0 1 1 1 0 0 1",16,The number of ones in the sequence is,False,False,False
+parity8,3,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 1 0 1 0 0 0 1",16,The number of ones in the sequence is,False,False,False
+parity8,4,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 0 1 0",16,The number of ones in the sequence is,False,False,False
+parity8,5,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 1 0 1 1 1 0",16,The number of ones in the sequence is,False,False,False
+track_total,0,constrained,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,16,1.0user,False,False,False
+track_total,1,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,16,1.0user,False,False,False
+track_total,2,constrained,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,16,1.user,False,False,False
+track_total,3,constrained,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,16,1.user,False,False,False
+track_total,4,constrained,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,16,The final total is $\boxed{1,False,False,False
+track_total,5,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,16,1.0user,False,False,False
+local_last,0,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,16,"The last instruction was ""Add 1.",False,False,False
+local_last,1,constrained,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,16,"The last instruction was ""Subtract 1.",False,True,False
+local_last,2,constrained,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,16,"The last instruction was ""Add 1.",False,True,False
+local_last,3,constrained,Subtract,Start at 0. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. Add 1. Subtract 1. What was the last instruction?,16,"The last instruction was ""Subtract 1.",False,True,False
+local_last,4,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,16,"The last instruction was ""Subtract 1.",False,True,False
+local_last,5,constrained,Add,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. What was the last instruction?,16,"The last instruction was ""Add 1.",False,True,False
+max_run,0,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 0 1 0 1 0 1 1",16,The longest run of identical symbols in the,False,False,False
+max_run,1,constrained,5,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 0 1 1 0 0 1 0 0",16,The longest run of identical symbols in the,False,False,False
+max_run,2,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 1 0 0 1 1 1 1",16,The longest run of identical symbols in the,False,False,False
+max_run,3,constrained,3,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 1 1 1 0 0 1 0 0 1 1",16,The longest run of identical symbols in the,False,False,False
+max_run,4,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",16,The longest run of identical symbols in the,False,False,False
+max_run,5,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",16,The longest run of identical symbols in the,False,False,False
+sort_min,0,constrained,18,"What is the smallest of these numbers: 18, 57, 72?",16,The smallest of these numbers is 18,False,True,False
+sort_min,1,constrained,57,"What is the smallest of these numbers: 65, 63, 57?",16,The smallest of these numbers is 57,False,True,False
+sort_min,2,constrained,12,"What is the smallest of these numbers: 86, 12, 61?",16,The smallest of these numbers is 86,False,False,False
+sort_min,3,constrained,56,"What is the smallest of these numbers: 63, 92, 56?",16,The smallest of these numbers is 56,False,True,False
+sort_min,4,constrained,76,"What is the smallest of these numbers: 76, 88, 98?",16,The smallest of these numbers is 76,False,True,False
+sort_min,5,constrained,36,"What is the smallest of these numbers: 73, 87, 36?",16,The smallest of these numbers is 36,False,True,False
+succ_letter,0,constrained,o,What letter comes after 'n' in the alphabet?,16,The letter that comes after 'n' in,False,False,False
+succ_letter,1,constrained,n,What letter comes after 'm' in the alphabet?,16,The letter that comes after'm' in,False,False,False
+succ_letter,2,constrained,p,What letter comes after 'o' in the alphabet?,16,The letter that comes after 'o' in,False,False,False
+succ_letter,3,constrained,c,What letter comes after 'b' in the alphabet?,16,The letter that comes after 'b' in,False,False,False
+succ_letter,4,constrained,o,What letter comes after 'n' in the alphabet?,16,The letter that comes after 'n' in,False,False,False
+succ_letter,5,constrained,v,What letter comes after 'u' in the alphabet?,16,The letter that comes after 'u' in,False,False,False
+caesar1_letter,0,constrained,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",16,The letter forward by 1 in the alphabet,False,False,False
+caesar1_letter,1,constrained,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",16,The letter forward by 1 in the alphabet,False,False,False
+caesar1_letter,2,constrained,g,"Shift this letter forward by 1 in the alphabet.
+Letter: f",16,Letter: guser,False,False,False
+caesar1_letter,3,constrained,j,"Shift this letter forward by 1 in the alphabet.
+Letter: i",16,Letter: juser,False,False,False
+caesar1_letter,4,constrained,b,"Shift this letter forward by 1 in the alphabet.
+Letter: a",16,The letter forward by 1 in the alphabet,False,False,False
+caesar1_letter,5,constrained,t,"Shift this letter forward by 1 in the alphabet.
+Letter: s",16,The letter forward by 1 in the alphabet,False,False,False
+caesar1_word,0,constrained,gcns,"Shift each letter of this text backward by 1 in the alphabet.
+Text: hdot",16,The answer is: tdoh,False,False,False
+caesar1_word,1,constrained,iekb,"Shift each letter of this text backward by 1 in the alphabet.
+Text: jflc",16,The text shifted backward by 1 in the,False,False,False
+caesar1_word,2,constrained,rhod,"Shift each letter of this text backward by 1 in the alphabet.
+Text: sipe",16,The text shifted backward by 1 in the,False,False,False
+caesar1_word,3,constrained,vfar,"Shift each letter of this text backward by 1 in the alphabet.
+Text: wgbs",16,"Text: wgbs
+Answer:",False,False,False
+caesar1_word,4,constrained,chkn,"Shift each letter of this text backward by 1 in the alphabet.
+Text: dilo",16,"Text: dilo
+Answer: lo",False,False,False
+caesar1_word,5,constrained,rtvj,"Shift each letter of this text backward by 1 in the alphabet.
+Text: suwk",16,"The answer is:
+The text shifted",False,False,False
+rot13_word,0,constrained,uzxq,"Decode this ROT13 text.
+Text: hmkd",16,"The decoded text is: ""The quick",False,False,False
+rot13_word,1,constrained,aeqc,"Decode this ROT13 text.
+Text: nrdp",16,"The ROT13 text is """,False,False,False
+rot13_word,2,constrained,svdq,"Decode this ROT13 text.
+Text: fiqd",16,"The decoded text is ""The quick brown",False,False,False
+rot13_word,3,constrained,sypi,"Decode this ROT13 text.
+Text: flcv",16,"The decoded text is ""flcv""",False,False,False
+rot13_word,4,constrained,jlhi,"Decode this ROT13 text.
+Text: wyuv",16,The ROT13 text is:,False,False,False
+rot13_word,5,constrained,mroq,"Decode this ROT13 text.
+Text: zebd",16,"The decoded text is: ""The answer",False,False,False
+echo_digit,0,bare,4,"Repeat this number exactly.
+Number: 4",2,"4Huginn
+
+",False,False,False
+echo_digit,1,bare,1,"Repeat this number exactly.
+Number: 1",2,Number: 1Huginn,False,False,False
+echo_digit,2,bare,7,"Repeat this number exactly.
+Number: 7",2,"7Huginn
+
+",False,False,False
+echo_digit,3,bare,4,"Repeat this number exactly.
+Number: 4",2,"4Huginn
+
+",False,False,False
+echo_digit,4,bare,6,"Repeat this number exactly.
+Number: 6",2,"6Huginn
+
+",False,False,False
+echo_digit,5,bare,3,"Repeat this number exactly.
+Number: 3",2,"3user
+
+",False,False,False
+echo_word,0,bare,paper,"Repeat this word exactly.
+Word: paper",2,Word: paperHuginn,False,False,False
+echo_word,1,bare,chair,"Repeat this word exactly.
+Word: chair",2,"""The chairman is the chairman",False,False,False
+echo_word,2,bare,cloud,"Repeat this word exactly.
+Word: cloud",2,Word: clouduser,False,False,False
+echo_word,3,bare,night,"Repeat this word exactly.
+Word: night",2,"The word ""night"" is used to",False,True,False
+echo_word,4,bare,queen,"Repeat this word exactly.
+Word: queen",2,Queen: QueenHug,False,True,False
+echo_word,5,bare,water,"Repeat this word exactly.
+Word: water",2,Word: waterHuginn,False,False,False
+nth_item,0,bare,5,"What is item number 3 in this list?
+List: 9 5 5 0 2",2,9 5 5 0 2,False,True,False
+nth_item,1,bare,6,"What is item number 4 in this list?
+List: 7 2 9 6 9",2,Item number 4 in this list is 4,False,False,False
+nth_item,2,bare,1,"What is item number 3 in this list?
+List: 4 9 1 8 4",2,4 9 1 8 4,False,True,False
+nth_item,3,bare,2,"What is item number 1 in this list?
+List: 2 9 3 6 4",2,2 9 3 6 4 3 6 4,False,True,False
+nth_item,4,bare,8,"What is item number 2 in this list?
+List: 7 8 9 9 0",2,1 item 2user,False,False,False
+nth_item,5,bare,9,"What is item number 4 in this list?
+List: 8 7 6 9 0",2,8 7 6 9,False,True,False
+last_item,0,bare,2,"What is the last number in this list?
+List: 5 1 2 3 4 2",2,The last number in this list is 5,False,False,False
+last_item,1,bare,0,"What is the last number in this list?
+List: 7 8 3 8 6 0",2,7 8 3 8 6 3 8 6,False,False,False
+last_item,2,bare,3,"What is the last number in this list?
+List: 8 8 2 7 1 3",2,Last number in this list is 8 8,False,False,False
+last_item,3,bare,0,"What is the last number in this list?
+List: 2 7 2 6 3 0",2,10user,False,False,False
+last_item,4,bare,7,"What is the last number in this list?
+List: 0 4 0 2 8 7",2,1. 0 4 0 2 8 7,False,True,False
+last_item,5,bare,3,"What is the last number in this list?
+List: 6 7 9 3 1 3",2,6 7 9 3 1 3 1 3,False,True,False
+add1,0,bare,2,What is 1 + 1?,2,2 + 1Huginn,False,True,False
+add1,1,bare,7,What is 6 + 1?,2,24Huginn,False,False,False
+add1,2,bare,3,What is 2 + 1?,2,2 + 1Huginn,False,False,False
+add1,3,bare,6,What is 5 + 1?,2,5 + 1Huginn,False,False,False
+add1,4,bare,5,What is 4 + 1?,2,4 + 1Huginn,False,False,False
+add1,5,bare,2,What is 1 + 1?,2,1 + 1Huginn,False,False,False
+sub1,0,bare,3,What is 4 - 1?,2,2 - 1 - 1 - 1 -,False,False,False
+sub1,1,bare,8,What is 9 - 1?,2,10Huginn,False,False,False
+sub1,2,bare,3,What is 4 - 1?,2,4 - 12Hug,False,False,False
+sub1,3,bare,2,What is 3 - 1?,2,2 - 1Huginn,False,True,False
+sub1,4,bare,2,What is 3 - 1?,2,3 - 1?Hug,False,False,False
+sub1,5,bare,1,What is 2 - 1?,2,2 - 1Huginn,False,False,False
+add_2d,0,bare,63,What is 22 + 41?,2,22 + 41H,False,False,False
+add_2d,1,bare,74,What is 27 + 47?,2,27 + 47H,False,False,False
+add_2d,2,bare,44,What is 32 + 12?,2,32Huginn,False,False,False
+add_2d,3,bare,57,What is 12 + 45?,2,12 + 45 = 12,False,False,False
+add_2d,4,bare,43,What is 11 + 32?,2,11 + 32user,False,False,False
+add_2d,5,bare,68,What is 30 + 38?,2,30Huginn,False,False,False
+compare,0,bare,83,"Which number is larger, 83 or 23?",2,83,True,True,False
+compare,1,bare,54,"Which number is larger, 54 or 7?",2,44Huginn,False,False,False
+compare,2,bare,52,"Which number is larger, 38 or 52?",2,38,False,False,False
+compare,3,bare,89,"Which number is larger, 65 or 89?",2,65,False,False,False
+compare,4,bare,75,"Which number is larger, 6 or 75?",2,6 or 75,False,True,False
+compare,5,bare,96,"Which number is larger, 96 or 59?",2,96,True,True,False
+count4,0,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 1 1 0",2,1 1 1 2 3 4 5 6,False,True,False
+count4,1,bare,4,"Count how many ones are in this sequence.
+Sequence: 1 1 1 1",2,Count how many ones are in this sequence,False,False,False
+count4,2,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1",2,Sequence: 1 1 2 3 4 5,False,True,False
+count4,3,bare,0,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0",2,11 12 13 14,False,False,False
+count4,4,bare,2,"Count how many ones are in this sequence.
+Sequence: 1 1 0 0",2,1 1 0 0 1 1 0 0,False,False,False
+count4,5,bare,1,"Count how many ones are in this sequence.
+Sequence: 0 1 0 0",2,Sequence: 0 1 0 0 1 0,False,True,False
+count8,0,bare,5,"Count how many ones are in this sequence.
+Sequence: 1 0 1 0 1 1 0 1",2,Count how many ones are in this sequence,False,False,False
+count8,1,bare,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 0 1 1",2,Count how many zeros are in this sequence,False,False,False
+count8,2,bare,6,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1 1 0 1 1",2,Count the number of ones in this sequence,False,False,False
+count8,3,bare,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 0 1",2,1. Sequence: 0 1 1 0,False,False,False
+count8,4,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 0 0 0 1 0 0 1",2,1000,False,False,False
+count8,5,bare,3,"Count how many ones are in this sequence.
+Sequence: 1 0 1 1 0 0 0 0",2,Sequence: 1 0 1 1 0 0,False,False,False
+count16,0,bare,7,"Count how many ones are in this sequence.
+Sequence: 0 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0",2,1 1 2 3 4 5 6 7,False,True,False
+count16,1,bare,6,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0 1 0 0 0 1 0 1 0 0 1 1 1",2,Count the number of zeros in the sequence,False,False,False
+count16,2,bare,9,"Count how many ones are in this sequence.
+Sequence: 1 0 0 1 1 0 1 0 1 1 1 1 0 0 0 1",2,Count: 1user,False,False,False
+count16,3,bare,8,"Count how many ones are in this sequence.
+Sequence: 0 0 0 1 0 1 1 1 1 0 1 1 1 0 0 0",2,10user,False,False,False
+count16,4,bare,12,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1",2,Count the number of ones in the sequence,False,False,False
+count16,5,bare,11,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 1 1 1 1 1 1 0 0 0 1 1 0",2,Sequence: 0 1 1 1 1 1,False,False,False
+count_mod3,0,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 0 1 1 1 1",2,Count: 0user,False,False,False
+count_mod3,1,bare,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 0 0 0 1 1 1 0 0",2,10:3,False,False,False
+count_mod3,2,bare,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 1 0 0 1 0",2,10 10 10 10,False,False,False
+count_mod3,3,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 1 0 0 0",2,Sequence: 1 1 1 1 0 0,False,False,False
+count_mod3,4,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 0 1 0 0 1 1 0",2,1 1 0 1 1 0 1 1,False,False,False
+count_mod3,5,bare,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 0 0 0 1",2,1. Count how many ones are in,False,False,False
+parity8,0,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 1 1 1 1 1",2,Sequence: 0 0 0 1 1 1,False,True,False
+parity8,1,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 1 0 0",2,Sequence: 0 0 0 0 0 0,False,False,False
+parity8,2,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 0 1 1 1 0 0 1",2,Sequence: 1 0 1 1 0 1,False,True,False
+parity8,3,bare,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 1 0 1 0 0 0 1",2,1 1 0 1 1 0 0 1,False,True,False
+parity8,4,bare,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 0 1 0",2,Sequence: 0 0 0 0 0 1,False,True,False
+parity8,5,bare,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 1 0 1 1 1 0",2,Sequence: 0 0 1 0 1 1,False,True,False
+track_total,0,bare,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,2,1. Final total: $1$,False,False,False
+track_total,1,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,2,0. Subtract 1. Add 1.,False,True,False
+track_total,2,bare,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,2,2.Huginn,False,False,False
+track_total,3,bare,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,2,1. Add 1. Add 1.,False,False,False
+track_total,4,bare,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,2,2. Add 1. Add 1.,False,False,False
+track_total,5,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,2,"Huginn
+
+1",False,False,False
+local_last,0,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,2,1. Add 1. Subtract 1.,False,True,False
+local_last,1,bare,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,2,1. The last instruction is to add,False,False,False
+local_last,2,bare,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,2,1. The last instruction was added to,False,False,False
+local_last,3,bare,Subtract,Start at 0. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. Add 1. Subtract 1. What was the last instruction?,2,1. Start at 0. Subtract 1,False,True,False
+local_last,4,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,2,1. Add 1. Subtract 1.,False,True,False
+local_last,5,bare,Add,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. What was the last instruction?,2,1.Huginn,False,False,False
+max_run,0,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 0 1 0 1 0 1 1",2,Length of the Sequence: 0 0 0,False,False,False
+max_run,1,bare,5,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 0 1 1 0 0 1 0 0",2,"Symbol:
+Length:  0 0",False,False,False
+max_run,2,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 1 0 0 1 1 1 1",2,Length: 12,False,False,False
+max_run,3,bare,3,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 1 1 1 0 0 1 0 0 1 1",2,10user,False,False,False
+max_run,4,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",2,Length: 1000,False,False,False
+max_run,5,bare,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",2,Length of Sequence: 0 0 0 1,False,False,False
+sort_min,0,bare,18,"What is the smallest of these numbers: 18, 57, 72?",2,25user,False,False,False
+sort_min,1,bare,57,"What is the smallest of these numbers: 65, 63, 57?",2,65user,False,False,False
+sort_min,2,bare,12,"What is the smallest of these numbers: 86, 12, 61?",2,86user,False,False,False
+sort_min,3,bare,56,"What is the smallest of these numbers: 63, 92, 56?",2,"63, 92, 56",False,True,False
+sort_min,4,bare,76,"What is the smallest of these numbers: 76, 88, 98?",2,The smallest of these numbers is 76,False,True,False
+sort_min,5,bare,36,"What is the smallest of these numbers: 73, 87, 36?",2,The smallest of these numbers is 73,False,False,False
+succ_letter,0,bare,o,What letter comes after 'n' in the alphabet?,2,The letter comes after the alphabet. It,False,False,False
+succ_letter,1,bare,n,What letter comes after 'm' in the alphabet?,2,The letter is in the alphabet. It,False,False,False
+succ_letter,2,bare,p,What letter comes after 'o' in the alphabet?,2,o' in the alphabet,False,False,False
+succ_letter,3,bare,c,What letter comes after 'b' in the alphabet?,2,A letter comes after 'b' in the,False,False,False
+succ_letter,4,bare,o,What letter comes after 'n' in the alphabet?,2,n' in alphabetHug,False,False,False
+succ_letter,5,bare,v,What letter comes after 'u' in the alphabet?,2,A letter in the alphabet comes after a,False,False,False
+caesar1_letter,0,bare,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",2,Shift this letter forward by 1 in the,False,False,False
+caesar1_letter,1,bare,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",2,Shift this letter forward by 1 in the,False,False,False
+caesar1_letter,2,bare,g,"Shift this letter forward by 1 in the alphabet.
+Letter: f",2,Shift this letter forward by 1 in the,False,False,False
+caesar1_letter,3,bare,j,"Shift this letter forward by 1 in the alphabet.
+Letter: i",2,Shift this letter forward by 1 in the,False,False,False
+caesar1_letter,4,bare,b,"Shift this letter forward by 1 in the alphabet.
+Letter: a",2,Shift this letter forward by 1 in the,False,False,False
+caesar1_letter,5,bare,t,"Shift this letter forward by 1 in the alphabet.
+Letter: s",2,Shift this letter forward by 1 in the,False,False,False
+caesar1_word,0,bare,gcns,"Shift each letter of this text backward by 1 in the alphabet.
+Text: hdot",2,Shift each letter of this text backward by,False,False,False
+caesar1_word,1,bare,iekb,"Shift each letter of this text backward by 1 in the alphabet.
+Text: jflc",2,Shift each letter of this text backward by,False,False,False
+caesar1_word,2,bare,rhod,"Shift each letter of this text backward by 1 in the alphabet.
+Text: sipe",2,1. Shift each letter of this text,False,False,False
+caesar1_word,3,bare,vfar,"Shift each letter of this text backward by 1 in the alphabet.
+Text: wgbs",2,Shift each letter of this text backward by,False,False,False
+caesar1_word,4,bare,chkn,"Shift each letter of this text backward by 1 in the alphabet.
+Text: dilo",2,Shift each letter of this text backward by,False,False,False
+caesar1_word,5,bare,rtvj,"Shift each letter of this text backward by 1 in the alphabet.
+Text: suwk",2,Shift each letter of this text backward by,False,False,False
+rot13_word,0,bare,uzxq,"Decode this ROT13 text.
+Text: hmkd",2,Text: ROT13 text.,False,False,False
+rot13_word,1,bare,aeqc,"Decode this ROT13 text.
+Text: nrdp",2,"Text:
+Text: nrdp",False,False,False
+rot13_word,2,bare,svdq,"Decode this ROT13 text.
+Text: fiqd",2,Text: fiqdHug,False,False,False
+rot13_word,3,bare,sypi,"Decode this ROT13 text.
+Text: flcv",2,"Text:
+ROT13 Text",False,False,False
+rot13_word,4,bare,jlhi,"Decode this ROT13 text.
+Text: wyuv",2,"Text: text.
+Text: text",False,False,False
+rot13_word,5,bare,mroq,"Decode this ROT13 text.
+Text: zebd",2,ROT13 text: zebd,False,False,False
+echo_digit,0,constrained,4,"Repeat this number exactly.
+Number: 4",2,Number: 4,False,True,False
+echo_digit,1,constrained,1,"Repeat this number exactly.
+Number: 1",2,2,False,False,False
+echo_digit,2,constrained,7,"Repeat this number exactly.
+Number: 7",2,Number: 7,False,True,False
+echo_digit,3,constrained,4,"Repeat this number exactly.
+Number: 4",2,Number: 4,False,True,False
+echo_digit,4,constrained,6,"Repeat this number exactly.
+Number: 6",2,Number: 6,False,True,False
+echo_digit,5,constrained,3,"Repeat this number exactly.
+Number: 3",2,Number: 3,False,True,False
+echo_word,0,constrained,paper,"Repeat this word exactly.
+Word: paper",2,Word: paper,False,True,False
+echo_word,1,constrained,chair,"Repeat this word exactly.
+Word: chair",2,Word: chair,False,True,False
+echo_word,2,constrained,cloud,"Repeat this word exactly.
+Word: cloud",2,Yes,False,False,False
+echo_word,3,constrained,night,"Repeat this word exactly.
+Word: night",2,Yes,False,False,False
+echo_word,4,constrained,queen,"Repeat this word exactly.
+Word: queen",2,Queen,True,True,False
+echo_word,5,constrained,water,"Repeat this word exactly.
+Word: water",2,Word: water,False,True,False
+nth_item,0,constrained,5,"What is item number 3 in this list?
+List: 9 5 5 0 2",2,Item number 3user,False,False,False
+nth_item,1,constrained,6,"What is item number 4 in this list?
+List: 7 2 9 6 9",2,Item number 4 in this list: 7,False,False,False
+nth_item,2,constrained,1,"What is item number 3 in this list?
+List: 4 9 1 8 4",2,4 9 1 8 4,False,True,False
+nth_item,3,constrained,2,"What is item number 1 in this list?
+List: 2 9 3 6 4",2,"2user
+
+",False,False,False
+nth_item,4,constrained,8,"What is item number 2 in this list?
+List: 7 8 9 9 0",2,7 8 9 9,False,True,False
+nth_item,5,constrained,9,"What is item number 4 in this list?
+List: 8 7 6 9 0",2,"4user
+
+",False,False,False
+last_item,0,constrained,2,"What is the last number in this list?
+List: 5 1 2 3 4 2",2,"5user
+
+",False,False,False
+last_item,1,constrained,0,"What is the last number in this list?
+List: 7 8 3 8 6 0",2,7 8 3 8 6,False,False,False
+last_item,2,constrained,3,"What is the last number in this list?
+List: 8 8 2 7 1 3",2,1. 8user,False,False,False
+last_item,3,constrained,0,"What is the last number in this list?
+List: 2 7 2 6 3 0",2,Last number in this list is 27,False,False,False
+last_item,4,constrained,7,"What is the last number in this list?
+List: 0 4 0 2 8 7",2,Last number in this list is 0 4,False,False,False
+last_item,5,constrained,3,"What is the last number in this list?
+List: 6 7 9 3 1 3",2,Last number in the list: 6 7,False,False,False
+add1,0,constrained,2,What is 1 + 1?,2,1,False,False,False
+add1,1,constrained,7,What is 6 + 1?,2,2,False,False,False
+add1,2,constrained,3,What is 2 + 1?,2,2 + 1,False,False,False
+add1,3,constrained,6,What is 5 + 1?,2,5,False,False,False
+add1,4,constrained,5,What is 4 + 1?,2,4 + 1,False,False,False
+add1,5,constrained,2,What is 1 + 1?,2,1 + 1,False,False,False
+sub1,0,constrained,3,What is 4 - 1?,2,4,False,False,False
+sub1,1,constrained,8,What is 9 - 1?,2,9,False,False,False
+sub1,2,constrained,3,What is 4 - 1?,2,4,False,False,False
+sub1,3,constrained,2,What is 3 - 1?,2,3,False,False,False
+sub1,4,constrained,2,What is 3 - 1?,2,3,False,False,False
+sub1,5,constrained,1,What is 2 - 1?,2,2,False,False,False
+add_2d,0,constrained,63,What is 22 + 41?,2,22,False,False,False
+add_2d,1,constrained,74,What is 27 + 47?,2,27,False,False,False
+add_2d,2,constrained,44,What is 32 + 12?,2,32,False,False,False
+add_2d,3,constrained,57,What is 12 + 45?,2,12,False,False,False
+add_2d,4,constrained,43,What is 11 + 32?,2,11,False,False,False
+add_2d,5,constrained,68,What is 30 + 38?,2,30,False,False,False
+compare,0,constrained,83,"Which number is larger, 83 or 23?",2,83,True,True,False
+compare,1,constrained,54,"Which number is larger, 54 or 7?",2,54user,False,False,False
+compare,2,constrained,52,"Which number is larger, 38 or 52?",2,38,False,False,False
+compare,3,constrained,89,"Which number is larger, 65 or 89?",2,65,False,False,False
+compare,4,constrained,75,"Which number is larger, 6 or 75?",2,"6user
+
+",False,False,False
+compare,5,constrained,96,"Which number is larger, 96 or 59?",2,96,True,True,False
+count4,0,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 1 1 0",2,Sequence: 1 1 1 0,False,False,False
+count4,1,constrained,4,"Count how many ones are in this sequence.
+Sequence: 1 1 1 1",2,"2user
+
+",False,False,False
+count4,2,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1",2,One sequence is that there are 10,False,False,False
+count4,3,constrained,0,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0",2,"1user
+
+",False,False,False
+count4,4,constrained,2,"Count how many ones are in this sequence.
+Sequence: 1 1 0 0",2,Count: 1user,False,False,False
+count4,5,constrained,1,"Count how many ones are in this sequence.
+Sequence: 0 1 0 0",2,1.Huginn,False,True,False
+count8,0,constrained,5,"Count how many ones are in this sequence.
+Sequence: 1 0 1 0 1 1 0 1",2,Count how many ones are in this sequence,False,False,False
+count8,1,constrained,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 0 1 1",2,Sequence: 0 1 1 2 3 4,False,False,False
+count8,2,constrained,6,"Count how many ones are in this sequence.
+Sequence: 1 1 0 1 1 0 1 1",2,Count how many ones are in this sequence,False,False,False
+count8,3,constrained,5,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 0 1",2,Count: 0 1 1 0 1 1,False,False,False
+count8,4,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 0 0 0 1 0 0 1",2,10user,False,False,False
+count8,5,constrained,3,"Count how many ones are in this sequence.
+Sequence: 1 0 1 1 0 0 0 0",2,Count the number of ones in the sequence,False,False,False
+count16,0,constrained,7,"Count how many ones are in this sequence.
+Sequence: 0 1 1 0 0 0 0 1 1 0 0 1 1 0 1 0",2,Sequence: 0 1 1 0 0 1,False,False,False
+count16,1,constrained,6,"Count how many ones are in this sequence.
+Sequence: 0 0 0 0 1 0 0 0 1 0 1 0 0 1 1 1",2,"1user
+
+",False,False,False
+count16,2,constrained,9,"Count how many ones are in this sequence.
+Sequence: 1 0 0 1 1 0 1 0 1 1 1 1 0 0 0 1",2,Sequence: 1 0 1 1 0 1,False,False,False
+count16,3,constrained,8,"Count how many ones are in this sequence.
+Sequence: 0 0 0 1 0 1 1 1 1 0 1 1 1 0 0 0",2,1. Sequence: 0 0 0 1,False,False,False
+count16,4,constrained,12,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1",2,Count: 0user,False,False,False
+count16,5,constrained,11,"Count how many ones are in this sequence.
+Sequence: 0 1 1 1 1 1 1 1 1 1 0 0 0 1 1 0",2,"1user
+
+",False,False,False
+count_mod3,0,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 0 1 1 1 1",2,1. Count how many one is in,False,False,False
+count_mod3,1,constrained,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 0 0 0 1 1 1 0 0",2,Count: 10,False,False,False
+count_mod3,2,constrained,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 0 1 0 0 1 0 0 1 0",2,1. The number of terms in the,False,False,False
+count_mod3,3,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 1 0 0 0",2,Count: 1 1 0 1 1 0,False,False,False
+count_mod3,4,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 0 1 0 0 1 1 0",2,"1user
+
+",False,False,False
+count_mod3,5,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
+Sequence: 1 1 1 0 1 0 0 0 1",2,Sequence: 1 1 0 1 0 1,False,False,False
+parity8,0,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 1 1 1 1 1",2,Sequence: 0 0 0 1 1 1,False,True,False
+parity8,1,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 1 0 0",2,1. Sequence: 0 0 0 0,False,True,False
+parity8,2,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 0 1 1 1 0 0 1",2,Sequence: 1 0 1 1 1 0,False,True,False
+parity8,3,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 1 1 0 1 0 0 0 1",2,"Yesuser
+
+",False,False,False
+parity8,4,constrained,1,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 0 0 0 0 1 0",2,Sequence: 0 0 0 0 0 1,False,True,False
+parity8,5,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
+Sequence: 0 0 1 0 1 1 1 0",2,"Yesuser
+
+",False,False,False
+track_total,0,constrained,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,2,1. Final,False,False,False
+track_total,1,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,2,1,False,False,False
+track_total,2,constrained,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,2,1.,False,False,False
+track_total,3,constrained,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,2,1.,False,False,False
+track_total,4,constrained,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,2,,False,False,True
+track_total,5,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,2,0.,True,True,False
+local_last,0,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,2,"user
+
+Title",False,False,False
+local_last,1,constrained,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,2,"Huginn
+
+",False,False,False
+local_last,2,constrained,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,2,"user
+
+Title",False,False,False
+local_last,3,constrained,Subtract,Start at 0. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. Add 1. Subtract 1. What was the last instruction?,2,The last instruction is:H,False,False,False
+local_last,4,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,2,1.user,False,False,False
+local_last,5,constrained,Add,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Add 1. What was the last instruction?,2,"Last time you read this article, you",False,False,False
+max_run,0,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 0 1 0 1 0 1 1",2,Sequence: 0 0 0 1 0 1,False,False,False
+max_run,1,constrained,5,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 0 1 1 0 0 1 0 0",2,1. The length of the longest run,False,False,False
+max_run,2,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 0 1 1 0 0 1 1 1 1",2,Sequence: 0 0 0 0 1 1,False,False,False
+max_run,3,constrained,3,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 1 1 1 0 0 1 0 0 1 1",2,Length: 0user,False,False,False
+max_run,4,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",2,Length of sequence: 100,False,False,False
+max_run,5,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
+Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",2,Length: 0user,False,False,False
+sort_min,0,constrained,18,"What is the smallest of these numbers: 18, 57, 72?",2,18user,False,False,False
+sort_min,1,constrained,57,"What is the smallest of these numbers: 65, 63, 57?",2,65user,False,False,False
+sort_min,2,constrained,12,"What is the smallest of these numbers: 86, 12, 61?",2,86user,False,False,False
+sort_min,3,constrained,56,"What is the smallest of these numbers: 63, 92, 56?",2,"63, 92, 56",False,True,False
+sort_min,4,constrained,76,"What is the smallest of these numbers: 76, 88, 98?",2,76user,False,False,False
+sort_min,5,constrained,36,"What is the smallest of these numbers: 73, 87, 36?",2,73user,False,False,False
+succ_letter,0,constrained,o,What letter comes after 'n' in the alphabet?,2,"Letter:
+N: 
+N:",False,False,False
+succ_letter,1,constrained,n,What letter comes after 'm' in the alphabet?,2,A letter comes after'm' in the,False,False,False
+succ_letter,2,constrained,p,What letter comes after 'o' in the alphabet?,2,The letter comes after the letter 'o'.,False,False,False
+succ_letter,3,constrained,c,What letter comes after 'b' in the alphabet?,2,Letter comes after 'b' in the alphabet,False,False,False
+succ_letter,4,constrained,o,What letter comes after 'n' in the alphabet?,2,Reply with the letter,False,False,False
+succ_letter,5,constrained,v,What letter comes after 'u' in the alphabet?,2,"Letter:
+The letter comes in the",False,False,False
+caesar1_letter,0,constrained,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",2,"Letter: m
+This letter is a",False,False,False
+caesar1_letter,1,constrained,n,"Shift this letter forward by 1 in the alphabet.
+Letter: m",2,Shift this letter forward by 1 in the,False,False,False
+caesar1_letter,2,constrained,g,"Shift this letter forward by 1 in the alphabet.
+Letter: f",2,"Letter: f
+Reply with:",False,False,False
+caesar1_letter,3,constrained,j,"Shift this letter forward by 1 in the alphabet.
+Letter: i",2,Shift this letter forward by 1 in the,False,False,False
+caesar1_letter,4,constrained,b,"Shift this letter forward by 1 in the alphabet.
+Letter: a",2,Shift this letter forward by 1 in the,False,False,False
+caesar1_letter,5,constrained,t,"Shift this letter forward by 1 in the alphabet.
+Letter: s",2,Shift this letter forward by 1 in the,False,False,False
+caesar1_word,0,constrained,gcns,"Shift each letter of this text backward by 1 in the alphabet.
+Text: hdot",2,Shift each letter of this text backward by,False,False,False
+caesar1_word,1,constrained,iekb,"Shift each letter of this text backward by 1 in the alphabet.
+Text: jflc",2,Shift each letter of this text backward by,False,False,False
+caesar1_word,2,constrained,rhod,"Shift each letter of this text backward by 1 in the alphabet.
+Text: sipe",2,Shift each letter of this text backward by,False,False,False
+caesar1_word,3,constrained,vfar,"Shift each letter of this text backward by 1 in the alphabet.
+Text: wgbs",2,Text: wgbs,False,False,False
+caesar1_word,4,constrained,chkn,"Shift each letter of this text backward by 1 in the alphabet.
+Text: dilo",2,Shift each letter of the alphabet to the,False,False,False
+caesar1_word,5,constrained,rtvj,"Shift each letter of this text backward by 1 in the alphabet.
+Text: suwk",2,Shift each letter of this text backward by,False,False,False
+rot13_word,0,constrained,uzxq,"Decode this ROT13 text.
+Text: hmkd",2,"Text:
+ROT13:",False,False,False
+rot13_word,1,constrained,aeqc,"Decode this ROT13 text.
+Text: nrdp",2,Text: nrdp,False,False,False
+rot13_word,2,constrained,svdq,"Decode this ROT13 text.
+Text: fiqd",2,Text: fiqd,False,False,False
+rot13_word,3,constrained,sypi,"Decode this ROT13 text.
+Text: flcv",2,Decoding this ROT13 text,False,False,False
+rot13_word,4,constrained,jlhi,"Decode this ROT13 text.
+Text: wyuv",2,Text:Huginn,False,False,False
+rot13_word,5,constrained,mroq,"Decode this ROT13 text.
+Text: zebd",2,ZebraHuginn,False,False,False

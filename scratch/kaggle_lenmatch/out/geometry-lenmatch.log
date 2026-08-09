@@ -1,0 +1,32 @@
+[{"stream_name":"stdout","time":1.512705566,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":5.228482263,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.24250652,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 96.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.27698864,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 32.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.338578656,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 74.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":34.605017119,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stdout","time":35.568251866,"data":"P1 length gate: kept 188 prompts, dropped 0 item(s) whose two markers tokenised differently\n"}
+,{"stream_name":"stdout","time":35.568286802,"data":"       count_vs_last: 60 prompts (30 matched items)  OK\n"}
+,{"stream_name":"stdout","time":35.568290975,"data":"       first_vs_last: 64 prompts (32 matched items)  OK\n"}
+,{"stream_name":"stdout","time":35.568294101,"data":"          max_vs_min: 64 prompts (32 matched items)  OK\n"}
+,{"stream_name":"stderr","time":124.819905614,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:07\u003c03:22, 67.58s/it]\rFetching 4 files:  50%|█████     | 2/4 [01:07\u003c00:55, 27.95s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:07\u003c00:00, 16.95s/it]\n"}
+,{"stream_name":"stderr","time":124.964371386,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 65.23it/s]\n"}
+,{"stream_name":"stdout","time":2278.773288862,"data":"\n"}
+,{"stream_name":"stdout","time":2278.781562324,"data":"     count_vs_last A: 30 prompts, gold reaches rank 1 in 0%, median best rank 6\n"}
+,{"stream_name":"stdout","time":2278.781735866,"data":"     count_vs_last B: 30 prompts, gold reaches rank 1 in 47%, median best rank 2\n"}
+,{"stream_name":"stdout","time":2278.782001724,"data":"     first_vs_last A: 32 prompts, gold reaches rank 1 in 28%, median best rank 2\n"}
+,{"stream_name":"stdout","time":2278.782225024,"data":"     first_vs_last B: 32 prompts, gold reaches rank 1 in 6%, median best rank 2\n"}
+,{"stream_name":"stdout","time":2278.78240928,"data":"        max_vs_min A: 32 prompts, gold reaches rank 1 in 3%, median best rank 6\n"}
+,{"stream_name":"stdout","time":2278.782557289,"data":"        max_vs_min B: 32 prompts, gold reaches rank 1 in 19%, median best rank 4\n"}
+,{"stream_name":"stdout","time":2291.771216195,"data":"  after cleanup: 14.31 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":2292.604880128,"data":"  purged /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":2292.604971842,"data":"\n"}
+,{"stream_name":"stdout","time":2292.604989381,"data":"=== banked 188/188 in 35.9 min ===\n"}
+,{"stream_name":"stdout","time":2292.605034209,"data":"no analysis here by design; see scripts/run_shape_decode.py\n"}
+,{"stream_name":"stdout","time":2292.605096213,"data":"DONE\n"}
+,{"stream_name":"stderr","time":2299.978749454,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":2299.978786224,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":2300.277110153,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":2300.277135611,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":2300.96076196,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":2302.036331526,"data":"[NbConvertApp] Writing 335399 bytes to __results__.html\n"}
+]

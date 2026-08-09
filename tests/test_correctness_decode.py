@@ -85,9 +85,22 @@ def test_a_planted_within_family_effect_is_found() -> None:
     assert out["balanced_accuracy"] > 0.65, out
 
 
-def test_no_effect_gives_a_null() -> None:
-    out = decode_correctness(_bank(effect=0.0, seed=4), "shape", n_perm=200)
-    assert out["usable"] and out["p"] > 0.05, out
+def test_the_test_is_CALIBRATED_under_the_null() -> None:
+    """Rejection rate near alpha over many seeds, NOT a null on one seed.
+
+    The first version of this asserted p > 0.05 at seed 4 and failed at p = 0.0398,
+    which is not a defect: a calibrated test at alpha = 0.05 fires on about one draw
+    in twenty, and demanding otherwise tests the seed rather than the estimator.
+    The same correction was needed for the ICC recovery test in
+    `tests/test_reliability.py`. The real run's power curve agrees -- 5% detection
+    at a planted effect of exactly zero.
+    """
+    hits, trials = 0, 20
+    for k in range(trials):
+        out = decode_correctness(_bank(effect=0.0, seed=100 + k), "shape",
+                                 n_perm=60, seed=k)
+        hits += out["usable"] and out["p"] < 0.05
+    assert hits / trials < 0.25, f"rejects at {hits / trials:.0%} under the null"
 
 
 def test_single_class_families_are_excluded_not_counted() -> None:

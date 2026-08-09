@@ -1,0 +1,38 @@
+[{"stream_name":"stdout","time":0.761730202,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":4.193730863,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 1.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.823443868,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 37.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.895231451,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 35.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.989359577,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 88.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":33.284440346,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stderr","time":136.171460153,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:19\u003c03:59, 79.99s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:19\u003c00:00, 20.00s/it]\n"}
+,{"stream_name":"stderr","time":136.328735294,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 76.59it/s]\n"}
+,{"stream_name":"stdout","time":161.287343478,"data":"  generation smoke-test: 4/4 copied  -\u003e ['banana', 'orange', 'puzzle', 'kitten']\n"}
+,{"stream_name":"stdout","time":161.287398372,"data":"P1: generation gate PASSED\n"}
+,{"stream_name":"stdout","time":249.718889564,"data":"  depth   4: gold is top-1 in 12.3% of 252 cells (teacher-forced)\n"}
+,{"stream_name":"stdout","time":475.820941168,"data":"  depth   4         bare: exact 1.6%, contains 13.5%, 126 items, degenerate=(False, '')\n"}
+,{"stream_name":"stdout","time":682.920509341,"data":"  depth   4  constrained: exact 11.1%, contains 14.3%, 126 items, degenerate=(False, '')\n"}
+,{"stream_name":"stdout","time":1355.790113188,"data":"  depth  32: gold is top-1 in 7.1% of 252 cells (teacher-forced)\n"}
+,{"stream_name":"stdout","time":2879.909931453,"data":"  depth  32         bare: exact 0.0%, contains 33.3%, 126 items, degenerate=(False, '')\n"}
+,{"stream_name":"stdout","time":4625.430200603,"data":"  depth  32  constrained: exact 0.0%, contains 38.9%, 126 items, degenerate=(False, '')\n"}
+,{"stream_name":"stdout","time":4811.7901508,"data":"  depth   8: gold is top-1 in 3.2% of 252 cells (teacher-forced)\n"}
+,{"stream_name":"stdout","time":5227.212398489,"data":"  depth   8         bare: exact 0.0%, contains 24.6%, 126 items, degenerate=(False, '')\n"}
+,{"stream_name":"stdout","time":5706.01525306,"data":"  depth   8  constrained: exact 0.0%, contains 23.8%, 126 items, degenerate=(False, '')\n"}
+,{"stream_name":"stdout","time":6055.520450087,"data":"  depth  16: gold is top-1 in 7.5% of 252 cells (teacher-forced)\n"}
+,{"stream_name":"stdout","time":6839.392468321,"data":"  depth  16         bare: exact 0.0%, contains 33.3%, 126 items, degenerate=(False, '')\n"}
+,{"stream_name":"stdout","time":7714.298293092,"data":"  depth  16  constrained: exact 2.4%, contains 34.9%, 126 items, degenerate=(False, '')\n"}
+,{"stream_name":"stdout","time":7778.542055821,"data":"  depth   2: gold is top-1 in 7.9% of 252 cells (teacher-forced)\n"}
+,{"stream_name":"stdout","time":7921.650337297,"data":"  depth   2         bare: exact 1.6%, contains 22.2%, 126 items, degenerate=(False, '')\n"}
+,{"stream_name":"stdout","time":8063.589452333,"data":"  depth   2  constrained: exact 3.2%, contains 15.9%, 126 items, degenerate=(False, '')\n"}
+,{"stream_name":"stdout","time":8076.709610604,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":8077.608207383,"data":"  purged /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":8077.608242917,"data":"\n"}
+,{"stream_name":"stdout","time":8077.608253042,"data":"=== 1260 generations + 1260 ranks in 131.9 min ===\n"}
+,{"stream_name":"stdout","time":8077.608259631,"data":"scoring is redone offline from the banked strings; see scripts/run_depth_accuracy.py\n"}
+,{"stream_name":"stdout","time":8077.60829659,"data":"DONE\n"}
+,{"stream_name":"stderr","time":8084.376149105,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":8084.376201124,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":8084.616234531,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":8084.616262108,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":8085.277770209,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":8086.302867204,"data":"[NbConvertApp] Writing 402610 bytes to __results__.html\n"}
+]

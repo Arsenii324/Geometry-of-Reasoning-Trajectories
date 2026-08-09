@@ -1,0 +1,112 @@
+{
+  "bytes": 85,
+  "columns": [
+    "effect_sd",
+    "n_trials",
+    "detected"
+  ],
+  "file": "correctness_decode.csv",
+  "git_commit": "31647bac4c514df8f9f25bdd6d2f4add832f95f8",
+  "git_dirty": true,
+  "kind": "correctness_decode",
+  "min_per_class": 6,
+  "model_id": "tomg-group-umd/huginn-0125",
+  "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
+  "n_rows": 5,
+  "per_family": [
+    {
+      "balanced_accuracy": 0.5416666666666666,
+      "family": "add_2d",
+      "n": 24,
+      "n_correct": 10,
+      "null_mean": 0.47864583333333327,
+      "p": 0.31343283582089554
+    },
+    {
+      "balanced_accuracy": 0.4472222222222222,
+      "family": "count_mod3",
+      "n": 56,
+      "n_correct": 20,
+      "null_mean": 0.5011388888888889,
+      "p": 0.7910447761194029
+    },
+    {
+      "balanced_accuracy": 0.6553030303030303,
+      "family": "local_last",
+      "n": 56,
+      "n_correct": 11,
+      "null_mean": 0.5000615530303031,
+      "p": 0.04477611940298507
+    },
+    {
+      "balanced_accuracy": 0.5564393939393939,
+      "family": "nth_item",
+      "n": 56,
+      "n_correct": 13,
+      "null_mean": 0.5052774621212122,
+      "p": 0.24378109452736318
+    },
+    {
+      "balanced_accuracy": 0.5375,
+      "family": "parity8",
+      "n": 24,
+      "n_correct": 6,
+      "null_mean": 0.5071875,
+      "p": 0.4427860696517413
+    },
+    {
+      "balanced_accuracy": 0.4166666666666667,
+      "family": "sort_min",
+      "n": 24,
+      "n_correct": 14,
+      "null_mean": 0.49546875,
+      "p": 0.736318407960199
+    },
+    {
+      "balanced_accuracy": 0.8616071428571428,
+      "family": "sub1",
+      "n": 56,
+      "n_correct": 29,
+      "null_mean": 0.4969159226190476,
+      "p": 0.004975124378109453
+    },
+    {
+      "balanced_accuracy": 0.6,
+      "family": "track_total",
+      "n": 24,
+      "n_correct": 7,
+      "null_mean": 0.5055,
+      "p": 0.1691542288557214
+    }
+  ],
+  "position": {
+    "balanced_accuracy": 0.5554112554112554,
+    "families": "add_2d,count_mod3,local_last,nth_item,parity8,sort_min,sub1,track_total",
+    "feature": "position",
+    "n": 320,
+    "n_correct": 110,
+    "n_families": 8,
+    "null_mean": 0.5010936147186147,
+    "null_p95": 0.5559415584415585,
+    "p": 0.059850374064837904,
+    "p_floor": 0.0024937655860349127,
+    "usable": true
+  },
+  "produced_by": "/home/user/Geometry-of-Reasoning-Trajectories/scripts/run_correctness_decode.py",
+  "run_id": "20260809T025207Z-d770b2a2",
+  "sha256": "75029a43f8163516fe645063c6da016651841d0b96ee4434ec0b6d456bbd906a",
+  "shape": {
+    "balanced_accuracy": 0.5958874458874458,
+    "families": "add_2d,count_mod3,local_last,nth_item,parity8,sort_min,sub1,track_total",
+    "feature": "shape",
+    "n": 320,
+    "n_correct": 110,
+    "n_families": 8,
+    "null_mean": 0.504607683982684,
+    "null_p95": 0.5567207792207792,
+    "p": 0.0024937655860349127,
+    "p_floor": 0.0024937655860349127,
+    "usable": true
+  },
+  "written_utc": "2026-08-09T02:52:07.952314+00:00"
+}

@@ -10,12 +10,17 @@ is what the D68/D69 work concluded at the time and the difference is informative
 ## 1. The synthesis, as of 2026-08-09
 
 **One sentence: the geometry of Huginn's latent trajectory is set by the weights,
-by how far the contraction has run, and by which prompt it is reading — but not by
-whether the computation succeeded.**
+by how far the contraction has run, and by the input — down to a single token — but
+not by whether the computation succeeded.**
 
-*(That sentence replaces "…not of the input or of the computation", which D84
-refuted the same day: the shape identifies the input at ceiling. The surviving
-dissociation is input versus outcome.)*
+*(This sentence has been rewritten twice in one day, and the history is the
+evidence. It began as "…not of the input or of the computation". D84 refuted the
+first half — the shape identifies the input at ceiling — but could not separate task
+from prompt length, since no two families in any bank share a token count. D87 then
+settled that: at verified-identical token counts, with prompts differing in exactly
+one marker character, the shape separates two computations at 96.9–100%. What
+survives every revision is the second half: the outcome is what the path does not
+carry.)*
 
 That is a claim with three legs, and each is measured rather than argued.
 
@@ -107,8 +112,18 @@ predicts more that is not yet in. Two runs are in flight to test exactly that:
   is measured, not manufactured). It also puts a number on the mechanism: **h₀
   accounts for 0.39–1.42 of the within-family variance** in these statistics, so
   what a single orbit's geometry shows is largely where it started.
-- `geometry-depthacc` — still running. Closes the gap D68(5) named itself: rank is
-  not capability.
+- `geometry-depthacc` — **landed, D86.** Rank is capability only where the output is
+  still short. Exact-match accuracy hits 0% by r=8 while CONTAINMENT rises 13.5% →
+  33.3%, up in 9 of 10 families that moved (p = 0.0215): **depth does not destroy
+  the answer, it wraps it in prose.** Being top-1 raises P(exact) from 3.7% to
+  58.8% at r=4, and the link is gone by r=32. It also amends D69 — that row's
+  0% → 83% was one trivial task; over 21 families the same instruction is worth
+  +9.5 points at r=4 and ~0 elsewhere.
+- `geometry-marker` — running. The one control D87 still needs: three markers with
+  the rules defining A and C **identically** and B differently, so A-vs-C is one
+  token with the same computation and A-vs-B is one token with a different one.
+  Equal decodability means the shape reads the token; a gap means it reads the
+  computation.
 
 **The strongest objection I cannot yet answer.** Everything above is about
 statistics of the *path*. It does not show that no geometric description could

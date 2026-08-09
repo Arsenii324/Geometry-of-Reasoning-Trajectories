@@ -62,7 +62,7 @@ SOURCES = (
 
 
 def collect(sources=SOURCES, m: int = M) -> pd.DataFrame:
-    rows = []
+    rows, skipped = [], []
     for bank, path, suf in sources:
         mp = os.path.join(path, "manifest.json")
         if not os.path.exists(mp):
@@ -77,7 +77,15 @@ def collect(sources=SOURCES, m: int = M) -> pd.DataFrame:
             f = os.path.join(path, r["tag"] + suf)
             if not os.path.exists(f):
                 continue
-            traj = np.load(f).astype(np.float64)
+            try:
+                traj = np.load(f).astype(np.float64)
+            except (ValueError, OSError) as exc:
+                # A truncated download is not a reason to abandon 800 orbits. One
+                # 18-byte file survived a `kaggle kernels output` pull and took the
+                # whole analysis down with a pickle error; skipped and counted here,
+                # and the count is printed so a silent shortfall cannot pass as data.
+                skipped.append((f, type(exc).__name__))
+                continue
             lo, _ = pre_floor_window(traj)
             g = gram_code(traj, lo=lo, m=m)
             p = position_code(traj, lo=lo, m=m, n_proj=len(g))
@@ -85,10 +93,18 @@ def collect(sources=SOURCES, m: int = M) -> pd.DataFrame:
                 continue
             rows.append({"bank": bank, "tag": r["tag"], "_group": bank,
                          "family": r.get("family") or r.get("task", "?"),
+                         # The ANSWER VALUE, so correctness can be conditioned on it.
+                         # D72 voided a whole run because correctness was a function
+                         # of the gold, and any analysis that pools across golds
+                         # inherits that confound.
+                         "gold": str(r.get("gold", "")),
                          "correct": bool(r.get("correct",
                                                r.get("correct_any_depth", False))),
                          "n_tokens": int(r.get("n_tokens", 0)),
                          "shape": g, "position": p})
+    if skipped:
+        print(f"  skipped {len(skipped)} unreadable .npy file(s): "
+              + ", ".join(os.path.basename(f) for f, _ in skipped[:4]))
     df = pd.DataFrame(rows)
     if len(df):
         # Prompt length, as a THREE-LEVEL target. It is the confound that most
