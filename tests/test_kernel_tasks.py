@@ -457,3 +457,58 @@ def test_lenmatch_readout_has_not_drifted_from_the_validated_one() -> None:
     b = open(os.path.join(ROOT, "scratch", "kaggle_lenmatch", "body.py"),
              encoding="utf-8").read()
     assert body_of(b, "coda_head") == body_of(a, "coda_head")
+
+
+# --------------------------------------------------------------------------
+# clrs: the capability screen on a dataset that is IN Huginn's training mix.
+# --------------------------------------------------------------------------
+
+
+def test_clrs_final_answer_splits_on_the_last_separator() -> None:
+    """CLRS answers are `trace | final`, and several algorithms emit `|` inside the
+    trace. Splitting on the FIRST separator would score a trace step as the answer
+    and the whole screen would read as failure."""
+    ns = _load("kaggle_clrs", "def main")
+    fa = ns["final_answer"]
+    assert fa("(1,1), (5,17) | (5, 17)") == "(5, 17)"
+    assert fa("a | b | c") == "c"
+    assert fa("no separator here") == "no separator here"
+
+
+def test_clrs_problem_size_reads_the_difficulty_knob() -> None:
+    """Problem size is the difficulty parameter and the dataset does not carry it as
+    a column -- only `question`, `answer`, `algo_name`. It has to be parsed, and for
+    a graph algorithm the first bracketed group is a MATRIX ROW, which for an n x n
+    adjacency matrix is n."""
+    ns = _load("kaggle_clrs", "def main")
+    ps = ns["problem_size"]
+    assert ps("key: [-0.5 0.7 0.1], initial_trace: (0,0)") == 3
+    assert ps("A: [[0 1], [0 0]], initial_trace: [0 1]") == 2
+    assert ps("no list at all") == 0
+
+
+def test_clrs_scores_the_decoded_string_not_a_first_token() -> None:
+    """D89: `correct` as first-token rank measures the leading token, and CLRS
+    answers are long numeric strings where that instrument is simply wrong."""
+    ns = _load("kaggle_clrs", "def main")
+    score = ns["score"]
+    assert score("(5, 17)", "(5, 17)") == (True, True)
+    assert score("the answer is (5, 17)", "(5, 17)") == (False, True)
+    assert score("(5, 18)", "(5, 17)") == (False, False)
+
+
+def test_clrs_brackets_the_depth_where_d86_found_the_transition() -> None:
+    """D86: exact-match peaks shallow and hits 0% by r=8 while containment rises to
+    r=32. A screen at one depth would report whichever side of that it landed on."""
+    ns = _load("kaggle_clrs", "def main")
+    assert ns["DEPTHS"] == (4, 32)
+
+
+def test_clrs_gates_the_decoder_before_reading_it() -> None:
+    src = open(os.path.join(ROOT, "scratch", "kaggle_clrs", "body.py"),
+               encoding="utf-8").read()
+    main = next(n for n in ast.walk(ast.parse(src))
+                if isinstance(n, ast.FunctionDef) and n.name == "main")
+    calls = [ast.unparse(n.func) for n in ast.walk(main) if isinstance(n, ast.Call)]
+    assert "assert_generation_works" in calls
+    assert calls.index("assert_generation_works") < calls.index("batched_generate")

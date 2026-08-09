@@ -39,6 +39,9 @@ live state without asking. Updated 2026-08-09.
 | `geom-seeds` | DataSphere g1.1 | closes D76's one-draw limit | **DONE.** Five draws agree (cos -0.339..-0.389); trained/untrained completely disjoint, p=1.05e-12 |
 | `geometry-b6-bank` | Kaggle T4 | **B6 re-run** | **DONE -> D79.** Bounded null: no geometric difference at matched answer, powered to 1.5 sd, in the 1 family of 4 that the design could test |
 
+| `geometry-h0bank` | Kaggle T4 | **the powered, PRE-REGISTERED test of D91's lead** — 16 boundary prompts x 32 unseeded h_0 draws, within-ITEM correctness decode with the window grid fixed in advance | RUNNING |
+| `geometry-clrs` | Kaggle T4 | capability screen on CLRS-Text, which is IN Huginn's training mixture and has a clean integer difficulty knob — the task gap the supervisor named | BUILDING |
+
 **Answered offline since, with no GPU, from data already on disk.**
 
 - **D80 — the shape statistics are mostly a clock.** Sliding a fixed-width window
