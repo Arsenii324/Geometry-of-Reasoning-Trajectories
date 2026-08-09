@@ -67,6 +67,15 @@ sequences, **identical 53-token count**, flipping in **36 of 36** within-sequenc
 in the ledger: `e` is the map's **parameter** (D111, D113), and the spectrum at h\*(e)
 is task-dependent (D115, D116, D119) — D132 localises that dependence to one token.
 
+**And the three nouns request the same computation and the same answer.** `symbol`,
+`element` and `item` all mean *take the maximum of this sequence*, and the banked golds
+are identical across all three in **36 of 36** cells. Computation fixed, answer fixed,
+token count fixed, sequences shared — **and the dynamics change completely.** This is
+D88 one level down: D88 found the trajectory's *shape* reads the input token rather than
+the computation; D132 finds the same of the *dynamics*. **The latent geometry tracks the
+surface form of the instruction, not what the instruction asks for** — which is the
+sharpest statement of §1.1 available, and it is causal rather than correlational.
+
 ### 1.4 What the corrections did to the older record
 
 An independent audit on 2026-08-10 found that **three older positives all rest on one
