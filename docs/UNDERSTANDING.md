@@ -208,11 +208,45 @@ gives top eigenvalues in complex-conjugate pairs at **0.808, 0.808, 0.802, 0.802
 if the top modulus is 0.808 then **nothing is near 1: there is no line attractor
 and no integrator eigendirection.**
 
-So H3's mechanistic form is supported on this model — not by the contraction rate
-alone, but by the absence of the specific structure that would permit a running
-count. Two caveats travel with it: 3 prompts, and the Jacobian is evaluated at
-particular points along particular orbits, so this is a local statement about the
+So **the state h carries no near-unity eigendirection** — no unbounded register
+lives in h. Two caveats travel with that: 3 prompts, and the Jacobian is evaluated
+at particular points along particular orbits, so it is a local statement about the
 region the orbits actually visit.
+
+**But it does NOT follow that Huginn cannot count, and the earlier version of this
+section said it did. Corrected 2026-08-09.** The Contraction Bottleneck Theorem's
+proof is about **forgetting h₀**: iterated contraction destroys dependence on the
+arbitrary starting point. It says nothing about dependence on an input that is
+**re-injected at every step** — and a contraction toward a fixed point still lets
+that fixed point *h\*(e)* depend arbitrarily on *e*. Huginn re-injects the prelude
+output every unroll, by deliberate design, precisely to buy path-independence. So
+the count need never survive *in h at all*; it can live in how *h\** depends on *e*,
+which the contraction does not touch.
+
+**This project measured exactly that in July and I had not read it.**
+`h3_toy_model/` (imported 2026-07-22, never cited in this document) sweeps a forced
+contraction over a recurrent-over-**depth** model with Huginn's re-injection
+topology and finds count information survives essentially intact: **linear-probe
+R² ≥ 0.996 at every β tested, including β=20 where ρ ≈ 0.25–0.33** — if anything
+*higher* under strong contraction. Its recurrent-over-**time** counterpart (a
+classic RNN, the architecture the theorem's own worked example assumes) collapses
+to R² ≈ 0. Its own `FINDINGS.md` states the diagnosis: §5 of the proof leaps from
+"h₀-dependence decays" to "therefore N-state counting must fail" by implicitly
+assuming the N states are encoded *as different h₀ values*, which nothing in the
+proof establishes.
+
+**Two independent routes now say the same thing**, which is why this is a
+correction rather than a caveat: the project's own toy model (July, empirical), and
+an external interpretability pass (2026-08-09) which framed *e* as the map's
+**parameter** and *h* as its **state**, noting that perturbing *h* perturbs an
+initial condition a contraction erases while perturbing *e* moves *h\*(e)* and
+persists. **H3's applied claim is therefore architecture-dependent, and Huginn's
+architecture is the case where it does not follow.** What remains defensible is the
+narrow statement: *no unbounded register is maintained in the recurrent state
+across iterations.* Whether Huginn counts is an empirical question about *h\*(e)*,
+not one the contraction settles — and the toy model's caveats (no attention,
+mean-pooled context, binary vocab, h₀=0, forced contraction) mean it argues the
+theorem's scope, not Huginn's behaviour.
 
 **And the bounded-counter caveat is ours to state, because nobody else has.** The
 same pass found no published source drawing the distinction, so it is uncontested
