@@ -61,8 +61,6 @@ import tarfile
 import time
 import traceback
 
-import numpy as np
-
 MODEL_ID = "tomg-group-umd/huginn-0125"
 REVISION = "bb6621b65e90b6a4b9b29ef88dc83866d450470c"
 NUM_STEPS = 64
@@ -122,8 +120,15 @@ def main():
     t0 = time.time()
     run("pip install torch==2.5.1")
     run("pip install transformers==4.53.3 accelerate safetensors")
+
+    # THIRD-PARTY IMPORTS MUST NOT BE AT MODULE LEVEL for a DataSphere job:
+    # the CLI IMPORTS this file locally to analyse dependencies, and the
+    # pipx venv has no numpy. This does not contradict D125's "imports at
+    # the top" rule -- that is about position INSIDE main(), after the
+    # install, where a missing REPO symbol fails in 30 s rather than hours.
     import random
 
+    import numpy as np
     import torch
     from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 

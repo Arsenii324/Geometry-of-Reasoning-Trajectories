@@ -174,6 +174,13 @@ from a template, so **write results incrementally rather than once at the end.**
   finally found by `git grep` over history. A neighbouring id, `bt14qn4u9t3n09nfjoqu`,
   appears in a sibling directory's launch command and returns PERMISSION_DENIED —
   it is not this account's.
+- **DataSphere's CLI IMPORTS your job.py locally** to analyse dependencies, so a
+  module-level `import numpy` fails with `ModuleNotFoundError` in the pipx venv
+  before anything uploads. **All third-party imports go inside `main()`, after the
+  pip installs** -- which is why every working kernel here does that. This does NOT
+  contradict D125's "imports at the top": that rule is about position INSIDE
+  `main()`, putting REPO imports right after the editable install so a missing
+  symbol fails in 30 s instead of after every forward has run.
 - **DataSphere requires `if __name__ == '__main__':` in the main script.** A Kaggle
   kernel ending in a bare `main()` is rejected before upload with
   `ValueError: Main script must have line ...`. Costs seconds, but it is the first
