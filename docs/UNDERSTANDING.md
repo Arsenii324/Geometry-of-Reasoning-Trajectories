@@ -9,8 +9,13 @@ is what the D68/D69 work concluded at the time and the difference is informative
 
 ## 1. The synthesis, as of 2026-08-09
 
-**One sentence: the geometry of Huginn's latent trajectory is a signature of the
-weights and of depth, not of the input or of the computation.**
+**One sentence: the geometry of Huginn's latent trajectory is set by the weights,
+by how far the contraction has run, and by which prompt it is reading — but not by
+whether the computation succeeded.**
+
+*(That sentence replaces "…not of the input or of the computation", which D84
+refuted the same day: the shape identifies the input at ceiling. The surviving
+dissociation is input versus outcome.)*
 
 That is a claim with three legs, and each is measured rather than argued.
 
@@ -56,12 +61,29 @@ design that escapes the length confound: the paired `track − local` contrast g
 and D74(6) (dimensionality), **every instrument this project has built for H2 now
 returns nothing**, and D80 explains why: they were all reading a clock.
 
+**(c′) — CORRECTED 2026-08-09 by D84, and the correction sharpens the claim.** An
+earlier draft of this section said the geometry is "the input it cannot see". That
+is wrong. Handing a classifier the *whole* shape — the rotation-, translation- and
+scale-invariant Gram matrix of unit step directions, a complete invariant of the
+path — decodes the **task family at 100% balanced accuracy within every bank**
+against permutation nulls of 25–33%. The shape identifies which prompt is being
+processed, at ceiling. What the same classifier on the same orbits cannot decode is
+**correctness: 55.3% balanced, p = 0.065** (D84). So the dissociation is not between
+weights and input. It is between **input and outcome**: the path tells you what the
+model is reading and not whether it got the answer right.
+
+Two caveats travel with that, both measured. The family result **cannot be
+attributed to the task**: no two families share a prompt length anywhere in the
+banked data — 0 of 6 pairs in one bank, 0 of 3 in the other — so task identity and
+sequence length are perfectly collinear, the same situation where D74(6)'s
+`partial_spearman` refused at ρ = −1.000. And the correctness null is "not linearly
+decodable at n = 128", not "absent".
+
 **What training does, by contrast, is unmissable.** ρ rises 0.7048 → 0.8577 across
 14 weight-sets with no overlap (D52); the step cosine *flips sign*, −0.379 →
 +0.541, with completely disjoint distributions across five independent untrained
 draws (D76, D76(8)); and rotation per unroll read off the operator falls from 1.892
-to 1.024 (D83(4)). The geometry is highly sensitive — to the weights. It is the
-input it cannot see.
+to 1.024 (D83(4)).
 
 **The most telling single number** is in D83(6): across `track`/`local` and n_ops
 4–32, the *measured* step cosine spans just **0.44–0.57**, while the Jacobian's

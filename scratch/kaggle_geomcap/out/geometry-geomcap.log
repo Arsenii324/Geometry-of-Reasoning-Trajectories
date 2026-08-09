@@ -1,0 +1,63 @@
+[{"stream_name":"stdout","time":1.629937145,"data":"$ pip install -q 'transformers\u003e=4.50,\u003c4.54'\n"}
+,{"stream_name":"stdout","time":5.4359951429999995,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.9/40.9 kB 2.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.412314508,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 102.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.441363042,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 34.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.49075105,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 87.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":36.125866172,"data":"CUDA: True Tesla T4\n"}
+,{"stream_name":"stderr","time":125.275741159,"data":"\rFetching 4 files:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rFetching 4 files:  25%|██▌       | 1/4 [01:05\u003c03:16, 65.47s/it]\rFetching 4 files: 100%|██████████| 4/4 [01:05\u003c00:00, 16.37s/it]\n"}
+,{"stream_name":"stderr","time":125.465471687,"data":"\rLoading checkpoint shards:   0%|          | 0/4 [00:00\u003c?, ?it/s]\rLoading checkpoint shards: 100%|██████████| 4/4 [00:00\u003c00:00, 42.40it/s]\n"}
+,{"stream_name":"stdout","time":282.347306908,"data":"      echo_digit: 24 items, acc 100%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":441.315495047,"data":"       echo_word: 24 items, acc 79%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":609.125739945,"data":"        nth_item: 24 items, acc 21%, 2 gold values carry both classes, 9 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":778.22273627,"data":"       last_item: 24 items, acc 12%, 2 gold values carry both classes, 5 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":931.799480195,"data":"            add1: 24 items, acc 79%, 2 gold values carry both classes, 7 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":1086.74631838,"data":"            sub1: 24 items, acc 62%, 1 gold values carry both classes, 4 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":1244.461909003,"data":"          add_2d: 24 items, acc 42%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":1408.448644091,"data":"         compare: 24 items, acc 92%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":1576.547805704,"data":"          count4: 24 items, acc 21%, 1 gold values carry both classes, 2 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":1745.636364554,"data":"          count8: 24 items, acc 0%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":2030.816846067,"data":"         count16: 24 items, acc 12%, 1 gold values carry both classes, 2 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":2317.751417714,"data":"      count_mod3: 24 items, acc 42%, 2 gold values carry both classes, 16 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":2605.121767852,"data":"         parity8: 24 items, acc 25%, 1 gold values carry both classes, 11 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":2891.428811273,"data":"     track_total: 24 items, acc 29%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":3178.816105839,"data":"      local_last: 24 items, acc 21%, 1 gold values carry both classes, 13 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":3465.325880115,"data":"         max_run: 24 items, acc 0%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":3634.161479964,"data":"        sort_min: 24 items, acc 58%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":3797.58015405,"data":"     succ_letter: 24 items, acc 8%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":3966.012581699,"data":"  caesar1_letter: 24 items, acc 8%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":4136.737811418,"data":"    caesar1_word: 24 items, acc 0%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":4305.09609614,"data":"      rot13_word: 24 items, acc 0%, 0 gold values carry both classes, 0 items in them (within-family test wants \u003e= 6)\n"}
+,{"stream_name":"stdout","time":4305.096260192,"data":"\n"}
+,{"stream_name":"stdout","time":4305.096283038,"data":"=== ceiling block: 10 replicates each of item 0 from 8 families spanning acc 0%-100% ===\n"}
+,{"stream_name":"stdout","time":4305.096344049,"data":"    caesar1_word 0%, rot13_word 0%, count16 12%, local_last 21%, parity8 25%, count_mod3 42%, add1 79%, echo_digit 100%\n"}
+,{"stream_name":"stdout","time":4376.531800566,"data":"    caesar1_word: 10 replicates, best_rank 1923-2375, 10 distinct state hashes (expect 10: unseeded h_0)\n"}
+,{"stream_name":"stdout","time":4447.084829631,"data":"      rot13_word: 10 replicates, best_rank 891-3986, 10 distinct state hashes (expect 10: unseeded h_0)\n"}
+,{"stream_name":"stdout","time":4566.742211574,"data":"         count16: 10 replicates, best_rank 8-17, 10 distinct state hashes (expect 10: unseeded h_0)\n"}
+,{"stream_name":"stdout","time":4687.490045297,"data":"      local_last: 10 replicates, best_rank 2-2, 10 distinct state hashes (expect 10: unseeded h_0)\n"}
+,{"stream_name":"stdout","time":4807.9498302,"data":"         parity8: 10 replicates, best_rank 1-2, 10 distinct state hashes (expect 10: unseeded h_0)\n"}
+,{"stream_name":"stdout","time":4928.414863484,"data":"      count_mod3: 10 replicates, best_rank 1-6, 10 distinct state hashes (expect 10: unseeded h_0)\n"}
+,{"stream_name":"stdout","time":4994.366816564,"data":"            add1: 10 replicates, best_rank 1-2, 10 distinct state hashes (expect 10: unseeded h_0)\n"}
+,{"stream_name":"stdout","time":5062.100731906,"data":"      echo_digit: 10 replicates, best_rank 1-1, 10 distinct state hashes (expect 10: unseeded h_0)\n"}
+,{"stream_name":"stdout","time":5062.100774065,"data":"\n"}
+,{"stream_name":"stdout","time":5062.100782706,"data":"=== determinism control: 3 forwards per prompt at manual_seed(20260809) ===\n"}
+,{"stream_name":"stdout","time":5083.41778293,"data":"    caesar1_word: IDENTICAL\n"}
+,{"stream_name":"stdout","time":5104.527556227,"data":"      rot13_word: IDENTICAL\n"}
+,{"stream_name":"stdout","time":5140.273319468,"data":"         count16: IDENTICAL\n"}
+,{"stream_name":"stdout","time":5176.480821826,"data":"      local_last: IDENTICAL\n"}
+,{"stream_name":"stdout","time":5212.724579411,"data":"         parity8: IDENTICAL\n"}
+,{"stream_name":"stdout","time":5248.953198234,"data":"      count_mod3: IDENTICAL\n"}
+,{"stream_name":"stdout","time":5268.748856461,"data":"            add1: IDENTICAL\n"}
+,{"stream_name":"stdout","time":5289.187353314,"data":"      echo_digit: IDENTICAL\n"}
+,{"stream_name":"stdout","time":5301.999312631,"data":"  after cleanup: 14.41 GiB free of 14.56 GiB\n"}
+,{"stream_name":"stdout","time":5302.754272509,"data":"  purged /root/.cache/huggingface/hub/models--tomg-group-umd--huginn-0125\n"}
+,{"stream_name":"stdout","time":5302.754531941,"data":"\n"}
+,{"stream_name":"stdout","time":5302.754543098,"data":"=== banked 608/608 in 86.1 min ===\n"}
+,{"stream_name":"stdout","time":5302.754555707,"data":"no analysis here by design; see scripts/run_geomcap.py\n"}
+,{"stream_name":"stdout","time":5302.754608688,"data":"DONE\n"}
+,{"stream_name":"stderr","time":5310.666893987,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":5310.666928535,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":5310.993569599,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":5310.993614295,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":5311.751288413,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":5312.856442101,"data":"[NbConvertApp] Writing 382583 bytes to __results__.html\n"}
+]
