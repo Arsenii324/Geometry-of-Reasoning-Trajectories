@@ -145,6 +145,13 @@ def main() -> None:
                      [(r, ds_status(r["id"]) if r["platform"] == "datasphere"
                        else kaggle_status(r["id"])) for r in runs]
                      if r["platform"] == "datasphere" and s in ("EXECUTING", "PREPARING"))
+    # SLOTS ARE NOT THE ONLY KAGGLE LIMIT. On 2026-08-09 a push was refused with
+    # "Maximum weekly GPU quota of 30.00 hours reached" while a slot was free -- so
+    # "1/2 used" read as available when nothing could be launched at all. Occupancy
+    # and entitlement are different questions and this line used to conflate them.
+    print("CAPACITY NOTE: a free Kaggle SLOT does not mean Kaggle is usable -- the\n"
+          "  weekly 30 h GPU quota is separate and, once spent, refuses every push.\n"
+          "  Confirm with a real `kaggle kernels push` before planning around it.")
     print(f"\nCAPACITY  kaggle {kag_running}/2 used"
           f"{'  <-- FULL' if kag_running >= 2 else f'  ({2 - kag_running} FREE)'}"
           f"   |   datasphere {ds_running} running, NO SLOT CAP -- always launchable "
