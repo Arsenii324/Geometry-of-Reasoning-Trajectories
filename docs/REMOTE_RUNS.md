@@ -191,6 +191,16 @@ from a template, so **write results incrementally rather than once at the end.**
   revision of this file asserted it did not, which was inference stated as fact and is
   retracted. Design so it does not matter: if a run's value depends on output surviving
   an abnormal end, the run is already badly designed.
+- **PUSH BEFORE YOU LAUNCH.** Remote jobs `git clone` the branch from GitHub, so a
+  kernel importing anything added locally fails on the REMOTE's older copy. On
+  2026-08-09 A4b died at `ImportError: cannot import name 'require_null_can_move'`
+  with the branch **31 commits ahead of origin**. It cost nothing only because the
+  import sat in the analysis block, after all 256 forwards had run, and incremental
+  saves preserved 225 records. At the top of the file it would have lost the entire
+  run before the first forward. `git status -sb` must show no `[ahead N]` before any
+  `job execute` or `kernels push`.
+- **Corollary: put third-party and repo imports at the TOP, where they fail fast.**
+  A late import turns a 30-second failure into a 2.5-hour one.
 - **The local CLI dying does NOT kill the job.** On 2026-08-09 `job execute` crashed
   locally with `AssertionError` in `auth.get_md` (`assert current_iam_token`) — an IAM
   token refresh failing in the attached client. The job stayed `EXECUTING` server-side
