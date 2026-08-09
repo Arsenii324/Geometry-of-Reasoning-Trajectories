@@ -671,3 +671,89 @@ harder/more OOD than GSM8K-style problems (plausible: ciphers, parity, indexing 
 not what the training mixture emphasises), or something in the scoring is still
 wrong beyond D89's fix.
 
+
+### E3. How to MINE for good task statements and setups — the strategy, and its traps
+
+**Why this needs a strategy at all.** Two runs have now failed on task supply
+rather than on method: D47 (no dynamic range in the outcome) and D95 (2 of 9
+items split, gate VOID). `geometry-census` searches the EXISTING pool of 21
+hand-authored families x 12 items. **If that pool contains no good items, the
+census returns nothing and we have learned only that the pool is bad.** Searching
+a fixed pool is not the same as generating good tasks.
+
+**What "good" means here is FIVE criteria that do not coincide, and that is the
+whole difficulty.**
+
+| criterion | why | who violates it |
+|---|---|---|
+| accuracy strictly inside 0-1, ideally near 0.5 | a pinned outcome carries no correctness information however much h_0 moves it (D90(6)) | most of the battery: `echo_digit` at 100%, `rot13_word` at ~0% |
+| difficulty set by an explicit knob | the supervisor's actual ask -- vary required reasoning steps while holding everything else fixed | the battery families are single-difficulty by construction |
+| token count NOT covarying with difficulty | else geometry tracks LENGTH, which it demonstrably does (D26, D84, 6 of 18 cells in D85) | almost everything; only the D87 lenmatch design controls it |
+| single-token gold | else the rank readout scores the leading token, not the answer (D89) | 8 of 21 battery families |
+| in-distribution enough that the model can do it | Huginn gets GSM8K 32.6%, ARC-E 69.9% on natural-language in-mixture tasks, but our synthetic symbolic families read near zero | the synthetic battery |
+
+**Criteria 2 and 5 pull directly against each other**, and that tension is the
+core problem: clean difficulty knobs come from synthetic tasks the model is bad
+at; tasks the model is good at come from natural-language data with messy,
+uncontrolled difficulty.
+
+**Five mining strategies, roughly in order of expected value.**
+
+1. **TITRATION rather than guessing (the big one, not yet built).** Stop
+   hand-picking difficulty. Define each family as a GENERATOR with an explicit
+   integer knob n (cipher rotations, prefix length, sequence length, number of
+   operations), then **binary-search n per family for the value where accuracy
+   crosses the 20-80% band**. ~8 forwards per family brackets a threshold. This
+   is an adaptive staircase, and it produces exactly what the supervisor asked
+   for -- difficulty-controlled families -- *by construction* rather than by
+   luck. It also adapts automatically if the model is better or worse than
+   assumed, which is where both failed runs went wrong.
+2. **CLRS-Text, the rare intersection.** It is IN Huginn's training mixture
+   (`tomg-group-umd/CLRS-Text-train`, confirmed in the model card) AND has a
+   clean integer problem-size knob. That is the one place criteria 2 and 5 are
+   satisfied at once. `geometry-clrs` is testing it now.
+3. **Prompt format as a deliberate lever, not a nuisance.** D69 moved
+   `echo_digit` from 0% to 83% with ONE added instruction. So format can move a
+   task into the measurable band without changing the computation at all. Any
+   titration should sweep format as a second axis, and D86 shows the effect is
+   family-specific rather than global (+9.5 points at r=4, ~0 elsewhere).
+4. **Length-matching by construction, verified not assumed.** The D87 trick --
+   two prompts with byte-identical bodies differing in one marker character --
+   is the only design in this project proven to escape the length confound, and
+   it passed its gate absolutely (188/188, token multisets identical). Any new
+   difficulty-controlled family should be built this way where possible, and the
+   token-count gate must be CHECKED in the kernel, as D87 checked it.
+5. **h_0 as the micro-knob.** Once an item sits near the boundary, the unseeded
+   h_0 ensemble supplies within-item outcome variance for free (D90). This is
+   the last mile, not the search itself.
+
+**THE TRAPS, and one of them is already live in `geometry-census`.**
+
+- **Winner's curse / regression to the mean.** Selecting items because their
+  measured `frac_correct` looks balanced, on FEW draws, preferentially selects
+  items that got lucky; re-measuring them moves the estimate back toward the
+  extremes. **`geometry-census` as launched has this: `summarise` pools the 4
+  stage-1 screening draws with the 20 stage-2 draws for selected items, so its
+  printed `frac_correct` is contaminated by the very draws that caused
+  selection.** *Recoverable:* `census.json` stores `rows` in append order, and
+  each item's first 4 rows are its stage-1 draws, so the offline analysis MUST
+  compute the split fraction from **stage-2 draws only** and treat stage 1
+  purely as a selector. Do not quote the kernel's printed table in the ledger.
+- **Circularity: selecting on the outcome, then predicting the outcome.** If
+  items are chosen because correctness varies and we then ask whether geometry
+  predicts correctness, the selection and the analysis share data. The correct
+  pattern is the one `geometry-h0bank` used: **select the boundary prompts from
+  a DIFFERENT run's ranks (geomcap), so selection cannot be circular with this
+  run's labels.** Any census-selected item set must be used the same way -- as a
+  selector for a FRESH banking run, never analysed on the census's own draws.
+- **Selection restricts generalisation.** Results on titrated boundary items are
+  claims about boundary items, not about the model's geometry in general. That
+  must be stated in whatever claim they support, as D79's "in the 1 family of 4
+  that the design could test" states it.
+- **D89 and the length confound do not go away** just because the items are
+  better chosen; the single-token-gold and token-count gates still have to run.
+
+**Concrete next build, if the census returns too few splitting items:** the
+titration kernel in (1), over parametric generators with an explicit n, is the
+principled replacement for a fixed item pool and is the thing to build rather
+than re-running a wider census over the same hand-authored families.
