@@ -927,6 +927,27 @@ count IS decodable — from the state, i.e. from *h\**).
 versus from the shape code, matched feature counts. The hypothesis predicts the
 final state wins substantially. **Killed if** shape matches or beats it.
 
+**RUN 2026-08-09, AND THE TEST AS SPECIFIED WAS MIS-DESIGNED — recorded because
+the mistake is instructive.** I ran it within-prompt on the 320 splitting h0bank
+orbits: shape 0.520 (null 0.471, p = 0.030); final state h\* 5280-d **0.451**
+(p = 0.79); final state at a matched 66 random projections 0.493 (p = 0.42).
+That looks like a refutation and is not one. **Within a prompt, *e* is FIXED, so
+*h\*(e)* is the same target for all 32 draws** — after within-prompt centring
+there is almost nothing left in the endpoint to decode, which is exactly what
+G2.1 itself predicts. The test cannot discriminate; it needed a BETWEEN-prompt
+contrast, where *e* varies.
+
+**What it does establish, and this is worth keeping:** whatever correctness
+signal exists within a prompt lives in the **path, not the endpoint** — shape is
+weakly above its null while the raw final state sits at chance on both a full
+5280-d and a matched-dimension projection. Combined with D93's timing control
+(`best_depth` alone decodes correctness about as well as the best shape window),
+the most economical reading is that **within-prompt correctness is a fact about
+WHEN the transient peaks, not about where it ends up.**
+**Redesigned test, still zero GPU:** decode the gold VALUE across items within a
+family at matched token count (the D87/lenmatch banks) from *h\** versus from
+shape. There *e* genuinely varies, so the hypothesis is testable.
+
 **G2.2 — The period-4 cycle is an architectural carrier; any task signal lives in
 deviations from it.** D100 found every cycle statistic invariant across tasks and
 difficulty — which is exactly what a carrier looks like. **Test, zero GPU on the
