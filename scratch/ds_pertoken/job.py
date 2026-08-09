@@ -53,6 +53,7 @@ are returned for 2 prompts only, since all-position states are ~50 MB/prompt.
 import json
 import os
 import subprocess
+import sys
 
 
 def run(cmd):
@@ -82,7 +83,6 @@ PROMPTS = [
 
 
 def main():
-    import sys
     out_path = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else \
         os.path.abspath("pertoken.json")
     print(f"results -> {out_path}", flush=True)
@@ -95,6 +95,16 @@ def main():
     run("pip install torch==2.5.1")
     run("sed -i 's/<3.12/<3.13/' pyproject.toml")
     run("pip install -e .[model]")
+
+    # `pip install -e .` reports success but the package can still be missing from
+    # THIS interpreter's sys.path -- pip and `python` are not guaranteed to be the
+    # same environment under `env.python.type: manual`, and the first submission of
+    # this job died on `ModuleNotFoundError: No module named 'traj_geom'` several
+    # lines after pip printed "Successfully installed ... traj-geom-0.1.0".
+    # Putting the source root on the path directly makes the import independent of
+    # which interpreter pip chose. (The QK probe never hit this because it imports
+    # nothing from the project.)
+    sys.path.insert(0, os.path.abspath("src"))
 
     import numpy as np
     import torch

@@ -109,6 +109,25 @@ with `pip install torch==2.5.1` pinned inside the job (needed for
 `sed -i 's/<3.12/<3.13/' pyproject.toml` before `pip install -e .[model]`.
 Verify `torch.cuda.is_available()` and print the device name before real work.
 
+**`pip install -e .` can succeed and still leave the package unimportable.**
+Under `env.python.type: manual`, `pip` and `python` are not guaranteed to be the
+same environment. A job died on
+
+```
+ModuleNotFoundError: No module named 'traj_geom'
+```
+
+*after* pip printed `Successfully installed ... traj-geom-0.1.0` in the same log.
+Fix — put the source root on the path directly, independent of which interpreter
+pip chose:
+
+```python
+sys.path.insert(0, os.path.abspath("src"))   # after os.chdir into the clone
+```
+
+Only jobs that import the project package hit this; one that uses nothing but
+torch/transformers will pass and give false confidence that the install works.
+
 **CLI gotchas on this Mac.**
 
 - `GRPC_DNS_RESOLVER=native` is REQUIRED on every `datasphere` invocation. The
