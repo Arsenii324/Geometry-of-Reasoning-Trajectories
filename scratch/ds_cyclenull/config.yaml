@@ -1,0 +1,18 @@
+name: block-cycle-untrained-control
+desc: >
+  The control D98 needs before anything else is built on it. Four blocks with
+  four DIFFERENT random matrices will have four different fixed points for a
+  trivial reason, so if an untrained model shows the same cycle then D98 is
+  architectural rather than a fact about training. Measures D98's statistics on
+  identical prompts in the trained arm and in three independently seeded
+  untrained arms, loading and freeing one 3.5B model at a time. Pre-registered:
+  the EXISTENCE of a cycle is expected to be architectural; the test is whether
+  its geometry separates the arms.
+cmd: python job.py ${RESULT}
+outputs:
+  - cyclenull.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
