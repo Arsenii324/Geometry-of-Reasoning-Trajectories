@@ -1,0 +1,22 @@
+name: nounsweep-which-words-select-rotation
+desc: >
+  A22: WHICH nouns select the rotation? D132 showed one word flips the recurrent
+  map between settling and a damped period-6 rotation -- symbol 36/36, element
+  0/36, item 0/36 -- at identical token count and on the same sequences. Three
+  words is a switch, not a mapping. This sweeps 16 nouns in the same slot over 12
+  shared sequences: semantic neighbours of symbol, semantic neighbours of element,
+  and FORM-matched controls (symptom, cymbal, symmetry) that share form with symbol
+  but denote nothing like it. If the semantic neighbours follow symbol and the
+  form-matched ones do not, the selector is semantic; if the form-matched ones
+  rotate too, it is lexical/embedding-level. symbol and element are included as
+  replications -- if they do not reproduce 100%/0% the run is VOID. Token counts
+  necessarily vary across nouns, so they are recorded per orbit and any partition
+  matching token count is reported as length-confounded.
+cmd: python job.py ${RESULT}
+outputs:
+  - nounsweep.tgz: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
