@@ -1,6 +1,11 @@
 [
   {
     "platform": "datasphere",
+    "id": "bt1ac05vfako35rndads",
+    "what": "B1b state arm fixed (single injection, matched-unroll donor) + e-arm reproducibility"
+  },
+  {
+    "platform": "datasphere",
     "id": "bt1piv6aglul4h2nbtnk",
     "what": "B1 e-stream potency curve (the causal instrument null)"
   },

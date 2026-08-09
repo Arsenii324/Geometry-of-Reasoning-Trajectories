@@ -18,19 +18,30 @@ Perturbing `x` perturbs an initial condition that a contraction erases; perturbi
 `e` moves the fixed point `h*(e)` itself. A forward-PRE-hook on `transformer.adapter`
 can replace the `e` half of its input with a donor's, which is the intervention.
 
-THE PRE-REGISTERED PREDICTION, AND IT IS SHARP BECAUSE THE TWO ARMS DISAGREE:
+SECOND SUBMISSION (D108 -> B1b). The first run ANSWERED the e arm and VOIDED the
+state arm, so the pre-registration is updated here rather than left stale:
 
-  * **e-stream arm: potency should DECREASE with r.** Patching from unroll r onward
-    leaves only (R - r) steps to converge toward the new fixed point h*(e_donor),
-    so a late patch has less time to take effect.
-  * **state arm: potency should INCREASE with r.** A state perturbation decays as
-    rho^(R-r), so a late patch has less remaining budget in which to be erased.
-    (D95's row states this direction explicitly, after an earlier draft had it
-    backwards.)
+  * **e arm -- SETTLED by D108.** The instrument works: the preferred answer flips
+    in 42/56 measurements, mean potency +3.973 nats. Potency is FLAT in r
+    (rho = -0.071, p = 0.879), refuting the original prediction that it would fall
+    -- 87% of the effect is present with only 8 unrolls left. It is re-run here
+    unchanged, as a reproducibility check on a result that changed a headline.
+  * **state arm -- VOID in the first run, by two bugs of mine.** It overwrote `x`
+    at EVERY unroll from r onward (so the outcome could not depend on when
+    patching began: exactly 8 distinct values across 56 measurements), and it
+    captured the donor's state with `setdefault` on the FIRST adapter call, i.e.
+    the donor's initial state rather than its state at the unroll being patched.
+    Both are fixed below: a SINGLE injection at r, using the donor's state AT r.
+  * **The surviving pre-registered prediction is for the fixed state arm:
+    potency should INCREASE with r**, because a state perturbation decays as
+    rho^(R-r) and a later patch has less remaining budget in which to be erased.
+    A flat state arm would mean state interventions are inert at every depth,
+    which together with D108's potent e arm is itself the parameter-vs-state
+    dissociation this pair of arms exists to test.
 
-**These curves point in OPPOSITE directions. If both come out flat, the instrument
-is dead and every patching null in this project is uninterpretable. If they cross,
-that is a clean mechanistic result and the first causal handle the project has.**
+A degeneracy guard now runs before any interpretation: if either arm returns a
+single value per pair across all depths, it is reported as NOT measuring a
+depth-dependent intervention rather than being silently analysed.
 
 THE CALIBRATION IS THE POINT, NOT A PRELIMINARY. Per CLAUDE.md section 5, an
 instrument must pass its own null before its results mean anything. Here the null
@@ -162,9 +173,14 @@ def main():
                 return (cur,)
             handles.append(adapter.register_forward_pre_hook(pre))
         elif patch == "state":
+            # INJECT ONCE, AT r. The first version of this arm overwrote x at EVERY
+            # unroll from r onward, which pins the trajectory and makes the outcome
+            # independent of when patching began -- it produced exactly 8 distinct
+            # values across 56 measurements (D108(3)). A causal patch is a single
+            # substitution followed by the model's own dynamics.
             def pre(_m, inp):
                 cur = inp[0]
-                if step["i"] >= patch_r and donor_state is not None:
+                if step["i"] == patch_r and donor_state is not None:
                     cur = torch.cat([donor_state, cur[..., d_model:]], dim=-1)
                 step["i"] += 1
                 return (cur,)
@@ -216,11 +232,14 @@ def main():
             print(f"  shape mismatch, skipping {rec_i}->{don_i}", flush=True)
             continue
         base_gap, base_rank = forward(ids, g_r, g_d)
-        # a donor STATE at the answer position, for the contrasting arm
-        st = {}
+        # The donor's state AT EVERY UNROLL. The first version used setdefault and
+        # therefore captured only the donor's unroll-0 state -- essentially its
+        # random h_0, not the state it actually holds at the unroll being patched
+        # (D108(3), second bug). Patching r must inject the donor's state at r.
+        st_all = []
 
         def grab(_m, inp):
-            st.setdefault("x", inp[0][..., :d_model].detach().clone())
+            st_all.append(inp[0][..., :d_model].detach().clone())
 
         h = adapter.register_forward_pre_hook(grab)
         try:
@@ -231,7 +250,8 @@ def main():
 
         for r in PATCH_R:
             ge, _ = forward(ids, g_r, g_d, patch="e", donor_e=e_don, patch_r=r)
-            gs, _ = forward(ids, g_r, g_d, patch="state", donor_state=st["x"], patch_r=r)
+            ds_r = st_all[r] if r < len(st_all) else st_all[-1]
+            gs, _ = forward(ids, g_r, g_d, patch="state", donor_state=ds_r, patch_r=r)
             records.append({"pair": f"{rec_i}->{don_i}", "r": r,
                             "rec_gold": rec["gold"], "don_gold": don["gold"],
                             "base_gap": base_gap, "e_gap": ge, "state_gap": gs,
@@ -244,6 +264,23 @@ def main():
               f"@r={PATCH_R[-1]} {records[-1]['state_potency']:+.3f}", flush=True)
 
     from scipy.stats import spearmanr
+    # DEGENERACY GUARD. D108's state arm returned exactly one distinct value per
+    # pair across all 7 depths, which is the signature of a patch that does not
+    # actually depend on r. Check it rather than discover it in the analysis.
+    for arm in ("e_gap", "state_gap"):
+        per_pair = {}
+        for x in records:
+            per_pair.setdefault(x["pair"], set()).add(round(x[arm], 9))
+        flat = [k for k, v in per_pair.items() if len(v) == 1]
+        if flat:
+            print(f"  !! DEGENERACY: {arm} is constant across all r for "
+                  f"{len(flat)}/{len(per_pair)} pairs -- that arm is NOT measuring "
+                  f"a depth-dependent intervention and must not be interpreted.",
+                  flush=True)
+        else:
+            print(f"  {arm}: varies with r in all {len(per_pair)} pairs (not degenerate)",
+                  flush=True)
+
     print("\n=== INSTRUMENT NULL: can the intervention move the output AT ALL? ===",
           flush=True)
     n_pairs = len({x["pair"] for x in records})
