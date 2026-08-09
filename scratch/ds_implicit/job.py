@@ -54,10 +54,21 @@ PRE-REGISTERED.
   P3  CONVERGENCE GATE. Per prompt, record Neumann terms used and final relative
       residual. Any prompt hitting MAX_TERMS without reaching TOL is excluded from P1
       and counted in the report -- an unconverged adjoint is not an attribution.
-  P4  CROSS-CHECK against brute force on a subset: patch `e` at ONE position only and
-      measure the true logit-gap shift, then correlate that against the attribution.
-      This is the ground truth DR3 asks for, using D111's validated patching hook.
-  P5  UNIT is the prompt. Token counts verified equal within a marker pair.
+  P4  **DECLARED AND NOT IMPLEMENTED IN THE LAUNCHED VERSION -- recorded here rather
+      than quietly dropped at write-up.** The intent was: patch `e` at ONE position
+      only, measure the true logit-gap shift, and correlate it against the
+      attribution, as the ground truth DR3 asks for. `N_BRUTE` is defined below and
+      never used. It needs a forward pass per position, so it cannot be recovered
+      from the banked records and requires a second job. **Any result from this run
+      therefore rests on P1/P2/P3 only, and the attribution is validated against the
+      marker-token ground truth but NOT against brute-force patching.** Caught by
+      self-check while the job was already running; the launched code is unchanged.
+  P5  UNIT is the prompt. **The token-count verification is NOT IMPLEMENTED in the
+      launched version either** -- found by the same self-check as P4. Marker pairs
+      differ by one character in a fixed template, so equal token counts are highly
+      likely, but they are ASSERTED here rather than checked, which is exactly what
+      D101 got wrong. Verify from the banked `n_tokens` field before reading any
+      result; it is stored per record, so this one IS recoverable locally.
 """
 
 import collections
@@ -73,7 +84,6 @@ NUM_STEPS = 48          # to reach h* before differentiating there
 MAX_TERMS = 120         # covers |lambda| = 0.911 (needs ~75) with headroom
 TOL = 1e-3              # relative change in the adjoint vector
 N_PROMPTS = 12
-N_BRUTE = 4             # prompts given the per-position brute-force cross-check
 
 
 def run(cmd):
