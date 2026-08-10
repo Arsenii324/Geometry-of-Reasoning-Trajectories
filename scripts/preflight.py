@@ -39,6 +39,7 @@ USAGE
 from __future__ import annotations
 
 import argparse
+import ast
 import pathlib
 import re
 import subprocess
@@ -162,6 +163,63 @@ def check_launch(job_dir: str) -> int:
         bad += len(missing)
     else:
         print(f"  ok    every third-party import is covered by an install line")
+
+    # 5. Item keys copied wholesale onto a result row that build_items() never sets.
+    #    B4c died with `KeyError: 'array'` on its FIRST forward -- 12 minutes of clone,
+    #    install and weight download before the first line that touched an item --
+    #    from exactly this shape:
+    #        r.update({k: it[k] for k in ("array", "pos", "depth", "key", ...)})
+    #    while build_items() emitted `item` and `k`.
+    #
+    #    This targets that shape ONLY, and the narrowness is the result of a failed
+    #    first attempt rather than caution in advance: a version that also checked
+    #    direct `it["..."]` subscripts MISSED this bug (the keys are comprehension
+    #    constants, not subscripts) while flagging `n_tokens` in five working kernels,
+    #    where the subscripted variable was a result row and not an item at all.
+    try:
+        tree = ast.parse(text)
+    except SyntaxError as exc:
+        print(f"  FAIL  job.py does not parse: {exc}")
+        bad += 1
+        tree = None
+    builder = next((n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
+                    and n.name == "build_items"), None) if tree else None
+    if builder is not None:
+        produced = {k.value for d in ast.walk(builder) if isinstance(d, ast.Dict)
+                    for k in d.keys
+                    if isinstance(k, ast.Constant) and isinstance(k.value, str)}
+        # keys ASSIGNED after construction count as produced: several kernels do
+        #   it["n_tokens"] = int(la)
+        # outside build_items() and then copy it, which is correct and must not flag.
+        produced |= {n.slice.value for n in ast.walk(tree)
+                     if isinstance(n, ast.Subscript) and isinstance(n.ctx, ast.Store)
+                     and isinstance(n.slice, ast.Constant)
+                     and isinstance(n.slice.value, str)}
+        requested = set()
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.DictComp):
+                continue
+            for gen in node.generators:
+                # the value must actually SUBSCRIPT something by the loop variable,
+                # which is what makes the constants item keys rather than plain data
+                if not (isinstance(node.value, ast.Subscript)
+                        and isinstance(node.value.slice, ast.Name)
+                        and isinstance(gen.target, ast.Name)
+                        and node.value.slice.id == gen.target.id):
+                    continue
+                if isinstance(gen.iter, (ast.Tuple, ast.List)):
+                    requested |= {e.value for e in gen.iter.elts
+                                  if isinstance(e, ast.Constant)
+                                  and isinstance(e.value, str)}
+        unknown = sorted(requested - produced)
+        if unknown:
+            for k in unknown:
+                print(f"  FAIL  copies item key '{k}' that build_items() never sets "
+                      f"(it sets: {', '.join(sorted(produced))})")
+            print("        B4c lost a full setup cycle to exactly this KeyError")
+            bad += len(unknown)
+        elif requested:
+            print(f"  ok    all {len(requested)} copied item keys exist in build_items()")
 
     print(f"\n{'PREFLIGHT FAILED' if bad else 'PREFLIGHT PASSED'} ({bad} blocking)")
     return bad

@@ -410,3 +410,40 @@ reports a finding without opening the file is the failure mode — but batch it 
 fixed cap (`MAX_VERIFIERS`) so agent count does not scale with how much the
 auditors happen to find, and run it on a cheaper model, since checking that a
 quoted line exists is mechanical.
+
+## Post-mortem on a failed job, and the two install recipes (2026-08-10)
+
+**`datasphere project job attach --id <job>` is the only way to see why a finished
+job failed.** `download-files` refuses outright on `ERROR` status ("job ... was
+completed with error (5). Not all files can be downloaded" -> "no files to
+download"), and the CLI's local follower log under
+`/var/folders/.../T/datasphere/job_*` is empty once the launching `timeout` has
+killed the follower. `attach` re-streams the job's stdout/stderr from the server,
+including the full Python traceback, and works long after the job ended. It exits
+non-zero with `ProgramError: Program returned code 1`, which is expected -- read the
+traceback above it.
+
+**This mattered.** A21 failed 12 minutes in. From timing alone the obvious diagnosis
+was a CUDA OOM: Huginn in float32 is ~14 GB on a 16 GB T4, and A21 is the first
+kernel needing autograd rather than pure forwards. `attach` showed the actual cause
+in one line -- `ModuleNotFoundError: No module named 'scipy'` -- which is a
+30-second fix rather than a redesign. **Retrieve the log before theorising.**
+
+**TWO INSTALL RECIPES COEXIST AND THEY ARE NOT INTERCHANGEABLE.**
+
+| recipe | what it installs | used by |
+|---|---|---|
+| `pip install -e .[model]` | the repo **and its dependencies** -- numpy, scipy, scikit-learn, matplotlib, pandas, tqdm, pyyaml, plus the `model` extra | `ds_nth`, `ds_einterp`, `ds_estream` |
+| `pip install transformers==4.53.3 accelerate safetensors` | only what is named; **no repo dependencies at all** | `ds_gmres`, `ds_embsep` |
+
+The lean recipe is legitimate and faster -- it skips sklearn/matplotlib/pandas/datasets.
+What is not legitimate is combining it with an import of a repo dependency. Because
+this project deliberately places third-party imports LATE (inside `main()`, after the
+clone), the failure surfaces at the moment that line executes, which is after every
+fixed cost has been paid. Kernels using the lean recipe must name every package they
+import.
+
+`scripts/preflight.py` check 4 now enforces this: it cross-checks each kernel's
+imports against its own pip lines, skips `try:`-guarded optional imports, and was
+verified to fail the real pre-fix file and to produce no false positives on any of
+the 24 kernels in `scratch/`.

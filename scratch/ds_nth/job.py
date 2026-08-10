@@ -182,8 +182,11 @@ def main():
             except Exception as exc:  # noqa: BLE001
                 r = {"ok": False, "why": f"{type(exc).__name__}: {exc}"}
             r.setdefault("ok", True)
-            r.update({k: it[k] for k in ("array", "pos", "depth", "key", "gold",
-                                         "prompt")})
+            # keys must match build_items() exactly: it emits `item` and `k`, NOT
+            # `array` and `key`. The first launch died here with KeyError: 'array'
+            # on the very first forward, after paying the full 12-minute setup.
+            r.update({key: it[key] for key in ("item", "pos", "depth", "k", "gold",
+                                               "prompt")})
             rows.append(r)
         if n % 20 == 0:
             print(f"  {n}/{len(items)}", flush=True)
@@ -197,7 +200,7 @@ def main():
     print("\n=== P3 TOKEN GATE (per fixed array) ===", flush=True)
     bad = []
     for a in range(N_ITEMS):
-        nt = sorted({r["n_tokens"] for r in ok if r["array"] == a})
+        nt = sorted({r["n_tokens"] for r in ok if r["item"] == a})
         if len(nt) != 1:
             bad.append((a, nt))
     if bad:
