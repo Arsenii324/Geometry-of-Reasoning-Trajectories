@@ -156,8 +156,19 @@ Meaning, surface form and subword structure are all refuted (D134). D134 then in
 that survivor on 51 nouns and it **fails** — leave-one-out from the embedding is 0.551
 against a permuted null of 0.530, below the 0.592 majority baseline, and the separating
 direction is not low-dimensional (D135). Six classifiers, linear and nonlinear, then give
-a **best-of-six of 0.551 against a null-of-max of 0.589, p = 0.808** (D136). So the
-property is a function of the token that no simple rule reads off its embedding at n = 49.
+a **best-of-six of 0.551 against a null-of-max of 0.589, p = 0.808** (D136).
+
+**Those two rows do NOT refute the embedding hypothesis, and reading them as if they did
+was an error of mine.** Planting a linear class separation of known strength into the same
+49 embeddings shows the design cannot resolve anything below **Cohen's d ≈ 10** — where
+0.8 is conventionally a *large* effect — and the observed result is indistinguishable from
+planted separations of d = 0.25, 0.5 and 1.0, all of which return the identical 0.551
+(D155). **D135 and D136 are uninformative, not refutations.** Combined with D149 removing
+the hyperplane picture that would have explained a linear-in-`e` structure being invisible
+in the embedding, the honest state is: **we do not know where the property lives, and the
+one attempt to rule out the embedding had no power to.** A32 asks it causally instead —
+interpolating the token's `wte` row directly — because manipulation is what worked for
+`e` when fitting failed.
 
 **The regime is bimodal, and D132's determinism survives at larger scale.** A continuous
 rotation statistic R separates the two populations (median **0.896** vs **0.336**,
