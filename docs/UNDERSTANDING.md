@@ -101,6 +101,15 @@ with all four orbits between the modes. **50 of 51 nouns are deterministic**, wi
 marker or sequence confound (D137) — which retires D135's own reading that the regime
 depends on the token *and* the sequence.
 
+**And the gap replicates, at the same place, on banks with no sequences in common.**
+Re-reading orbits banked months earlier for D134 and D132 with the same statistic:
+`nounsweep` (384 orbits, 16 nouns × **12** sequences) gaps at **R = 0.2984**, `wordswap`
+(108 orbits, D132's original three nouns) at **R = 0.3502**, against `embsep`'s
+**0.2822** — three banks, three gap locations within 0.068, every one at p = 0.0002
+(D138). Pooled across all three: **696 orbits, 70 noun-slots, exactly one ambiguous
+token.** This is the strongest form of §1.3's claim available from existing data, and it
+cost no GPU.
+
 The live candidate is now `e` itself, the prelude's nonlinear image of the embedding,
 which is the map's parameter (D111, D113) and is where a threshold would sit. A24 tests
 it causally rather than by fitting — interpolating `e` from a settling noun's to a
