@@ -391,9 +391,18 @@ the independently computed period-6 label on **691 of 696 orbits** across three 
 (D141). The patch itself is proven exact: with h₀ seeded, a no-op patch reproduces the
 unpatched orbit at **0.000e+00** on all 8 chords (D144).
 
-**And it has no behavioural consequence.** The rotating and settling arms differ in neither
-the depth at which the answer is best available (16.0 vs 14.5, p = 0.156) nor the best rank
-reached (6.5 vs 7.0, p = 0.880) (D132). A single word restructures the entire latent
+**And it has no behavioural consequence — now bounded, not merely unrefuted.** D132's
+observational comparison found nothing (16.0 vs 14.5, p = 0.156; 6.5 vs 7.0, p = 0.880)
+but computed no detection floor, so it excluded nothing. A regression discontinuity across
+the boundary — the *same* prompt at two parameter values 0.05 apart in `e`, 48 of 48 units
+with exactly one crossing, the no-op patch verified to reproduce the rank curve identically
+48/48, and the readout verified to respond to `e` — settles it: **correctness changes in 0
+of 48 units**; `best_depth` is null against a floor that catches a planted 0.5 sd
+(4.7 unrolls) 99.3% of the time and 0.25 sd never; and the only signal is a **one-rank
+shift** in 16 of 48 pairs, every difference exactly ±1, 13 in the same direction, exact
+sign test p = 0.0213 — which does *not* survive correction over the three measures tested
+(D148). Depth effects below ~4.7 unrolls remain untested. A single word restructures the
+entire latent
 dynamics without changing what the model computes, answers, or gets right — which is the
 sharpest form of this document's thesis, and the strongest open question in it.
 
