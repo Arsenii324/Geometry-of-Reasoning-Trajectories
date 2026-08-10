@@ -138,12 +138,28 @@ def main() -> int:
     else:
         lines.append("- none")
 
-    orphan = sorted(set(banked) - {k for r in rs for k in r["kernels"]})
+    # A bank is only an orphan if NOTHING references it -- not merely if no ledger row
+    # does. The first version checked ledger citations alone and reported
+    # `kaggle_b6bank`, `ds_seeds` and `kaggle_register_correct` as orphans while
+    # `run_b6.py`, `run_window_law.py`, `run_shape_decode.py`, `run_linearity.py`,
+    # `recheck_register_window.py` and two test files all read them, and D50/D53/D79/D80
+    # rest on them. An asset register that flags live assets as dead is worse than none.
+    referenced = set()
+    for f in list((ROOT / "scripts").glob("*.py")) + list((ROOT / "tests").glob("*.py")) \
+            + list((ROOT / "src").rglob("*.py")):
+        try:
+            body = f.read_text()
+        except OSError:
+            continue
+        for k in banked:
+            if k in body:
+                referenced.add(k)
+    orphan = sorted(set(banked) - {k for r in rs for k in r["kernels"]} - referenced)
     lines += [
         "",
         "## Banked data no claim references",
         "",
-        "Directories holding `.npy`/`.json` that no ledger row cites. Each is either a dead",
+        "Directories holding `.npy`/`.json` that NO ledger row cites AND no script,", "test or module reads. Each is either a dead",
         "run worth deleting or an unanalysed asset worth mining — and this project has",
         "already found one of the latter (three banks re-read with a new statistic became",
         "D138/D141 at zero GPU cost).",

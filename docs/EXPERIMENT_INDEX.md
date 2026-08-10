@@ -4,7 +4,7 @@ Regenerate with `uv run python scripts/build_index.py`. Source of truth is
 `claims_ledger.md`; this file only cross-references it against the code, the runs
 and the banked data, so that no experiment is unfindable.
 
-**144 claims · 28 distinct jobs referenced · 54 kernels · 3250 banked artifacts across 85 directories**
+**144 claims · 28 distinct jobs referenced · 54 kernels · 3251 banked artifacts across 86 directories**
 
 | row | claim (first sentence) | kernel | job | analysis | banked |
 |---|---|---|---|---|---|
@@ -202,20 +202,16 @@ But a load-bearing number in this list should get a script.
 
 ## Banked data no claim references
 
-Directories holding `.npy`/`.json` that no ledger row cites. Each is either a dead
+Directories holding `.npy`/`.json` that NO ledger row cites AND no script,
+test or module reads. Each is either a dead
 run worth deleting or an unanalysed asset worth mining — and this project has
 already found one of the latter (three banks re-read with a new statistic became
 D138/D141 at zero GPU cost).
 
 - `scratch/datasphere_smoke_test` — 5 artifact(s)
 - `scratch/ds_blockbank` — 131 artifact(s)
-- `scratch/ds_seeds` — 61 artifact(s)
 - `scratch/ds_startup_probe` — 18 artifact(s)
-- `scratch/kaggle_b6bank` — 130 artifact(s)
 - `scratch/kaggle_blayney_modk` — 16 artifact(s)
-- `scratch/kaggle_blockbank` — 1 artifact(s)
-- `scratch/kaggle_caesar` — 2 artifact(s)
-- `scratch/kaggle_caesar2` — 1 artifact(s)
 - `scratch/kaggle_capcontent` — 1 artifact(s)
 - `scratch/kaggle_chatfmt` — 2 artifact(s)
 - `scratch/kaggle_eps_split` — 2 artifact(s)
@@ -227,15 +223,11 @@ D138/D141 at zero GPU cost).
 - `scratch/kaggle_output_5` — 15 artifact(s)
 - `scratch/kaggle_output_6` — 15 artifact(s)
 - `scratch/kaggle_output_7` — 15 artifact(s)
-- `scratch/kaggle_promptdepth` — 1 artifact(s)
-- `scratch/kaggle_register_correct` — 34 artifact(s)
-- `scratch/kaggle_rho_ckpt_a` — 2 artifact(s)
 - `scratch/kaggle_rho_ckpt_b` — 2 artifact(s)
 - `scratch/kaggle_rho_ckpt_c` — 2 artifact(s)
 - `scratch/kaggle_rho_ckpt_d` — 2 artifact(s)
 - `scratch/kaggle_rho_seed_a` — 2 artifact(s)
 - `scratch/kaggle_rho_seed_b` — 2 artifact(s)
-- `scratch/kaggle_untrained_depth` — 5 artifact(s)
 - `scratch/kaggle_v6_probe` — 1 artifact(s)
 - `scratch/kaggle_v6_rerun` — 1 artifact(s)
 - `scratch/kaggle_v6_topk_fix` — 16 artifact(s)
