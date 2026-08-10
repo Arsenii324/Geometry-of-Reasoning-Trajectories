@@ -66,6 +66,18 @@ bias-corrected (D94). Training moves it from **0.7042 → 0.8582** with *total*
 separation, and is done by the earliest public checkpoint (D52, rediscovered and
 retracted as D120).
 
+**And there is a loop — across the four core blocks, not within one.** Every instrument
+in this project reads `core_block[-1]`, and at that block the state contracts. Hooking all
+four instead: each block converges tightly to **its own** fixed point (per-block residual
+~61–64 → **0.052–0.402**, a 159×–1185× reduction, median 384×), and those four fixed points
+are separated by **22–58** in a space where states have norm 70–76 — about **52% of the
+state norm**. The ratio of separation to residual is **95–730, median 232**, and the cycle's
+perimeter is **1.6× the entire distance the state travels** from initialisation to
+convergence (D98). **The loop exists, it is large, and single-block reading was blind to it
+by construction.** This is the scope on the contraction rates above: they describe the
+iteration-to-iteration map *at a fixed block*, and every absolute "no loop anywhere"
+statement this project once made is retired.
+
 **And a single word selects the qualitative regime.** *"largest **symbol**"* rotates
 36/36; *"largest **element**"* and *"largest **item**"* rotate 0/36 — same task, same
 sequences, **identical 53-token count**, flipping in **36 of 36** within-sequence cells
