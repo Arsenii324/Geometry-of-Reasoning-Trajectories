@@ -62,9 +62,18 @@ decided in the first few unrolls.
 Four instruments of three kinds put the contraction rate in **0.79–0.87**: causal
 state-injection **0.8335 ± 0.028** over 16 recipients (D113), full-operator Arnoldi
 **0.8098** (D119), diagonal-block Arnoldi 0.79–0.81 (D31), passive orbit decay ≈0.82
-bias-corrected (D94). Training moves it from **0.7042 → 0.8582** with *total*
-separation, and is done by the earliest public checkpoint (D52, rediscovered and
-retracted as D120).
+(D94 — whose +0.033 bias correction toward ~0.82 was **withdrawn**: it fitted 3 of 12 real
+prompts and the 0.058 gap to Arnoldi remains unexplained, D58). Training moves it from
+**0.7048 ± 0.0087 → 0.8577 ± 0.0139** across 14 weight-sets, with *total* separation
+(U = 0, p = 5.0e-04, d = 13.2), and is done by the earliest public checkpoint (D52; the
+0.7042 → 0.8582 figures previously quoted here are D120's, and D120(1) is retracted as a
+rediscovery of D52).
+
+**These are not four estimates of one number.** Each instrument ran on a different prompt
+set and ρ is family-level: across 21 families it spans **0.8239** (`rot13_word`) to
+**0.9181** (`count16`), with between-family spread **4.2×** the within-family spread
+(D115). The defensible statement is that the map contracts on every prompt measured, at a
+rate the *task* sets.
 
 **And there is a loop — across the four core blocks, not within one.** Every instrument
 in this project reads `core_block[-1]`, and at that block the state contracts. Hooking all
