@@ -82,6 +82,18 @@ the computation; D132 finds the same of the *dynamics*. **The latent geometry tr
 surface form of the instruction, not what the instruction asks for** — which is the
 sharpest statement of §1.1 available, and it is causal rather than correlational.
 
+**What selects the regime is still unknown, and one round of guessing has been spent.**
+Meaning, surface form and subword structure are all refuted (D134). D134 then inferred
+*by elimination* that the property must live in the token's learned embedding; A23 tested
+that survivor on 51 nouns and it **fails** — leave-one-out from the embedding is 0.551
+against a permuted null of 0.530, below the 0.592 majority baseline, and the separating
+direction is not low-dimensional (D135). **The scope of D132 also narrows: at 51 nouns,
+2 (`set`, `word`) are MIXED across their four orbits**, so the regime is not a property
+of the token alone but of the token *and* the sequence — a continuous quantity thresholded
+near a boundary, not a label looked up. Read D132's determinism as *"for the nouns
+tested"*. The live candidate is now `e` itself, the prelude's nonlinear image of the
+embedding, which is the map's parameter (D111, D113) and is where a threshold would sit.
+
 ### 1.4 What the corrections did to the older record
 
 An independent audit on 2026-08-10 found that **three older positives all rest on one
