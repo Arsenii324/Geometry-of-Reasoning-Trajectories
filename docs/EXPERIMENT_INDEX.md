@@ -4,7 +4,7 @@ Regenerate with `uv run python scripts/build_index.py`. Source of truth is
 `claims_ledger.md`; this file only cross-references it against the code, the runs
 and the banked data, so that no experiment is unfindable.
 
-**154 claims · 32 distinct jobs referenced · 60 kernels · 3255 banked artifacts across 90 directories**
+**155 claims · 32 distinct jobs referenced · 60 kernels · 3255 banked artifacts across 90 directories**
 
 | row | claim (first sentence) | kernel | job | analysis | banked |
 |---|---|---|---|---|---|
@@ -162,6 +162,7 @@ and the banked data, so that no experiment is unfindable.
 | **D152** | fromconfig IS DETERMINISTIC AND THE UNTRAINED ARMS REPRODUCE AT THE WEIGHT LEVEL -- AND 70% OF dsseeds' RECORDING IS BELOW THE FLOATING-POINT FLOOR, T | `ds_bank`, `ds_seeds` | — | — | ds_bank: 97, ds_seeds: 61 |
 | **D153** | WE DO NOT REPRODUCE HUGINN'S OWN PUBLISHED ARC-EASY NUMBER: 40.7% AGAINST 69.9%, A 29-POINT MISS OF A PRE-REGISTERED +/-10 BAND. | `ds_arcrepro` | `bt11qtigf5o3aj8hbad0` ⚠unregistered | — | ds_arcrepro: 1 |
 | **D154** 🔻 | WHAT MOVES THE READOUT IS DISPLACEMENT IN e, NOT THE REGIME: rho(t, bestrank) = +0.8163 WHILE THE PARTIAL rho(R, bestrank | `ds_regimebehav` | — | — | ds_regimebehav: 1 |
+| **D155** | D135 AND D136 ARE NOT BOUNDED NULLS: THEIR DESIGN CANNOT SEE A LINEAR SEPARATION BELOW COHEN'S d  10. | `ds_embsep` | — | — | ds_embsep: 206 |
 
 ## Claims with no code, job or script reference
 
