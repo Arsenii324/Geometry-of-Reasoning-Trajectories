@@ -65,7 +65,12 @@ import numpy as np
 from traj_geom.metrics.dynamics import rotation_power
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-OUT = ROOT / "scratch/ds_embsep/out/out"
+BANKS = {                       # same manifest schema, independent draws
+    "embsep":    "scratch/ds_embsep/out/out",      # 51 nouns x 2 seqs (D135/D137)
+    "nounsweep": "scratch/ds_nounsweep/out/out",   # 16 nouns x 12 seqs (D134)
+    "wordswap":  "scratch/ds_wordswap/out/out",
+}
+OUT = ROOT / BANKS["embsep"]
 PERIOD = 6
 TAIL = 24
 N_PERM = 5000
@@ -89,8 +94,15 @@ def mannwhitney_p(a, b, rng) -> float:
     return (cnt + 1) / (N_PERM + 1)
 
 
-def main() -> int:
-    man = {m["tag"]: m for m in json.loads((OUT / "manifest.json").read_text())}
+def main(bank: str = "embsep") -> int:
+    global OUT
+    OUT = ROOT / BANKS[bank]
+    print(f"=== BANK: {bank}  ({BANKS[bank]})")
+    raw = json.loads((OUT / "manifest.json").read_text())
+    raw = raw["rows"] if isinstance(raw, dict) else raw
+    # `tag` is embsep's filename key; the older banks name files
+    # <pair>_<marker>_i<NN>.npy and carry no tag, so it is reconstructed.
+    man = {m.get("tag", f'{m["pair"]}_{m["marker"]}_i{m["item"]:02d}'): m for m in raw}
     rows = []
     for f in sorted(glob.glob(str(OUT / "*.npy"))):
         m = man.get(pathlib.Path(f).stem)
@@ -122,28 +134,41 @@ def main() -> int:
         print("\n  R does not measure what the binary label measures. Nothing below is read.")
         return 1
 
-    print(f"\nP4 CONFOUND -- what do the mixed nouns' four orbits split on?")
-    for w in mixed:
-        for r in sorted(by[w], key=lambda r: (r["seq"], r["marker"])):
-            print(f"  {w:6s} marker={r['marker']}  seq=[{r['seq']}]  "
-                  f"rot={str(r['rot']):5s}  R={r['R']:.4f}")
+    pooled = np.sort(np.concatenate([rot, set_]))   # P3 needs this either way
 
-    pooled = np.sort(np.concatenate([rot, set_]))
-    pct = [float(np.searchsorted(pooled, r["R"]) / len(pooled)) for r in mix]
-    cross = float(np.searchsorted(pooled, 0.5 * (np.median(rot) + np.median(set_))) / len(pooled))
-    obs = float(np.mean([abs(p - cross) for p in pct]))
-    draws = []
-    for _ in range(N_PERM):
-        s = [pooled[rng.randrange(len(pooled))] for _ in mix]
-        draws.append(float(np.mean([abs(np.searchsorted(pooled, v) / len(pooled) - cross)
-                                    for v in s])))
-    pv = (sum(1 for d in draws if d <= obs) + 1) / (N_PERM + 1)
-    print(f"\nP2 PRIMARY -- do mixed orbits sit at the crossover?")
-    print(f"  crossover percentile {cross:.3f}; mixed orbit percentiles "
-          f"{[round(p, 3) for p in pct]}")
-    print(f"  mean |percentile - crossover| = {obs:.3f}   random-orbit null "
-          f"{np.mean(draws):.3f} (sd {np.std(draws):.3f})")
-    print(f"  p = {pv:.4f}  ->  {'AT THE BOUNDARY' if pv < 0.05 else 'NOT DISTINGUISHABLE'}")
+    # P2 and P4 are ABOUT the mixed orbits, so with none they are not "passed" -- they
+    # are not evaluated. Without this guard the P2 permutation compares against a nan
+    # observed value, no draw ever satisfies `d <= nan`, and the count of 0 becomes
+    # (0+1)/(N+1) = 0.0002: a p-value that reads as strongly significant and is
+    # computed from an empty set. It printed exactly that on the nounsweep bank, which
+    # has 0 mixed nouns, and the summary line said "AT THE BOUNDARY".
+    if not mix:
+        print(f"\nP2 / P4 NOT EVALUATED -- this bank has 0 mixed nouns, so there is "
+              f"nothing to place.\n  ({len(det)} of {len(det)} nouns clean in this "
+              f"bank, which is itself the determinism claim holding at "
+              f"{len(rows) // max(1, len(det))} orbits per noun.)")
+    else:
+        print(f"\nP4 CONFOUND -- what do the mixed nouns' four orbits split on?")
+        for w in mixed:
+            for r in sorted(by[w], key=lambda r: (r["seq"], r["marker"])):
+                print(f"  {w:6s} marker={r['marker']}  seq=[{r['seq']}]  "
+                      f"rot={str(r['rot']):5s}  R={r['R']:.4f}")
+
+        pct = [float(np.searchsorted(pooled, r["R"]) / len(pooled)) for r in mix]
+        cross = float(np.searchsorted(pooled, 0.5 * (np.median(rot) + np.median(set_))) / len(pooled))
+        obs = float(np.mean([abs(p - cross) for p in pct]))
+        draws = []
+        for _ in range(N_PERM):
+            s = [pooled[rng.randrange(len(pooled))] for _ in mix]
+            draws.append(float(np.mean([abs(np.searchsorted(pooled, v) / len(pooled) - cross)
+                                        for v in s])))
+        pv = (sum(1 for d in draws if d <= obs) + 1) / (N_PERM + 1)
+        print(f"\nP2 PRIMARY -- do mixed orbits sit at the crossover?")
+        print(f"  crossover percentile {cross:.3f}; mixed orbit percentiles "
+              f"{[round(p, 3) for p in pct]}")
+        print(f"  mean |percentile - crossover| = {obs:.3f}   random-orbit null "
+              f"{np.mean(draws):.3f} (sd {np.std(draws):.3f})")
+        print(f"  p = {pv:.4f}  ->  {'AT THE BOUNDARY' if pv < 0.05 else 'NOT DISTINGUISHABLE'}")
 
     gaps = np.diff(pooled)
     g = float(gaps.max() / (pooled[-1] - pooled[0]))
@@ -160,4 +185,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import sys
+    raise SystemExit(main(sys.argv[1] if len(sys.argv) > 1 else "embsep"))
