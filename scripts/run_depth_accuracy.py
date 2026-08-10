@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from math import comb
 
 import numpy as np
@@ -46,9 +47,26 @@ def normalise(text: str) -> str:
     return " ".join(w for w in t.split() if w not in STOPWORDS)
 
 
+# D145: Huginn's chat template glues the NEXT TURN's role header onto the answer with
+# no separator -- 224 of the 1260 banked generations end in `user`, e.g. '4user\n\n'
+# where the gold is '4', 'Clouduser\n\n' where it is 'cloud'. Left in place the marker
+# is part of the token and the whole-word match below rejects a correct answer; D86's
+# headline "exact match hits 0.0% by r=8" was that rejection, not the model. Separated
+# here rather than deleted, and BEFORE normalisation so the case-sensitive marker still
+# matches. Same rule and same word list as `scripts/run_depth_profile.py::_contains`.
+_ROLE = re.compile(r"(?:Huginn|user|assistant|system)\b")
+
+
 def score(pred: str, gold: str) -> tuple[bool, bool]:
-    """(exact, contains) after normalisation, whole-word for single-token golds."""
-    p, g = normalise(pred), normalise(gold)
+    """(exact, contains) after normalisation, whole-word for single-token golds.
+
+    Separating the marker can only ADD matches, never remove one, so it cannot
+    manufacture an exact match out of prose: '4user' -> '4' scores exact, while
+    'Letter: nuser' -> 'letter n' still fails exact for gold 'n' and passes
+    containment only. Verified on the bank: 3 of 1260 generations have any non-blank
+    text after the marker, so substituting and truncating give identical tables.
+    """
+    p, g = normalise(_ROLE.sub(" ", str(pred))), normalise(gold)
     contains = (g in p.split()) if " " not in g else (g in p)
     return p == g, bool(contains)
 

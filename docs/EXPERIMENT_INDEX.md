@@ -4,7 +4,7 @@ Regenerate with `uv run python scripts/build_index.py`. Source of truth is
 `claims_ledger.md`; this file only cross-references it against the code, the runs
 and the banked data, so that no experiment is unfindable.
 
-**149 claims · 31 distinct jobs referenced · 58 kernels · 3254 banked artifacts across 89 directories**
+**150 claims · 31 distinct jobs referenced · 58 kernels · 3254 banked artifacts across 89 directories**
 
 | row | claim (first sentence) | kernel | job | analysis | banked |
 |---|---|---|---|---|---|
@@ -157,6 +157,7 @@ and the banked data, so that no experiment is unfindable.
 | **D147** | HUGINN CANNOT STATE-TRACK AT ALL: IT IS A CONSTANT RESPONDER, AND THE PROJECT'S STANDARD CAPABILITY AXIS SCORES THAT 100%. | `ds_statetrack` | `bt12s3ifcf9u6383e468` ⚠unregistered | `run_statetrack_analysis.py` | ds_statetrack: 1 |
 | **D148** | CROSSING THE REGIME BOUNDARY MOVES THE ANSWER'S RANK BY EXACTLY ONE POSITION AND FLIPS NO ANSWERS -- THE BEHAVIOURAL NULL IS NOW BOUNDED, WHICH D132's | `ds_regimebehav` | `bt1jp231g4u3d1fbp168` ⚠unregistered | `run_regimebehav_analysis.py` | ds_regimebehav: 1 |
 | **D149** | THE ROTATING REGION IS A BOUNDED, ANISOTROPIC REGION -- NOT A HALF-SPACE. | `ds_boundary` | `bt17mi3ab789pavgrg3c` ⚠unregistered | — | ds_boundary: 1 |
+| **D150** | SYSTEMATIC EXPOSURE AUDIT OF THE ORACLE CAPABILITY AXIS: 22 OF 149 ROWS CARRY A NUMBER FROM IT -- NOT THE 44 A NAIVE COUNT GIVES. | — | — | — | — |
 
 ## Claims with no code, job or script reference
 
@@ -204,6 +205,7 @@ But a load-bearing number in this list should get a script.
 - **D117** — D85's GEOMETRY-CAPABILITY NULL NOW COVERS THE DYNAMICS, NOT ONLY THE SHAPE -- AND THE SAME RUN REPRODUCES PROM *(evidence column: lambda)*
 - **D121** — A4b CANNOT BE SETTLED FROM BANKED DATA, AND THE FIRST ANALYSIS THAT SAID IT COULD WAS A CONFOUND WORTH RECORDI *(evidence column: Banked data only, zero GPU: 188 kagglelenmatch orbits with their manif)*
 - **D122** — TWO NUMBERS IN THIS LEDGER ARE GEOMETRIC IDENTITIES OF THE SPHERE, NOT MEASUREMENTS OF HUGINN. *(evidence column: )*
+- **D150** — SYSTEMATIC EXPOSURE AUDIT OF THE ORACLE CAPABILITY AXIS: 22 OF 149 ROWS CARRY A NUMBER FROM IT -- NOT THE 44 A *(evidence column: docs/claimsledger.md cross-referenced against scratch//{job,main,body})*
 
 ## Banked data no claim references
 
