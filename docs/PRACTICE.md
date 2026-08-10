@@ -404,3 +404,54 @@ hours later. Knowing the rule did not apply it.
   be unmade.
 - `git commit -m` with quotes inside the message failed to parse *again*, despite the
   standing rule to use `-F` with a file. The rule is right; I bypassed it for brevity.
+
+
+## RC5 — the auditor's proxy: RC1 committed *inside* the checking instruments (2026-08-10)
+
+A practices audit of the 2026-08-10 session, run against CLAUDE.md and this file rather
+than against the numbers. Four of the session's tool-level failures turn out to be one
+failure.
+
+| instrument | the proxy it used | what it should have measured |
+|---|---|---|
+| `build_index.py`, orphan list | "no ledger row cites it" | "nothing references it" — 7 scripts and 2 test files read three of the banks it called dead |
+| `build_index.py`, unlinked list | a `scratch/` **path** | any evidence pointer — 13 rows cite a **run name** (`geometry-clrs`), the same alias defect that made D120 duplicate D52 |
+| D150's exposure audit | claim text **mentions** accuracy | the claim **depends on** accuracy — the 22 is a regex over prose |
+| the D145 containment analysis (RC4) | a fresh reimplementation | the banked field it was compared against |
+
+**The pattern, and it is sharper than RC1.** RC1 is "a proxy substituted for the thing",
+logged nine times in earlier post-mortems. Every failure above is RC1 **committed inside an
+audit instrument** — and that is strictly worse, because an audit's entire value is that
+its output is trusted without being re-checked. A wrong experiment produces a wrong claim
+someone may catch. A wrong auditor produces *confidence*, and it launders the error.
+
+Three of the four were caught only because something external forced a second look: a
+subagent that happened to read the scripts, a subagent that read the ledger rows, and a
+number too clean to believe. **None was caught by the instrument's own author.**
+
+**The rule being followed in letter and not in spirit: CLAUDE.md §1, "check the premise
+before you build on it."** It is applied rigorously to experiments — every kernel this
+session carries preregistered gates, instrument nulls and detection floors, and A25's P1
+and A26's P1 both had the power to void their own runs. It is applied **not at all to the
+instruments that audit those experiments.** The index's orphan count and unlinked count
+were both quoted to the supervisor as facts before either was correct.
+
+**The fix, stated as a rule rather than an intention:** *a tool's first output gets the
+same premise-check an experiment's first run gets.* Concretely — before quoting any number
+a new script produces, find one case where you already know the answer and confirm the tool
+returns it. For the index that would have been: pick one bank a script demonstrably reads,
+and check it is not in the orphan list. One command, and it would have caught two of the four.
+
+**Two smaller items from the same audit, recorded without inflation:**
+- **The result artifact was published, then audited, then corrected** for eight overclaims.
+  The order should be verify → publish. It was publish → verify.
+- **A26's `best_rank` had two statistics for one question**, and the reported one was chosen
+  after seeing both: the preregistered permutation gave p = 0.0051, an exact sign test gave
+  p = 0.0213, and D148 reports 0.0213. Reporting the *more conservative* number and noting
+  it fails Bonferroni is the right call — but it was made after seeing both, which is not
+  what preregistration means.
+- **"Three documents only" (§6) is comprehensively not the practice**: ten documents were
+  edited in one day. Most predate this session (`RESULT.md`, `PRACTICE.md`,
+  `REMOTE_RUNS.md`, `OPEN_THREADS.md`, `architecture_state.md`), but `EXPERIMENT_INDEX.md`
+  was added here. Its defence — generated, so it cannot drift — is real, and it is still a
+  rule bent rather than followed. Naming it beats justifying it inside its own docstring.
