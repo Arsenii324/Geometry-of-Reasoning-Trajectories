@@ -4,7 +4,7 @@ Regenerate with `uv run python scripts/build_index.py`. Source of truth is
 `claims_ledger.md`; this file only cross-references it against the code, the runs
 and the banked data, so that no experiment is unfindable.
 
-**159 claims · 33 distinct jobs referenced · 61 kernels · 3261 banked artifacts across 92 directories**
+**160 claims · 34 distinct jobs referenced · 62 kernels · 3264 banked artifacts across 93 directories**
 
 | row | claim (first sentence) | kernel | job | analysis | banked |
 |---|---|---|---|---|---|
@@ -167,6 +167,7 @@ and the banked data, so that no experiment is unfindable.
 | **D157** | THE OBSERVABILITY CENSUS CERTIFIES AVAILABILITY, NOT PRODUCTION -- ITS 41 LIVE ITEMS BECOME 0 ON THE FINAL-UNROLL AXIS, AND THE INFLATION IS 5.29x, NO | `kaggle_census` | — | — | kaggle_census: 3 |
 | **D158** | ON THE PRODUCTION AXIS HUGINN HAS TWO USABLE TASK FAMILIES, NOT FIVE -- AND IT CAN HOLD A COPIED WORD TO THE END OF ITS COMPUTATION BUT NOT A COPIED D | `kaggle_census` | — | — | kaggle_census: 3 |
 | **D159** | THE ANSWER IS NOT DECAYING WITH DEPTH -- IT IS DISPLACED TO A STABLE WRONG RANK. | `kaggle_census` | — | — | kaggle_census: 3 |
+| **D160** | THE ROTATING REGION IS EXTENDED ALONG THE SETTLING-NOUN SUBSPACE, NOT THE ROTATING ONE -- THE OPPOSITE OF WHAT D144 PREDICTED, AT p = 0.010. | `ds_aniso2` | `bt161qbvm53hdc6d5mea` ⚠unregistered | — | ds_aniso2: 1 |
 
 ## Claims with no code, job or script reference
 
@@ -213,7 +214,7 @@ D138/D141 at zero GPU cost).
 
 - `scratch/datasphere_smoke_test` — 5 artifact(s)
 - `scratch/ds_startup_probe` — 18 artifact(s)
-- `scratch/ds_weightsds` — 5 artifact(s)
+- `scratch/ds_weightsds` — 7 artifact(s)
 - `scratch/kaggle_blayney_modk` — 16 artifact(s)
 - `scratch/kaggle_capcontent` — 1 artifact(s)
 - `scratch/kaggle_chatfmt` — 2 artifact(s)
