@@ -1,0 +1,27 @@
+name: regimebehav-does-the-regime-change-behaviour
+desc: >
+  A26: the behavioural test the project has never had, as a REGRESSION DISCONTINUITY.
+  D132 compared the rotating and settling arms and found nothing (16.0 vs 14.5 unrolls,
+  p = 0.156; best rank 6.5 vs 7.0, p = 0.880) -- but no detection floor was ever computed
+  for it, so the result is UNREFUTED rather than bounded, and it rests on 36 pairs where
+  rank-1 accuracy is 6-17%, meaning best_depth is mostly the argmin of curves that never
+  reach 1. It is the weakest link in the project: a dramatic dynamical phenomenon with no
+  demonstrated consequence and no bound on the consequence we could have missed. D132 was
+  also observational -- it compared DIFFERENT PROMPTS, so any difference could have been
+  the word rather than the regime. A24/A25 supply something better: a causal handle that
+  leaves the prompt untouched. Since the transition is sharper than a 0.05 grid step, this
+  compares two points 0.05 apart in e-space on opposite sides of the boundary -- identical
+  tokens, identical required answer, parameter barely moved, regime flipped. The kernel
+  banks the gold-token RANK at every unroll as well as the state, which A24 and A25 did
+  not, and that is the one addition that turns the causal handle into a behavioural test.
+  P1 checks the no-op patch reproduces the rank curve exactly (a different code path from
+  A25's state check). P2 drops units without exactly one crossing. P4's detection floor is
+  computed locally from the banked curves, so it cannot be skipped for time.
+cmd: python job.py ${RESULT}
+outputs:
+  - regimebehav.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
