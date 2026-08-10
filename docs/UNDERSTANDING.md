@@ -91,15 +91,17 @@ direction is not low-dimensional (D135). Six classifiers, linear and nonlinear, 
 a **best-of-six of 0.551 against a null-of-max of 0.589, p = 0.808** (D136). So the
 property is a function of the token that no simple rule reads off its embedding at n = 49.
 
-**The regime is genuinely bimodal, and D132's determinism survives at larger scale.** A
-continuous rotation statistic separates the two populations (median **0.896** vs
-**0.336**, p = 0.0002) and the distribution is **gapped** (p = 0.0002) — two regimes, not
-a continuum with an arbitrary cut. Of the two nouns that failed D135's determinism gate,
-`word` is a **detector false positive** (its "rotating" orbit carries the *lowest*
-period-6 power of its four) and only `set` is genuinely intermediate, sitting in the gap
-with all four orbits between the modes. **50 of 51 nouns are deterministic**, with no
-marker or sequence confound (D137) — which retires D135's own reading that the regime
-depends on the token *and* the sequence.
+**The regime is bimodal, and D132's determinism survives at larger scale.** A continuous
+rotation statistic R separates the two populations (median **0.896** vs **0.336**,
+p = 0.0002) with no marker or sequence confound. Of the two nouns that failed D135's
+determinism gate, `word` is a **detector false positive** — all four of its orbits sit at
+R = 0.26–0.40, well below the decision threshold, so the period detector's single
+"rotating" call on it is spurious — and only `set` is genuinely intermediate, its four
+orbits at 0.559, 0.560, 0.570 and **0.737** straddling the threshold, with the one above
+it being exactly the one the detector also called rotating. The two instruments agree on
+`set` and disagree only on `word`. **50 of 51 nouns are deterministic** (D137, sharpened
+by D141) — which retires D135's own reading that the regime depends on the token *and*
+the sequence.
 
 **And a single threshold on that statistic reproduces the regime label across three
 banks.** R > 0.6677 agrees with the independently computed period-6 label on **384/384**
