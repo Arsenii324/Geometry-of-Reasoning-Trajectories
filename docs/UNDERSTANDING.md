@@ -134,6 +134,17 @@ the hypothesis, and the gap it found sits inside the settling population in two 
 three banks. It is retracted and replaced by the threshold result, which is what the
 claim needed in the first place.*
 
+**And it has no behavioural consequence — now bounded, not merely unrefuted.** A26's
+regression discontinuity compares the two parameter values **0.05 apart in `e`** on
+opposite sides of the boundary: same tokens, same required answer, regime flipped, in 48
+of 48 units with exactly one crossing. **Correctness never changes — 0 of 48.**
+`best_depth` is null, with a floor that catches a planted 0.5 sd (4.7 unrolls) 99.3% of
+the time and 0.25 sd never, so effects below ~4.7 unrolls remain untested. The only
+signal is a **one-rank shift** in 16 of 48 pairs, 13 in the same direction, exact
+p = 0.0213 — which does *not* survive correction over the three measures tested, and is
+one position out of a median rank of 8 (D148). **"Dynamical epiphenomenon" is now the
+supported reading rather than a hedge.**
+
 **The regime is causally controlled by `e`, and the boundary is a surface rather than a
 split.** Interpolating `e` along straight lines between nouns, all eight cross-regime
 paths cross the threshold **exactly once**, every crossing inside a single 0.05 grid
@@ -158,8 +169,17 @@ a pre-registered bar of 3 of 6, so it is demonstrated and must not be read as ty
 (D144). But the rotating set is **not convex**: a
 rotating→rotating path never leaves the regime (0 crossings in 21 points), while a
 **settling→settling** path crosses **twice**, rising to R = 0.74 before falling to 0.05.
-t\* varies 0.28–0.74 by pair (D140). **That non-convexity also explains D135/D136** —
-a linear rule or a nearest-neighbour vote on 49 points cannot represent such a region.
+t\* varies 0.28–0.74 by pair (D140).
+
+**The region is bounded and anisotropic, and it is NOT a half-space.** Bisecting from two
+rotating carriers along 64 rays: **81.2%** of random directions escape the regime, and of
+32 antipodal pairs **both** sides cross in 20, one side in 12, neither in 0 — where a
+hyperplane would predict ~0 pairs crossing on both. Crossing distances vary by a factor of
+**49** (0.053–2.572 chord units). So the rotating set is extended along the directions
+connecting rotating tokens and thin in random ones (D149). **This kills the tidiest
+explanation of D135/D136**: had the boundary been a hyperplane in `e`, those embedding
+nulls would have been predicted, since `e` is the prelude's nonlinear image of the
+embedding. It is not, so they remain unexplained.
 
 That pointed at `e` itself — the prelude's nonlinear image of the embedding, and the
 map's parameter (D111, D113). **A24 tested it causally rather than by fitting**, since at

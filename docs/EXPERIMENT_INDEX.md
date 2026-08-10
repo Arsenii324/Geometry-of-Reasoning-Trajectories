@@ -4,7 +4,7 @@ Regenerate with `uv run python scripts/build_index.py`. Source of truth is
 `claims_ledger.md`; this file only cross-references it against the code, the runs
 and the banked data, so that no experiment is unfindable.
 
-**144 claims · 28 distinct jobs referenced · 54 kernels · 3251 banked artifacts across 86 directories**
+**149 claims · 31 distinct jobs referenced · 58 kernels · 3254 banked artifacts across 89 directories**
 
 | row | claim (first sentence) | kernel | job | analysis | banked |
 |---|---|---|---|---|---|
@@ -140,7 +140,7 @@ and the banked data, so that no experiment is unfindable.
 | **D130** | THE OBSERVABILITY CENSUS LANDS: 31 USABLE ITEMS WITH GENUINE DYNAMIC RANGE, ACROSS 5 FAMILIES THAT CAN EACH CARRY A WITHIN-FAMILY DESIGN. | `kaggle_census` | — | `run_census_analysis.py` | kaggle_census: 3 |
 | **D131** 🔻 | DR3's 'NOVEL, PUBLISHABLE CORE' DOES NOT CONVERGE ON HUGINN: THE IMPLICIT-DIFFERENTIATION ADJOINT NEEDS 257 VJPs, NOT THE 30-40 PREDICTED, AND ITS OWN | `ds_implicit` | `bt1i4qge4opib5adikll` () | — | ds_implicit: 1 |
 | **D132** | ONE NOUN IN THE INSTRUCTION SWITCHES THE RECURRENT MAP BETWEEN SETTLING AND A DAMPED PERIOD-6 ROTATION -- 36 OF 36 PAIRED CELLS, AT AN IDENTICAL TOKEN | `ds_wordswap` | `bt19t87hq0fmmget8p36` ⚠unregistered | — | ds_wordswap: 109 |
-| **D133** | D86's CONTAINMENT RISE IS SPECIFIC TO THE CORRECT ANSWER, NOT A SIDE-EFFECT OF LONGER OUTPUT -- imported from a parallel branch and INDEPENDENTLY REPR | `kaggle_depthacc` | — | — | kaggle_depthacc: 3 |
+| **D133** 🔻 | D86's CONTAINMENT RISE IS SPECIFIC TO THE CORRECT ANSWER, NOT A SIDE-EFFECT OF LONGER OUTPUT -- imported from a parallel branch and INDEPENDENTLY REPR | `kaggle_depthacc` | — | — | kaggle_depthacc: 3 |
 | **D134** | THE WORD THAT SELECTS THE DYNAMICAL REGIME IS NOT PREDICTED BY MEANING, BY FORM, OR BY TOKENISATION -- IT IS IDIOSYNCRATIC TO THE TOKEN. | `ds_nounsweep` | `bt1p04j521i2udj5civd` ⚠unregistered | — | ds_nounsweep: 385 |
 | **D135** | THE REGIME IS NOT A LINEAR FUNCTION OF THE TOKEN EMBEDDING EITHER, WHICH REFUTES D134's OWN 'BY ELIMINATION' INFERENCE -- AND ROTATION TURNS OUT NOT T | `ds_embsep` | `bt19lv117dbh0bqrcbcv` () | — | ds_embsep: 206 |
 | **D136** | THE REGIME IS NOT RECOVERABLE FROM THE TOKEN EMBEDDING BY ANY OF SIX SIMPLE RULES, LINEAR OR NONLINEAR. | — | — | `run_embsep_nonlinear.py` | — |
@@ -152,6 +152,11 @@ and the banked data, so that no experiment is unfindable.
 | **D142** | GMRES FIXES D131's SOLVER OUTRIGHT -- 24/24 CONVERGED AGAINST 1/24 -- AT THE ITERATION COUNT THE THEORY PREDICTED; THE ATTRIBUTION IT YIELDS IS ONLY M | `ds_gmres` | `bt13o2rva6j2mk5ls0u8` (gmres-implicit-attribution) | — | ds_gmres: 1 |
 | **D143** 🔻 | THE FIRST STRUCTURALLY CLEAN DIFFICULTY LADDER THIS PROJECT HAS BUILT, AND H2 IS NULL ON IT ONCE LIST POSITION 1 IS REMOVED. | `ds_nth` | `bt1j97ks2han4ptnks5q` (nth-orthogonal-ladder) | — | ds_nth: 1 |
 | **D144** | THE ROTATING REGION OF e-SPACE IS A STRUCTURED SET, NOT A BLOB: THE SAME DISTANCE TRAVELLED LEAVES IT IN A RANDOM DIRECTION AND STAYS INSIDE IT ALONG  | `ds_nonconvex` | `bt12cjm70cqfbgqu4qhr` ⚠unregistered | — | ds_nonconvex: 1 |
+| **D145** | HUGINN'S CHAT TEMPLATE LEAKS THE NEXT-TURN ROLE HEADER ONTO THE ANSWER WITH NO SEPARATOR, AND IT HAS BEEN CORRUPTING EVERY DECODED-ACCURACY NUMBER IN  | `kaggle_depthacc` | — | — | kaggle_depthacc: 3 |
+| **D146** | D98's 'EACH BLOCK CONVERGES TO ITS OWN FIXED POINT' IS FALSE FOR ROTATING ORBITS -- THEY ARE STILL MOVING AT 4% OF THE STATE NORM AT UNROLL 63, A 157x | `ds_blockbank` | `bt16fuonalgnb2fldhpk` () | — | ds_blockbank: 131 |
+| **D147** | HUGINN CANNOT STATE-TRACK AT ALL: IT IS A CONSTANT RESPONDER, AND THE PROJECT'S STANDARD CAPABILITY AXIS SCORES THAT 100%. | `ds_statetrack` | `bt12s3ifcf9u6383e468` ⚠unregistered | `run_statetrack_analysis.py` | ds_statetrack: 1 |
+| **D148** | CROSSING THE REGIME BOUNDARY MOVES THE ANSWER'S RANK BY EXACTLY ONE POSITION AND FLIPS NO ANSWERS -- THE BEHAVIOURAL NULL IS NOW BOUNDED, WHICH D132's | `ds_regimebehav` | `bt1jp231g4u3d1fbp168` ⚠unregistered | `run_regimebehav_analysis.py` | ds_regimebehav: 1 |
+| **D149** | THE ROTATING REGION IS A BOUNDED, ANISOTROPIC REGION -- NOT A HALF-SPACE. | `ds_boundary` | `bt17mi3ab789pavgrg3c` ⚠unregistered | — | ds_boundary: 1 |
 
 ## Claims with no code, job or script reference
 
@@ -209,7 +214,6 @@ already found one of the latter (three banks re-read with a new statistic became
 D138/D141 at zero GPU cost).
 
 - `scratch/datasphere_smoke_test` — 5 artifact(s)
-- `scratch/ds_blockbank` — 131 artifact(s)
 - `scratch/ds_startup_probe` — 18 artifact(s)
 - `scratch/kaggle_blayney_modk` — 16 artifact(s)
 - `scratch/kaggle_capcontent` — 1 artifact(s)
