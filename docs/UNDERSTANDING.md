@@ -87,12 +87,25 @@ Meaning, surface form and subword structure are all refuted (D134). D134 then in
 *by elimination* that the property must live in the token's learned embedding; A23 tested
 that survivor on 51 nouns and it **fails** — leave-one-out from the embedding is 0.551
 against a permuted null of 0.530, below the 0.592 majority baseline, and the separating
-direction is not low-dimensional (D135). **The scope of D132 also narrows: at 51 nouns,
-2 (`set`, `word`) are MIXED across their four orbits**, so the regime is not a property
-of the token alone but of the token *and* the sequence — a continuous quantity thresholded
-near a boundary, not a label looked up. Read D132's determinism as *"for the nouns
-tested"*. The live candidate is now `e` itself, the prelude's nonlinear image of the
-embedding, which is the map's parameter (D111, D113) and is where a threshold would sit.
+direction is not low-dimensional (D135). Six classifiers, linear and nonlinear, then give
+a **best-of-six of 0.551 against a null-of-max of 0.589, p = 0.808** (D136). So the
+property is a function of the token that no simple rule reads off its embedding at n = 49.
+
+**The regime is genuinely bimodal, and D132's determinism survives at larger scale.** A
+continuous rotation statistic separates the two populations (median **0.896** vs
+**0.336**, p = 0.0002) and the distribution is **gapped** (p = 0.0002) — two regimes, not
+a continuum with an arbitrary cut. Of the two nouns that failed D135's determinism gate,
+`word` is a **detector false positive** (its "rotating" orbit carries the *lowest*
+period-6 power of its four) and only `set` is genuinely intermediate, sitting in the gap
+with all four orbits between the modes. **50 of 51 nouns are deterministic**, with no
+marker or sequence confound (D137) — which retires D135's own reading that the regime
+depends on the token *and* the sequence.
+
+The live candidate is now `e` itself, the prelude's nonlinear image of the embedding,
+which is the map's parameter (D111, D113) and is where a threshold would sit. A24 tests
+it causally rather than by fitting — interpolating `e` from a settling noun's to a
+rotating noun's and locating the flip — because at 51 nouns power, not the hypothesis, is
+what binds.
 
 ### 1.4 What the corrections did to the older record
 
