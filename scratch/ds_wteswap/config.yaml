@@ -1,0 +1,26 @@
+name: wteswap-control-the-regime-from-the-embedding
+desc: >
+  A32: ask the embedding question causally instead of by fitting. D134 inferred by
+  elimination that the regime selector lives in the token's learned embedding; D135/D136
+  appeared to refute that by fitting classifiers to 49 banked embeddings, and D155 shows
+  they did no such thing -- the design cannot resolve a linear separation below Cohen's
+  d ~ 10, where 0.8 is conventionally large, and the observed data is indistinguishable
+  from planted separations of 0.25, 0.5 and 1.0. So the hypothesis is untested, not
+  refuted. A24/A25's lesson applies: stop fitting, manipulate. Here the object is `wte`
+  itself -- one row, for one token. The prompt text stays at the rotating noun while that
+  token's EMBEDDING ROW is interpolated toward a settling noun's, so nothing else changes:
+  same string, same token ids, same length, same h_0. At t=1 the row IS the settling
+  token's, so the regime must flip -- that is a sanity check, not a finding. The finding is
+  the SHAPE of the crossing, which is exactly what the fitted classifiers had no power to
+  see. P5 is load-bearing: interpolating toward another ROTATING noun must not flip the
+  regime, because D144 already showed a norm-matched random bearing in e-space destroys
+  rotation on 3 of 3 carriers, so "any large edit destroys it" is a real and observed
+  failure mode rather than a hypothetical one.
+cmd: python job.py ${RESULT}
+outputs:
+  - wteswap.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
