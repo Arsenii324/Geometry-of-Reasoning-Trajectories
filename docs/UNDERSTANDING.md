@@ -118,10 +118,23 @@ split.** Interpolating `e` along straight lines between nouns, all eight cross-r
 paths cross the threshold **exactly once**, every crossing inside a single 0.05 grid
 step — sharper than the design resolves — and at t = 1 the orbit matches the rotating
 noun's own R to within the h₀ noise even though h₀ came from the settling prompt, which
-supports D111/D113's parameter claim causally — **though A24 could not verify its own
-patch fidelity**: its check demanded 1e-6 agreement between two forwards, and h₀ is drawn
-from an unseeded RNG (D78), so the run leans on its within-regime control instead. A25 is
-the seeded re-run. But the rotating set is **not convex**: a
+supports D111/D113's parameter claim causally. A24 could not verify its own patch
+fidelity — its check demanded 1e-6 agreement between two forwards while h₀ is drawn from
+an unseeded RNG (D78) — but **A25 seeded h₀ and the same check now returns exactly
+0.000e+00 on all 8 chords**, so the hook writes `e` and only `e`, retrospectively
+licensing A24's numbers (D144).
+
+**And direction, not distance, is what moves the regime — which is the finding that makes
+this geometric rather than anecdotal.** A25's off-distribution control travels the *same
+euclidean distance* from a carrier's `e` in a random bearing. **None of 8 random bearings
+rotates** (R = 0.054 … 0.579, all below threshold), and on a rotating carrier a random
+bearing of that magnitude **destroys the rotation in 3 of 3 cases** — 0.845 → 0.579,
+0.977 → 0.271, 0.974 → 0.131 — while the chord toward another *rotating* noun keeps all
+21 of 21 points inside the regime. So the rotating set is a structured region of
+parameter space, not a neighbourhood that any large perturbation escapes. **Non-convexity
+is real but not generic**: 2 of 5 settling→settling chords pass through rotation, against
+a pre-registered bar of 3 of 6, so it is demonstrated and must not be read as typical
+(D144). But the rotating set is **not convex**: a
 rotating→rotating path never leaves the regime (0 crossings in 21 points), while a
 **settling→settling** path crosses **twice**, rising to R = 0.74 before falling to 0.05.
 t\* varies 0.28–0.74 by pair (D140). **That non-convexity also explains D135/D136** —
