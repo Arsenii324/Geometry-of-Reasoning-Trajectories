@@ -4,7 +4,7 @@ Regenerate with `uv run python scripts/build_index.py`. Source of truth is
 `claims_ledger.md`; this file only cross-references it against the code, the runs
 and the banked data, so that no experiment is unfindable.
 
-**150 claims · 31 distinct jobs referenced · 58 kernels · 3254 banked artifacts across 89 directories**
+**152 claims · 31 distinct jobs referenced · 59 kernels · 3254 banked artifacts across 89 directories**
 
 | row | claim (first sentence) | kernel | job | analysis | banked |
 |---|---|---|---|---|---|
@@ -158,6 +158,8 @@ and the banked data, so that no experiment is unfindable.
 | **D148** | CROSSING THE REGIME BOUNDARY MOVES THE ANSWER'S RANK BY EXACTLY ONE POSITION AND FLIPS NO ANSWERS -- THE BEHAVIOURAL NULL IS NOW BOUNDED, WHICH D132's | `ds_regimebehav` | `bt1jp231g4u3d1fbp168` ⚠unregistered | `run_regimebehav_analysis.py` | ds_regimebehav: 1 |
 | **D149** | THE ROTATING REGION IS A BOUNDED, ANISOTROPIC REGION -- NOT A HALF-SPACE. | `ds_boundary` | `bt17mi3ab789pavgrg3c` ⚠unregistered | — | ds_boundary: 1 |
 | **D150** | SYSTEMATIC EXPOSURE AUDIT OF THE ORACLE CAPABILITY AXIS: 22 OF 149 ROWS CARRY A NUMBER FROM IT -- NOT THE 44 A NAIVE COUNT GIVES. | — | — | — | — |
+| **D151** 🔻 | THE SCORER IS REPAIRED, D89's NULL SURVIVES AND STRENGTHENS, AND D145's CONTAINMENT SENTENCE IS WITHDRAWN AS MY OWN RULE-MISMATCH ERROR. | `kaggle_depthacc` | — | `run_addk_arms.py`, `run_depth_accuracy.py`, `run_depth_profile.py` | kaggle_depthacc: 3 |
+| **D152** | fromconfig IS DETERMINISTIC AND THE UNTRAINED ARMS REPRODUCE AT THE WEIGHT LEVEL -- AND 70% OF dsseeds' RECORDING IS BELOW THE FLOATING-POINT FLOOR, T | `ds_bank`, `ds_seeds` | — | — | ds_bank: 97, ds_seeds: 61 |
 
 ## Claims with no code, job or script reference
 

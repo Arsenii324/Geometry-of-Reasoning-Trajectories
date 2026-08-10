@@ -1,5 +1,5 @@
 {
-  "bytes": 162581,
+  "bytes": 162434,
   "columns": [
     "family",
     "item",
@@ -13,15 +13,15 @@
     "empty"
   ],
   "file": "depth_accuracy.csv",
-  "git_commit": "31647bac4c514df8f9f25bdd6d2f4add832f95f8",
+  "git_commit": "7aeba1a412f362bf6ae34f26a7747c903425242d",
   "git_dirty": true,
   "kind": "depth_accuracy",
   "model_id": "tomg-group-umd/huginn-0125",
   "model_revision": "bb6621b65e90b6a4b9b29ef88dc83866d450470c",
   "n_rows": 1260,
-  "produced_by": "/home/user/Geometry-of-Reasoning-Trajectories/scripts/run_depth_accuracy.py",
-  "run_id": "20260809T030057Z-ef13ec42",
-  "sha256": "8abe197d40473cc89fd7108f2048be2138032061e25f7783c5369384cae7d49b",
+  "produced_by": "scripts/run_depth_accuracy.py",
+  "run_id": "20260810T120508Z-87ecfd09",
+  "sha256": "3dbd8873de7ada900d34c048bed1331958e63ddbab1571be6a932488f8883f63",
   "source": "scratch/kaggle_depthacc/out",
-  "written_utc": "2026-08-09T03:00:57.577059+00:00"
+  "written_utc": "2026-08-10T12:05:08.846863+00:00"
 }

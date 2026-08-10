@@ -2,25 +2,25 @@ family,item,fmt,gold,prompt,depth,output,exact,contains,empty
 echo_digit,0,bare,4,"Repeat this number exactly.
 Number: 4",4,"4user
 
-",False,False,False
+",True,True,False
 echo_digit,1,bare,1,"Repeat this number exactly.
 Number: 1",4,"1user
 
-",False,False,False
+",True,True,False
 echo_digit,2,bare,7,"Repeat this number exactly.
 Number: 7",4,"7user
 
-",False,False,False
+",True,True,False
 echo_digit,3,bare,4,"Repeat this number exactly.
 Number: 4",4,The number 4 is repeated four times.,False,True,False
 echo_digit,4,bare,6,"Repeat this number exactly.
 Number: 6",4,"6user
 
-",False,False,False
+",True,True,False
 echo_digit,5,bare,3,"Repeat this number exactly.
 Number: 3",4,"3user
 
-",False,False,False
+",True,True,False
 echo_word,0,bare,paper,"Repeat this word exactly.
 Word: paper",4,Repeat this word exactly.,False,False,False
 echo_word,1,bare,chair,"Repeat this word exactly.
@@ -28,15 +28,15 @@ Word: chair",4,Repeat this word exactly.,False,False,False
 echo_word,2,bare,cloud,"Repeat this word exactly.
 Word: cloud",4,"Clouduser
 
-",False,False,False
+",True,True,False
 echo_word,3,bare,night,"Repeat this word exactly.
 Word: night",4,Repeat this word exactly.,False,False,False
 echo_word,4,bare,queen,"Repeat this word exactly.
-Word: queen",4,Queenuser,False,False,False
+Word: queen",4,Queenuser,True,True,False
 echo_word,5,bare,water,"Repeat this word exactly.
 Word: water",4,"Wateruser
 
-",False,False,False
+",True,True,False
 nth_item,0,bare,5,"What is item number 3 in this list?
 List: 9 5 5 0 2",4,Item number 3 in this list is:,False,False,False
 nth_item,1,bare,6,"What is item number 4 in this list?
@@ -148,7 +148,7 @@ Sequence: 0 1 0 0 0 1 1 1 1",4,1Question: Let y,False,False,False
 count_mod3,1,bare,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
 Sequence: 1 0 0 0 1 1 1 0 0",4,"1user
 
-",False,False,False
+",True,True,False
 count_mod3,2,bare,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
 Sequence: 0 1 0 0 1 0 0 1 0",4,"1user
 
@@ -184,7 +184,7 @@ track_total,1,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 
 track_total,2,bare,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,4,0.user,False,False,False
 track_total,3,bare,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,4,0.user,False,False,False
 track_total,4,bare,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,4,0.user,False,False,False
-track_total,5,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,4,0.user,False,True,False
+track_total,5,bare,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,4,0.user,True,True,False
 local_last,0,bare,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,4,1. Subtract 1.,False,True,False
 local_last,1,bare,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,4,Subtract 1.user,False,True,False
 local_last,2,bare,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,4,Subtract 1. Subtract 1. Subtract 1,False,False,False
@@ -207,9 +207,9 @@ Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",4,"1user
 ",False,False,False
 max_run,5,bare,4,"What is the length of the longest run of identical symbols in this sequence?
 Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",4,1Question: Let y,False,False,False
-sort_min,0,bare,18,"What is the smallest of these numbers: 18, 57, 72?",4,18user,False,False,False
+sort_min,0,bare,18,"What is the smallest of these numbers: 18, 57, 72?",4,18user,True,True,False
 sort_min,1,bare,57,"What is the smallest of these numbers: 65, 63, 57?",4,65Question: Let,False,False,False
-sort_min,2,bare,12,"What is the smallest of these numbers: 86, 12, 61?",4,12user,False,False,False
+sort_min,2,bare,12,"What is the smallest of these numbers: 86, 12, 61?",4,12user,True,True,False
 sort_min,3,bare,56,"What is the smallest of these numbers: 63, 92, 56?",4,The smallest of these numbers is 56,False,True,False
 sort_min,4,bare,76,"What is the smallest of these numbers: 76, 88, 98?",4,The smallest of these numbers is 98,False,False,False
 sort_min,5,bare,36,"What is the smallest of these numbers: 73, 87, 36?",4,The smallest of these numbers is 36,False,True,False
@@ -222,7 +222,7 @@ succ_letter,3,bare,c,What letter comes after 'b' in the alphabet?,4,The letter '
 succ_letter,4,bare,o,What letter comes after 'n' in the alphabet?,4,"The letter ""n"" is the second",False,False,False
 succ_letter,5,bare,v,What letter comes after 'u' in the alphabet?,4,"Vuser
 
-",False,False,False
+",True,True,False
 caesar1_letter,0,bare,n,"Shift this letter forward by 1 in the alphabet.
 Letter: m",4,"muser
 
@@ -412,7 +412,7 @@ Sequence: 0 1 0 0 0 1 1 1 1",4,"1user
 count_mod3,1,constrained,1,"Count how many ones are in this sequence, then give the remainder when divided by 3.
 Sequence: 1 0 0 0 1 1 1 0 0",4,"1user
 
-",False,False,False
+",True,True,False
 count_mod3,2,constrained,0,"Count how many ones are in this sequence, then give the remainder when divided by 3.
 Sequence: 0 1 0 0 1 0 0 1 0",4,There are $3$ ones in the,False,False,False
 count_mod3,3,constrained,2,"Count how many ones are in this sequence, then give the remainder when divided by 3.
@@ -475,14 +475,14 @@ max_run,5,constrained,4,"What is the length of the longest run of identical symb
 Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",4,"1user
 
 ",False,False,False
-sort_min,0,constrained,18,"What is the smallest of these numbers: 18, 57, 72?",4,18user,False,False,False
+sort_min,0,constrained,18,"What is the smallest of these numbers: 18, 57, 72?",4,18user,True,True,False
 sort_min,1,constrained,57,"What is the smallest of these numbers: 65, 63, 57?",4,The smallest of these numbers is 65,False,False,False
 sort_min,2,constrained,12,"What is the smallest of these numbers: 86, 12, 61?",4,The smallest of these numbers is 12,False,True,False
 sort_min,3,constrained,56,"What is the smallest of these numbers: 63, 92, 56?",4,The smallest of these numbers is 63,False,False,False
-sort_min,4,constrained,76,"What is the smallest of these numbers: 76, 88, 98?",4,76user,False,False,False
+sort_min,4,constrained,76,"What is the smallest of these numbers: 76, 88, 98?",4,76user,True,True,False
 sort_min,5,constrained,36,"What is the smallest of these numbers: 73, 87, 36?",4,73user,False,False,False
 succ_letter,0,constrained,o,What letter comes after 'n' in the alphabet?,4,nuser,False,False,False
-succ_letter,1,constrained,n,What letter comes after 'm' in the alphabet?,4,nuser,False,False,False
+succ_letter,1,constrained,n,What letter comes after 'm' in the alphabet?,4,nuser,True,True,False
 succ_letter,2,constrained,p,What letter comes after 'o' in the alphabet?,4,"The letter ""O""",False,False,False
 succ_letter,3,constrained,c,What letter comes after 'b' in the alphabet?,4,Auser,False,False,False
 succ_letter,4,constrained,o,What letter comes after 'n' in the alphabet?,4,nuser,False,False,False
@@ -540,7 +540,7 @@ Text: zebd",4,The ROT13 text is a,False,False,False
 echo_digit,0,bare,4,"Repeat this number exactly.
 Number: 4",32,The number 4 is repeated exactly.,False,True,False
 echo_digit,1,bare,1,"Repeat this number exactly.
-Number: 1",32,Number: 1user,False,False,False
+Number: 1",32,Number: 1user,False,True,False
 echo_digit,2,bare,7,"Repeat this number exactly.
 Number: 7",32,The number 7 is repeated exactly.,False,True,False
 echo_digit,3,bare,4,"Repeat this number exactly.
@@ -552,23 +552,23 @@ Number: 3",32,The number 3 is repeated exactly.,False,True,False
 echo_word,0,bare,paper,"Repeat this word exactly.
 Word: paper",32,"paperuser
 
-",False,False,False
+",True,True,False
 echo_word,1,bare,chair,"Repeat this word exactly.
 Word: chair",32,"chairuser
 
-",False,False,False
+",True,True,False
 echo_word,2,bare,cloud,"Repeat this word exactly.
 Word: cloud",32,"clouduser
 
-",False,False,False
+",True,True,False
 echo_word,3,bare,night,"Repeat this word exactly.
 Word: night",32,"The word ""night"" is repeated exactly",False,True,False
 echo_word,4,bare,queen,"Repeat this word exactly.
-Word: queen",32,queenuser,False,False,False
+Word: queen",32,queenuser,True,True,False
 echo_word,5,bare,water,"Repeat this word exactly.
 Word: water",32,"wateruser
 
-",False,False,False
+",True,True,False
 nth_item,0,bare,5,"What is item number 3 in this list?
 List: 9 5 5 0 2",32,The number 3 is in the list.,False,False,False
 nth_item,1,bare,6,"What is item number 4 in this list?
@@ -714,17 +714,17 @@ succ_letter,3,bare,c,What letter comes after 'b' in the alphabet?,32,The letter 
 succ_letter,4,bare,o,What letter comes after 'n' in the alphabet?,32,The letter that comes after 'n' in,False,False,False
 succ_letter,5,bare,v,What letter comes after 'u' in the alphabet?,32,The letter that comes after 'u' in,False,False,False
 caesar1_letter,0,bare,n,"Shift this letter forward by 1 in the alphabet.
-Letter: m",32,Letter: nuser,False,False,False
+Letter: m",32,Letter: nuser,False,True,False
 caesar1_letter,1,bare,n,"Shift this letter forward by 1 in the alphabet.
-Letter: m",32,Letter: nuser,False,False,False
+Letter: m",32,Letter: nuser,False,True,False
 caesar1_letter,2,bare,g,"Shift this letter forward by 1 in the alphabet.
-Letter: f",32,Letter: guser,False,False,False
+Letter: f",32,Letter: guser,False,True,False
 caesar1_letter,3,bare,j,"Shift this letter forward by 1 in the alphabet.
-Letter: i",32,Letter: juser,False,False,False
+Letter: i",32,Letter: juser,False,True,False
 caesar1_letter,4,bare,b,"Shift this letter forward by 1 in the alphabet.
-Letter: a",32,Letter: buser,False,False,False
+Letter: a",32,Letter: buser,False,True,False
 caesar1_letter,5,bare,t,"Shift this letter forward by 1 in the alphabet.
-Letter: s",32,Letter: tuser,False,False,False
+Letter: s",32,Letter: tuser,False,True,False
 caesar1_word,0,bare,gcns,"Shift each letter of this text backward by 1 in the alphabet.
 Text: hdot",32,tdohuser,False,False,False
 caesar1_word,1,bare,iekb,"Shift each letter of this text backward by 1 in the alphabet.
@@ -766,23 +766,23 @@ Number: 3",32,The number 3 is repeated exactly.,False,True,False
 echo_word,0,constrained,paper,"Repeat this word exactly.
 Word: paper",32,"paperuser
 
-",False,False,False
+",True,True,False
 echo_word,1,constrained,chair,"Repeat this word exactly.
 Word: chair",32,"chairuser
 
-",False,False,False
+",True,True,False
 echo_word,2,constrained,cloud,"Repeat this word exactly.
 Word: cloud",32,"clouduser
 
-",False,False,False
+",True,True,False
 echo_word,3,constrained,night,"Repeat this word exactly.
 Word: night",32,"The word ""night"" is repeated exactly",False,True,False
 echo_word,4,constrained,queen,"Repeat this word exactly.
-Word: queen",32,queenuser,False,False,False
+Word: queen",32,queenuser,True,True,False
 echo_word,5,constrained,water,"Repeat this word exactly.
 Word: water",32,"wateruser
 
-",False,False,False
+",True,True,False
 nth_item,0,constrained,5,"What is item number 3 in this list?
 List: 9 5 5 0 2",32,The answer is 5.,False,True,False
 nth_item,1,constrained,6,"What is item number 4 in this list?
@@ -830,9 +830,9 @@ compare,1,constrained,54,"Which number is larger, 54 or 7?",32,"7user
 
 ",False,False,False
 compare,2,constrained,52,"Which number is larger, 38 or 52?",32,The number 52 is larger than the,False,True,False
-compare,3,constrained,89,"Which number is larger, 65 or 89?",32,89user,False,False,False
+compare,3,constrained,89,"Which number is larger, 65 or 89?",32,89user,True,True,False
 compare,4,constrained,75,"Which number is larger, 6 or 75?",32,75 is larger than 6.,False,True,False
-compare,5,constrained,96,"Which number is larger, 96 or 59?",32,96user,False,False,False
+compare,5,constrained,96,"Which number is larger, 96 or 59?",32,96user,True,True,False
 count4,0,constrained,3,"Count how many ones are in this sequence.
 Sequence: 1 1 1 0",32,The sequence is 1 1 1 0.,False,False,False
 count4,1,constrained,4,"Count how many ones are in this sequence.
@@ -936,7 +936,7 @@ Letter: m",32,The letter forward by 1 in the alphabet,False,False,False
 caesar1_letter,2,constrained,g,"Shift this letter forward by 1 in the alphabet.
 Letter: f",32,The letter forward by 1 in the alphabet,False,False,False
 caesar1_letter,3,constrained,j,"Shift this letter forward by 1 in the alphabet.
-Letter: i",32,Letter: juser,False,False,False
+Letter: i",32,Letter: juser,False,True,False
 caesar1_letter,4,constrained,b,"Shift this letter forward by 1 in the alphabet.
 Letter: a",32,The letter forward by 1 in the alphabet,False,False,False
 caesar1_letter,5,constrained,t,"Shift this letter forward by 1 in the alphabet.
@@ -976,7 +976,7 @@ Number: 4",8,The number 4 is repeated exactly.,False,True,False
 echo_digit,1,bare,1,"Repeat this number exactly.
 Number: 1",8,"1user
 
-",False,False,False
+",True,True,False
 echo_digit,2,bare,7,"Repeat this number exactly.
 Number: 7",8,The number 7 is repeated exactly once.,False,True,False
 echo_digit,3,bare,4,"Repeat this number exactly.
@@ -988,23 +988,23 @@ Number: 3",8,The number 3 is repeated exactly.,False,True,False
 echo_word,0,bare,paper,"Repeat this word exactly.
 Word: paper",8,"Paperuser
 
-",False,False,False
+",True,True,False
 echo_word,1,bare,chair,"Repeat this word exactly.
 Word: chair",8,"chairuser
 
-",False,False,False
+",True,True,False
 echo_word,2,bare,cloud,"Repeat this word exactly.
 Word: cloud",8,"clouduser
 
-",False,False,False
+",True,True,False
 echo_word,3,bare,night,"Repeat this word exactly.
 Word: night",8,"The word ""night"" is repeated exactly",False,True,False
 echo_word,4,bare,queen,"Repeat this word exactly.
-Word: queen",8,queenuser,False,False,False
+Word: queen",8,queenuser,True,True,False
 echo_word,5,bare,water,"Repeat this word exactly.
 Word: water",8,"wateruser
 
-",False,False,False
+",True,True,False
 nth_item,0,bare,5,"What is item number 3 in this list?
 List: 9 5 5 0 2",8,Item number 3 in the list is 5,False,True,False
 nth_item,1,bare,6,"What is item number 4 in this list?
@@ -1150,17 +1150,17 @@ succ_letter,3,bare,c,What letter comes after 'b' in the alphabet?,8,The letter t
 succ_letter,4,bare,o,What letter comes after 'n' in the alphabet?,8,The letter that comes after 'n' in,False,False,False
 succ_letter,5,bare,v,What letter comes after 'u' in the alphabet?,8,The letter that comes after 'u' in,False,False,False
 caesar1_letter,0,bare,n,"Shift this letter forward by 1 in the alphabet.
-Letter: m",8,Letter: nuser,False,False,False
+Letter: m",8,Letter: nuser,False,True,False
 caesar1_letter,1,bare,n,"Shift this letter forward by 1 in the alphabet.
-Letter: m",8,Letter: nuser,False,False,False
+Letter: m",8,Letter: nuser,False,True,False
 caesar1_letter,2,bare,g,"Shift this letter forward by 1 in the alphabet.
-Letter: f",8,Letter: guser,False,False,False
+Letter: f",8,Letter: guser,False,True,False
 caesar1_letter,3,bare,j,"Shift this letter forward by 1 in the alphabet.
-Letter: i",8,Letter: juser,False,False,False
+Letter: i",8,Letter: juser,False,True,False
 caesar1_letter,4,bare,b,"Shift this letter forward by 1 in the alphabet.
-Letter: a",8,Letter: buser,False,False,False
+Letter: a",8,Letter: buser,False,True,False
 caesar1_letter,5,bare,t,"Shift this letter forward by 1 in the alphabet.
-Letter: s",8,Letter: tuser,False,False,False
+Letter: s",8,Letter: tuser,False,True,False
 caesar1_word,0,bare,gcns,"Shift each letter of this text backward by 1 in the alphabet.
 Text: hdot",8,hdotuser,False,False,False
 caesar1_word,1,bare,iekb,"Shift each letter of this text backward by 1 in the alphabet.
@@ -1206,7 +1206,7 @@ Word: cloud",8,"The word ""cloud"" is repeated exactly",False,True,False
 echo_word,3,constrained,night,"Repeat this word exactly.
 Word: night",8,"The word ""night"" is repeated exactly",False,True,False
 echo_word,4,constrained,queen,"Repeat this word exactly.
-Word: queen",8,queenuser,False,False,False
+Word: queen",8,queenuser,True,True,False
 echo_word,5,constrained,water,"Repeat this word exactly.
 Word: water",8,"The word ""water"" is repeated exactly",False,True,False
 nth_item,0,constrained,5,"What is item number 3 in this list?
@@ -1415,11 +1415,11 @@ Number: 4",16,The number 4 is repeated exactly.,False,True,False
 echo_digit,1,bare,1,"Repeat this number exactly.
 Number: 1",16,"1user
 
-",False,False,False
+",True,True,False
 echo_digit,2,bare,7,"Repeat this number exactly.
 Number: 7",16,"7user
 
-",False,False,False
+",True,True,False
 echo_digit,3,bare,4,"Repeat this number exactly.
 Number: 4",16,The number 4 is repeated exactly.,False,True,False
 echo_digit,4,bare,6,"Repeat this number exactly.
@@ -1429,23 +1429,23 @@ Number: 3",16,The number you have repeated is 3.,False,True,False
 echo_word,0,bare,paper,"Repeat this word exactly.
 Word: paper",16,"paperuser
 
-",False,False,False
+",True,True,False
 echo_word,1,bare,chair,"Repeat this word exactly.
 Word: chair",16,"chairuser
 
-",False,False,False
+",True,True,False
 echo_word,2,bare,cloud,"Repeat this word exactly.
 Word: cloud",16,"clouduser
 
-",False,False,False
+",True,True,False
 echo_word,3,bare,night,"Repeat this word exactly.
 Word: night",16,"The word ""night"" is repeated exactly",False,True,False
 echo_word,4,bare,queen,"Repeat this word exactly.
-Word: queen",16,queenuser,False,False,False
+Word: queen",16,queenuser,True,True,False
 echo_word,5,bare,water,"Repeat this word exactly.
 Word: water",16,"wateruser
 
-",False,False,False
+",True,True,False
 nth_item,0,bare,5,"What is item number 3 in this list?
 List: 9 5 5 0 2",16,The number 3 is in the list.,False,False,False
 nth_item,1,bare,6,"What is item number 4 in this list?
@@ -1591,17 +1591,17 @@ succ_letter,3,bare,c,What letter comes after 'b' in the alphabet?,16,The letter 
 succ_letter,4,bare,o,What letter comes after 'n' in the alphabet?,16,The letter that comes after 'n' in,False,False,False
 succ_letter,5,bare,v,What letter comes after 'u' in the alphabet?,16,The letter that comes after 'u' in,False,False,False
 caesar1_letter,0,bare,n,"Shift this letter forward by 1 in the alphabet.
-Letter: m",16,Letter: nuser,False,False,False
+Letter: m",16,Letter: nuser,False,True,False
 caesar1_letter,1,bare,n,"Shift this letter forward by 1 in the alphabet.
-Letter: m",16,Letter: nuser,False,False,False
+Letter: m",16,Letter: nuser,False,True,False
 caesar1_letter,2,bare,g,"Shift this letter forward by 1 in the alphabet.
-Letter: f",16,Letter: guser,False,False,False
+Letter: f",16,Letter: guser,False,True,False
 caesar1_letter,3,bare,j,"Shift this letter forward by 1 in the alphabet.
-Letter: i",16,Letter: juser,False,False,False
+Letter: i",16,Letter: juser,False,True,False
 caesar1_letter,4,bare,b,"Shift this letter forward by 1 in the alphabet.
-Letter: a",16,Letter: buser,False,False,False
+Letter: a",16,Letter: buser,False,True,False
 caesar1_letter,5,bare,t,"Shift this letter forward by 1 in the alphabet.
-Letter: s",16,Letter: tuser,False,False,False
+Letter: s",16,Letter: tuser,False,True,False
 caesar1_word,0,bare,gcns,"Shift each letter of this text backward by 1 in the alphabet.
 Text: hdot",16,tdohuser,False,False,False
 caesar1_word,1,bare,iekb,"Shift each letter of this text backward by 1 in the alphabet.
@@ -1631,11 +1631,11 @@ Number: 4",16,The number 4 is repeated exactly.,False,True,False
 echo_digit,1,constrained,1,"Repeat this number exactly.
 Number: 1",16,"1user
 
-",False,False,False
+",True,True,False
 echo_digit,2,constrained,7,"Repeat this number exactly.
 Number: 7",16,"7user
 
-",False,False,False
+",True,True,False
 echo_digit,3,constrained,4,"Repeat this number exactly.
 Number: 4",16,The number 4 is repeated exactly.,False,True,False
 echo_digit,4,constrained,6,"Repeat this number exactly.
@@ -1645,19 +1645,19 @@ Number: 3",16,The number 3 is repeated exactly.,False,True,False
 echo_word,0,constrained,paper,"Repeat this word exactly.
 Word: paper",16,"paperuser
 
-",False,False,False
+",True,True,False
 echo_word,1,constrained,chair,"Repeat this word exactly.
 Word: chair",16,"chairuser
 
-",False,False,False
+",True,True,False
 echo_word,2,constrained,cloud,"Repeat this word exactly.
 Word: cloud",16,"clouduser
 
-",False,False,False
+",True,True,False
 echo_word,3,constrained,night,"Repeat this word exactly.
 Word: night",16,"The word ""night"" is repeated exactly",False,True,False
 echo_word,4,constrained,queen,"Repeat this word exactly.
-Word: queen",16,queenuser,False,False,False
+Word: queen",16,queenuser,True,True,False
 echo_word,5,constrained,water,"Repeat this word exactly.
 Word: water",16,"The word ""water"" is repeated exactly",False,True,False
 nth_item,0,constrained,5,"What is item number 3 in this list?
@@ -1708,7 +1708,7 @@ compare,1,constrained,54,"Which number is larger, 54 or 7?",16,"7user
 ",False,False,False
 compare,2,constrained,52,"Which number is larger, 38 or 52?",16,38,False,False,False
 compare,3,constrained,89,"Which number is larger, 65 or 89?",16,89,True,True,False
-compare,4,constrained,75,"Which number is larger, 6 or 75?",16,75user,False,False,False
+compare,4,constrained,75,"Which number is larger, 6 or 75?",16,75user,True,True,False
 compare,5,constrained,96,"Which number is larger, 96 or 59?",16,96,True,True,False
 count4,0,constrained,3,"Count how many ones are in this sequence.
 Sequence: 1 1 1 0",16,1Question: Let y,False,False,False
@@ -1771,11 +1771,11 @@ Sequence: 0 0 0 0 0 0 1 0",16,The number of ones in the sequence is,False,False,
 parity8,5,constrained,0,"Is the number of ones in this sequence even or odd? Answer 0 for even and 1 for odd.
 Sequence: 0 0 1 0 1 1 1 0",16,The number of ones in the sequence is,False,False,False
 track_total,0,constrained,-4,Start at 0. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Final total?,16,1.0user,False,False,False
-track_total,1,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,16,1.0user,False,False,False
+track_total,1,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Subtract 1. Add 1. Final total?,16,1.0user,False,True,False
 track_total,2,constrained,-2,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Add 1. Final total?,16,1.user,False,False,False
 track_total,3,constrained,4,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Final total?,16,1.user,False,False,False
 track_total,4,constrained,6,Start at 0. Add 1. Add 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Add 1. Final total?,16,The final total is $\boxed{1,False,False,False
-track_total,5,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,16,1.0user,False,False,False
+track_total,5,constrained,0,Start at 0. Subtract 1. Add 1. Subtract 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Final total?,16,1.0user,False,True,False
 local_last,0,constrained,Subtract,Start at 0. Add 1. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Subtract 1. What was the last instruction?,16,"The last instruction was ""Add 1.",False,False,False
 local_last,1,constrained,Subtract,Start at 0. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. Subtract 1. Subtract 1. What was the last instruction?,16,"The last instruction was ""Subtract 1.",False,True,False
 local_last,2,constrained,Add,Start at 0. Subtract 1. Subtract 1. Subtract 1. Add 1. Subtract 1. Add 1. Add 1. Add 1. What was the last instruction?,16,"The last instruction was ""Add 1.",False,True,False
@@ -1811,9 +1811,9 @@ Letter: m",16,The letter forward by 1 in the alphabet,False,False,False
 caesar1_letter,1,constrained,n,"Shift this letter forward by 1 in the alphabet.
 Letter: m",16,The letter forward by 1 in the alphabet,False,False,False
 caesar1_letter,2,constrained,g,"Shift this letter forward by 1 in the alphabet.
-Letter: f",16,Letter: guser,False,False,False
+Letter: f",16,Letter: guser,False,True,False
 caesar1_letter,3,constrained,j,"Shift this letter forward by 1 in the alphabet.
-Letter: i",16,Letter: juser,False,False,False
+Letter: i",16,Letter: juser,False,True,False
 caesar1_letter,4,constrained,b,"Shift this letter forward by 1 in the alphabet.
 Letter: a",16,The letter forward by 1 in the alphabet,False,False,False
 caesar1_letter,5,constrained,t,"Shift this letter forward by 1 in the alphabet.
@@ -1848,37 +1848,37 @@ Text: zebd",16,"The decoded text is: ""The answer",False,False,False
 echo_digit,0,bare,4,"Repeat this number exactly.
 Number: 4",2,"4Huginn
 
-",False,False,False
+",True,True,False
 echo_digit,1,bare,1,"Repeat this number exactly.
-Number: 1",2,Number: 1Huginn,False,False,False
+Number: 1",2,Number: 1Huginn,False,True,False
 echo_digit,2,bare,7,"Repeat this number exactly.
 Number: 7",2,"7Huginn
 
-",False,False,False
+",True,True,False
 echo_digit,3,bare,4,"Repeat this number exactly.
 Number: 4",2,"4Huginn
 
-",False,False,False
+",True,True,False
 echo_digit,4,bare,6,"Repeat this number exactly.
 Number: 6",2,"6Huginn
 
-",False,False,False
+",True,True,False
 echo_digit,5,bare,3,"Repeat this number exactly.
 Number: 3",2,"3user
 
-",False,False,False
+",True,True,False
 echo_word,0,bare,paper,"Repeat this word exactly.
-Word: paper",2,Word: paperHuginn,False,False,False
+Word: paper",2,Word: paperHuginn,False,True,False
 echo_word,1,bare,chair,"Repeat this word exactly.
 Word: chair",2,"""The chairman is the chairman",False,False,False
 echo_word,2,bare,cloud,"Repeat this word exactly.
-Word: cloud",2,Word: clouduser,False,False,False
+Word: cloud",2,Word: clouduser,False,True,False
 echo_word,3,bare,night,"Repeat this word exactly.
 Word: night",2,"The word ""night"" is used to",False,True,False
 echo_word,4,bare,queen,"Repeat this word exactly.
 Word: queen",2,Queen: QueenHug,False,True,False
 echo_word,5,bare,water,"Repeat this word exactly.
-Word: water",2,Word: waterHuginn,False,False,False
+Word: water",2,Word: waterHuginn,False,True,False
 nth_item,0,bare,5,"What is item number 3 in this list?
 List: 9 5 5 0 2",2,9 5 5 0 2,False,True,False
 nth_item,1,bare,6,"What is item number 4 in this list?
@@ -1914,7 +1914,7 @@ sub1,1,bare,8,What is 9 - 1?,2,10Huginn,False,False,False
 sub1,2,bare,3,What is 4 - 1?,2,4 - 12Hug,False,False,False
 sub1,3,bare,2,What is 3 - 1?,2,2 - 1Huginn,False,True,False
 sub1,4,bare,2,What is 3 - 1?,2,3 - 1?Hug,False,False,False
-sub1,5,bare,1,What is 2 - 1?,2,2 - 1Huginn,False,False,False
+sub1,5,bare,1,What is 2 - 1?,2,2 - 1Huginn,False,True,False
 add_2d,0,bare,63,What is 22 + 41?,2,22 + 41H,False,False,False
 add_2d,1,bare,74,What is 27 + 47?,2,27 + 47H,False,False,False
 add_2d,2,bare,44,What is 32 + 12?,2,32Huginn,False,False,False
@@ -2098,7 +2098,7 @@ List: 4 9 1 8 4",2,4 9 1 8 4,False,True,False
 nth_item,3,constrained,2,"What is item number 1 in this list?
 List: 2 9 3 6 4",2,"2user
 
-",False,False,False
+",True,True,False
 nth_item,4,constrained,8,"What is item number 2 in this list?
 List: 7 8 9 9 0",2,7 8 9 9,False,True,False
 nth_item,5,constrained,9,"What is item number 4 in this list?
@@ -2138,7 +2138,7 @@ add_2d,3,constrained,57,What is 12 + 45?,2,12,False,False,False
 add_2d,4,constrained,43,What is 11 + 32?,2,11,False,False,False
 add_2d,5,constrained,68,What is 30 + 38?,2,30,False,False,False
 compare,0,constrained,83,"Which number is larger, 83 or 23?",2,83,True,True,False
-compare,1,constrained,54,"Which number is larger, 54 or 7?",2,54user,False,False,False
+compare,1,constrained,54,"Which number is larger, 54 or 7?",2,54user,True,True,False
 compare,2,constrained,52,"Which number is larger, 38 or 52?",2,38,False,False,False
 compare,3,constrained,89,"Which number is larger, 65 or 89?",2,65,False,False,False
 compare,4,constrained,75,"Which number is larger, 6 or 75?",2,"6user
@@ -2160,7 +2160,7 @@ Sequence: 0 0 0 0",2,"1user
 count4,4,constrained,2,"Count how many ones are in this sequence.
 Sequence: 1 1 0 0",2,Count: 1user,False,False,False
 count4,5,constrained,1,"Count how many ones are in this sequence.
-Sequence: 0 1 0 0",2,1.Huginn,False,True,False
+Sequence: 0 1 0 0",2,1.Huginn,True,True,False
 count8,0,constrained,5,"Count how many ones are in this sequence.
 Sequence: 1 0 1 0 1 1 0 1",2,Count how many ones are in this sequence,False,False,False
 count8,1,constrained,5,"Count how many ones are in this sequence.
@@ -2249,11 +2249,11 @@ max_run,4,constrained,4,"What is the length of the longest run of identical symb
 Sequence: 1 0 0 1 1 1 0 0 0 0 1 0",2,Length of sequence: 100,False,False,False
 max_run,5,constrained,4,"What is the length of the longest run of identical symbols in this sequence?
 Sequence: 0 0 0 1 1 1 0 0 0 0 1 0",2,Length: 0user,False,False,False
-sort_min,0,constrained,18,"What is the smallest of these numbers: 18, 57, 72?",2,18user,False,False,False
+sort_min,0,constrained,18,"What is the smallest of these numbers: 18, 57, 72?",2,18user,True,True,False
 sort_min,1,constrained,57,"What is the smallest of these numbers: 65, 63, 57?",2,65user,False,False,False
 sort_min,2,constrained,12,"What is the smallest of these numbers: 86, 12, 61?",2,86user,False,False,False
 sort_min,3,constrained,56,"What is the smallest of these numbers: 63, 92, 56?",2,"63, 92, 56",False,True,False
-sort_min,4,constrained,76,"What is the smallest of these numbers: 76, 88, 98?",2,76user,False,False,False
+sort_min,4,constrained,76,"What is the smallest of these numbers: 76, 88, 98?",2,76user,True,True,False
 sort_min,5,constrained,36,"What is the smallest of these numbers: 73, 87, 36?",2,73user,False,False,False
 succ_letter,0,constrained,o,What letter comes after 'n' in the alphabet?,2,"Letter:
 N: 
