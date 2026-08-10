@@ -55,7 +55,12 @@ NUM_STEPS = 64
 SEED = 20260810          # D78/constants.py: h_0 is random; seeding it is the prescription
 
 # A23's two sequences, verbatim from its manifest, so P1 compares against banked orbits
-SEQS = ("1 6 0 1 7 7 8 1",)   # A23's first sequence, verbatim
+SEQS = ("1 6 0 1 7 7 8 1",)   # ONE sequence: h_0 is seeded, so a second adds
+#                               nothing here. (An `N_SEQ = 1` constant was
+#                               declared alongside this and never read; the
+#                               preregistration guard caught it. A constant
+#                               that parameterises nothing is how a gate gets
+#                               declared and not written -- A18's failure.)
 
 # Labels from A23/D135. Cross-regime pairs first, then the P3 within-regime controls.
 # labels from A23/D135. `a` is the far end of the chord, `b` the carrier.
@@ -71,10 +76,14 @@ PAIRS = (
     ("chunk", "node", "within-rot"),
 )
 PROBE = "set"                  # D141's one straddling token
-THRESHOLD = 0.6677             # D141: reproduces the binary label on 691/696 orbits
+# P2's threshold (D141's R > 0.6677, which reproduces the binary label on 691/696
+# orbits) is applied in the ANALYSIS, not here: this kernel banks R at every grid
+# point, so the crossing count is fully recoverable downstream. It was originally
+# declared as a module constant here and never read -- the preregistration guard
+# caught that, twice on this file, which is exactly the A18 failure mode (a gate
+# declared in the docstring and never written).
 TS = tuple(i / 20 for i in range(21))    # 0.00 .. 1.00 step 0.05
 MARKER = "A"
-N_SEQ = 1                # h_0 is seeded, so one sequence per chord suffices
 OUTDIR = os.path.abspath("out")
 WALL_BUDGET_S = 9000
 

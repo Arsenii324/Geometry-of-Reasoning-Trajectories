@@ -118,17 +118,19 @@ split.** Interpolating `e` along straight lines between nouns, all eight cross-r
 paths cross the threshold **exactly once**, every crossing inside a single 0.05 grid
 step — sharper than the design resolves — and at t = 1 the orbit matches the rotating
 noun's own R to within the h₀ noise even though h₀ came from the settling prompt, which
-confirms D111/D113's parameter claim causally. But the rotating set is **not convex**: a
+supports D111/D113's parameter claim causally — **though A24 could not verify its own
+patch fidelity**: its check demanded 1e-6 agreement between two forwards, and h₀ is drawn
+from an unseeded RNG (D78), so the run leans on its within-regime control instead. A25 is
+the seeded re-run. But the rotating set is **not convex**: a
 rotating→rotating path never leaves the regime (0 crossings in 21 points), while a
 **settling→settling** path crosses **twice**, rising to R = 0.74 before falling to 0.05.
 t\* varies 0.28–0.74 by pair (D140). **That non-convexity also explains D135/D136** —
 a linear rule or a nearest-neighbour vote on 49 points cannot represent such a region.
 
-The live candidate is now `e` itself, the prelude's nonlinear image of the embedding,
-which is the map's parameter (D111, D113) and is where a threshold would sit. A24 tests
-it causally rather than by fitting — interpolating `e` from a settling noun's to a
-rotating noun's and locating the flip — because at 51 nouns power, not the hypothesis, is
-what binds.
+That pointed at `e` itself — the prelude's nonlinear image of the embedding, and the
+map's parameter (D111, D113). **A24 tested it causally rather than by fitting**, since at
+51 nouns power rather than the hypothesis was what bound; its result is the next
+paragraph.
 
 ### 1.4 What the corrections did to the older record
 

@@ -93,5 +93,29 @@
     "platform": "datasphere",
     "id": "bt1f31eeijhc7t6mt859",
     "what": "block-cycle test -> D98"
+  },
+  {
+    "id": "bt1igml4vt3so359mdp3",
+    "name": "einterp-regime-boundary",
+    "platform": "datasphere",
+    "status": "SUCCESS",
+    "claim": "D140",
+    "dir": "scratch/ds_einterp"
+  },
+  {
+    "id": "bt13o2rva6j2mk5ls0u8",
+    "name": "gmres-implicit-attribution",
+    "platform": "datasphere",
+    "status": "SUCCESS",
+    "claim": "D142",
+    "dir": "scratch/ds_gmres"
+  },
+  {
+    "id": "bt1j97ks2han4ptnks5q",
+    "name": "nth-orthogonal-ladder",
+    "platform": "datasphere",
+    "status": "SUCCESS",
+    "claim": "D143",
+    "dir": "scratch/ds_nth"
   }
 ]

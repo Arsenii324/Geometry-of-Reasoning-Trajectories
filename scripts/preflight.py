@@ -67,6 +67,27 @@ def _run_builder(src: pathlib.Path) -> set[str] | None:
     """
     import importlib.util
 
+    # REFUSE TO IMPORT AN UNGUARDED MODULE. Importing executes module scope, so a
+    # kernel whose `main()` is called at top level would RUN here -- cloning a repo,
+    # pip-installing, and downloading 15 GB of weights onto the developer's machine,
+    # from a command whose entire purpose is to be a cheap pre-launch check.
+    #
+    # The docstring above claimed module scope is pure "by the project's entrypoint
+    # rule". That rule is a convention, not an invariant, and `scratch/kaggle_blockbank/
+    # main.py` breaks it -- it defines `build_items` with no `if __name__` guard. The
+    # earlier sweep missed it only because that sweep filtered on `job.py` and this
+    # kernel is `main.py`. A convention is not a safety property; check it.
+    try:
+        tree = ast.parse(src.read_text())
+    except SyntaxError:
+        return None
+    guarded = any(isinstance(n, ast.If) and "__main__" in ast.dump(n.test)
+                  for n in tree.body)
+    toplevel_calls = [n for n in tree.body
+                      if isinstance(n, ast.Expr) and isinstance(n.value, ast.Call)]
+    if not guarded or toplevel_calls:
+        return None
+
     spec = importlib.util.spec_from_file_location(f"_kernel_{src.parent.name}", src)
     if spec is None or spec.loader is None:
         return None
@@ -223,10 +244,11 @@ def check_launch(job_dir: str) -> int:
         # RUN the builder rather than reading it, when that is possible. This is the
         # actual object; the AST walk above is a proxy for it, and substituting a
         # proxy for the thing is the single most common error in this project's
-        # post-mortems. It is safe to import a kernel: the project's own entrypoint
-        # rule puts every side effect inside `main()` behind `if __name__ ==
-        # '__main__'`, and third-party imports inside `main()` too, so module scope is
-        # pure. Falls back to the static keys if the import raises for any reason.
+        # post-mortems. `_run_builder` imports ONLY files that carry an `if __name__`
+        # guard and no top-level calls, and falls back to the static keys otherwise --
+        # an earlier version of this comment asserted that the project's entrypoint
+        # convention made every kernel safe to import, which is false: one kernel
+        # breaks it and importing that one would have downloaded 15 GB of weights.
         real = _run_builder(src)
         if real is not None:
             extra = sorted(real - produced)
