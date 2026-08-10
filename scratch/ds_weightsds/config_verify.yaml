@@ -1,0 +1,18 @@
+name: huginn-weights-dataset-verify
+desc: >
+  Mount the dataset the build job produced (bt102r0j5cb8r6r6nb36) and prove it is usable
+  before any kernel is told to rely on it: the bytes survived the snapshot, the wheels/
+  subdirectory survived, torch+transformers install from the cached wheels with the index
+  OFF, and AutoConfig/AutoTokenizer load from the read-only mount. Also measures the mount
+  cost, which is the number that decides whether replacing the 262-282 s download is a
+  saving at all. CPU tier.
+cmd: python verify.py ${RESULT} ${DS1}
+datasets:
+  - bt102r0j5cb8r6r6nb36: DS1
+outputs:
+  - verify.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: c1.4

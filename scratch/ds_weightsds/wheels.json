@@ -1,0 +1,60 @@
+{
+ "job": "ds_weightsds_wheels",
+ "dataset_dir": "/job/output-datasets/huginn-pip-wheels",
+ "argv": [
+  "wheels.py",
+  "/job/result_nyk",
+  "/job/output-datasets/huginn-pip-wheels"
+ ],
+ "script_start_epoch": 1786396359.9911766,
+ "idle_until_s": 660,
+ "mark_every_s": 30,
+ "markers": [
+  "marker_t0000.txt",
+  "marker_t0420.txt",
+  "marker_t0450.txt",
+  "marker_t0480.txt",
+  "marker_t0510.txt",
+  "marker_t0540.txt",
+  "marker_t0570.txt",
+  "marker_t0600.txt",
+  "marker_t0630.txt",
+  "marker_t0660.txt"
+ ],
+ "df_before": "/dev/vdb         12G   12K   12G   1% /job/output-datasets/huginn-pip-wheels",
+ "elapsed_s": 661.4,
+ "sets": [
+  {
+   "spec": [
+    "torch==2.5.1"
+   ],
+   "rc": 0,
+   "seconds": 82.2
+  },
+  {
+   "spec": [
+    "transformers==4.53.3",
+    "accelerate",
+    "safetensors",
+    "datasets",
+    "huggingface_hub",
+    "numpy",
+    "scipy",
+    "scikit-learn",
+    "matplotlib",
+    "pandas",
+    "tqdm",
+    "pyyaml"
+   ],
+   "rc": 0,
+   "seconds": 72.3
+  }
+ ],
+ "wheels_count": 94,
+ "wheels_bytes": 5910067829,
+ "wheels_ok": true,
+ "df_after": "/dev/vdb         12G  5.6G  5.6G  50% /job/output-datasets/huginn-pip-wheels",
+ "listing": "total 68\ndrwxr-xr-x 3 1000 1000  4096 Aug 10 21:23 .\ndrwxr-xr-x 3 root root  4096 Aug 10 21:12 ..\n-rw-r--r-- 1 root root  6420 Aug 10 21:15 MANIFEST.json\n-rw-r--r-- 1 root root    27 Aug 10 21:12 marker_t0000.txt\n-rw-r--r-- 1 root root    29 Aug 10 21:19 marker_t0420.txt\n-rw-r--r-- 1 root root    29 Aug 10 21:20 marker_t0450.txt\n-rw-r--r-- 1 root root    29 Aug 10 21:20 marker_t0480.txt\n-rw-r--r-- 1 root root    29 Aug 10 21:21 marker_t0510.txt\n-rw-r--r-- 1 root root    29 Aug 10 21:21 marker_t0540.txt\n-rw-r--r-- 1 root root    29 Aug 10 21:22 marker_t0570.txt\n-rw-r--r-- 1 root root    29 Aug 10 21:22 marker_t0600.txt\n-rw-r--r-- 1 root root    29 Aug 10 21:23 marker_t0630.txt\n-rw-r--r-- 1 root root    29 Aug 10 21:23 marker_t0660.txt\ndrwxr-xr-x 2 root root 12288 Aug 10 21:15 wheels",
+ "last_marker_s": 660,
+ "exit_at_s": 661.4
+}

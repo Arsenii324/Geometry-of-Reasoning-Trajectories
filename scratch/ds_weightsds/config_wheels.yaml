@@ -1,0 +1,23 @@
+name: huginn-pip-wheels-dataset
+desc: >
+  Build the pip wheel cache (torch 2.5.1 + transformers 4.53.3 + this repo's deps) as its
+  own dataset, after the weights build showed an output-dataset snapshot is taken BEFORE
+  the job ends and silently drops late writes. Writes the wheels early, then emits a
+  timestamped marker every 30 s until exit so that mounting this dataset measures the
+  cut-off in seconds rather than guessing it. CPU tier.
+cmd: python wheels.py ${RESULT} ${OUTDS}
+outputs:
+  - wheels.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+output-datasets:
+  - name: huginn-pip-wheels
+    description: >
+      pip wheels for torch==2.5.1, transformers==4.53.3, accelerate, safetensors,
+      datasets and this repo's dependencies, under wheels/, plus MANIFEST.json and
+      marker_tNNNN.txt files recording when each was written.
+    var: OUTDS
+    size: 12Gb
+cloud-instance-type: c1.4

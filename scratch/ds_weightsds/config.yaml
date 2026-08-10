@@ -1,0 +1,23 @@
+name: huginn-weights-dataset-build
+desc: >
+  Build the huginn-0125 weights (revision bb6621b6, 15.65 GB) ONCE into a DataSphere
+  dataset so no later job repeats the 262-282 s HuggingFace download. Also caches the
+  pip wheels both of this repo's install recipes need, in a wheels/ subdir. CPU tier
+  only -- this moves bytes and needs no GPU. Mechanism verified by startup probes D
+  (output-datasets is writable) and G (datasets: mounts it read-only at /job/datasets/<id>).
+cmd: python job.py ${RESULT} ${OUTDS}
+outputs:
+  - weightsds.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+output-datasets:
+  - name: huginn-0125-weights
+    description: >
+      tomg-group-umd/huginn-0125 at revision bb6621b65e90b6a4b9b29ef88dc83866d450470c,
+      snapshot at the dataset root (so the mount path loads directly with
+      from_pretrained), plus a pip wheel cache under wheels/ and a MANIFEST.json.
+    var: OUTDS
+    size: 25Gb
+cloud-instance-type: c1.4

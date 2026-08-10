@@ -447,3 +447,108 @@ import.
 imports against its own pip lines, skips `try:`-guarded optional imports, and was
 verified to fail the real pre-fix file and to produce no false positives on any of
 the 24 kernels in `scratch/`.
+
+## The weights are now a dataset: stop downloading them (built and verified 2026-08-10)
+
+**The 262-282 s HuggingFace download is gone. Mount this instead.** Built by
+`scratch/ds_weightsds/` on `c1.4`, no GPU.
+
+| | |
+|---|---|
+| **dataset id** | **`bt102r0j5cb8r6r6nb36`** (name `huginn-0125-weights`, 25 Gb) |
+| contents | `tomg-group-umd/huginn-0125` at revision `bb6621b65e90b6a4b9b29ef88dc83866d450470c`, snapshot at the dataset ROOT, plus `MANIFEST.json` |
+| build | job `bt1e9ld08akjoe25q22j`, **19 m 47 s** wall (20:40:13→20:59:59 UTC); the download itself was 1005.3 s at ~15.6 MB/s on `c1.4` |
+| verified | job `bt1uj1rm0fhnvm82srhd` mounted it: 16 files, **15,651,519,639 bytes**, zero symlinks, byte-exact against the HF API's own per-file sizes |
+| **mount cost** | **7.7 s** — against 8.1 s for the *empty* output-dataset device on the build job, and 9.2 s for two datasets at once. Mounting is ~constant in dataset size. |
+
+**Recovering the id of a dataset a job just built** — still not printed by `job get`, and
+`job list` does not carry it either. One command, and it works on a finished job:
+
+```bash
+GRPC_DNS_RESOLVER=native ~/.local/pipx/venvs/datasphere/bin/python \
+  scratch/ds_startup_probe/dump_job.py <JOB_ID>      # -> OUTPUT DATASET id=... name=... size_gb=...
+```
+
+The mount is read-only at `/job/datasets/<id>`, and the path also arrives in `argv`.
+
+```yaml
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+cmd: python job.py ${RESULT} ${HUGINN}
+```
+
+Then pass the mount path where `MODEL_ID` used to go. **Do not pass `revision=`** — the
+revision is baked into the dataset, and there is nothing to resolve against the Hub.
+
+```python
+mnt = os.path.abspath(sys.argv[2])                      # /job/datasets/bt102r0j5cb8r6r6nb36
+tok = AutoTokenizer.from_pretrained(mnt)
+cfg = AutoConfig.from_pretrained(mnt, trust_remote_code=True)
+model = AutoModelForCausalLM.from_pretrained(
+    mnt, config=cfg, trust_remote_code=True,
+    torch_dtype=torch.float32, low_cpu_mem_usage=True).to("cuda").eval()
+```
+
+`trust_remote_code=True` makes transformers import `raven_modeling_minimal.py` out of the
+model directory, and that directory is **read-only** — the plausible way this whole scheme
+fails. It does not: transformers copies the module into its own writable modules cache.
+Measured on the mount, `AutoConfig` returned `RavenConfig` with `n_embd=5280`,
+`mean_recurrence=32` in 0.2 s, `AutoTokenizer` gave `PreTrainedTokenizerFast` with
+vocab 65536, and `safetensors.safe_open` on shard 1 read 23 finite tensors. The full
+`from_pretrained` above was NOT run (a CPU pod will not hold 14 GB of fp32); everything
+short of materialising the weights was.
+
+Cheap verification from inside a later job, before trusting the mount:
+
+```python
+man = json.load(open(os.path.join(mnt, "MANIFEST.json")))   # weights_ok, per-file sizes
+assert man["weights_ok"] and sum(man["weights_files"].values()) == 15651519639
+```
+
+### The trap that ate 5.91 GB: an output-dataset snapshot does NOT include your page cache
+
+The build job also wrote a 94-file, 5.91 GB pip wheel cache into `wheels/`. Its own
+end-of-job `df` said **21G used** and its file walk counted **146 files / 21,561,595,604
+bytes**, both `pip download`s returned rc=0, and the job reported **SUCCESS**. The mounted
+dataset contains **15G**, an **empty `wheels/` directory**, and a `MANIFEST.json` of 1347
+bytes — the version written at t=1010 s, not the 3438-byte one written at t=1165 s.
+Everything from the last ~2m45s was silently discarded.
+
+Two explanations fit that, and they imply different rules, so it was measured rather than
+guessed. A second job (`bt1pk4fk6lvjl0ogc28n`) wrote a marker file every 30 s until it
+exited at t=661.4 s, calling `os.sync()` after each. **All ten markers survived, including
+`marker_t0660` written ~1 s before exit.** So the snapshot is not taken early; what is lost
+is data still sitting in the guest's page cache when the volume is read. The unplanned
+corroboration is in that job's own timing: its `os.sync()` **blocked for ~257 s**
+(t=154.5→t=411.3) flushing the 5.91 GB that pip had "finished" writing minutes earlier.
+
+**Rule: call `os.sync()` after the last write to an `output-datasets:` volume, and let it
+return before the job exits.** It can take minutes for multi-GB payloads, and that time is
+the job's, not the platform's. Write the manifest EARLY, not last — writing it last is
+exactly what lost it here. And a build job's own `df` proves nothing: only mounting the
+finished dataset does.
+
+### The wheel cache exists, and on the evidence it is not worth mounting
+
+Rebuilt with the sync fix as its own dataset — **`bt1k1pq7maoh30b29t1l`**
+(`huginn-pip-wheels`, 12 Gb): 94 wheels, 5.91 GB, for `torch==2.5.1`,
+`transformers==4.53.3`, accelerate, safetensors, datasets and the repo's own dependencies.
+
+```yaml
+datasets:
+  - bt1k1pq7maoh30b29t1l: WHEELS
+# pip install --no-index --find-links=${WHEELS}/wheels torch==2.5.1 transformers==4.53.3 ...
+```
+
+It works — `--no-index` installed the whole set with no network. **But it was slower than
+just using PyPI.** On `c1.4`, the offline install from the mount took **340.9 s**
+(job `bt1ms84pjdlt4q5dn17e`) against **248.0 s** for the ordinary online install of the
+identical package list (job `bt1uj1rm0fhnvm82srhd`). Reading 5.91 GB off the dataset mount
+costs more than fetching it, and the unpack is CPU-bound either way.
+
+Caveats, both directions: these are one measurement each on different pods, not a
+controlled A/B, and both are **cheap-tier** numbers — the rule against quoting a `c1.4`
+duration as a GPU-tier saving applies here too, since PyPI runs ~8.3 MB/s from `c1.4`
+against ~55 MB/s on a GPU pod, and the mount's read throughput on a GPU tier is untested.
+So: **mount the weights (a clear ~270 s saving for ~8 s), and do not bother with the wheels
+unless someone measures them on the tier that matters.** The dataset is there if they do.

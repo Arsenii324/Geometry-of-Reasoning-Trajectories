@@ -1,0 +1,465 @@
+[37m2026-08-11 00:26:55,373 - [INFO] - logs file path: /var/folders/pj/kc0mj8fx5ks38zy3t9nbjfdh0000gn/T/datasphere/job_2026-08-11T00:26:55.368152[0m
+[37m2026-08-11 00:26:57,159 - [INFO] - creating job ...[0m
+[37m2026-08-11 00:27:06,742 - [INFO] - uploading 1 files (6.4KB) ...[0m
+[37m2026-08-11 00:27:08,894 - [INFO] - files are uploaded[0m
+[37m2026-08-11 00:27:08,894 - [INFO] - created job `bt1ms84pjdlt4q5dn17e`[0m
+I0811 00:27:08.897154 4911150 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+[37m2026-08-11 00:27:14,389 - [INFO] - executing job ...[0m
+I0811 00:27:14.395647 4911313 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:27:19.404162 4911473 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:27:32.286626 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:27:32.290709 4911788 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:27:32.290886 4911788 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:27:43.684275 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:27:43.689096 4912215 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:27:43.689276 4912215 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:27:52.714551 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:27:52.717299 4912454 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:27:52.717380 4912454 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:28:02.022492 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:28:02.028080 4912743 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:28:02.028242 4912743 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:28:11.639139 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:28:11.642834 4913139 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:28:11.642956 4913139 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+2026-08-11 00:28:15,868 - [    0.0s] MOUNT CLOCK -- this line minus the proto's started_at is the cost of mounting BOTH datasets. weights=True wheels=True
+2026-08-11 00:28:15,869 - [    0.0s] $ df -h /job/datasets/bt102r0j5cb8r6r6nb36 /job/datasets/bt1k1pq7maoh30b29t1l | tail -3
+2026-08-11 00:28:15,909 - [    0.0s]   rc=0  Filesystem      Size  Used Avail Use% Mounted on
+2026-08-11 00:28:15,910 - /dev/vdc         25G   15G  8.4G  64% /job/datasets/bt102r0j5cb8r6r6nb36
+2026-08-11 00:28:15,910 - /dev/vdb         12G  5.6G  5.6G  50% /job/datasets/bt1k1pq7maoh30b29t1l
+2026-08-11 00:28:15,910 - [    0.0s] $ ls -la /job/datasets/bt1k1pq7maoh30b29t1l | head -20
+WARNING: Cannot connect to YC tool initialization service. Network connectivity to the service is required for cli version control. In case you are using yc in an isolated environment, you may turn off this warning by setting env YC_CLI_INITIALIZATION_SILENCE=true
+
+2026-08-11 00:28:16,545 - [    0.0s]   rc=0  total 68
+2026-08-11 00:28:16,545 - drwxr-xr-x 3 1000 1000  4096 Aug 10 21:23 .
+2026-08-11 00:28:16,545 - drwxr-xr-x 4 root root  4096 Aug 10 21:27 ..
+2026-08-11 00:28:16,545 - -rw-r--r-- 1 root root  6420 Aug 10 21:15 MANIFEST.json
+2026-08-11 00:28:16,545 - -rw-r--r-- 1 root root    27 Aug 10 21:12 marker_t0000.txt
+2026-08-11 00:28:16,545 - -rw-r--r-- 1 root root    29 Aug 10 21:19 marker_t0420.txt
+2026-08-11 00:28:16,545 - -rw-r--r-- 1 root root    29 Aug 10 21:20 marker_t0450.txt
+2026-08-11 00:28:16,545 - -rw-r--r-- 1 root root    29 Aug 10 21:20 marker_t0480.txt
+2026-08-11 00:28:16,546 - -rw-r--r-- 1 root root    29 Aug 10 21:21 marker_t0510.txt
+2026-08-11 00:28:16,546 - -rw-r--r-- 1 root root    29 Aug 10 21:21 marker_t0540.txt
+2026-08-11 00:28:16,546 - -rw-r--r-- 1 root root    29 Aug 10 21:22 marker_t0570.txt
+2026-08-11 00:28:16,618 - -rw-r--r-- 1 root root    29 Aug 10 21:22 marker_t0600.txt
+2026-08-11 00:28:16,619 - -rw-r--r-- 1 root root    29 Aug 10 21:23 marker_t0630.txt
+2026-08-11 00:28:16,619 - -rw-r--r-- 1 root root    29 Aug 10 21:23 marker_t0660.txt
+2026-08-11 00:28:16,620 - drwxr-xr-x 2 root root 12288 Aug 10 21:15 wheels
+2026-08-11 00:28:16,620 - [    0.0s] MARKERS present: [0, 420, 450, 480, 510, 540, 570, 600, 630, 660] ; last=660 of 660 written ; -> H_sync: page-cache writeback, not snapshot timing
+2026-08-11 00:28:16,620 - [    0.0s] wheels/: 94 files, 5.91 GB
+2026-08-11 00:28:16,620 - [    0.0s] weights mount: 16 files, 15651519639 bytes, ok=True
+2026-08-11 00:28:16,620 - [    0.0s] $ pip install --no-index --find-links=/job/datasets/bt1k1pq7maoh30b29t1l/wheels torch==2.5.1 transformers==4.53.3 accelerate safetensors datasets numpy scipy scikit-learn matplotlib pandas tqdm pyyaml
+I0811 00:28:24.167380 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:28:24.170845 4913476 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:28:24.171016 4913476 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:28:33.412492 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:28:33.417641 4913753 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:28:33.417811 4913753 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:28:42.243832 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:28:42.247346 4914031 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:28:42.247440 4914031 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:28:51.419506 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:28:51.422373 4914602 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:28:51.422497 4914602 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:28:56.824170 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:28:56.826583 4914784 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:28:56.826683 4914784 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:29:02.549553 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:29:02.554383 4915011 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:29:02.554469 4915011 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:29:08.116456 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:29:08.119898 4915286 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:29:08.120003 4915286 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:29:13.956597 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:29:13.959180 4915481 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:29:13.959279 4915481 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:29:19.796561 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:29:19.800232 4915724 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:29:19.800442 4915724 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:29:26.106889 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:29:26.108999 4915899 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:29:26.109093 4915899 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:29:32.523509 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:29:32.526928 4916152 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:29:32.527003 4916152 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+WARNING: Cannot connect to YC tool initialization service. Network connectivity to the service is required for cli version control. In case you are using yc in an isolated environment, you may turn off this warning by setting env YC_CLI_INITIALIZATION_SILENCE=true
+
+I0811 00:29:41.590347 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:29:41.593826 4916404 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:29:41.593993 4916404 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:29:46.962646 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:29:46.964446 4916593 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:29:46.964507 4916593 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:29:55.924003 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:29:55.927976 4916853 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:29:55.928079 4916853 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:30:03.716328 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:30:03.719962 4917134 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:30:03.720020 4917134 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:30:11.431233 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:30:11.434762 4917509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:30:11.434967 4917509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:30:20.003657 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:30:20.006877 4918024 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:30:20.007081 4918024 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+WARNING: Cannot connect to YC tool initialization service. Network connectivity to the service is required for cli version control. In case you are using yc in an isolated environment, you may turn off this warning by setting env YC_CLI_INITIALIZATION_SILENCE=true
+
+I0811 00:30:30.295784 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:30:30.298992 4918444 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:30:30.299078 4918444 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:30:39.381366 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:30:39.384170 4918721 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:30:39.384276 4918721 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:30:44.726893 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:30:44.728984 4919047 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:30:44.729034 4919047 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:30:54.665471 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:30:54.668584 4919399 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:30:54.668668 4919399 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:31:04.536612 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:31:04.538835 4919747 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:31:04.538946 4919747 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:31:14.552023 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:31:14.554498 4920187 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:31:14.554601 4920187 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:31:25.651188 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:31:25.655163 4920606 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:31:25.655266 4920606 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:31:36.336941 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:31:36.341013 4920899 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:31:36.341167 4920899 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:31:41.675818 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:31:41.677861 4921105 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:31:41.677992 4921105 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:31:47.551771 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:31:47.553434 4921335 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:31:47.553506 4921335 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:31:56.543510 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:31:56.545431 4921661 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:31:56.545473 4921661 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:32:05.183849 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:32:05.186706 4922109 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:32:05.186797 4922109 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:32:15.265815 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:32:15.268659 4922486 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:32:15.268765 4922486 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:32:24.057511 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:32:24.060427 4922866 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:32:24.060590 4922866 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:32:33.188941 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:32:33.192093 4923174 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:32:33.192177 4923174 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:32:38.694511 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:32:38.696761 4923397 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:32:38.696919 4923397 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:32:46.276654 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:32:46.280047 4923640 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:32:46.280129 4923640 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:32:53.953561 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:32:53.957054 4923835 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:32:53.957125 4923835 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:02.513764 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:33:02.517723 4924103 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:02.517812 4924103 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:10.969943 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:33:10.973615 4924469 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:10.973739 4924469 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:19.323988 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:33:19.328322 4924718 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:19.328466 4924718 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:24.721923 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:33:24.724860 4924893 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:24.724926 4924893 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.353077 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:33:32.358408 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358607 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358627 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358638 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358649 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358659 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358668 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358677 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358690 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358727 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358737 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358746 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358754 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358762 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358769 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358778 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358785 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358793 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358800 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358807 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358813 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358820 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358830 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358837 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358844 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358852 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358867 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358882 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358895 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358904 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358916 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358924 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358934 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358942 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358955 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358963 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.358977 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.358986 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.359002 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.359011 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:32.359025 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:32.359033 4925168 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:40.169190 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:33:40.172525 4925360 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:40.172593 4925360 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.266803 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:33:50.270627 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270765 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270788 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270798 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270808 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270817 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270826 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270833 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270841 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270849 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270857 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270865 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270873 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270880 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270887 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270895 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270903 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270910 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270918 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270925 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270933 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270941 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270949 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270956 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270964 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270971 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270979 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.270986 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.270993 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271001 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271085 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271112 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271124 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271134 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271143 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271175 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271187 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271195 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271203 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271209 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271217 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271223 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271230 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271236 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271244 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271250 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271257 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271263 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271270 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271276 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271283 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271289 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271296 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271302 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271309 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271315 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271323 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271329 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271336 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271342 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271349 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271356 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271365 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271371 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271381 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271388 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271395 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271402 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271409 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271415 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271422 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271447 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271457 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271464 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271473 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271480 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271489 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271495 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271503 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271509 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271518 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271525 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271531 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271537 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271543 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271549 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271556 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271562 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271570 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271576 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271583 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271589 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271595 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271601 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271608 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271613 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271620 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271626 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271635 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271642 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271652 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271658 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:33:50.271668 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271675 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271688 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271705 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271712 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271730 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271737 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271744 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271751 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271760 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271770 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271780 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271787 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271794 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271803 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271810 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271818 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271827 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271836 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271844 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271853 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271860 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271868 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271875 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271882 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271888 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271895 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271901 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271908 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271915 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271921 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271930 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271939 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271947 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271956 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271965 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271973 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271982 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271991 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.271998 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272005 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272023 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272032 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272042 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272051 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272060 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272069 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272078 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272086 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272096 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272104 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272113 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272122 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272130 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272139 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272148 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272157 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272166 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272175 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272184 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272193 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272202 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272211 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272220 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272229 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272237 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272246 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272255 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272264 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272272 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272281 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272290 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272298 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272307 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272314 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272322 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272329 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272347 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272356 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272365 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272373 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272382 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272391 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272399 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272408 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272416 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272425 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272434 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272443 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272452 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272460 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272469 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272477 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272485 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272494 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272503 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272512 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272520 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272529 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:33:50.272538 4925682 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+2026-08-11 00:33:56,691 - [  340.9s]   rc=0  oblib-1.5.3 kiwisolver-1.5.0 matplotlib-3.11.1 mpmath-1.3.0 multidict-6.7.1 multiprocess-0.70.19 narwhals-2.24.0 networkx-3.6.1 numpy-2.4.6 nvidia-cublas-cu12-12.4.5.8 nvidia-cuda-cupti-cu12-12.4.127 nvidia-cuda-nvrtc-cu12-12.4.127 nvidia-cuda-runtime-cu12-12.4.127 nvidia-cudnn-cu12-9.1.0.70 nvidia-cufft-cu12-11.2.1.3 nvidia-curand-cu12-10.3.5.147 nvidia-cusolver-cu12-11.6.1.9 nvidia-cusparse-cu12-12.3.1.170 nvidia-nccl-cu12-2.21.5 nvidia-nvjitlink-cu12-12.4.127 nvidia-nvtx-cu12-12.4.127 packaging-26.3 pandas-3.0.5 pillow-12.3.0 propcache-0.5.2 psutil-7.2.2 pyarrow-25.0.1 pyparsing-3.3.2 python-dateutil-2.9.0.post0 pyyaml-6.0.3 regex-2026.7.19 requests-2.34.2 safetensors-0.8.0 scikit-learn-1.9.0 scipy-1.17.1 six-1.17.0 sympy-1.13.1 threadpoolctl-3.6.0 tokenizers-0.21.4 torch-2.5.1 tqdm-4.70.0 transformers-4.53.3 triton-3.1.0 typing-extensions-4.16.0 urllib3-2.7.0 xxhash-3.8.1 yarl-1.24.5
+2026-08-11 00:33:56,691 - [  340.9s] OFFLINE install from the mounted wheel cache: rc=0 in 340.9s (no network used)
+I0811 00:34:01.657836 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:34:01.659500 4926009 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:34:01.659568 4926009 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:34:11.298865 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:34:11.304476 4926359 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:34:11.304627 4926359 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+2026-08-11 00:34:18,551 - [  363.2s] loaded from the mount with the OFFLINE-installed packages: RavenConfig n_embd=5280 vocab=65536 in 0.2s
+2026-08-11 00:34:18,552 - [  363.2s] VERDICT ok=True | markers=True | weights=True wheels=94 offline_install=True load=True | whole setup 363.2s against 262-282 s of download plus ~390 s of pip
+I0811 00:34:21.038796 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:34:21.041578 4926659 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:34:21.041697 4926659 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:34:27.201790 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:34:27.206983 4926867 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:34:27.207128 4926867 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:34:36.872957 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:34:36.878703 4927177 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:34:36.878877 4927177 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:34:46.341087 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:34:46.344595 4927688 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:34:46.344740 4927688 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:34:54.662271 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:34:54.667329 4927991 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:34:54.667512 4927991 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:35:03.383516 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:35:03.387260 4928311 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:35:03.387356 4928311 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(19, generation: 1)
+I0811 00:35:09.389629 4928777 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:35:12.202359 4928846 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+2026-08-11 00:35:18,799 - [  363.2s] VERDICT ok=True | markers=True | weights=True wheels=94 offline_install=True load=True | whole setup 363.2s against 262-282 s of download plus ~390 s of pip
+I0811 00:35:22.431711 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:35:22.437097 4929375 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(15, generation: 1)
+I0811 00:35:22.437217 4929375 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:35:36.768905 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:35:36.772824 4929813 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(15, generation: 1)
+I0811 00:35:36.772984 4929813 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+I0811 00:35:40.724400 4910572 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0811 00:35:40.729080 4930005 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(15, generation: 1)
+I0811 00:35:40.729227 4930005 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(22, generation: 1)
+[37m2026-08-11 00:35:41,520 - [INFO] - job link: https://datasphere.yandex.cloud/communities/bt19h0cm8nqhr7489r9o/projects/bt12q57tmrs03pnt8drc/job/bt1ms84pjdlt4q5dn17e[0m
+[37m2026-08-11 00:35:41,520 - [INFO] - downloading 1 files (1.8KB) ...[0m
+[37m2026-08-11 00:35:41,594 - [INFO] - files are downloaded[0m
+[37m2026-08-11 00:35:41,594 - [INFO] - job completed successfully[0m

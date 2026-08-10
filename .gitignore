@@ -81,6 +81,12 @@
 !/scratch/ds_cyclenull/
 !/scratch/ds_estream/
 !/scratch/ds_addk/
+# Infrastructure, not a ledger claim: the four c1.4 jobs that built and verified the
+# huginn weights dataset bt102r0j5cb8r6r6nb36 and the wheel cache bt1k1pq7maoh30b29t1l.
+# Committed for the same reason as the rest -- REMOTE_RUNS.md's mount stanza and the
+# page-cache/os.sync() rule both rest on these runs, so the producing code and the
+# collected JSON stay on disk. Small: the whole bundle is under 1 MB, no weights.
+!/scratch/ds_weightsds/
 # G1's raw state grids: the full [48 x n_tokens x 5280] tensor is 101 MB as
 # JSON, over GitHub's 100 MB per-file limit, so it is stored as compressed
 # npz alongside a 45 KB stats-only JSON. *.npz is ignored globally above.

@@ -1,0 +1,19 @@
+name: huginn-datasets-verify-both
+desc: >
+  Mount the weights dataset (bt102r0j5cb8r6r6nb36) and the wheel-cache dataset
+  (bt1k1pq7maoh30b29t1l) together: read the timestamped markers to decide whether the
+  weights build lost its late writes to snapshot TIMING or to unflushed page cache, run
+  the offline `pip install --no-index` that failed against the empty wheels/ directory,
+  and load the model config and tokenizer from the read-only weights mount using the
+  packages that offline install produced. CPU tier.
+cmd: python verify_both.py ${RESULT} ${DSW} ${DSP}
+datasets:
+  - bt102r0j5cb8r6r6nb36: DSW
+  - bt1k1pq7maoh30b29t1l: DSP
+outputs:
+  - verify_both.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: c1.4
