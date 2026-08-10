@@ -4,7 +4,7 @@ Regenerate with `uv run python scripts/build_index.py`. Source of truth is
 `claims_ledger.md`; this file only cross-references it against the code, the runs
 and the banked data, so that no experiment is unfindable.
 
-**157 claims · 33 distinct jobs referenced · 61 kernels · 3261 banked artifacts across 92 directories**
+**158 claims · 33 distinct jobs referenced · 61 kernels · 3261 banked artifacts across 92 directories**
 
 | row | claim (first sentence) | kernel | job | analysis | banked |
 |---|---|---|---|---|---|
@@ -165,6 +165,7 @@ and the banked data, so that no experiment is unfindable.
 | **D155** | D135 AND D136 ARE NOT BOUNDED NULLS: THEIR DESIGN CANNOT SEE A LINEAR SEPARATION BELOW COHEN'S d  10. | `ds_embsep` | — | — | ds_embsep: 206 |
 | **D156** | A31 IS A NULL, AND THE REASON IS THAT ITS DESIGN COULD NOT HAVE WORKED: RANDOM DIRECTIONS IN 279,840 DIMENSIONS ARE ALL ORTHOGONAL TO A 6-DIMENSIONAL  | `ds_aniso` | `bt1mi0pjmouua0nil59f` ⚠unregistered | — | ds_aniso: 1 |
 | **D157** | THE OBSERVABILITY CENSUS CERTIFIES AVAILABILITY, NOT PRODUCTION -- ITS 41 LIVE ITEMS BECOME 0 ON THE FINAL-UNROLL AXIS, AND THE INFLATION IS 5.29x, NO | `kaggle_census` | — | — | kaggle_census: 3 |
+| **D158** | ON THE PRODUCTION AXIS HUGINN HAS TWO USABLE TASK FAMILIES, NOT FIVE -- AND IT CAN HOLD A COPIED WORD TO THE END OF ITS COMPUTATION BUT NOT A COPIED D | `kaggle_census` | — | — | kaggle_census: 3 |
 
 ## Claims with no code, job or script reference
 
