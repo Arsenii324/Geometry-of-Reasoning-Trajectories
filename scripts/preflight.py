@@ -55,6 +55,37 @@ def _sh(*args: str) -> str:
     return subprocess.run(args, cwd=ROOT, capture_output=True, text=True).stdout.strip()
 
 
+def _run_builder(src: pathlib.Path) -> set[str] | None:
+    """Import a kernel and call its `build_items()`, returning the keys it really emits.
+
+    Returns None if the kernel cannot be imported or has no zero-argument builder --
+    a kernel that needs the GPU to build its items is not a failure of this check.
+
+    The point of running it: BOTH of the launch failures on 2026-08-10 were in code
+    that needs no GPU and executes in under a second locally, and neither was ever
+    executed before being sent to a machine that charges for a 12-minute setup first.
+    """
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(f"_kernel_{src.parent.name}", src)
+    if spec is None or spec.loader is None:
+        return None
+    mod = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(mod)
+        fn = getattr(mod, "build_items", None)
+        if fn is None:
+            return None
+        try:
+            items = fn()
+        except TypeError:
+            import random as _r
+            items = fn(_r.Random(0))          # some builders take an rng
+        return {k for it in items for k in it} if items else set()
+    except Exception:
+        return None
+
+
 def check_launch(job_dir: str) -> int:
     """Everything that has actually broken a remote run, checked before spending one."""
     bad = 0
@@ -188,6 +219,20 @@ def check_launch(job_dir: str) -> int:
         produced = {k.value for d in ast.walk(builder) if isinstance(d, ast.Dict)
                     for k in d.keys
                     if isinstance(k, ast.Constant) and isinstance(k.value, str)}
+
+        # RUN the builder rather than reading it, when that is possible. This is the
+        # actual object; the AST walk above is a proxy for it, and substituting a
+        # proxy for the thing is the single most common error in this project's
+        # post-mortems. It is safe to import a kernel: the project's own entrypoint
+        # rule puts every side effect inside `main()` behind `if __name__ ==
+        # '__main__'`, and third-party imports inside `main()` too, so module scope is
+        # pure. Falls back to the static keys if the import raises for any reason.
+        real = _run_builder(src)
+        if real is not None:
+            extra = sorted(real - produced)
+            print(f"  ok    build_items() RAN locally: {len(real)} keys"
+                  + (f" (+{', '.join(extra)} not visible statically)" if extra else ""))
+            produced |= real
         # keys ASSIGNED after construction count as produced: several kernels do
         #   it["n_tokens"] = int(la)
         # outside build_items() and then copy it, which is correct and must not flag.

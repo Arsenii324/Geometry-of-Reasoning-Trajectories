@@ -315,3 +315,51 @@ that no script under `scripts/` referenced `ds_addk`, so D110's analysis lived o
 heredocs and nobody could re-derive it. That is true of a load-bearing number and is now fixed
 (`scripts/run_addk_arms.py`). A correct number with no reproducible derivation is one nobody can
 check, including its author six hours later.
+
+
+## RC3 — the remote environment is not the local one, and only the failing line finds out (2026-08-10)
+
+Two of three launches on the night of 2026-08-10 died on setup bugs. Each cost a full
+clone + torch install + 3 GB weight download — about twelve minutes — before failing on
+its first substantive line. Neither bug needed a GPU to find.
+
+| run | died on | where it was visible |
+|---|---|---|
+| A21 | `ModuleNotFoundError: No module named 'scipy'` | the kernel's own pip line, statically |
+| B4c | `KeyError: 'array'` on the first forward | `build_items()` vs. the row assembly, statically |
+
+**Shallow why:** the lean install recipe does not carry repo dependencies, and a kernel
+adapted from a sibling inherited its key names but not its builder.
+
+**Deeper why, and the one worth keeping:** *every guard so far was written to catch the
+last failure, not its class.* Preflight already checked `traj_geom` symbols — because
+A4b had died on one — and generalised no further, so a missing **third-party** package
+walked straight past a check whose whole purpose was missing-import failures.
+
+**Deepest why:** **the pure-Python half of every kernel runs locally in under a second,
+and neither kernel had ever been executed at all.** Both bugs are in code that never
+touches CUDA. The project had been treating "kernel" as an atom that either runs on a
+GPU or does not, when in fact each one has a substantial GPU-free prefix — item
+construction, prompt assembly, key wiring — that is free to exercise.
+
+**What changed.** `scripts/preflight.py` gained checks 4 and 5, and check 5 does not
+merely *read* `build_items()` — it **imports the kernel and calls it**, then compares the
+keys that actually come back. Reading the AST was the first version and is retained only
+as a fallback, because reading is a proxy and running is the thing; substituting the
+first for the second is RC1, which this repo has now logged ten times.
+
+**The self-correcting detail.** The first version of check 5 was discarded rather than
+patched: it **missed the very bug it was written for** (the keys are comprehension
+constants, not subscripts) while flagging `n_tokens` in five kernels that work. A guard
+that is wrong in both directions is worse than none, because it trains the reader to
+skip the output. Both checks were then verified against the genuine pre-fix revisions
+from git — `2de977a~1` and `bf3d9db~1` — and against all 24 kernels for false positives.
+**A guard nobody has watched fail is an assumption in a costume.**
+
+**A related operational fact, recorded in REMOTE_RUNS.md:** `datasphere project job
+attach --id <job>` is the only way to see a finished job's traceback;
+`download-files` refuses on ERROR status and the local follower log is empty once the
+launching `timeout` kills it. It mattered here — from timing alone, A21's failure looked
+exactly like a float32 OOM on a 16 GB T4 (Huginn is ~14 GB in float32, and A21 is the
+first kernel needing autograd rather than forwards). That diagnosis was wrong and would
+have cost a redesign. **Retrieve the log before theorising.**
