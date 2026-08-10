@@ -1,0 +1,25 @@
+name: arcproto-protocol-or-capability
+desc: >
+  A30: decides D153's open question. A29 scored ARC-Easy by argmax over the option-LETTER
+  tokens and got 0.407 at r=32 against Huginn's published 0.699 -- a 29-point miss of a
+  pre-registered band. D153 named PROTOCOL as the most likely explanation and recorded it
+  explicitly as a hypothesis rather than evidence. This runs the test. The standard
+  multiple-choice protocol does not ask the model to emit a letter at all: it scores each
+  option by the log-likelihood of the option TEXT as a continuation and takes the argmax,
+  reported both raw-summed and length-normalised. A base model that understands the
+  content but never learned the letter-indexing convention scores far lower under A29's
+  protocol WITHOUT knowing less. Both arms run on the SAME 150 items in one job, so P1 is
+  an identity check -- the letter arm must reproduce A29's 0.407 at r=32 or no comparison
+  is licensed. Registered reading: if the text arm lands inside [0.599, 0.799] the gap was
+  protocol and this project reproduces a published number for the first time; if it also
+  misses low, protocol is REFUTED as the explanation and the discrepancy is real, which is
+  the more serious finding and is to be reported as such. Both normalisations are reported
+  and neither is designated the headline after the fact.
+cmd: python job.py ${RESULT}
+outputs:
+  - arcproto.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
