@@ -862,7 +862,37 @@ when a ledger row is corrected, grep every other document for the retracted
 phrasing **in the same commit**. Four of the six items above existed only because
 that was not done.
 
-### F2. OPEN — highest consequence first
+### F2. STATUS AS OF 2026-08-10 — **9 of 13 verified RESOLVED, 3 still live, 1 undecidable**
+
+**Read this before the table below.** The table was written when all 13 were open and
+still reads that way; every row is preserved verbatim because a corrected audit item is
+evidence about how the correction went, but **the table alone overstates the number of
+live errors by four times.** Each verdict below was checked against the file, not
+against memory.
+
+| # | verdict | what the check showed |
+|---|---|---|
+| F2.1 | **RESOLVED** | `run_qk_analysis.py` 205-206 now runs an item-clustered permutation and states "Both are reported; **the clustered one decides**", at p = 0.093 — within rounding of the auditor's 0.095. |
+| F2.2 | **RESOLVED** | None of "two unrelated instruments", "independently measured", "n = 960" appears in `UNDERSTANDING.md`, `RESULT.md` or `PLAN.md`. |
+| F2.3 | **RESOLVED** | "no loop or drift regime exists" does not appear in `RESULT.md`. |
+| F2.4 | **RESOLVED** | `PLAN.md` 164 now attributes [0.808, 0.920] to the `contraction` column of `results/geomcap.csv`, not to D52. |
+| F2.5 | **STILL LIVE** | `RESULT.md` 72 still reads "per-block residual 58–71 → **~0.1**". The auditor's point stands: that is one prompt's value presented as the general one, with three prompts 2–3.5x above it. The *conclusion* survives (minimum separation/residual across prompts is 95); the quoted number does not. **Cheapest fix: quote the per-prompt range.** |
+| F2.7 | **RESOLVED** | No line-attractor claim survives in `UNDERSTANDING.md` — removed in the 2026-08-10 rewrite. |
+| F2.8 | **RESOLVED** | Re-simulated under a bimodal prior; `run_census_analysis.py` amended. |
+| F2.9 | **RESOLVED** | `split_stages` fixed so a failed screening draw consumes its slot; pinned by `tests/test_census_stages.py`. |
+| F2.10 | **STILL LIVE, but cosmetic** | `run_h0_within.py` 33 still Bonferronis over 8 windows. That is correct for its own pre-registered P5 and D93's verdict stands; what needs restating is **D93(5)'s SECONDARY multiplicity argument**, which is vacuous rather than informative. A wording fix in one ledger row, no re-run. |
+| F2.11 | **RESOLVED** | `require_exact_test_if_small` is called at `run_qk_analysis.py` 112, with the 4096-point-space incident recorded in the comment above it. |
+| F2.12 | **STILL LIVE** | `related_work.md` carries 9 `[V]` tags; the contradictory pair was not reconciled. Cheap, and it matters because [V] is the only thing standing between us and a repeat of the Movahedi/Du citation failures. |
+| F2.13 | **RESOLVED** | `RESULT.md` 300-303 now states outright that the null survived a tokenisation-free re-test **and** that "every number quoted from the first-token axis is a first-token number and should be read as one". |
+| F2.6 | **UNDECIDABLE HERE** | `research_inquiry_3_interp.md` exists and was already sent; no live harm either way, and re-reading it cannot unsend it. Left alone deliberately. |
+
+**What the resolution pattern says.** The four that remain are all *wording* — a
+single-prompt number quoted as a range, a vacuous secondary argument, an inconsistent
+tag. Every item that touched a **number or a code path** was fixed. That is the
+opposite of the failure mode the table's closing paragraph predicted, and it is worth
+recording: the propagation guard worked, and what it does not catch is prose.
+
+### F2 (original table). OPEN — highest consequence first
 
 | # | claim | file | why it matters |
 |---|---|---|---|
