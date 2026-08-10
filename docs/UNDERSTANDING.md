@@ -12,6 +12,53 @@ itself evidence. Every figure cites the ledger row carrying its controls and lim
 alike — while difficulty never reaches the dynamics, the dynamics never reach the
 readout, and the readout is finished long before the dynamics are.*
 
+### 1.0 Where the three starting hypotheses stand
+
+D65 returned H1, H2 and H3 all to **open** on the correct grounds — each had been retired
+using winding, an instrument that fails its own null (window-governed, D28; sampled near
+the aliasing limit, D55), and *"the measurement failed" is not "the phenomenon is
+absent."* Enough has been measured since to give each a verdict. Stated here because
+they are otherwise scattered across fifty rows.
+
+**H1 (settle / loop / drift) — ANSWERED, and the answer is "both, at different levels".**
+*Drift was never available:* every recorded state is an RMSNorm output on a sphere of
+radius 76.386, so unbounded drift is excluded by construction rather than by measurement
+(D23, D99). *The loop exists and is large:* hooking all four core blocks instead of one,
+each converges to **its own** fixed point, the four separated by **22–58** where states
+have norm 70–76 — about **52% of the state norm** — with a separation-to-residual ratio of
+median **232** and a cycle perimeter **1.6×** the entire distance the state travels
+(D98). *And "each block converges" holds only for two thirds of prompts:* on rotating
+orbits the per-block last-step residual is **2.9152** against **0.0185** for settling ones,
+a **157×** gap, while the cycle's vertex geometry is regime-invariant (D146). So: **loops
+across blocks always; within a block, settles or rotates depending on one instruction
+token.** The hypothesis was not wrong — the instrument that retired it read one block.
+
+**H2 (harder problems recruit more depth) — NOT REFUTED SO MUCH AS UNTESTABLE ON THIS
+MODEL.** Where it could be tested it is null, with bounds: difficulty moves the contraction
+rate by **0.0033** when the count quadruples (D115, D116); the dynamics do not reach the
+readout (ρ = +0.118, p = 0.65, D114); the readout is finished at median unroll **4** with
+87% of the journey ahead (D112); the first structurally clean ladder gives ρ = **−0.0286,
+p = 0.7986** once the trivial level is removed, bounded at |ρ| ≥ 0.216 (D143); and a
+causally induced regime change alters **0 of 48** answers (D148). **But the decisive fact
+is D147**: the one difficulty axis where theory says recurrence is *required* — sequential
+state tracking — is out of Huginn's reach entirely, since it answers with a constant. Every
+axis we could build is either shortcuttable in principle or beyond the model. **That is a
+limit of Huginn, not of the hypothesis**, and no amount of further GPU on this model
+changes it.
+
+**H3 (contraction ⇒ no running register) — ITS STRONG FORM OVERSTATES ITS OWN EVIDENCE.**
+Contraction is real (ρ in 0.79–0.87 by four measurements, §1.3). But the limit set has
+**diameter ≈1 in 5279 tangent dimensions**, ample room to separate 64 states, so
+contraction excludes an **unbounded** register and says nothing about a bounded counter.
+And a bounded register is not merely possible but *observed*: the count is linearly
+decodable from the latents on both of Barannikov's tasks (D32) — while the *winding*
+readout of it shows no quantisation, which is what the original instrument actually
+measured. A further scope condition: the register is **architectural, not learned** — an
+untrained Huginn carries the lagged running count at cross-validated R² = **0.7498**
+against the trained model's **0.7175** (D53).
+
+---
+
 ### 1.1 What the latent carries
 
 The trajectory's **shape** identifies the input at ceiling, separating two prompts one
