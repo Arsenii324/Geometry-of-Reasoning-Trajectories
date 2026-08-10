@@ -1045,3 +1045,52 @@ git revision and against all 24 kernels for false positives. See `PRACTICE.md` R
   bound. Brute-force ablation is ~51 forwards per prompt, so under an hour.
 - **B4c's ladder is reusable and its limit is recorded**: structural difficulty, not
   behavioural — Spearman(k, accuracy) = -0.1350, p = 0.1769.
+
+
+## I. Strategic audit, 2026-08-10 23:45 — answers, not just state
+
+First run of `scripts/strategic_audit.py`. The state it assembled, then the five answers.
+Recorded here rather than in a message because the answers change what gets queued.
+
+**The signal that matters most, and it is uncomfortable:** of the last twelve ledger rows,
+**6 are bounded negatives, 5 are repairs of our own record, and 1 is a new positive.** The
+project is currently spending most of its output correcting itself. That was necessary —
+the repairs found a scorer defect that overturned a headline, an axis that reads 1.000 on a
+task the model cannot do, and a control eight rows depended on that had never been checked.
+But it is not a state to stay in, and noticing it required counting rather than recalling.
+
+**1. What is the binding constraint?** **The model.** Task supply was the answer once and
+D130 closed it. The capability axis was the answer next and D145/D147/D153 characterised
+it. What is left is Huginn itself: the one difficulty axis where theory says recurrence is
+*required* is out of its reach entirely (D147, a constant responder); we cannot reproduce
+its own published ARC-Easy figure (D153, 0.407 against 0.699); and the one dramatic
+phenomenon we did find has no behavioural consequence (D148, 0 of 48 answers changed).
+**Every functional road now ends at "the model is too weak to carry the question."** Since
+the scope is Huginn-only by instruction, **the remaining tractable questions are geometric,
+not functional** — which is also where the supervisor's interest lies.
+
+**2. What is being paid repeatedly?** Weight downloads: **≥ 4.8 GPU-hours** across runs
+visible locally, and the platform's job count is higher still. `REMOTE_RUNS.md` has
+recorded a verified mechanism to remove it for a day. **Now delegated** to a `c1.4` CPU job
+that builds the weights into a mountable dataset without touching any existing kernel.
+Second: **`scratch/RUNS.json` registers 22 runs against 146 jobs on the platform** — the
+operational registry `runs_status.py` reads is 15% complete, so any "have we run this?"
+question answered from it is unreliable. That is the same class of defect as D119, where a
+thread was called never-done while a bank had already answered it.
+
+**3. What class of result cannot be produced, and why?** A **functional consequence of any
+geometric phenomenon**. This is a MODEL limit, not an instrument or design limit, and the
+distinction is now measured rather than assumed: A26 demonstrated the instrument is
+sensitive — the readout tracks displacement of the map's parameter at ρ = **+0.82** (D154) —
+and still found no effect of the regime. More GPU does not fix a model limit.
+
+**4. What would fail if queued now?** **Another capability-flavoured run on Huginn.**
+D118 (0% above one level), D128 (depth ran backwards), D143 (null once the trivial level is
+removed), D147 (constant responder), D153 (29 points below the published number) are five
+independent instances of the same outcome. Geometry runs (A31) are not in that class.
+
+**5. Ten times the compute, or a tenth?** **The same answer both ways** — geometry on banked
+data plus a small number of targeted interventions. **Compute is therefore not the
+constraint**, and "queue a GPU job" should stop being the default action. The corollary:
+prefer re-analysis of the 63 banked runs over new ones, which is how D138, D141, D146, D152
+and D154 were obtained at zero GPU cost.
