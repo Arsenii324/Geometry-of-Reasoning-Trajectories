@@ -1,0 +1,27 @@
+name: einterp-regime-boundary
+desc: >
+  A24: stop fitting the regime from the token and manipulate it instead. D135 and D136
+  both tried to predict rotation from the 51 nouns' embeddings and both were null --
+  six classifiers, best-of-six 0.551 against a null-of-max 0.589, below the 0.592
+  majority baseline. The obstacle is n, not the hypothesis: 51 points cannot fit a rule
+  in 5280 dimensions. So this walks a straight line in `e`-space -- the map's PARAMETER
+  per D111/D113, re-injected every unroll via adapter(cat[x, input_embeds]) -- from a
+  settling noun's `e` to a rotating noun's, and measures rotation strength R along it.
+  One pair locates a boundary, so no classifier power problem arises. D137 predicts the
+  transition is SHARP: it found the R distribution gapped (relative gap 0.1128,
+  p = 0.0002) with exactly one token (`set`) inside the gap, and a population gap
+  implies a step rather than a ramp. The within-regime control (P3) is the load-bearing
+  one -- rotating->rotating and settling->settling interpolations must show NO
+  transition, or "any `e` perturbation moves the dynamics" explains the result equally
+  well. P1 is a no-op-patch identity check computed in-kernel; P1' (does the attractor
+  follow `e` alone, from a foreign initial state) is flagged as a PREDICTION about the
+  model rather than an instrument check, because its failure would be a finding.
+  Token counts are gated per pair, not asserted.
+cmd: python job.py ${RESULT}
+outputs:
+  - einterp.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1

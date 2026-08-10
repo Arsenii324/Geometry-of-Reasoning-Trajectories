@@ -1,0 +1,24 @@
+name: nonconvex-rotating-set
+desc: >
+  A25: is the rotating region in `e`-space non-convex, or was that one pair? D140's
+  novel structural claim rests on a single chord -- interpolating `e` between `element`
+  and `token`, both SETTLING nouns, produced an orbit that crossed into rotation and
+  back on both sequences. This runs SIX settling->settling chords instead of one, with
+  three rotating->rotating chords as the control that a chord inside a region stays
+  inside it. It also FIXES D140's unevaluable gate: every forward is preceded by
+  torch.manual_seed, which is the prescription constants.py has carried since D78
+  documented that h_0 is drawn from an unseeded RNG no kernel seeds. P1 therefore
+  becomes a real identity check (|R(0) - R_base| < 1e-9) rather than a confound, and
+  the run is VOID without it. P4 is the control that could kill the design: an
+  interpolated `e` is no token's `e`, so each chord's midpoint is compared against a
+  NORM-MATCHED RANDOM bearing from the same origin -- if random directions rotate as
+  often as real chords, non-convexity is really just "interpolated e is
+  off-distribution", which is a duller claim and the one P4 exists to exclude.
+cmd: python job.py ${RESULT}
+outputs:
+  - nonconvex.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
