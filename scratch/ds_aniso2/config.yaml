@@ -1,0 +1,20 @@
+name: aniso2-three-group-boundary-distance
+desc: >
+  A33: the corrected A31. D156 found A31 null with a diagnosed cause -- random directions
+  in 279,840 dimensions are all nearly orthogonal to a 6-dimensional span (expected
+  alignment sqrt(6/D) = 0.0046 against an observed sd of 0.0013), so correlating boundary
+  distance against span-alignment over random rays had no variable to correlate with. That
+  is a fact about spheres, not about Huginn, and one line of arithmetic before launch would
+  have caught it. This replaces the correlation with a THREE-GROUP comparison at maximal
+  contrast: draw directions INSIDE the rotating span, INSIDE the settling span, and
+  uniformly at random, and compare boundary distances between the groups. Same forwards,
+  same bisection, same gates -- P1 (no-op exact) and P5 (equal span ranks) both passed in
+  A31 and are retained. D144 predicts the in-rotating-span group survives furthest.
+cmd: python job.py ${RESULT}
+outputs:
+  - aniso.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
