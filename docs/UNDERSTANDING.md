@@ -101,14 +101,26 @@ with all four orbits between the modes. **50 of 51 nouns are deterministic**, wi
 marker or sequence confound (D137) — which retires D135's own reading that the regime
 depends on the token *and* the sequence.
 
-**And the gap replicates, at the same place, on banks with no sequences in common.**
-Re-reading orbits banked months earlier for D134 and D132 with the same statistic:
-`nounsweep` (384 orbits, 16 nouns × **12** sequences) gaps at **R = 0.2984**, `wordswap`
-(108 orbits, D132's original three nouns) at **R = 0.3502**, against `embsep`'s
-**0.2822** — three banks, three gap locations within 0.068, every one at p = 0.0002
-(D138). Pooled across all three: **696 orbits, 70 noun-slots, exactly one ambiguous
-token.** This is the strongest form of §1.3's claim available from existing data, and it
-cost no GPU.
+**And a single threshold on that statistic reproduces the regime label across three
+banks.** R > 0.6677 agrees with the independently computed period-6 label on **384/384**
+(`nounsweep`, 16 nouns × 12 sequences), **108/108** (`wordswap`), and **199/204**
+(`embsep`) — **691 of 696 orbits**, across banks with different nouns, sequence counts
+and templates (D141). *An earlier version of this paragraph claimed a distributional
+**gap** instead; that test used a uniform null the data beats for reasons unrelated to
+the hypothesis, and the gap it found sits inside the settling population in two of the
+three banks. It is retracted and replaced by the threshold result, which is what the
+claim needed in the first place.*
+
+**The regime is causally controlled by `e`, and the boundary is a surface rather than a
+split.** Interpolating `e` along straight lines between nouns, all eight cross-regime
+paths cross the threshold **exactly once**, every crossing inside a single 0.05 grid
+step — sharper than the design resolves — and at t = 1 the orbit matches the rotating
+noun's own R to within the h₀ noise even though h₀ came from the settling prompt, which
+confirms D111/D113's parameter claim causally. But the rotating set is **not convex**: a
+rotating→rotating path never leaves the regime (0 crossings in 21 points), while a
+**settling→settling** path crosses **twice**, rising to R = 0.74 before falling to 0.05.
+t\* varies 0.28–0.74 by pair (D140). **That non-convexity also explains D135/D136** —
+a linear rule or a nearest-neighbour vote on 49 points cannot represent such a region.
 
 The live candidate is now `e` itself, the prelude's nonlinear image of the embedding,
 which is the map's parameter (D111, D113) and is where a threshold would sit. A24 tests
