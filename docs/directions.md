@@ -1013,3 +1013,35 @@ H2-shaped question is not "do harder problems need more depth" but "does the pea
 move later" — precisely D101's `best_depth`. **This makes D101 the right
 instrument rather than a consolation prize**, and a powered re-run of it on
 `nth_item_k` and `addk` alone is the highest-value H2 experiment available.
+
+
+## H. Runs landed 2026-08-10 (overnight battery) — status, not narrative
+
+Three DataSphere jobs launched and landed in one night, plus four local re-analyses of
+already-banked orbits. Ledger rows carry the controls and limits; this table exists so
+nothing here is later called "never run".
+
+| run | job | question | outcome |
+|---|---|---|---|
+| **A23** `ds_embsep` | `bt19lv117dbh0bqrcbcv` | does the token EMBEDDING select the rotation regime? | **DONE -> D135, D136.** NULL. Six classifiers, best-of-six 0.551 against a null-of-max 0.589, p = 0.808, below the 0.592 majority baseline. Refutes D134's untested "by elimination" inference in both its linear and nonlinear forms. |
+| **A24** `ds_einterp` | `bt1igml4vt3so359mdp3` | interpolate `e` between a settling and a rotating noun — where does the regime flip, and how sharply? | **DONE -> D140.** All 8 cross-regime paths cross the threshold exactly once, every crossing inside one 0.05 grid step. At t = 1 the orbit matches the rotating noun's own R within the h_0 floor despite a foreign h_0 — D111/D113's parameter claim, causally. **The rotating set is NOT convex**: settling->settling crosses twice. P1 unevaluable (unseeded h_0, D78). |
+| **A21** `ds_gmres` | `bt13o2rva6j2mk5ls0u8` | re-solve DR3 Method 2's adjoint with GMRES instead of Neumann | **DONE -> D142.** Converged **24/24** at tol 1e-3 in 39-48 matvecs, against D131's **1/24** exhausting a 120-term cap; the count lands in DR3's predicted band. P4 (the instrument's own null) passes only weakly at mean rho = +0.3732, so the marker's median rank 13/51 vs a random direction's 33 is informative but not localising. |
+| **B4c** `ds_nth` | `bt1j97ks2han4ptnks5q` | the orthogonal difficulty ladder, third attempt | **DONE -> D143.** Every structural gate passes for the first time (37 tokens at all levels, 8/8 levels live, no multi-token golds). **H2 null once list position 1 is removed**: +0.2825 (p = 0.0051) collapses to -0.0286 (p = 0.7986). |
+| **D137** (local) | — | is the regime a thresholded continuum? | **DONE, then AMENDED by D141.** `word` is a detector false positive, `set` genuinely straddles. |
+| **D138** (local) | — | does the structure replicate on other banks? | **DONE -> partially RETRACTED by D141.** The gap replication was the wrong statistic; the threshold replication (691/696 orbits across three banks) survives and is stronger. |
+| **D139** (local) | — | does symbol diversity modulate the regime continuously? | **DONE.** D129 survives: 0 of 132 orbits cross the threshold. The graded arm does not survive the correct unit (p = 0.0143 -> 0.0973). |
+
+**Two kernels died on setup bugs before these landed**, each after a full ~12-minute
+clone + install + weight download: a missing `scipy` (the lean install recipe does not
+carry repo dependencies) and a `KeyError` from item keys the builder never wrote. Both
+are now `scripts/preflight.py` checks 4 and 5, each verified against the genuine pre-fix
+git revision and against all 24 kernels for false positives. See `PRACTICE.md` RC3.
+
+### H1. What these leave open
+
+- **A seeded re-run of A24** would establish patch fidelity, which its P1 could not.
+  One cheap job; D78's prescription (seed h_0 per forward) is already in `constants.py`.
+- **Extending A21's P4 to all 24 prompts** turns rho = +0.3732 from an estimate into a
+  bound. Brute-force ablation is ~51 forwards per prompt, so under an hour.
+- **B4c's ladder is reusable and its limit is recorded**: structural difficulty, not
+  behavioural — Spearman(k, accuracy) = -0.1350, p = 0.1769.
