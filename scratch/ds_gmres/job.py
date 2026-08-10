@@ -92,7 +92,12 @@ def main():
           f"{len({i['prompt'] for i in items})} distinct", flush=True)
 
     run("pip install torch==2.5.1")
-    run("pip install transformers==4.53.3 accelerate safetensors")
+    # scipy is EXPLICIT here. This kernel uses the lean install recipe (direct
+    # transformers, no `pip install -e .[model]`), which never installs the repo's
+    # own dependencies -- and scipy is one of them. A21's first launch died on
+    # `ModuleNotFoundError: No module named 'scipy'` at the first GMRES call, 12
+    # minutes in, after paying the full clone + torch + weights cost.
+    run("pip install transformers==4.53.3 accelerate safetensors scipy")
 
     import numpy as np
     import torch

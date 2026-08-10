@@ -42,6 +42,7 @@ import argparse
 import pathlib
 import re
 import subprocess
+import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SEARCH = ["docs/claims_ledger.md", "docs/directions.md", "docs/OPEN_THREADS.md",
@@ -98,6 +99,69 @@ def check_launch(job_dir: str) -> int:
     if late:
         print(f"  WARN  traj_geom import at line {late[0] + 1} of {len(lines)} -- late "
               f"imports turn a 30-second failure into an hours-long one")
+
+    # 4. Third-party imports the kernel's OWN install line does not provide.
+    #    A21 died 12 minutes in on `No module named 'scipy'`, after paying the full
+    #    clone + torch + weights cost, because TWO install recipes coexist in this
+    #    repo and they are not interchangeable:
+    #      `pip install -e .[model]`                 -> repo deps, so scipy included
+    #      `pip install transformers accelerate ...` -> leaner, and scipy is NOT there
+    #    Both are legitimate; the lean one is faster. What is not legitimate is using
+    #    the lean recipe and then importing a repo dependency, which is invisible
+    #    until the line that needs it runs -- and this project puts third-party
+    #    imports LATE on purpose, so that is the worst possible place to find out.
+    # Comments are STRIPPED first. The first version of this check scanned the raw
+    # file and was defeated by the explanatory comment added to `ds_gmres` next to
+    # the fix -- that comment names `pip install -e .[model]`, so the check read a
+    # comment as an install line, concluded the repo deps were present, and passed
+    # the very file whose bug it was written for.
+    code = "\n".join(ln for ln in text.split("\n") if not ln.strip().startswith("#"))
+    installs = re.findall(r"pip install ([^\n]+)", code)
+    editable = any("-e ." in s for s in installs)
+    provided = {"torch", "numpy", "traj_geom"}       # torch is its own install line
+    if editable:
+        pyproject = (ROOT / "pyproject.toml").read_text()
+        provided |= {m.replace("-", "_") for m in
+                     re.findall(r'^\s*"([A-Za-z][\w-]*)', pyproject, re.M)}
+        provided |= {"sklearn", "yaml"}              # scikit-learn, pyyaml import names
+    for spec in installs:
+        for tokenpart in spec.split():
+            if tokenpart.startswith("-"):
+                continue
+            # strip the QUOTES too: several kernels write
+            #   pip install -q 'transformers>=4.50,<4.54' scipy
+            # and a capture that stopped at the first quote saw only "-q",
+            # which flagged three already-successful kernels as broken.
+            # strip trailing shell/Python punctuation as well as quotes: the line
+            #   run("pip install ... scipy")
+            # ends the last token as `scipy")`, and stripping quotes alone leaves
+            # the paren, so `scipy` was still reported missing after being added.
+            name = re.split(r"[=<>\[]", tokenpart.strip("\"')(,;"))[0]
+            provided.add(name.replace("-", "_"))
+    # Imports guarded by `try:` are OPTIONAL and must not be flagged. Three kernels
+    # do `if os.environ.get("WANDB_API_KEY"): try: import wandb`, which is a
+    # deliberate soft dependency -- reporting it would train the reader to ignore
+    # this check, which is worse than not having it.
+    code_lines = code.split("\n")
+    guarded = {i for i, ln in enumerate(code_lines)
+               if i and code_lines[i - 1].strip().rstrip(":") == "try"}
+    code = "\n".join(ln for i, ln in enumerate(code_lines) if i not in guarded)
+
+    imported = set(re.findall(r"^\s*import (\w+)", code, re.M))
+    # `from X import` REQUIRES the literal ` import `: without it the pattern matches
+    # ordinary docstring prose ("from the model's own init, ...") and reported a
+    # missing package called `the` in two kernels.
+    imported |= set(re.findall(r"^\s*from (\w+)[\w.]* import ", code, re.M))
+    missing = sorted(m for m in imported - provided
+                     if m not in sys.stdlib_module_names and not m.startswith("_"))
+    if missing:
+        for m in missing:
+            print(f"  FAIL  imports `{m}` but no pip install line provides it"
+                  f"{' (editable install present, so check pyproject)' if editable else ''}")
+        print("        this fails only when the importing line RUNS -- A21 lost 12 min")
+        bad += len(missing)
+    else:
+        print(f"  ok    every third-party import is covered by an install line")
 
     print(f"\n{'PREFLIGHT FAILED' if bad else 'PREFLIGHT PASSED'} ({bad} blocking)")
     return bad
