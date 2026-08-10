@@ -40,6 +40,13 @@ JOB_RE = re.compile(r"\b(bt1[a-z0-9]{16,})\b")
 KERNEL_RE = re.compile(r"scratch/([A-Za-z0-9_]+)")
 SCRIPT_RE = re.compile(r"(scripts/[A-Za-z0-9_]+\.py|`(run_[A-Za-z0-9_]+\.py)`)")
 SRC_RE = re.compile(r"\b(traj_geom(?:\.[A-Za-z0-9_]+)+)")
+# RUN NAMES, not just paths. Rows routinely cite a run as `geometry-clrs` or
+# `geom-eigenplane` rather than as `scratch/<dir>`, and an index keyed only on
+# paths reports those rows as unlinked. This is the SAME alias defect that made
+# D120 duplicate D52 -- the sweep searched a directory name while the ledger cited
+# a run name -- and `preflight.py --prior` already normalises for it. Fixing it
+# here too rather than leaving two detectors that disagree.
+RUN_RE = re.compile(r"\b((?:geometry|geom|ds|kaggle)-[a-z0-9][a-z0-9-]{2,})")
 
 
 def rows() -> list[dict]:
@@ -66,6 +73,7 @@ def rows() -> list[dict]:
             "scripts": sorted({(m[1] or m[0]).replace("scripts/", "")
                                for m in SCRIPT_RE.findall(blob)}),
             "modules": sorted(set(SRC_RE.findall(blob))),
+            "runs": sorted(set(RUN_RE.findall(blob))),
             "retracted": bool(re.search(r"RETRACT|SUPERSEDED|WITHDRAWN|VOID", blob)),
             "evidence_raw": re.sub(r"[*_`]", "", evidence).strip()[:120],
         })
@@ -112,7 +120,7 @@ def main() -> int:
         ks = ", ".join(f"`{k}`{'' if (ROOT / 'scratch' / k).exists() else ' ⚠MISSING'}"
                        for k in r["kernels"]) or "—"
         js = ", ".join(f"`{j}`" + (f" ({runs[j]})" if j in runs else " ⚠unregistered")
-                       for j in r["jobs"]) or "—"
+                       for j in r["jobs"]) or (", ".join(f"*{x}*" for x in r["runs"]) or "—")
         ss = ", ".join(f"`{s}`{'' if (ROOT / 'scripts' / s).exists() else ' ⚠MISSING'}"
                        for s in r["scripts"]) or "—"
         bk = ", ".join(f"{k}: {banked[k]}" for k in r["kernels"] if k in banked) or "—"
@@ -120,7 +128,9 @@ def main() -> int:
         head = r["headline"].replace("|", "/")
         lines.append(f"| **{r['id']}**{flag} | {head} | {ks} | {js} | {ss} | {bk} |")
 
-    unlinked = [r for r in rs if not (r["kernels"] or r["jobs"] or r["scripts"] or r["modules"])]
+    unlinked = [r for r in rs
+                if not (r["kernels"] or r["jobs"] or r["scripts"]
+                        or r["modules"] or r["runs"])]
     lines += [
         "",
         "## Claims with no code, job or script reference",
