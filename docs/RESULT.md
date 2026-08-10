@@ -1,6 +1,6 @@
 # The latent trajectory encodes the input, not the outcome
 
-*Huginn-3.5B, a recurrent-depth transformer. Inference only. 2026-08-09.*
+*Huginn-3.5B, a recurrent-depth transformer. Inference only. 2026-08-09, extended 2026-08-10 with the causal result in §6.*
 
 Every number here cites the row in `claims_ledger.md` that carries its evidence,
 its controls and its limits. This document is the argument; the ledger is the
@@ -352,6 +352,53 @@ computation. On this model it traces the input and the clock. Concretely:
 
 ---
 
+## 6. The causal version of the claim — one word, and the map itself
+
+Everything above is measured on the trajectory's *shape*. The same dissociation holds one
+level down, in the *dynamics*, and there it is causal rather than correlational.
+
+**Eighteen sequences under three instructions differing in one word** — *"report the
+largest **symbol** / **element** / **item** of the sequence"* — both markers, token count
+verified in-kernel at 53 for all three, and the banked gold answers identical in 36 of 36
+cells. `symbol` rotates **36/36**; `element` and `item` rotate **0/36**. The two regimes
+differ on every statistic measured, not only the period: late-step ratio 0.0217 vs
+0.0004/0.0014, H₁ persistence 0.02005 vs 0.00000/0.00225, fitted modulus of the 6-mode
+0.9351 vs 0.8811/0.8940 (D132). `item` is what makes it a result rather than a
+coincidence — it behaves like `element`, so `symbol` is the special one.
+
+**Seven candidate causes were tested and eliminated**: meaning (semantic neighbours of
+`symbol` rotate 0/144 while neighbours of `element` rotate 96/120 — an inversion), surface
+form, subword structure, symbol diversity (0 of 132 orbits cross the threshold), sequence,
+marker, and the learned embedding both linearly and nonlinearly (best-of-six leave-one-out
+0.551 against a null-of-maximum 0.589, p = 0.808) (D129, D134, D135, D136, D137, D139).
+
+**Then the manipulation.** `e` is the map's *parameter*; it can be set to values no token
+produces. Interpolating `e` along straight lines: all **8** cross-regime paths cross the
+regime threshold **exactly once**, each crossing inside a single 0.05 grid step; **5**
+rotating→rotating paths never leave (21/21 points inside); and at t = 1 the orbit matches
+the rotating noun's own statistic *even though h₀ came from the settling prompt* — the
+attractor follows the parameter (D140, D144).
+
+**Direction, not distance.** Travelling the *same euclidean distance* from a carrier's `e`
+in a random bearing: **none of 8 random bearings rotates**, and on a rotating carrier a
+random bearing of that magnitude **destroys the rotation in 3 of 3 cases** (0.845 → 0.579,
+0.977 → 0.271, 0.974 → 0.131), while the chord toward another rotating noun keeps all 21
+points inside. The rotating set is a structured region of parameter space, not a
+neighbourhood any large perturbation escapes (D144).
+
+Scoring throughout uses a threshold validated before use: one cut at R > 0.6677 reproduces
+the independently computed period-6 label on **691 of 696 orbits** across three banks
+(D141). The patch itself is proven exact: with h₀ seeded, a no-op patch reproduces the
+unpatched orbit at **0.000e+00** on all 8 chords (D144).
+
+**And it has no behavioural consequence.** The rotating and settling arms differ in neither
+the depth at which the answer is best available (16.0 vs 14.5, p = 0.156) nor the best rank
+reached (6.5 vs 7.0, p = 0.880) (D132). A single word restructures the entire latent
+dynamics without changing what the model computes, answers, or gets right — which is the
+sharpest form of this document's thesis, and the strongest open question in it.
+
+---
+
 ## What is not established
 
 - **Trained arm, synthetic tasks.** D80(7) supplies the untrained contrast for the
@@ -391,8 +438,13 @@ computation. On this model it traces the input and the clock. Concretely:
   so the map reaches its new fixed point almost immediately. What is *not* yet
   shown: that the donor's answer becomes the global argmax, and any claim of
   selectivity rather than potency.
-- **The binding constraint is now task supply, not instrumentation.** Two
-  experiments have died on it. Tasks with clean difficulty knobs are synthetic and
+- **Task supply is no longer the binding constraint, but the ceiling is low.** The
+  observability census (D130) yields 31 usable items across 5 families, and a difficulty
+  ladder satisfying every structural criterion at once now exists (D143: 37 tokens at all
+  eight levels, all eight in the live band). H2 is null on it once list position 1 — which
+  needs no counting — is removed: +0.2825 (p = 0.0051) becomes −0.0286 (p = 0.7986).
+  **The remaining constraint is that the model's accuracy on these tasks runs 6–40%.**
+  Two earlier experiments died on task supply outright. Tasks with clean difficulty knobs are synthetic and
   score near zero; tasks the model genuinely does (GSM8K 32.6%, ARC-E 69.9% at
   r=32, from the model's own paper) are natural-language with uncontrolled
   difficulty and multi-token answers. Runs aimed squarely at this are in flight.
