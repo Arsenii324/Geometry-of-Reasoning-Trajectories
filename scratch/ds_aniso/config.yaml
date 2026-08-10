@@ -1,0 +1,27 @@
+name: aniso-what-is-the-region-elongated-along
+desc: >
+  A31: closes the gap D149's own limits section names -- "the anisotropy is described, not
+  quantified". Not by PCA: `e` has 279,840 dimensions and a run this size affords tens of
+  rays, so a top-k PCA of 64 boundary points would return sampling noise. Instead a
+  specific hypothesis with a specific prediction, taken from D144: the chord toward
+  another ROTATING noun keeps all 21 of 21 grid points inside the regime while
+  norm-matched random bearings escape and destroy rotation on 3 of 3 carriers. That says
+  the region is extended along the directions connecting rotating tokens. So: build
+  V = span{e(rot_i) - e(carrier)}, sample random unit directions, bisect for the boundary,
+  and test whether alignment with V predicts survival distance. The CONTROL is the
+  matching span from SETTLING nouns, built from the same number of nouns so the ranks
+  match -- a larger span captures more of any random vector by construction, and comparing
+  unequal ranks would manufacture the result. If alignment with the settling span predicts
+  distance equally well, what is measured is "alignment with any token-difference
+  direction" and the finding is not about rotation; that is reported as the result rather
+  than suppressed. Censored rays are the most informative points under the hypothesis, not
+  a nuisance -- they should be the MOST aligned -- so they get their own censoring-free
+  test that needs no distance at all.
+cmd: python job.py ${RESULT}
+outputs:
+  - aniso.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
