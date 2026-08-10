@@ -1,0 +1,28 @@
+name: boundary-what-shape-is-the-regime-boundary
+desc: >
+  A28: bisect the regime boundary in many random directions from a rotating carrier and
+  read its SHAPE off the distribution of crossing distances. A24/A25 established that the
+  regime is causally set by `e`, that the transition is sharper than a 0.05 grid step,
+  that direction rather than distance is what matters (0 of 8 norm-matched random bearings
+  rotate; a random bearing destroys rotation on 3 of 3 rotating carriers), and that the
+  rotating set is non-convex but not generically so. All of that says WHERE the regime
+  lives and nothing about WHAT it is. This asks the shape question with a sharp null: a
+  HYPERPLANE predicts that about half of random directions never cross, that 1/d is the
+  positive half of a near-Gaussian whose density RISES toward 0, and -- the cleanest
+  discriminator, needing no distributional assumption -- that for an antipodal pair {u,
+  -u} exactly ONE side crosses. A bounded BLOB predicts essentially all directions cross,
+  1/d concentrated at a typical radius with density FALLING toward 0, and both members of
+  every antipodal pair crossing. Directions that do not leave the regime within the cap
+  are recorded CENSORED, never as "very far" -- averaging a cap in as an observation is an
+  error this project has already made. If the boundary is a hyperplane in `e`, D135 and
+  D136 stop being puzzling: `e` is the prelude's NONLINEAR image of the embedding, so a
+  structure exactly linear in `e` need not be even approximately linear in the embedding,
+  and two of this project's nulls convert from unexplained to predicted.
+cmd: python job.py ${RESULT}
+outputs:
+  - boundary.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
