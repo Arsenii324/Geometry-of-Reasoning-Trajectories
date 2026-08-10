@@ -455,3 +455,26 @@ and check it is not in the orphan list. One command, and it would have caught tw
   `REMOTE_RUNS.md`, `OPEN_THREADS.md`, `architecture_state.md`), but `EXPERIMENT_INDEX.md`
   was added here. Its defence — generated, so it cannot drift — is real, and it is still a
   rule bent rather than followed. Naming it beats justifying it inside its own docstring.
+
+## The wake invariant (2026-08-10)
+
+**Never end a turn without at least one pending background task.** Waiting on a 2-hour GPU
+job with nothing else armed is functionally identical to stopping, and during an overnight
+run the supervisor cannot restart the session.
+
+The failure mode is not that a timer misfires — it is that a turn ends without one, because
+the turn felt finished. So the rule is structural rather than attentive:
+
+1. **Every message ends with 2–3 backgrounded `Bash` calls that sleep and exit**, staggered
+   (≈60 s, ≈4 min, ≈12 min). Each completion produces a notification, so a single missed or
+   swallowed one cannot end the session. They cost nothing.
+2. **A job monitor is not a substitute.** A monitor that polls until a job finishes fires
+   once, hours later. It is the thing being guarded against, not the guard.
+3. **Long GPU runs are not a reason to wait.** Zero-GPU work always exists: re-analysis of
+   the 63 banked runs, instrument checks, propagation of a landed result. D138, D141, D146,
+   D152 and D154 were all obtained at zero GPU cost while something else was executing.
+
+Rationale for the redundancy specifically: a single 10-minute timer was used earlier in this
+session and the supervisor's objection was correct — the window is both too coarse to keep
+work flowing and a single point of failure. Three short staggered ones cost the same and
+degrade gracefully.
