@@ -121,3 +121,40 @@ def normed_acceleration(traj: np.ndarray, eps: float = 1e-9) -> np.ndarray:
     den = norm_delta[1:] + norm_delta[:-1] + eps
     return num / den
 
+
+
+def rotation_power(traj: np.ndarray, period: int = 6, tail: int = 24) -> float:
+    """Fraction of a trajectory tail's non-DC spectral power at a given period.
+
+    The CONTINUOUS extension of the binary "does this orbit rotate" label that D132
+    and D134 used. `traj` is [T, H]; returns a value in [0, 1] -- a pure period-`period`
+    orbit tends to 1, a monotone settle to 0.
+
+    Lives here, and not in the two callers, because D137 compares kernel-side and
+    analysis-side values of exactly this number: `scripts/run_rotation_continuum.py`
+    computed it locally on banked orbits, and `scratch/ds_einterp/job.py` computes it
+    on GPU inside the run. Two copies would let those drift, and the comparison
+    between them is what D137's instrument null rests on.
+
+    Raises when the tail cannot resolve the requested period rather than returning a
+    number computed from an aliased bin: `tail` must be a whole multiple of `period`
+    (so the period lands on an exact rfft bin) and must span at least two cycles.
+    """
+    if period <= 0 or tail <= 0:
+        raise ValueError(f"period and tail must be positive, got {period}, {tail}")
+    if tail % period:
+        raise ValueError(
+            f"tail={tail} is not a whole multiple of period={period}, so period "
+            f"{period} does not land on an rfft bin and the returned power would be "
+            f"split across neighbours. Choose a tail divisible by the period.")
+    if tail // period < 2:
+        raise ValueError(f"tail={tail} spans {tail // period} cycle(s) of period "
+                         f"{period}; at least 2 are needed to distinguish a "
+                         f"periodic orbit from a single excursion.")
+    if traj.shape[0] < tail:
+        raise ValueError(f"trajectory has {traj.shape[0]} steps, fewer than tail={tail}")
+    x = np.asarray(traj[-tail:], dtype=np.float64)
+    x = x - x.mean(0)
+    f = np.abs(np.fft.rfft(x, axis=0)) ** 2
+    total = f[1:].sum()
+    return float(f[tail // period].sum() / total) if total > 0 else 0.0

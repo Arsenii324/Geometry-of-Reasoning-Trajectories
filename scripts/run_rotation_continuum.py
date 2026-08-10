@@ -62,22 +62,14 @@ import random
 
 import numpy as np
 
+from traj_geom.metrics.dynamics import rotation_power
+
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 OUT = ROOT / "scratch/ds_embsep/out/out"
 PERIOD = 6
 TAIL = 24
 N_PERM = 5000
 SEED = 0
-
-
-def rotation_power(seq: np.ndarray) -> float:
-    """Fraction of the tail's non-DC spectral power sitting in the period-6 bin."""
-    x = seq[-TAIL:]
-    x = x - x.mean(0)
-    f = np.abs(np.fft.rfft(x, axis=0)) ** 2
-    bin6 = TAIL // PERIOD                      # 24 samples / period 6 -> bin 4
-    tot = f[1:].sum()
-    return float(f[bin6].sum() / tot) if tot > 0 else 0.0
 
 
 def dominant_period(seq: np.ndarray) -> int:
@@ -105,7 +97,7 @@ def main() -> int:
         if not m:
             continue
         s = np.load(f).astype(np.float64)[:, -1, :]
-        rows.append({**m, "R": rotation_power(s), "rot": dominant_period(s) == PERIOD})
+        rows.append({**m, "R": rotation_power(s, PERIOD, TAIL), "rot": dominant_period(s) == PERIOD})
 
     by = collections.defaultdict(list)
     for r in rows:
