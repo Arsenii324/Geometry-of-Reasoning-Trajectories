@@ -1,0 +1,26 @@
+name: arcrepro-reproduce-huginns-own-number
+desc: >
+  A29: reproduce Huginn's OWN published ARC-Easy accuracy (69.9% at r=32) and use it to
+  calibrate this project's capability axis against an external anchor. Not one published
+  result has ever been reproduced here; the single attempt (D14, against Blayney's winding
+  rate) was withdrawn. Two results this week made the gap urgent: D145 showed the chat
+  template glues the next-turn role header onto the answer so our decoded scorer discards
+  correct answers, and D147 showed the project's standard axis (min(rank)==1 over the
+  unroll budget) reads 1.000 at every difficulty level on a task where the model is a
+  constant responder -- not inflated but vacuous. ARC-Easy rather than GSM8K because its
+  answer is a single option letter, so it scores by argmax over option tokens with no
+  generation and therefore no exposure to the D145 marker leak; reproducing GSM8K would
+  confound "can Huginn do it" with "can we score it", which is the confound this run
+  exists to remove. Registered bar: r=32 final-unroll accuracy within +/-10 points of
+  69.9%. A miss is as informative as a hit and names which of three things is true. The
+  same orbits are scored three ways -- final-unroll option argmax, any-unroll oracle, and
+  full-vocab min-rank -- so the gap between the honest measure and this project's standard
+  one is measured on a benchmark with a published answer.
+cmd: python job.py ${RESULT}
+outputs:
+  - arcrepro.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
