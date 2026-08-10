@@ -1,0 +1,21 @@
+name: nth-orthogonal-ladder
+desc: >
+  B4c: the orthogonal difficulty ladder, third attempt and the first with both
+  properties at once. addk had difficulty and answer collinear by construction;
+  B4b achieved orthogonality but was VOID at 0% accuracy above one level; A16
+  passed every structural gate but binary-search depth ran OPPOSITE to Huginn's
+  difficulty. nth_item_k gives both once its generator is fixed: difficulty is the
+  requested INDEX, the answer is xs[k-1] for an independently drawn list so it is
+  orthogonal to difficulty by construction (realised r = +0.064), and the prompt is
+  81 characters at every k. D110 killed the old generator -- i*5 % 10 cycles 0,5,0,5
+  so items 0, 2 and 4 were the identical prompt -- which is also why D100 and D101
+  disagreed about this family's accuracy. D130's census says the task is alive:
+  nth_item supplies 4 items in the 20-80% band with single-token golds.
+cmd: python job.py ${RESULT}
+outputs:
+  - nth.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
