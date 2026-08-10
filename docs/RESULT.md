@@ -378,8 +378,11 @@ computation. On this model it traces the input and the clock. Concretely:
   unreplicated.
 - **Causal evidence is no longer absent — the instrument works (D108).** Patching
   the *re-injected prelude output* `e` from a different prompt **flips which answer
-  the model prefers in 42 of 56 measurements (75%)**, moving the logit gap from
-  −2.763 to +1.211, a mean potency of **+3.97 nats**. The earlier patching null
+  the model prefers in **35 of 112 measurements (31.2%)**, at a mean potency of
+  **+1.598 nats** (D113). *This paragraph previously quoted D108's 42 of 56 (75%) and
+  +3.97 nats; the ledger records those as measured into a SINGLE recipient, and at 16
+  distinct recipients the rate and potency fall by ~2.4×. The flatness in r and the
+  0/112 state-arm contrast both survive, so the conclusion below is unchanged.* The earlier patching null
   (D95) was uninformative rather than negative: it patched the **state**,
   same-prompt with a different random initialisation, which is inert at both ends
   because donor and recipient share an attractor. `e` is the map's *parameter*, and
