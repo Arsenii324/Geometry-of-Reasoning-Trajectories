@@ -120,10 +120,36 @@ Three things follow, and they matter more than the axis itself:
   the answer disappear. Bare, the gold's final rank is median **10** with a maximum of **509**,
   and `\n` wins **23 of 32** as the model continues a document instead of answering.
 
-So the sharpest version of §1.0b is this: **the recurrence reaches the answer at unroll ~3–4
-and spends the remaining ~44 unrolls committing to a prose frame.** What is still *not* shown
-is whether that is true of the census prompts too — A35 ran 8 items per family on
-purpose-built prompts and replicates D159's shape and family ordering, not its numbers.
+**At census scale that halves.** Re-scoring the 4868 banked draws, restricted to the **10
+families with oracle accuracy ≥ 0.35** — the only ones where a final-unroll zero can mean
+anything, since the rest are capability failures — gives **2720 draws in which the gold's final
+rank never exceeds 35, and 0 of 2720 sit beyond rank 100**, in a 65k vocabulary. `final_rank`
+is uncapped in that bank (it reaches **8971** across all rows), so that is a real bound. **On
+families the model can do, the answer is still there at the end of the computation, always.**
+
+But the pool splits sharply, and only one half is formatting (D168):
+
+| group | draws | median final rank | top-5 | worst |
+|---|---|---|---|---|
+| copy / compare / select | 1420 | **2.0** | 0.896 | 15 |
+| arithmetic (`add1`, `sub1`, `add_2d`) | 864 | **16.0** | 0.000 | 35 |
+
+A prose opener costs one or two rank positions — which is exactly the copy group. It cannot
+explain arithmetic at median 16. A35's literal top-5 for `add1` shows what does:
+`['One', 'The', 'To', '1']` — prose openers **and the input digit**, with the gold `2` outside
+the top five. **For arithmetic the model is uncertain about the answer itself, and that is a
+capability statement, not a formatting one.**
+
+*(A prediction of mine failed here and is recorded as failing: I expected survival to track
+word-gold against number-gold. It does not — 1 of 6 word families clear 0.05, 1 of 15 number
+families do, and the five failing word families all have oracle ≤ 0.222, so they are capability
+failures carrying no information about formatting.)*
+
+So the sharpest version of §1.0b is this: **the recurrence reaches the answer at unroll ~3–4,
+never subsequently loses it, and spends the remaining ~44 unrolls committing to a prose frame —
+on the tasks it can do. On arithmetic it also never resolves which answer it means.** And this
+decomposes D157's 5.29× inflation rather than merely restating it: formatting on one half,
+genuine uncertainty on the other, which is why one factor should never be quoted across both.
 
 ### 1.1 What the latent carries
 
