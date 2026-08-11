@@ -288,6 +288,25 @@ def check_launch(job_dir: str) -> int:
         elif requested:
             print(f"  ok    all {len(requested)} copied item keys exist in build_items()")
 
+    # 6. Model attribute paths must exist on the released source. TWO structural failures
+    #    on 2026-08-11 were of this shape and neither needed a GPU to catch: A41 concatenated
+    #    a fixed-length `e` onto a sequence that grows during generation, and A47 patched
+    #    `model.transformer.initialize_state` when `initialize_state` is a method of
+    #    RavenForCausalLM, not a ModuleDict key -- an AttributeError on the first
+    #    model-touching line, after the weights had loaded. Checks names only, which is what
+    #    that class of bug is.
+    jp = d / "job.py"
+    if jp.exists() and (ROOT / "scripts/model_attr_check.py").exists():
+        out = _sh(sys.executable, str(ROOT / "scripts/model_attr_check.py"), str(jp))
+        if "FAIL" in out:
+            print("  FAIL  model attribute path does not exist on the released source")
+            for line in out.splitlines():
+                if line.strip() and not line.startswith(str(jp)):
+                    print(f"        {line.strip()[:150]}")
+            bad += 1
+        else:
+            print("  ok    every model.<...> path resolves against the released source")
+
     print(f"\n{'PREFLIGHT FAILED' if bad else 'PREFLIGHT PASSED'} ({bad} blocking)")
     return bad
 

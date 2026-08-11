@@ -552,3 +552,35 @@ class of error as reporting a job status without querying it.
 **Why this keeps happening.** Arming the monitor is never the interesting part of the turn, so
 it gets bundled into whatever command was already being written. The bundling is exactly what
 kills it. Give it its own call.
+
+## RC8 — preflight checked everything except the model
+
+**Two structural failures on 2026-08-11, same shape, neither needing a GPU to catch.**
+
+- **A41** concatenated a fixed-length `e` onto a sequence that **grows** during generation. The
+  `cat` shape-mismatches at the second generated token. Died after the weights loaded, having
+  printed nothing.
+- **A47** monkeypatched `model.transformer.initialize_state`. `transformer` is a `ModuleDict`
+  with keys `[adapter, coda, core_block, ln_f, prelude, wte]`; `initialize_state` is a method of
+  `RavenForCausalLM`. `AttributeError` on the first model-touching line, no output written.
+
+**Why preflight missed both.** It checked unpushed commits, third-party imports, `build_items()`,
+and copied item keys — everything *around* the kernel, and nothing that touches the model
+surface. Each failure cost a GPU slot and ~20 minutes of setup to discover something a name
+lookup answers in under a second.
+
+**The fix, now check 6.** `scripts/model_attr_check.py` resolves every `model.<...>` path in a
+kernel against an attribute map read **verbatim from the released source** — not from a pattern
+someone chose — and preflight blocks on it. Verified by re-introducing A47's bug into a copy and
+confirming the check fires, and that the fixed kernel passes.
+
+**What it does NOT catch, stated so it is not over-trusted.** A41's bug is a *shape* error, not
+a *name* error; the checker passes `ds_regimeout` cleanly. Names are one class. Shapes,
+normalisation, and cache semantics are others, and they still need a local smoke test or a
+cheap remote canary.
+
+**And the checker's own first version was wrong in this project's signature way.** It built its
+attribute map from a grep pattern its author chose, omitted `prelude`, and confidently flagged a
+working kernel as broken. That is RC1 — a proxy for the thing — committed *inside a tool built
+to catch errors*, which is RC5. It now reads the `ModuleDict` construction verbatim with line
+numbers cited, so the map can be re-verified rather than trusted.
