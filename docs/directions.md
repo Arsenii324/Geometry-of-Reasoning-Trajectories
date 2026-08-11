@@ -1139,7 +1139,11 @@ Nobody has run it. D109/D125 tested h\* only.
    A prompt change to `scratch/ds_arcproto/job.py`, no new machinery. If few-shot closes
    it, our capability axis is calibrated for the first time; if not, the checkpoint or the
    150-item prefix are next.
-2. **Transient-vs-fixed-point decode** (J2). Zero GPU.
+2. ~~**Transient-vs-fixed-point decode** (J2). Zero GPU.~~ **CLOSED by D163, negatively
+   and without a run.** D93's powered sweep already covers the argmin window and shows no
+   trend (Spearman(start, accuracy) = +0.14 / −0.31, both null, argmin window at chance).
+   The direct version at n = 32 cannot resolve below Cohen's d = 10 raw, or d ≈ 2 even
+   after projecting to 5 dims, against real effects of d ≈ 0.6. **Do not run it.**
 3. **Bank the top-1 token at the fixed point.** D158/D159 both end at the same unanswered
    question — *what displaces the gold?* — and neither can answer it because only the gold's
    rank was banked. Costs nothing to add to any future kernel.
