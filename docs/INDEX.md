@@ -60,7 +60,6 @@
 | `scripts/arc_table.py` | regenerates all 25 ARC measurements from banked JSON — cannot go stale. |
 | `scripts/regime_onset.py` | the probe experiment that retired an instrument class (A37/D165). |
 | `scripts/strategic_audit.py` | repeated costs, repeated attempts, what the recent record is *about*. |
-| `scripts/dup_scan.py` | near-duplicate numerical function bodies. |
 | `scripts/build_index.py` | generates `docs/EXPERIMENT_INDEX.md`. |
 
 **The one implementation that must never be duplicated:**
