@@ -1,0 +1,30 @@
+name: archarness-score-arc-the-way-the-harness-does
+desc: >
+  A40: the project's only external calibration, measured on the axis nobody varied. Huginn's
+  paper reports 0.699 on ARC-Easy at r=32; D153 measured 0.407 by option-letter argmax and
+  D162 added option-text likelihood at 0.433 raw / 0.413 normalised, then concluded that
+  protocol is refuted as the explanation. That conclusion is too strong, and the reason is in
+  the kernels rather than the numbers: all three ARC runs call apply_chat_template, so every
+  arm D162 compared was chat-templated, while the standard lm-evaluation-harness arc_easy task
+  scores a bare completion of "Question: ...\nAnswer:" with no option list in the prompt and
+  normalises by characters rather than tokens. Our runs therefore deviate on three axes at
+  once and D162 varied one. D166 has just shown this model is severely format-sensitive --
+  stripping the chat template moved the gold's median rank from 2.5 to 10 -- so that cannot be
+  assumed away. Four arms on the same 120 items at r=32, two of them replication gates against
+  D153 and D162, with raw, per-token and per-character normalisation computed from the same
+  forwards so the third axis costs nothing. P2 is registered both ways: within 0.10 of 0.699
+  means the gap was protocol on an axis D162 did not vary and D162's headline needs amending;
+  still near 0.43 means the published number does not reproduce under the standard protocol
+  either, which is a defensible negative rather than an open question. P5 flags a degenerate
+  arm that picks one option index for most items, because D110 printed a verdict over
+  degenerate output. Mounts the prebuilt weights dataset.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - archarness.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
