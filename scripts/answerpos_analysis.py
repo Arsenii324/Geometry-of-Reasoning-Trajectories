@@ -51,6 +51,11 @@ def locate_own(per_pos):
         start = len(text)
         text += s["tok"]
         spans.append((start, len(text), s["pos"]))
+    # KNOWN FAILURE, MEASURED: `last_number` is structurally wrong wherever the answer is
+    # stated BEFORE a distractor. On A44's `compare` family it mislabels 5 of 5 correct items
+    # -- "83 is larger than 23." with gold 83 is right, and the last number is the loser.
+    # Using it to define correctness there manufactured a depth-correctness effect
+    # (p = 0.0359) that vanishes under a locator-independent label (p = 0.2901). See D184(3).
     nums = list(NUM.finditer(text))
     if not nums:
         return -1, None
