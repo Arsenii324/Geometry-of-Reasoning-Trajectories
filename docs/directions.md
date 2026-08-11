@@ -1480,6 +1480,9 @@ bank all arms. **No further forks are possible; everything from here is the main
 - Tooling added today: `model_attr_check.py` (preflight check 6), `local_smoke.py` (real model
   at 27.7M params, 4.25 s, reproduces A41 and A47's bugs), `experiment_registry.py`,
   `outcome_variance_scan.py`, `arc_table.py`, `parser_sweep.py`, `answerpos_analysis.py`.
+- **`files/paper_submission/WRITING_PACK.md`** — the argument spine, final prose for the six
+  hard paragraphs, an anti-overclaim table, writer traps, paste-ready submission fields, figure
+  candidates. **Read §C and §D before writing prose.**
 - **`docs/WORKING_KNOWLEDGE.md`** — the tacit layer: how the instruments actually behave
   (the `tail`/`period` coupling, why a longer tail is *worse* for a damped orbit, the sphere
   radius as the null for every distance claim), which numbers are load-bearing vs which only
