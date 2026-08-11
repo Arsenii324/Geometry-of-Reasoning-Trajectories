@@ -38,8 +38,10 @@ MODEL.** Where it could be tested it is null, with bounds: difficulty moves the 
 rate by **0.0033** when the count quadruples (D115, D116); the dynamics do not reach the
 readout (ρ = +0.118, p = 0.65, D114); the readout is finished at median unroll **4** with
 87% of the journey ahead (D112); the first structurally clean ladder gives ρ = **−0.0286,
-p = 0.7986** once the trivial level is removed, bounded at |ρ| ≥ 0.216 (D143); and a
-causally induced regime change alters **0 of 48** answers (D148). **But the decisive fact
+p = 0.7986** once the trivial level is removed, bounded at |ρ| ≥ 0.216 (D143). *(The
+"causally induced regime change alters 0 of 48 answers" that used to sit here is **withdrawn**:
+`correct` is False in 432 of 432 of that run's orbits, so there was no correctness to
+change — see §1.3.)* **But the decisive fact
 is D147**: the one difficulty axis where theory says recurrence is *required* — sequential
 state tracking — is out of Huginn's reach entirely, since it answers with a constant. Every
 axis we could build is either shortcuttable in principle or beyond the model. **That is a
@@ -308,20 +310,31 @@ to 0.05, with t\* varying 0.28–0.74 by pair. So in `e` it is the **settling** 
 chords escape, and 2 of 5 is below A25's pre-registered bar of 3 of 6 — demonstrated, and
 not to be read as typical (D140, D144).
 
-**But convexity is coordinate-dependent, and that is the sharper finding.** Redrawn in
-`wte`-space, **within-rotating chords leave the regime 2 of 2** — `symbol`→`array` dipping
-to R = 0.400 with two threshold crossings, `symbol`→`block` to 0.546 with four, on both
-sequences. **The decisive comparison is a matched pair: `symbol`↔`array` appears in both
-runs with the same endpoints, the same metric and the same threshold — min R 0.768 drawn in
-`e`, min R 0.400 drawn in `wte`.** The only difference is which space the straight line is
-drawn in, so the rotating region is chord-convex in the prelude's output and not in the
-embedding (D164). That also resolves A32's failed P5 control as a coordinate artefact rather
-than a confound: the endpoints are fine, the straight line is not. **Two readings remain
-live** — the prelude's nonlinearity curving the segment out of the region, or linear
-interpolation shrinking the interpolant's norm where `e`'s downstream RMSNorm would absorb
-it. Banked data bounds the second without excluding it (the `symbol`→`token` midpoint reads
-R = 0.773, *above* the source's own 0.768). A36 separates them by rescaling the `wte`
-interpolant to the source's norm at every t.
+**Redrawn in `wte`-space, within-rotating chords leave the regime 2 of 2** — `symbol`→`array`
+dipping to R = 0.400 with two threshold crossings, `symbol`→`block` to 0.546 with four, on both
+sequences (D164). That looked like a coordinate effect, on a matched pair appearing in both
+runs. **It was mostly norm, and the control says so.**
+
+A36 reran those chords rescaled to the source row's norm at every grid point, holding
+everything else. It replicates the plain arm bit-for-bit, and the confound turns out to be
+large: the embedding rows are nearly orthogonal (cos **+0.039 to +0.096**), so linear
+interpolation drops the interpolant to **69.5–75.5%** of the source norm at its minimum.
+
+- **On `symbol`→`array` — the pair that made D164 decisive — the excursion vanishes:** 0
+  crossings, **21 of 21** points rotating, min R **0.768** where the plain chord gave 0.400.
+  So *that* contrast between `e` and `wte` was normalisation, and **D164's headline is
+  withdrawn.**
+- **On `symbol`→`block` it does not vanish:** still 2 and 4 crossings at min R 0.568/0.561. So
+  **at least one straight line between two rotating embeddings exits the rotating set for
+  reasons that are not norm.**
+- **The control holds:** settling targets still leave under norm-matching (`digit` landing at
+  0.433, `element` at 0.068), so the matched arm is not merely pinning R high (D167).
+
+**What this leaves is narrower and should be quoted narrowly:** non-convexity in `wte` is
+demonstrated on **one chord of two**, which is the same "real but not generic" footing D144 put
+the `e`-space version on. What distinguishes `array` from `block` is unmeasured — `block` has
+the larger norm (0.874 against the source's 0.797 and `array`'s 0.742), so the target's norm
+relative to the source's is the first thing to check.
 
 **The region is bounded and anisotropic, and it is NOT a half-space.** Bisecting from two
 rotating carriers along 64 rays: **81.2%** of random directions escape the regime, and of
