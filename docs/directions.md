@@ -1346,3 +1346,78 @@ dynamics being manipulated had not started yet when the answer was chosen.**
 
 *Cost: one kernel, no new banking primitives — the trajectories are already hooked. Not launched
 now because four jobs are in flight.*
+
+---
+
+## §O Recap by failure cause, and what each direction is actually worth (2026-08-11 17:00)
+
+*196 rows; 10 carry an explicit withdrawal/amendment marker, 6 of those from today; 18 contain
+some withdrawn element. Organised by **why** things failed, because the row-by-row list hides
+that five different causes are at work and they have different fixes.*
+
+### O1 — Five failure classes, with the fix status of each
+
+**Class 1 · The metric measured something other than the thing.** *The dominant class, and the
+one that cost most.*
+- D148's correctness null ran on a variable that is False in **432 of 432** orbits.
+- D157/D158's "final-unroll accuracy" is format compliance: the answer is produced in 0.781 of
+  generations where first-token scoring reads 0.125 (D172).
+- D193's `parsed_exact` measured my parser — 0.028 where first-line scoring gives 0.389.
+- **Fix status: diagnosed, partially tooled.** `outcome_variance_scan.py` catches zero-variance
+  outcomes; D179 ranks ten extraction rules. **No tool prevents choosing a bad scorer up front.**
+
+**Class 2 · The instrument could not resolve what was asked of it.**
+- D135/D136: linear probe at n ≈ 50, floor at Cohen's d ≈ 10 (D155).
+- D165: the same probe class fails on a label it is *mathematically guaranteed* to contain —
+  0.690 against a 0.600 baseline, where the correct 1-D statistic gets 0.980.
+- **Fix status: closed by rule.** No null of that class may be quoted. Positive controls are now
+  standard (P1 gates).
+
+**Class 3 · The comparison was not matched — one variable moved while another moved with it.**
+- D164: `e`-vs-`wte` chords differed in **norm**, not only in coordinate system (D167).
+- A49 pass 1: spectrum at tail 48 vs `rotation_power` at tail 24 — **void on its own gate**.
+- D162: varied the *scoring rule* at fixed prompt, concluded "protocol refuted"; prompt format
+  was the whole story (D183).
+- D186: exemplar count and prompt length perfectly collinear until the padded control ran.
+- **Fix status: only culture.** Every instance was caught by a registered control, never by
+  foresight. This is the class most likely to recur.
+
+**Class 4 · Structural code errors costing a GPU slot.**
+- A41 (fixed-length `e` on a growing sequence), A47 (patched a non-existent attribute).
+- **Fix status: closed.** `model_attr_check.py` is preflight check 6; `local_smoke.py` runs the
+  real class at 27.7M params in 4.25 s and reproduces both bugs as regression checks.
+
+**Class 5 · A verdict accepted without being checked.**
+- Papers 07/09 dismissed as "background" by a triage and by me three times. They contain
+  **D191** — the sharpest H2 result in the record.
+- **Fix status: open.** Papers 04/06/10 still rest on the same kind of accepted "no bearing".
+
+### O2 — Directions, by how rigorously they were actually pursued
+
+| direction | state | honest assessment |
+|---|---|---|
+| **Regime: one noun flips the map** (D132→D192) | **strong** | The most rigorously pursued line here. Survived a scope test today that could have broken it (D192: 62.0% vs 0.000, no overlap). Causal at two levels (`e`, `wte`). Its behavioural consequence is the open end. |
+| **ARC reproduction** (D153→D183) | **closed** | Took 30 rows and four runs because we varied the wrong axis for weeks. Now pinned to their exact protocol. |
+| **Format/elicitation** (D166→D195) | **strong, recent** | Entirely today. Well-controlled (measured chance rates, paired tests). Its weakness is that it is one day old and has not been attacked. |
+| **H2 / depth-vs-difficulty** | **reframed, not resolved** | D191 shows it is architecturally untestable per-position on this model. Every earlier null was measuring the global r. Not a failure of the hypothesis. |
+| **Interp / steering** (D196) | **one draw** | A clean, well-gated null — but one contrast, one aggregation, one injection site, and §N2 now says the site was probably wrong. |
+| **h0 injection / H3** | **unresolved** | Failed twice on code errors; third attempt running. Partly pre-empted by the paper's path-independence claim (D190a). |
+| **Transient vs tail** (§N3) | **never pursued** | The regime is measured over unrolls 40–64; the answer is decided at ~4. **No test has ever put them in the same window.** |
+| **"Sliders"** (D187d) | **never looked for** | A third structure the paper names. No definition extracted. |
+| **PMI / surface-form correction** (D195) | **noted, not run** | Our ARC numbers and theirs share an uncorrected first-token bias. |
+
+### O3 — Next actions, ranked by what they would change
+
+1. **Transient rotation vs correctness** (§N3). One kernel. **If the regime only exists in the
+   tail, that reframes D148/D176's nulls from "the regime is an epiphenomenon" to "we measured
+   it in the wrong window."** Highest value because it touches the strongest line's weakest end.
+2. **Steer `e` at all positions** (§N1/N2). One-line change to A48. Separates "not this
+   direction" from "not this position" — currently the single largest ambiguity in the interp
+   result.
+3. **Read papers 04/06/10** rather than inheriting "no bearing." Zero GPU. The same acceptance
+   cost us D191.
+4. **PMI-corrected ARC.** Would change our absolute number, not the reproduction claim.
+5. **Sliders** — needs a definition extracted from paper 01 before it is runnable at all.
+
+*Not queued: anything requiring a new difficulty ladder. D191 makes clear the model cannot
+allocate depth per instance, so no ladder can test H2 on Huginn.*
