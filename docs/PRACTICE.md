@@ -497,11 +497,18 @@ was to find overclaims — read it as the geometry track's strongest negative.
 task", applied after the run rather than before it, because that is when the data exists.
 
 **Automated, so it does not depend on remembering.** `scripts/outcome_variance_scan.py` walks
-every banked result JSON and flags outcome fields whose base rate is exactly 0 or 1. Over the
-whole record it flags **two**: `ds_regimebehav` at 0.000 (D148 — the failure, now amended) and
-`ds_statetrack` at 1.000 (D147 — *the finding*, correctly reported, since its point is that the
-oracle axis scores a constant responder 100%). **A flag is a question, not a verdict:** it says
-the outcome had no variance, and the row must say which of those two it is.
+banked result JSONs and flags outcome fields whose base rate is exactly 0 or 1. It flags **two
+runs, five fields**: `ds_regimebehav` at 0.000 on `correct`, `best_rank` and `final_rank`
+(D148 — the failure, now amended) and `ds_statetrack` at 1.000 on `correct` and `best_rank`
+(D147 — *the finding*, correctly reported, since its point is that the oracle axis scores a
+constant responder 100%). **A flag is a question, not a verdict:** it says the outcome had no
+variance, and the row must say which of those two it is.
+
+**Its coverage is partial and that is not a clean bill of health.** It reaches **14** result
+files — the runs that bank a top-level `rows` array next to their kernel. Runs that archive
+into a `.tgz`, write per-item `.npy`, or live on Kaggle are **not scanned**, and the older
+`kaggle_*` behavioural claims are exactly the ones it cannot see. Reading "5 flags" as "the
+record is otherwise clean" would be RC1 again — a proxy for the thing — one level up.
 
 **The generalisation.** RC1 was measuring a proxy for the thing; RC5 was committing RC1 inside
 an audit instrument. RC6 is narrower and nastier: **the measurement is right, the analysis is
