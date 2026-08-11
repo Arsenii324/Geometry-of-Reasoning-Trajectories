@@ -1,0 +1,33 @@
+name: fmtsweep-which-answer-format-huginn-will-follow
+desc: >
+  A43: which answer format actually gets a parseable answer out of Huginn at zero shots. The
+  model has the answer and cannot emit it where we score: D172 measured first-token exact-match
+  at 0.125 against containment 0.781 with a chance rate of 0.042-0.152, and D174 found that by
+  unroll 8 it has committed to a prose frame, with "The" opening 39.4% of 1260 banked
+  generations and the rate of opening with the gold not moving with depth. Two routes are
+  already measured and they disagree. Instruction FAILS: kaggle_depthacc ran "Reply with only
+  the answer." at every depth and got exact-match 0.000 at r=32, identical to bare.
+  Demonstration WORKS: D169 moved ARC-Easy 0.416 to 0.723 on five examples. So this sweeps the
+  formats that were never tried, chosen from what the banked output shows Huginn already doing
+  unprompted -- it writes $\boxed{...}$ in 21 of 1260 generations and an Answer: marker in 8
+  more, so those are conventions it learned rather than instructions to suppress prose. Five
+  arms: bare as control, the known-failing "only the answer" as a replication gate, a \boxed{}
+  request, D175's harness-style bare continuation with no chat template, and a reason-then-mark
+  arm. One parser, banked with each row, tries boxed then an Answer marker then the whole first
+  line, in a fixed order across all arms so a spontaneous \boxed in a control arm is still
+  credited. P2 is registered both ways: an arm above 0.30 parsed-exact is a usable format, and
+  all arms within 0.05 of bare means no format instruction works at zero shots and
+  demonstration is the only route, which is itself the finding. P4 measures the cross-item
+  chance rate because digit golds make containment cheap. P5 reports median generated
+  characters and truncation per arm, since a format that works by spending 3x the tokens is a
+  different recommendation. P6 prints three literal generations per arm. Mounts the weights.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - fmtsweep.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
