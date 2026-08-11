@@ -408,6 +408,50 @@ sharpest form of this document's thesis, and the strongest open question in it.
 
 ---
 
+## 7. The capability axis, measured against itself and against the world
+
+This is the strongest objection to everything above, and it is now measured rather than
+asserted. Three findings, in order of how much they cost the record.
+
+**The axis behind most numbers here is an oracle over depth, and on the census it is
+inflated 5.29×.** Almost every accuracy figure in this ledger is `min(rank) == 1` over the
+unroll budget — the gold reaching rank 1 at *any* depth. Rescoring the census's 4868 banked
+draws at the **final** unroll instead: mean per-item accuracy falls **0.336 → 0.063**, and
+its 41 items in the 20–80% "dynamic range" band become **0** (D157). Set against D103's
+2.06× on our own tasks and A29's 2.00× on ARC-Easy, the inflation is a property of task and
+budget, **not a constant — no single factor should be quoted.**
+
+**Scored at the final unroll, 19 of 21 task families read exactly 0.000.** Including
+`echo_digit` — "repeat this number", the easiest task in the suite — at **0.997 → 0.000**.
+The model puts the gold digit at rank 1 by unroll 2 and, at the end of its own 48-unroll
+computation, has it at rank 4. Only two families hold their answer: `echo_word`
+(**0.861 → 0.833**) and `compare` (0.899 → 0.500). **Huginn holds a copied word to the end
+of its computation and cannot hold a copied digit** (D158).
+
+**And the answer is displaced, not decayed.** Median argmin unroll **4**; 17 of 21 families
+reach their best rank by unroll 8; then the rank **plateaus at a stable worse value** for
+forty-plus unrolls — `add1` at 19, `echo_digit` at 4 (D159). The map converges to a state
+whose readout does not prefer the gold. *What it prefers instead was never banked, and is
+being measured now.*
+
+**None of this is calibrated against anything external, and the one attempt to calibrate it
+failed.** Huginn's own paper reports **69.9%** on ARC-Easy at r = 32. We measure **0.407**
+by option-letter argmax and **0.433 / 0.413** by the standard option-text likelihood — the
+three protocols agree with each other within ~5 points at every depth, so the measurement
+is robust and **the 29-point gap to the paper is not explained by scoring** (D153, D162).
+After 163 rows this project cannot reproduce a single published number about the model it
+studies. What survives is the *internal* comparisons — inflation factors, relative
+orderings, the geometry — because those never leave our own runs.
+
+**One thing this does not license.** The tempting corollary — that because the answer lives
+in the transient, transient geometry predicts correctness where the fixed point does not —
+is checked and **unsupported**: D93's powered window sweep already covers the argmin and
+finds no trend across eight windows, with the argmin window itself at chance (D163).
+*Where the answer is available* and *where the geometry predicts success* are different
+questions, and only the first is established.
+
+---
+
 ## What is not established
 
 - **Trained arm, synthetic tasks.** D80(7) supplies the untrained contrast for the
