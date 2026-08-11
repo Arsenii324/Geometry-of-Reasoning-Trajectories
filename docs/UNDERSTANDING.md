@@ -62,7 +62,23 @@ the answer* rather than *blocked on format*, and at r = 32 `sub1` writes out *"T
 missing.** That is not H2, which claims *difficulty recruits depth*; it is the precondition H2
 needs, and the record had been treating it as absent.
 
-**But the formatting discovery does NOT rescue H2, and that is now measured rather than
+**And the reason H2 cannot be tested has changed, which is worth stating precisely.** Re-running
+the census's own items at 0/2/5 shots: two examples raise **availability**, not just emission —
+pooled oracle **0.327 → 0.548**, paired gains 41 against 4 losses, exact McNemar **p = 9.3e-09**
+(final-unroll accuracy moves 0.071 → 0.327, p = 7.0e-11). So *"the task is beyond the model"*
+was never established at zero shots (D180). **`succ_letter` goes 0.000 → 0.750 on the oracle
+axis.** But the ladder still cannot be walked, for the opposite reason it could not before:
+`add1` **0.750 → 1.000** and `add_2d` **0.250 → 1.000** at k = 2 — *both at ceiling*. The
+difficulty axis is squeezed between floor and ceiling, and demonstration moves it from one to
+the other rather than opening it. Five families stay at **0.000 at every k** — `last_item`,
+`count8`, `max_run`, `caesar1_word`, `rot13_word` — so the count ladder's middle rung is still
+missing. *(And more is not better: k = 5 is significantly worse than k = 2 on availability, net
+−15, p = 7.3e-04.)*
+
+**Everything below is therefore scoped to the zero-shot condition, including the H2 test that
+follows.**
+
+**The formatting discovery does NOT rescue H2, and that is measured rather than
 assumed.** The obvious worry after D174 — that every H2 null was an artefact of a metric
 anti-correlated with competence — is testable on a measure that has nothing to do with emission:
 **`best_depth` conditioned on the model being right**, i.e. when the answer becomes *available*.
