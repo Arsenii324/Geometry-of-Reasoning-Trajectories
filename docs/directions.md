@@ -1421,3 +1421,56 @@ one that cost most.*
 
 *Not queued: anything requiring a new difficulty ladder. D191 makes clear the model cannot
 allocate depth per instance, so no ladder can test H2 on Huginn.*
+
+---
+
+## §P RESUMPTION STATE, 2026-08-11 17:40 — written before a context compaction, near the deadline
+
+**The deadline is 21:00 Moscow and it is an UPLOAD-COMPLETE deadline, not a stop-working one.**
+Full submission state, placeholders, schedule and template traps are in
+**`files/paper_submission/SUBMISSION_STATE.md`** — read that first. This section covers only the
+research side.
+
+### P1 Jobs in flight (all EXECUTING at 17:39, one consolidated monitor)
+
+| exp | job id | tests |
+|---|---|---|
+| A52 `ds_transrot` | `bt1ori1l3q449kmbhgpd` | §N3 — is there period-6 power in the *decision* window (unrolls 0–11) as well as the tail? |
+| A50 `ds_sysprompt` | `bt1qu10g915hnuatdj2m` | does a format instruction work from the **system** turn (D189c's gap)? |
+| A47 `ds_h0inject` | `bt1vuemjmeg0onc52shp` | does an injected h₀ reach the readout before relaxation? 3rd attempt |
+| A49 `ds_periods` | `bt13tdktmeldau9tb3p4` | does their word problem orbit at any period? 2nd pass, tail mismatch fixed |
+
+**On landing: check the P1 gate before the headline.** Two runs today were void on their own
+gates (A49 pass 1, tail 48 vs 24) and two "ERROR"s were not crashes at all (RC9).
+
+### P2 Commitments made at 17:35, to be kept through compaction
+
+- **No further launches.** Results before 19:00 fold into the draft; after that, ledger only.
+- **On an error: record and move on.** No diagnosis sessions — three today cost 20–40 min each.
+- **Gate every push on a green suite.** I pushed red twice today.
+
+### P3 What is unrun and would be next, if there were time
+
+1. **Steer `Δe` at ALL positions**, not just the last — the single unresolved ambiguity in
+   D196/D197. §N1/§N2 argue the null is about the *site*, since D192 puts the regime's onset at
+   position 20 of 53 while the intervention is at 53.
+2. **Transient rotation vs correctness** — A52 is the first half; the correctness half needs the
+   census families where correctness varies.
+3. **Papers 04/06/10** — still resting on an accepted "no bearing" verdict, the same acceptance
+   that hid D191 in papers 07/09 through three passes.
+4. **PMI-corrected ARC** (D195) — our numbers and the published 0.699 share an uncorrected
+   first-token bias.
+5. **"Sliders"** (D187d) — a third structure the paper names; no definition extracted yet.
+
+### P4 The state that must not be lost
+
+- `claims_ledger.md` **197 rows**; 10 carry explicit withdrawal markers, 6 from today.
+- `UNDERSTANDING.md` **§1.0-today** is the day's verification surface (24 rows, 7 amendments).
+- `directions.md` **§M** live queue, **§N** pre-registered predictions, **§O** failure-cause
+  recap with ranked next actions.
+- Tooling added today: `model_attr_check.py` (preflight check 6), `local_smoke.py` (real model
+  at 27.7M params, 4.25 s, reproduces A41 and A47's bugs), `experiment_registry.py`,
+  `outcome_variance_scan.py`, `arc_table.py`, `parser_sweep.py`, `answerpos_analysis.py`.
+- Practice notes **RC6** (a degenerate outcome reads like a clean null), **RC7** (a monitor
+  inside another command is not a monitor), **RC8** (preflight checked everything except the
+  model), **RC9** (a platform ERROR is not necessarily a crash).
