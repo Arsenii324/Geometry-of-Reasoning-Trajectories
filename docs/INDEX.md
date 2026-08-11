@@ -23,7 +23,7 @@ all. A clone that skips the checkout sees an old tree and no submission material
 **What a fresh clone can and cannot do.** It *can*: read every document below, write from
 `docs/submission/CLAIM_INVENTORY.md`, cross-check against the 200-row ledger, rebuild the paper
 (`docs/submission/build/`), regenerate every figure and table from the banked result JSONs under
-`scratch/*/`, run the 616-test suite, and run `scripts/local_smoke.py` — which builds the *real*
+`scratch/*/`, run the 621-test suite (use `.venv/bin/python` — bare `python` cannot import `traj_geom`), and run `scripts/local_smoke.py` — which builds the *real*
 `RavenForCausalLM` at 27.7M params in ~1 s, **no GPU and no weights download**. It *cannot*: run
 anything needing the 3.5B checkpoint, and it does not have `scratch/ds_embsep/out` (1.0 GB of raw
 arrays, deliberately excluded — the derived numbers are in the ledger).
@@ -65,7 +65,8 @@ arrays, deliberately excluded — the derived numbers are in the ledger).
 | `build/` | **the paper, buildable from a fresh clone** — `main.tex` (CP1251), `zapiski.cls` (CP1251+CRLF), `pic/`, `main.pdf`, `instructions.md`. Two `pdflatex` passes; verified 2026-08-11 from a clean copy of that directory alone: 11 pages (main body ends p9), 283062 bytes, 0 errors, 0 undefined citations. The six `Font shape 'T2A/...' undefined` log lines are Cyrillic font substitutions, **not** missing references — do not re-diagnose. Supersedes the deleted `main.tex.cp1251` snapshot. |
 
 **Live draft:** `../files/paper_submission/draft/{main.tex,main.pdf,zapiski.cls,pic/}`.
-10 pages, main body ends p9, 0 errors, 0 undefined citations, 0 uncited bibitems.
+11 pages, **main body ends p9** (the appendices carry the rest), 0 errors, 0 undefined
+citations, 0 uncited bibitems, 1 figure.
 **Template + instructions:** `../files/paper_submission/{instructions.md,template-zapiski-main/}`.
 
 ## 4. Tools written this session — none of these are obvious from the code
@@ -82,7 +83,8 @@ arrays, deliberately excluded — the derived numbers are in the ledger).
 | `scripts/arc_table.py` | regenerates all 25 ARC measurements from banked JSON — cannot go stale. |
 | `scripts/regime_onset.py` | the probe experiment that retired an instrument class (A37/D165). |
 | `scripts/strategic_audit.py` | repeated costs, repeated attempts, what the recent record is *about*. |
-| `scripts/build_index.py` | generates `docs/EXPERIMENT_INDEX.md`. |
+| `scripts/build_index.py` | generates `docs/EXPERIMENT_INDEX.md`. **Stale: header says 163 claims, ledger has 200.** |
+| `scripts/fig_onset.py` | regenerates Figure 1 from `ds_transrot`. **Asserts its medians against C7's published values and that `slide[0] == R_early`**, so the figure cannot drift from the ledger. Docstring pins the axis convention: `s` is the window START, span `[s, s+12)`. |
 
 **The one implementation that must never be duplicated:**
 `src/traj_geom/metrics/dynamics.py::rotation_power` — raises rather than returning an aliased
@@ -104,7 +106,7 @@ number when `tail % period` or `tail // period < 2`. Two analyses compare across
 ## 6. Other directories
 
 **In this repo:** `src/traj_geom/` (metrics, extraction, shapes — the one-implementation-per-
-quantity home), `tests/` (616 passing; `test_preregistration_implemented.py` catches unwired
+quantity home), `tests/` (621 passing; `test_preregistration_implemented.py` catches unwired
 gates), `configs/`, `notebooks/`, `results/`, `trajectories/`, `figures/`, `h3_toy_model/`.
 
 **Parent `~/build-projs/barannikov-work/`** — predates this repo, still referenced:
