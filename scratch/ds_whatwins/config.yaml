@@ -1,0 +1,28 @@
+name: whatwins-what-displaces-the-gold
+desc: >
+  A35: answers the sentence D158 and D159 both end on. D158 found 19 of 21 census families
+  read exactly 0.000 at the final unroll, with echo_digit going 0.997 -> 0.000 while
+  echo_word holds 0.833. D159 showed the mechanism is displacement, not decay -- the gold
+  reaches rank 1 at a median unroll of 4 and then settles at a stable worse rank for
+  forty-plus unrolls. Neither can say WHAT wins instead, because every kernel in this
+  project banks the gold's rank and nothing else. D145 supplies a hypothesis and not an
+  answer: the depthacc generations end in a role marker glued to the output ('4user\n\n'),
+  so the model may be moving on to the next TURN. This banks the top-5 tokens and their
+  log-probabilities at EVERY unroll. P2 reports the literal decoded strings rather than a
+  category count, because a printed verdict over unread strings is how D110 went wrong. P4
+  runs echo_digit and echo_word together, since they are the same instruction over
+  different content and behave oppositely, so any answer must explain the difference rather
+  than describe one side. P5 runs every item both through the chat template and bare: if
+  the displacing token is a role marker, removing the template should remove it, and if the
+  gold is displaced anyway then D145's hypothesis is refuted and the cause is internal.
+  Mounts the prebuilt weights dataset rather than downloading.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - whatwins.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
