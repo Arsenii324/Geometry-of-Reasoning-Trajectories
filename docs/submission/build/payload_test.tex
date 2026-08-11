@@ -1,0 +1,19 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+
+\begin{document}
+
+\section*{The Geometry and Formatting of Reasoning Trajectories}
+
+To measure latent dynamics over the tail without the confounds of 2D projection, we define a scalar rotation statistic (\texttt{rotation\_power}): the fraction of non-DC power in the period-6 bin of the 5280-dimensional state over a 24-unroll tail. This instrument is self-consistent to $4\times10^{-8}$, supports exact thresholds, and reproduces hand-assigned binary regime labels on 691 of 696 orbits (688/696 held out in leave-one-bank-out validation).
+
+Using this instrument, we find that the recurrent map carries a sharp qualitative structure. A single instruction word switches the map between a settling regime and a damped period-6 rotation (e.g., ``report the largest symbol'' rotates 36/36 paired cells; ``largest element'' 0/36 at an identical token count). This switch is causally controlled by the token's embedding row. Furthermore, the regime is memoryless in its parameter: swapping the injected state mid-trajectory re-aims the dynamics with no hysteresis in 62 of 64 switches, revealing a strong entering-versus-leaving asymmetry (entering costs median 15.5 unrolls; leaving costs 1.0).
+
+However, behavioural attempts to connect this structure to capability revealed a massive evaluation confound. Scoring the first generated token, the model answers correctly on 12.5\% of items. Reading the generated text, however, the answer is present in 78.1\% (against a measured cross-item chance rate of 0.042 to 0.152). What occupies the first position is prose: the token ``The'' opens 39.4\% of 1260 banked generations. Depth makes this worse rather than better---the rate of opening with ``The'' rises twentyfold from $r = 2$ to $r = 32$, while the rate of opening with the answer does not move ($p = 0.515$). The model is not failing to compute the answer; it is failing to put the answer where standard metrics look. Consequently, supplying the output format recovers the published benchmark number by two independent routes: 0.658 zero-shot under the original evaluation protocol, and 0.723 with five in-context examples.
+
+The geometric and behavioural findings meet in a timing constraint. Measuring the rotation statistic over two distinct windows of the same orbit separates two facts: over the decision window (unrolls 0--11) rotating and settling prompts are indistinguishable (0.2292 against 0.2296, a separation of 0.0004), but over the tail they separate completely (0.862 against 0.298). Because the answer is best-ranked at a median unroll of four, behavioural nulls about the regime manipulate a property that has not yet come into existence when the readout is settled. This is a timing claim rather than a causal one: it does not show that the regime cannot affect behaviour, only that on this architecture the answer is fixed roughly twelve unrolls before the regime becomes measurable.
+
+Finally, we note methodological limits. We withdrew several initial claims when pre-registered controls failed (e.g., a linear probe result was rejected when the instrument failed a deterministic positive control). We also note that the hypothesis that harder problems recruit more depth is architecturally untestable here. Huginn lacks a halting head; \texttt{num\_steps = r} unrolls the whole sequence together, meaning every position receives exactly $r$ iterations with no mechanism to allocate compute by difficulty. Finally, our benchmark comparisons and the published figures share an uncorrected surface-form bias inherent to likelihood scoring.
+
+\end{document}

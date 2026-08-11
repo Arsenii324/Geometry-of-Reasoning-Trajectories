@@ -1,0 +1,139 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,graphicx,booktabs,multirow,url,float}
+\usepackage[margin=1in]{geometry}
+
+\title{Latent Trajectories in Recurrent Depth: Geometry, State-Tracking, and Formatting}
+\author{
+  Alexandr Shianov$^{1}$, David Sverdlov$^{1}$, Arsenii Varaksin$^{1}$ \\
+  \small $^{1}$SMILES-26
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present a reproducible inference-only pipeline for analyzing reasoning trajectories in recurrent-depth transformers. We demonstrate that multi-step logic does not induce looping, refuting naive depth-encoding hypotheses. Instead, we find that steps-to-settle serves as an effective compute proxy strongly correlated with state retention. Furthermore, we reveal that two-scale orthogonality dynamics previously reported in the literature are methodology-dependent artifacts. Finally, we identify a massive formatting confound in capability evaluations and establish a timing hinge showing that answers are fixed well before geometric regimes become measurable.
+\end{abstract}
+
+\section{Introduction}
+
+Each token's latent path falls into one of several regimes---settling, looping, or drifting---distinguishable via Lyapunov exponents, recurrence, and persistent homology signatures. We evaluate three hypotheses regarding the relationship between trajectory shape and reasoning:
+\begin{itemize}
+    \item[H1] \textbf{Settle / loop / drift.} All answer-token trajectories exhibit exponential contraction. Unbounded drift is excluded by construction.
+    \item[H2] \textbf{Loops encode reasoning depth.} When the path loops, its winding number grows with the number of reasoning steps required.
+    \item[H3] \textbf{Contraction prevents state tracking.} If the update strongly contracts, it cannot maintain a running count.
+\end{itemize}
+
+\subsection{Related Work}
+Recent work explores recurrent depths in language models. Geiping et al. introduced Huginn, observing looping on specific tokens. Blayney et al. found non-fixed-point behavior in a small fraction of tokens. Pappone et al. proposed two-scale orthogonal dynamics. Merrill et al. and Grazzi et al. highlighted limitations of state-tracking in linear and finite-precision recurrent models.
+
+\section{Methods}
+
+All experiments use the open Huginn-3.5B model in inference-only mode. Our pipeline extracts hidden states across the unroll dimension at the final layer.
+
+\begin{table}[H]
+\centering
+\caption{Experimental Datasets}
+\begin{tabular}{llll}
+\toprule
+Task & Levels & N (trajectories) & Prompt format \\
+\midrule
+PARARULE-Plus & depths 2--5 & 10 / depth & "Question: ... Answer:" \\
+Counting ($\pm1$) & lengths 2--32 & 5--15 / len & "Start at 0. Add 1. Subtract 1..." \\
+Parity (switch) & lengths 4--48 & 10 / len & "Light is off. Flip. Wait..." \\
+Running-max & lengths 4--48 & 8 / len & "Numbers: 3 7 2 ... Largest?" \\
+FineWeb & -- & 1000 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Metrics Implemented}
+\begin{itemize}
+    \item \textbf{Rotation power:} Fraction of non-DC power in the period-6 bin over a 24-unroll tail (5280-D).
+    \item \textbf{Winding number:} Accumulated angle in 2D-PCA projection, normalized to $2\pi$.
+    \item \textbf{Steps-to-settle:} First step where $\|\Delta h_t\| < 0.1$, serving as a proxy for effective computation.
+    \item \textbf{Persistent homology H1:} Maximum normalized persistence (Rips complex).
+\end{itemize}
+
+\section{Results}
+
+\subsection{Geometric Regimes and The Formatting Confound}
+Using the rotation statistic, we find that a single instruction word switches the recurrent map between a settling regime and a damped period-6 rotation, causally controlled by the token's embedding row. 
+
+Behavioural attempts to connect this structure to capability revealed a massive evaluation confound. Scoring the first generated token, the model answers correctly on 12.5\% of items. Reading the generated text, however, the answer is present in 78.1\%. The model is not failing to compute the answer; it is failing to put the answer where standard metrics look. Supplying the output format recovers the published benchmark number. 
+
+Measuring the rotation statistic over two distinct windows separates two facts: over the decision window (unrolls 0--11) rotating and settling prompts are indistinguishable, but over the tail they separate completely. Because the answer is best-ranked at a median unroll of four, behavioural nulls about the regime manipulate a property that has not yet come into existence when the readout is settled.
+
+\subsection{E1: PARARULE-Plus (H2 Refuted)}
+All 40 answer-token trajectories (depths 2--5) exhibit settling behavior. Correlation analysis reveals that winding vs depth (per-row, N=40) yields $\rho = -0.037$, $p = 0.82$. Multi-step symbolic logic does not induce looping; winding-depth correlation is null.
+
+\subsection{E2: Synthetic Counting (H3 Supported)}
+Running $\pm1$ sum (length $n_{\text{ops}} \in \{2\ldots 32\}$): Steps-to-settle vs $n_{\text{ops}}$ yields $\rho = 0.718$, $p < 1e-5$. The model fails tasks requiring state retention beyond a few operations, confirming theoretical limitations.
+
+\subsection{E3: Length-Matched Control}
+To isolate state-tracking from prompt length, E3 used \textit{Track} and \textit{Local} tasks of identical length. \textit{Track} yields steps vs $n_{\text{ops}}$ correlation of $+0.558$, while \textit{Local} yields $-0.576$. The sign of the correlation is determined solely by task type: state retention increases computation.
+
+\subsection{E4: Phase Map and Force-Loop}
+With reduced budget (\textit{num\_steps}=16), loops appear (7/8 loop at $n_{\text{ops}}=24$). With $\textit{num\_steps} \ge 24$, all trajectories settle. Loops are a symptom of insufficient computation budget.
+
+\subsection{E5: Generalization to Parity}
+Consistent with counting, steps-to-settle correlates with parity sequence length ($\rho = 0.615$). 
+
+\subsection{Two-Scale Dynamics on Synthetic Data}
+Applying Pappone et al.'s two-scale metrics to synthetic data, we find that Acceleration grows with depth ($4.89 \rightarrow 7.45$, $\rho = 0.997$), providing a strong signal where Winding fails. 
+
+\begin{table}[H]
+\centering
+\caption{Two-scale dynamics on synthetic data (Depths 2-5)}
+\begin{tabular}{llll}
+\toprule
+Depth & Accel (mean$\pm$std) & Orthogonality ($\cos\theta$) & Settled \\
+\midrule
+2 & $4.89 \pm 0.02$ & $-0.497 \pm 0.002$ & 50\% \\
+3 & $5.84 \pm 0.01$ & $-0.498 \pm 0.001$ & 50\% \\
+4 & $6.70 \pm 0.02$ & $-0.498 \pm 0.001$ & 50\% \\
+5 & $7.45 \pm 0.02$ & $-0.498 \pm 0.002$ & 50\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Reproduction of Orthogonality on Real Data}
+During reproduction on FineWeb text data, we obtained results that fundamentally differ from Pappone et al. We found that without step normalization, orthogonality is confounded with step norm (correlation $-0.0436$ after normalization). Instead of spiral dynamics, we observe oscillatory dynamics ($\cos \approx -0.687$).
+
+\section{Discussion and Conclusion}
+Answer-token trajectories in Huginn-3.5B converge to fixed points. We detect no winding-depth signal, refuting naive H2. However, steps-to-settle acts as an effective compute proxy, strongly supporting H3. Furthermore, two-scale orthogonality is shown to be a methodological artifact, and evaluating reasoning capability is heavily confounded by the model's formatting willingness.
+
+\section*{Contribution}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{4.5cm}p{3cm}p{3cm}p{3cm}}
+\toprule
+Component & Alexandr Shianov & David Sverdlov & Arsenii Varaksin \\
+\midrule
+Extraction pipeline & \checkmark & -- & -- \\
+Winding \& Steps-to-settle & \checkmark & -- & -- \\
+PARARULE \& Counting exps & \checkmark & -- & -- \\
+Length-matched controls & \checkmark & -- & -- \\
+Phase map experiments & \checkmark & -- & -- \\
+Two-scale dynamics & -- & \checkmark & -- \\
+FineWeb orthogonality reproduction & -- & \checkmark & -- \\
+Formatting confound \& regime timing & -- & -- & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Alexandr Shianov (45\% of work):} Developed extraction infrastructure, MVP metrics, and conducted E1--E5.
+
+\textbf{David Sverdlov (35\% of work):} Implemented two-scale dynamics metrics and conducted FineWeb reproduction.
+
+\textbf{Arsenii Varaksin (20\% of work):} 
+\begin{itemize}
+    \item Discovered the formatting evaluation confound.
+    \item Defined and validated the scalar \texttt{rotation\_power} statistic.
+    \item Established the timing hinge separating regime from answer computation.
+\end{itemize}
+
+\end{document}

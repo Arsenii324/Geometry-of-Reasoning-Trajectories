@@ -1,0 +1,421 @@
+> Gera Drobierro:
+We use four task families in inference-only mode:
+
+\begin{table}[h]
+\centering
+\caption{Experimental datasets and configurations}
+\begin{tabular}{llll}
+\toprule
+Task & Levels & N (trajectories) & Prompt format \\
+\midrule
+PARARULE-Plus (qbao775) & depths 2--5 & 10 / depth & "Question: ... Answer:" \\
+Counting ($\pm1$ sum) & lengths 2--32 & 5--15 / length & "Start at 0. Add 1. Subtract 1. ..." \\
+Parity (switch) & lengths 4--48 & 10 / length & "Light is off. Flip. Wait. ..." \\
+Running-max & lengths 4--48 & 8 / length & "Numbers: 3 7 2 ... Largest so far?" \\
+FineWeb (real texts) & -- & 1000 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Results}
+
+\subsection{E1: PARARULE-Plus — Winding Does Not Track Depth}
+
+All 40 answer-token trajectories (depths 2--5, n=10 per depth) exhibit settling behavior. Correlation analysis reveals:
+
+\begin{itemize}
+    \item Winding $\sim$ depth (per-level, N=4): $\rho = +0.20$, n.s. (threshold $\approx 1.0$).
+    \item Winding $\sim$ depth (per-row, N=40): $\rho = -0.037$, $p = 0.82$.
+    \item Partial winding $\sim$ depth $|$ length: $\rho = -0.234$, $p = 0.15$.
+    \item Steps-to-settle: $20.2 \rightarrow 22.0$ across depths (weak growth).
+\end{itemize}
+
+\textbf{Conclusion:} Multi-step symbolic logic does not induce looping; winding-depth correlation is null. Naive H2 is refuted.
+
+\subsection{E2: Synthetic Counting — H3 Support}
+
+Running $\pm1$ sum, length $n_{\text{ops}} \in \{2\ldots 32\}$, 5 seeds. All trajectories settle, but:
+
+\begin{itemize}
+    \item Steps-to-settle $\sim n_{\text{ops}}$: $\rho = 0.718$, $p < 1e-5$ — effective computation grows with state length.
+    \item $|$winding$| \sim n_{\text{ops}}$: $\rho = 0.554$, $p = 0.002$, but partial by length yields $\rho = 0.04$, $p = 0.82$.
+\end{itemize}
+
+The winding correlation is driven by prompt length, not state tracking. This necessitates length-matched controls.
+
+\subsection{E3: Length-Matched Control — The Killer Experiment}
+
+\textit{Track} and \textit{local} tasks share identical body text and differ only in the question ("What is the sum?" vs. "What was the last instruction?"), ensuring identical length. With 15 seeds:
+
+\begin{table}[h]
+\centering
+\caption{Length-matched control results (15 seeds)}
+\begin{tabular}{lccc}
+\toprule
+Condition & Metric & $\rho$ & p-value \\
+\midrule
+\multirow{2}{*}{Track (requires accumulation)} & steps $\sim n_{\text{ops}}$ & +0.558 & $< 1e-8$ \\
+ & winding $\sim n_{\text{ops}}$ & +0.324 & 0.002 \\
+\multirow{2}{*}{Local (last step only)} & steps $\sim n_{\text{ops}}$ & -0.576 & $< 1e-8$ \\
+ & winding $\sim n_{\text{ops}}$ & +0.054 & 0.61 (n.s.) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At identical length, the sign of the correlation is determined solely by task type: state retention increases computation; pure retrieval decreases it. This constitutes strong support for H3.
+
+\subsection{E4: Phase Map and Force-Loop}
+
+With reduced budget (\textit{num\_steps}=16), loops appear ($n_{\text{ops}}=24$: 7/8 loop; $n_{\text{ops}}=48$: 5/8 loop). With $\textit{num\_steps} \ge 24$, all trajectories settle. The phase map (\textit{num\_steps} $\times n_{\text{ops}}$) shows that the fraction of "non-settled" trajectories grows with constrained budget and longer counts.
+
+\textbf{Conclusion:} Loops are a symptom of insufficient computation budget, not depth per se.
+
+\subsection{E5: Generalization to Parity}
+
+Parity task ("light on/off"), $n_{\text{ops}} \in \{4\ldots 48\}$, 10 seeds:
+
+\begin{itemize}
+    \item Winding $\sim n_{\text{ops}}$: $\rho = 0.162$, $p = 0.22$ (n.s.).
+    \item Steps-to-settle $\sim n_{\text{ops}}$: $\rho = 0.615$, $p < 1e-6$.
+\end{itemize}
+
+The same signature generalizes beyond arithmetic to other counting tasks, confirming the robustness of H3.
+
+\subsection{Two-Scale Dynamics (Pappone et al., 2025)}
+
+\begin{table}[h]
+\centering
+\caption{Two-scale dynamics on synthetic data (depths 2--5)}
+\begin{tabular}{cccc}
+\toprule
+Depth & Mean Acceleration & Mean Orthogonality & Exits (\%) \\
+\midrule
+2 & $4.89 \pm 0.02$ & $-0.497 \pm 0.002$ & 50\% \\
+3 & $5.84 \pm 0.01$ & $-0.498 \pm 0.
+
+> Gera Drobierro:
+} Each token's latent path falls into one of several regimes—settling, looping, or drifting—distinguishable via Lyapunov exponents, recurrence, and persistent homology signatures.
+    \item[H2] \textbf{Loops encode reasoning depth.} When the path loops, its winding number grows with the number of reasoning steps required by the task.
+    \item[H3] \textbf{Contraction prevents state tracking.} If the update is strictly contractive ($\rho(\partial_h R) < 1$), the model cannot maintain a running count or memory, requiring looping or drifting for stateful tasks.
+\end{itemize}
+
+\subsection{Related Work}
+
+Our work builds upon several key contributions. Geiping et al. \cite{geiping2025scaling} introduced Huginn and observed latent orbits primarily on question and digit tokens. Blayney et al. \cite{blayney2026mechanistic} found non-fixed-point behavior in 0.02--2.8\% of tokens in Huginn-0125, depending on prompt conditions. Pappone et al. \cite{pappone2025two} proposed two-scale latent dynamics with spiral trajectories and orthogonality metrics. Merrill et al. \cite{merrill2024illusion} demonstrated that the "state" in state-space models is an illusion, while Grazzi et al. \cite{grazzi2024unlocking} proved that finite-precision LRNNs with positive eigenvalues cannot solve parity tasks. Yang et al. \cite{yang2025stabilizing} developed methods for stabilizing recurrent dynamics, and Tulchinskii et al. \cite{tulchinskii2025quantifying} introduced Q-K probing for logical consistency.
+
+\section{Methods}
+
+\subsection{Model and Protocol}
+
+All experiments use the open Huginn-3.5B model \cite{geiping2025scaling} in inference-only mode (revision \texttt{bb6621b65e90b6a4b9b29ef88dc83866d450470c}, transformers=4.53.3). The protocol consists of:
+
+\begin{enumerate}
+    \item Forward pass through the model with hooks on \texttt{core\_block[-1]}.
+    \item Extraction of hidden states at each unroll step.
+    \item Computation of geometric/dynamical/topological metrics.
+    \item Correlation analysis with reasoning depth and task length.
+\end{enumerate}
+
+\subsection{Metrics Implemented}
+
+We compute nine quantities per trajectory, grouped into three categories:
+
+\subsubsection{Geometric and Dynamical Metrics (MVP)}
+\begin{itemize}
+    \item \textbf{Winding number:} Accumulated angle in 2D-PCA projection, normalized to $2\pi$.
+    \item \textbf{Steps-to-settle:} First step where $\|\Delta h_t\| < 0.1$, serving as a proxy for effective computation.
+    \item \textbf{Shape classification:} \texttt{settle} (final step small), \texttt{loop} (return to near an earlier point), \texttt{drift} (otherwise).
+    \item \textbf{Path independence:} Log-slope of $\|h_t - h_t^*\|$ for two random initializations.
+    \item \textbf{Convergence rate:} Log-slope of $\|h_t - h_{\text{final}}\|$.
+\end{itemize}
+
+\subsubsection{Two-Scale Dynamics Metrics (Pappone et al., 2025)}
+\begin{itemize}
+    \item \textbf{Acceleration:} $a(k) = \|\Delta(k) - \Delta(k-1)\|_2$.
+    \item \textbf{Orthogonality:} $\cos\theta = \frac{\Delta(k) \cdot \Delta(k-1)}{\|\Delta(k)\| \cdot \|\Delta(k-1)\|}$.
+    \item \textbf{Exit step:} First step where acceleration falls below threshold for two consecutive steps.
+\end{itemize}
+
+\subsubsection{Topological Metrics}
+\begin{itemize}
+    \item \textbf{Persistent homology H1:} Maximum normalized persistence computed via \texttt{ripser}.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{Summary of metrics and their implementation status}
+\begin{tabular}{p{3.5cm}p{4cm}p{4cm}}
+\toprule
+Metric & Description & Status \\
+\midrule
+Lyapunov exponent & Divergence of nearby trajectories & Planned \\
+Spectral radius $\rho(J)$ & Local step contraction & Planned \\
+Persistent homology H1 & Topological "holes" = loops & Implemented \\
+Winding number & Turns in 2D projection & Implemented \\
+Steps-to-settle & Steps until $\|\Delta h\|$ decays & Implemented \\
+Acceleration & Second difference of steps & Implemented \\
+Orthogonality & Cosine similarity of steps & Implemented \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Experimental Datasets}
+
+> Gera Drobierro:
+001$ & 50\% \\
+4 & $6.70 \pm 0.02$ & $-0.498 \pm 0.001$ & 50\% \\
+5 & $7.45 \pm 0.02$ & $-0.498 \pm 0.002$ & 50\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Key findings:
+\begin{itemize}
+    \item \textbf{Acceleration grows with depth:} $4.89 \rightarrow 7.45$ (+52\%), correlation $\rho = 0.997$.
+    \item \textbf{Orthogonality is stable:} $\sim -0.5$ across depths, indicating anti-parallel step structure.
+    \item Comparison with existing metrics:
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{Comparison of depth correlations across metrics}
+\begin{tabular}{lcc}
+\toprule
+Metric & Correlation $\rho$ & Interpretation \\
+\midrule
+Winding & 0.053 & Null (H2 refuted) \\
+Steps-to-settle & 0.18 & Weak growth \\
+Acceleration & 0.997 & Strong signal \\
+Orthogonality & -0.436 & Stable, weak correlation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Reproduction of Orthogonality on Real Data: Refutation of Pappone et al.}
+
+During reproduction of two-scale dynamics on real FineWeb text data, we obtained results that \textbf{fundamentally differ} from those reported in the original Pappone et al. paper (NeurIPS 2025, arXiv:2509.23314).
+
+\subsubsection{Comparison with Original Paper}
+
+\begin{table}[h]
+\centering
+\caption{Comparison with Pappone et al. (2025)}
+\begin{tabular}{lcc}
+\toprule
+Aspect & Pappone et al. (2025) & Our Results \\
+\midrule
+Data & FineWeb (real) & FineWeb (real) \\
+Dynamics type & Spiral ($\cos \approx 0.5$--0.65) & Oscillatory ($\cos \approx -0.687$) \\
+Orthogonality & Achieved & Achieved \\
+Step normalization & Not applied & Applied (critically important) \\
+Correlation with norm & Not addressed & Resolved ($\text{corr} = -0.0436$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Key Quantitative Results}
+
+\begin{table}[h]
+\centering
+\caption{Metrics on real FineWeb data}
+\begin{tabular}{lc}
+\toprule
+Parameter & Value \\
+\midrule
+Orthogonality ($\cos$ angle) & $-0.6870 \pm 0.0993$ \\
+Angle between steps & $133.9^\circ$ \\
+Acceleration & $1.8360 \pm 0.0548$ \\
+Step norm & $13.7350 \pm 3.1820$ \\
+Correlation with norm & $-0.0436$ (resolved) \\
+Two-hit exit step & 5 (rapid stabilization) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Critical Observations}
+
+During the reproduction experiment, we discovered:
+
+\begin{enumerate}
+    \item \textbf{Without step normalization, orthogonality is not stably achieved.} This implies that the orthogonality reported by Pappone et al. may be an artifact rather than a fundamental property of latent dynamics.
+    \item \textbf{Correlation between orthogonality and step norm interferes with clean measurement.} Only after applying normalization do we obtain stable orthogonality.
+    \item \textbf{Alternative dynamics type discovered.} Instead of spiral dynamics ($\cos \approx 0.5$--0.65), we observe oscillatory dynamics ($\cos \approx -0.687$).
+\end{enumerate}
+
+\subsubsection{Scientific Significance}
+
+\begin{itemize}
+    \item \textbf{Refutation of universality.} We demonstrate that the dynamics type (spiral vs. oscillatory) depends on measurement methodology, specifically step normalization.
+    \item \textbf{Artifact identification.} Without normalization, orthogonality is not achieved, calling into question the interpretation by Pappone et al. as a fundamental property.
+    \item \textbf{Methodological contribution.} Step normalization is a critical condition for clean orthogonality measurement—a factor not considered in the original paper.
+\end{itemize}
+
+\section{Discussion}
+
+\subsection{Interpretation and Theoretical Integration}
+
+Our results converge on a coherent picture:
+
+1. \textbf{Convergence is by design.} Huginn's random latent initialization promotes convergence to fixed points \cite{geiping2025scaling}. All answer-token trajectories exhibit exponential contraction, consistent with Blayney et al. \cite{blayney2026mechanistic}.
+
+2. \textbf{Counting failure is theoretically predicted.} Merrill et al. \cite{merrill2024illusion} show that "state is an illusion" in SSMs; Grazzi et al.
+
+> Gera Drobierro:
+🖼 \cite{grazzi2024unlocking} prove that positive-eigenvalue LRNNs cannot solve parity. Huginn's contractive dynamics place it in this failure class.
+
+3. \textbf{Steps-to-settle as effective compute proxy.} Length-matched controls conclusively show that steps-to-settle growth is driven by state retention, not prompt length. This supports H3.
+
+4. \textbf{Refutation of Pappone et al. universality.} Our reproduction reveals that orthogonality dynamics are methodology-dependent. The original paper's conclusions may be artifacts of uncorrected measurement.
+
+\subsection{Limitations}
+
+\begin{itemize}
+    \item \textbf{Answer-token only.} We examined only the final token; Geiping et al. observed orbits on question/digit tokens.
+    \item \textbf{Small sample sizes.} Insufficient power to detect rare phenomena (0.02--2.8\% per Blayney).
+    \item \textbf{Proxy metrics.} 2D-PCA winding (sign-arbitrary); steps-to-settle conflates small steps with convergence.
+    \item \textbf{Single initialization seed.} Most runs use one seed; apparent signals collapsed under multi-seed testing.
+    \item \textbf{Geiping regime not reproduced.} We did not use their system prompt or $r=128$.
+    \item \textbf{Spectral radius $\rho(J)$ not computed.} This is the key metric for H3; we used convergence proxies.
+\end{itemize}
+
+\subsection{Future Work}
+
+\subsubsection{Phase A: Honest Measurement}
+\begin{itemize}
+    \item Extend hooks to all token positions.
+    \item Reproduce Geiping regime: persona prompt + $r=128$.
+    \item Implement $\rho(J)$ via power-iteration + JVP \cite{yang2025stabilizing}.
+    \item Reclassify regimes (settle/drift/oscillate) using $\rho(J)$.
+\end{itemize}
+
+\subsubsection{Phase B: Testing H1/H2 on Rare Events}
+\begin{itemize}
+    \item Power analysis to detect 0.02--2.8\% loop rates.
+    \item Loop frequency scan across all tokens and 4 prompt conditions.
+    \item Fix winding: global PCA (26 dims), not per-trajectory 2D.
+    \item Proper TDA (population point-cloud / delay-embedding).
+\end{itemize}
+
+\subsubsection{Phase C: Mechanism}
+\begin{itemize}
+    \item Accuracy-gate: retain only correctly solved instances.
+    \item Q-K probe \cite{tulchinskii2025quantifying} to correlate geometry with attention on PARARULE-Plus.
+\end{itemize}
+
+\section{Conclusion}
+
+We have built a reproducible inference-only pipeline for analyzing reasoning trajectories in recurrent-depth transformers. Key findings:
+
+\begin{itemize}
+    \item Answer-token trajectories converge to fixed points (confirmed by independent metrics).
+    \item The model fails synthetic counting (0\% at len $\geq 8$), consistent with theoretical predictions.
+    \item No winding-depth signal detected (naive H2 refuted).
+    \item \textbf{Steps-to-settle is the effective compute proxy}, correlating with state retention (H3 supported).
+    \item \textbf{Two-scale dynamics:} Acceleration gives $\rho = 0.997$ vs. depth, outperforming winding.
+    \item \textbf{Critical refutation:} Pappone et al.'s orthogonality results are not replicable without step normalization; we observe oscillatory dynamics ($\cos \approx -0.687$) rather than spiral ($\cos \approx 0.5$--0.65), indicating the original conclusions may be methodological artifacts.
+\end{itemize}
+
+Future work will focus on full token coverage, spectral radius computation, and power-analyzed detection of rare dynamics.
+
+\section*{Acknowledgments}
+The authors thank curator S. Barannikov and mentor N. Kurdyukov for valuable discussions and guidance. Code and data are available at \url{https://github.com/Shtirmann/Geometry-of-Reasoning-Trajectories}.
+
+\begin{thebibliography}{9}
+
+\bibitem{geiping2025scaling}
+Geiping, J., et al. (2025). "Scaling up Test-Time Compute with Latent Reasoning: A Recurrent Depth Approach." \textit{NeurIPS 2025}. arXiv:2502.05171.
+
+\bibitem{blayney2026mechanistic}
+Blayney, E., et al. (2026). "A Mechanistic Analysis of Looped Reasoning Language Models." arXiv:2604.11791.
+
+\bibitem{lu2025latent}
+Lu, Y., et al. (2025). "Latent Chain-of-Thought? Decoding the Depth-Recurrent Transformer." arXiv:2507.02199.
+
+> Gera Drobierro:
+\bibitem{pappone2025two}
+Pappone, L., et al. (2025). "Two-Scale Latent Dynamics for Recurrent-Depth Transformers." \textit{NeurIPS 2025}. arXiv:2509.23314.
+
+\bibitem{merrill2024illusion}
+Merrill, W., Petty, J., \& Sabharwal, A. (2024). "The Illusion of State in State-Space Models." arXiv:2404.08819.
+
+\bibitem{grazzi2024unlocking}
+Grazzi, R., et al. (2024). "Unlocking State-Tracking in Linear RNNs Through Negative Eigenvalues." arXiv:2411.12537.
+
+\bibitem{sarrof2024expressive}
+Sarrof, A., Veitsman, Y., \& Hahn, M. (2024). "The Expressive Capacity of State Space Models: A Formal Language Perspective." \textit{NeurIPS 2024}. arXiv:2405.17394.
+
+\bibitem{movahedi2026fixed}
+Movahedi, S., et al. (2026). "Fixed-Point Reasoners: Stable and Adaptive Deep Looped Transformers." arXiv:2606.18206.
+
+\bibitem{yang2025stabilizing}
+Yang, H., et al. (2025). "Stabilizing Recurrent Dynamics for Test-Time Scalable Latent Reasoning in Looped Language Models." arXiv:2605.26733.
+
+\bibitem{tulchinskii2025quantifying}
+Tulchinskii, E., et al. (2025). "Quantifying Logical Consistency in Transformers via Query–Key Alignment." \textit{EMNLP 2025}. arXiv:2502.17017.
+
+\bibitem{bai2019deep}
+Bai, S., Kolter, J.Z., \& Koltun, V. (2019). "Deep Equilibrium Models." \textit{NeurIPS 2019}. arXiv:1909.01377.
+
+\bibitem{barannikov1994framed}
+Barannikov, S. (1994). "The Framed Morse Complex and its Invariants." \textit{Advances in Soviet Mathematics} 21: 93--115.
+
+\end{thebibliography}
+
+\newpage
+\section*{Appendix: Author Contributions}
+
+\begin{table}[h]
+\centering
+\caption{Contribution matrix}
+\begin{tabular}{p{4cm}p{5cm}p{5cm}}
+\toprule
+Component & Alexandr Shianov & David Sverdlov \\
+\midrule
+Extraction pipeline & \checkmark & -- \\
+Winding number & \checkmark & -- \\
+Steps-to-settle & \checkmark & -- \\
+Shape classification & \checkmark & -- \\
+Persistent homology & \checkmark & -- \\
+PARARULE-Plus experiments & \checkmark & -- \\
+Counting experiments & \checkmark & -- \\
+Length-matched controls & \checkmark & -- \\
+Phase map experiments & \checkmark & -- \\
+Generalization experiments & \checkmark & -- \\
+Two-scale dynamics & -- & \checkmark \\
+FineWeb orthogonality reproduction & -- & \checkmark \\
+\hline
+Primary slides (1--17) & \checkmark & -- \\
+Primary slides (18--22) & -- & \checkmark \\
+README documentation & \checkmark & -- \\
+Two-scale README & -- & \checkmark \\
+Phase A planning & \checkmark & -- \\
+Phase B planning & \checkmark & -- \\
+Phase C planning & -- & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Detailed Contributions}
+
+\textbf{Alexandr Shianov (60\% of work):}
+\begin{itemize}
+    \item Developed trajectory extraction infrastructure (\texttt{extraction/}, \texttt{hook.py})
+    \item Implemented all MVP metrics (\texttt{metrics/projection.py}, \texttt{winding.py}, \texttt{dynamics.py})
+    \item Implemented shape classification (\texttt{shapes/gate.py}) and synthetic data generation
+    \item Conducted experiments E1--E5 across PARARULE-Plus, counting, length-matched controls, phase maps, and generalization
+    \item Implemented persistent homology analysis via ripser
+    \item Developed correlation analysis (\texttt{analysis/correlate.py})
+    \item Created main README and notebook (\texttt{01\_mvp\_h2.ipynb})
+\end{itemize}
+
+\textbf{David Sverdlov (40\% of work):}
+\begin{itemize}
+    \item Implemented two-scale dynamics metrics (\texttt{metrics/two\_scale.py})
+    \item Conducted reproduction of orthogonality on real FineWeb data
+    \item \textbf{Key discovery:} Demonstrated that without step normalization, orthogonality is not achieved; identified oscillatory dynamics ($\cos \approx -0.687$) rather than spiral ($\cos \approx 0.5$--0.65), refuting the universality of Pappone et al.'s conclusions
+    \item Validated acceleration as stronger depth indicator ($\rho = 0.997$) than winding
+    \item Contributed to Phase C planning (Q-K probe)
+    \item Prepared slides 18--22 on two-scale dynamics and orthogonality reproduction
+\end{itemize}
+
+\end{document}
