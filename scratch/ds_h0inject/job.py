@@ -359,13 +359,20 @@ def main():
             if d_same is None or d_xfam is None:
                 dropped.append({"item": it, "why": "no donor available"}); continue
             ids_same, ids_xfam = encode(prompt_for(d_same)), encode(prompt_for(d_xfam))
-            if ids_same.shape[1] != ids.shape[1] or ids_xfam.shape[1] != ids.shape[1]:
-                dropped.append({"family": it["family"], "item": it["item"],
-                                "why": f"donor token counts {ids_same.shape[1]}/"
-                                       f"{ids_xfam.shape[1]} vs {ids.shape[1]}"})
-                continue
+            # NO LENGTH GATE, and the first two runs died for want of this comment.
+            # The original required every donor prompt to match the recipient's token count.
+            # `echo_digit` encodes to 49 tokens and `add1`/`sub1` to 40, so the CROSS-FAMILY
+            # donor can never match -- 18 of 18 items were dropped, `ok` was empty, and the
+            # kernel hit its own "NO USABLE ITEMS" guard and returned 1. DataSphere reported
+            # ERROR with no output file, which is exactly what was observed twice.
+            # The gate was never needed: a donor is injected as ONE [d] vector tiled by
+            # `tile()` to the RECIPIENT's length, so the donor prompt's own length never
+            # enters the injection. The donor's orbit is a separate forward on its own ids.
             g_don = tok(d_same["gold"], add_special_tokens=False).input_ids[0]
-            gold_ids = [g_self, g_don]
+            # De-duplicate: `ranks` is keyed by token id, so a recipient and donor sharing a
+            # gold (3 of 18 items here -- both are single digits) made the hook append twice
+            # per unroll and doubled the rank curve. Verified against the toy model.
+            gold_ids = [g_self] if g_don == g_self else [g_self, g_don]
 
             base = orbit(ids, gold_ids)                       # unpatched reference
             h0_own = base["h0"]
@@ -434,6 +441,7 @@ def main():
                     "donor_norm": float(donor.norm()),
                     "rank_delta": [a - b for a, b in
                                    zip(o["ranks"][str(g_self)], base["ranks"][str(g_self)])],
+                    "donor_gold_shared": bool(g_don == g_self),
                 }
             rows.append(rec)
         except Exception as exc:  # noqa: BLE001
