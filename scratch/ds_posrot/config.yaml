@@ -1,0 +1,31 @@
+name: posrot-is-the-regime-a-property-of-the-prompt-or-of-one-position
+desc: >
+  A46: tests the largest scope gap in this project's strongest line. Every regime measurement
+  here reads ONE token position -- core_block[-1] output at [0,-1], the last prompt position --
+  and D132, D134, D141, D161, D164, D167, D173, D176 and D185 all rest on that single sample.
+  The Huginn paper's own orbit figures are drawn at interior positions; their rotating example
+  is the token "3" inside "Claire makes a 3 egg omelette", not the final token. So the regime
+  may be a property of the prompt, as we have written it, or a property of the position we
+  happen to sample. If interior positions rotate freely inside prompts whose last position
+  settles, D141's threshold was fitted on an unrepresentative population and every "this prompt
+  rotates" statement needs re-scoping. That is a large claim about our own record and it costs
+  one forward pass per prompt to test, because the hook already sees the full [T, 5280] state
+  at every unroll and we have simply been indexing [-1]. P1 gates on the last position
+  reproducing the banked values, symbol around 0.77-0.85 and element around 0.05-0.07 against
+  the 0.6677 threshold. P2 is registered both ways: if rotating prompts rotate at nearly all
+  positions and settling prompts at nearly none, the regime is a property of the prompt and the
+  record stands; substantial overlap means it is a property of the position and every regime row
+  needs a scope line. P3 prints R against position index with the tokens, so localisation around
+  the instruction noun is visible rather than inferred. P4 includes a word problem in the shape
+  of their own example, so if interior digit tokens rotate while its last position settles we
+  reproduce their observation directly on our instrument. Mounts the prebuilt weights dataset.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - posrot.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
