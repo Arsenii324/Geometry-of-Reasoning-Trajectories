@@ -90,6 +90,18 @@ We report both, together with the claims we withdrew in the process. The withdra
 included deliberately: in several cases the instrument, not the model, produced the result, and
 a report that omitted them would misrepresent how reliable the remainder is.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.86\linewidth]{pic/onset.pdf}
+\caption{Rotation power in a sliding 12-unroll window, median over six rotating and six
+settling prompts. The axis is the window \emph{start}: each point summarises unrolls
+$[s,\,s{+}12)$, twelve being the smallest window in which a period-6 orbit is defined at all.
+The two families are indistinguishable until the window beginning at unroll~16, by which point
+the answer has long been settled (shaded; median unroll~4). Higher $R$ means more of the
+trajectory's power sits at period~6.}
+\label{fig:onset}
+\end{figure}
+
 \section{Model and Protocol}
 
 Huginn-3.5B (\texttt{tomg-group-umd/huginn-0125}, revision \texttt{bb6621b6\ldots}) has the
@@ -225,8 +237,11 @@ at a median unroll of about four. Measuring the same statistic over the decision
 required) and over the tail separates two facts that had been conflated. Over the decision
 window, rotating and settling prompts are indistinguishable: $0.229$ against $0.230$, a
 separation of $0.000$. Over the tail the same prompts separate completely, $0.862$ against
-$0.298$. A sliding twelve-unroll window dates the divergence to between unrolls~12 and~16, the
-two populations being identical before that and reaching $0.96$ against $0.55$ by the end.
+$0.298$. A sliding twelve-unroll window dates the divergence (Figure~\ref{fig:onset}). Indexing
+each window by its start, the two curves are identical through the window beginning at
+unroll~12 ($0.29$ against $0.29$) and first separate at the window beginning at unroll~16
+($0.56$ against $0.34$); the rotating curve then crosses the regime threshold and saturates
+at $0.96$, while the settling curve flattens at $0.55$ and never reaches it.
 
 The early window is not quiet. Its non-DC power exceeds the tail's by about two orders of
 magnitude ($1.6\times10^{5}$ against $1943$ and $59$); it is energetic and simply carries no

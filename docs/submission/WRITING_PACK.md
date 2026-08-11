@@ -406,7 +406,12 @@ today; 6 is still thin for a paper that surveys 12.
 
 *Read whole, not skimmed. Ranked by cost of not doing.*
 
-1. **Figure 1 does not exist.** Guide-3: *"the most important figure… many readers will literally
+1. **~~Figure 1 does not exist~~ — BUILT 2026-08-11 19:50.** `scripts/fig_onset.py` regenerates it
+   from the bank into `pic/onset.pdf`; it is `\ref{fig:onset}`, placed `[t]` before §2 and cited
+   from the hinge section. **The axis convention is the load-bearing part and is documented in the
+   script's docstring: `s` is the window's START and the window spans `[s, s+12)`.** The script
+   asserts its medians against C7's published values and that `slide[0] == R_early`, so it cannot
+   silently drift from the ledger. Original note follows. Guide-3: *"the most important figure… many readers will literally
    skip all your writing and go straight to figure 1"*; in 1-column it belongs at the top of
    page 2. **Ours is the onset curve** (C7): sliding 12-unroll rotation power, two lines,
    identical through u12 then diverging to 0.96 vs 0.55, with a marker at the median
