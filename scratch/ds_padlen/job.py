@@ -63,11 +63,9 @@ import time
 import zlib
 
 DEPTH = 48                 # the census's depth, so the 0-shot arm is comparable
-SHOTS = (0, 2, 5)
 ARMS = ("k0", "k0_pad", "k2", "k5")
-N_TEST = 8                 # test items per family, from the START of the pool
+N_TEST = 6                 # test items per family, from the START of the pool
 N_ITEMS = 24               # census pool size; items() keeps the battery's item set
-TOPK = 5
 SEED = 20260811
 OUTDIR = os.path.abspath("out")
 WALL_BUDGET_S = 11000
@@ -196,7 +194,6 @@ def items(task, n=N_ITEMS):
 
 TASKS = ("echo_digit", "add1", "sub1", "sort_min", "count_mod3", "parity8",
          "caesar1_letter", "count16")
-N_TEST_LOCAL = 6
 
 # P4: neutral prose. No questions, no digits, no answer-shaped structure, so it cannot act
 # as a distractor exemplar. Repeated as needed to reach the target length.
@@ -215,13 +212,13 @@ PAD_TEXT = (
 def build_items(rng=None):
     out = []
     for task in TASKS:
-        for i, (prompt, gold, _d) in enumerate(items(task)[:N_TEST_LOCAL]):
+        for i, (prompt, gold, _d) in enumerate(items(task)[:N_TEST]):
             out.append({"family": task, "item": i, "prompt": prompt, "gold": gold})
     return out
 
 
 def shot_pool(task, k_max=5):
-    test = {p for p, _, _ in items(task)[:N_TEST_LOCAL]}
+    test = {p for p, _, _ in items(task)[:N_TEST]}
     seen, out = set(), []
     for prompt, gold, distractor in items(task, n=400):
         if prompt in test or prompt in seen:
