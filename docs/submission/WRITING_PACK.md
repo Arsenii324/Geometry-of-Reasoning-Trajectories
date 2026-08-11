@@ -363,3 +363,71 @@ apply, and three are already handled.***
   only ten distinct prompts. **Caught pre-launch by an assertion, and exemplars are now filtered
   against the test set.** Worth one clause in the text — it is a concrete instance of a control
   working.
+
+---
+
+## M. Checked against the writing guides — my earlier dismissal was wrong
+
+*I had skipped `~/Downloads/guides-write/guide-{1,2,3}` as "wrong stage". Their headings map
+directly onto our risks. Checked the draft mechanically against them; two real gaps, three
+clean.*
+
+**GAP 1 — zero figures, and guide-3 is blunt about it:** *"Figures are a big deal, and figure 1
+is the most important figure. Many readers will literally skip all your text."* We have **0**
+`figure` environments. **The onset curve is our Figure 1** — it carries the paper's hinge (C7) in
+one image: two lines identical through unroll 12, diverging to 0.96 vs 0.55. Data:
+`scratch/ds_transrot/transrot.json`, key `slide`. Three further candidates with data paths in §F.
+
+**GAP 2 — guide-3 asks the introduction to answer three questions explicitly**, and we answer
+only two: *how seriously should I take the main claims*, *what flavour of evidence will there
+be*, and — **missing** — *what kinds of evidence should you not expect, even if it would have
+been nice to have had this*. **We have that material and it is unusually strong**: no behavioural
+h₀ test (three failed attempts), single model and checkpoint and seed, an uncorrected
+surface-form bias shared with the number we compare against, and no per-position depth to
+allocate. Stating it in the intro converts a limitation section into an asset.
+
+**CLEAN — checked, not assumed:**
+- *Intensifiers* (guide-1: jettison "extremely, very, completely, essentially, rather…"): all 17
+  occurrences of "rather" are the contrastive `X rather than Y`, not the intensifier `rather
+  large`. One "completely", one "barely", both load-bearing.
+- *Introduction length* (guide-3: ≤1–1.5 pages): ours is ~0.4 pages.
+- *"A sin of omission is better than a sin of commission"* (guide-1) — this is exactly what
+  `CLAIM_INVENTORY.md` Part 6 enforces, and independently validates keeping it.
+
+**Also worth heeding, not yet done:** guide-1 *"cite generously — the papers you ought to cite
+are likely written by the people who will review your paper"*. We went from 1 citation to 6
+today; 6 is still thin for a paper that surveys 12.
+
+### M2 — full read of all three guides; ranked deltas
+
+*Read whole, not skimmed. Ranked by cost of not doing.*
+
+1. **Figure 1 does not exist.** Guide-3: *"the most important figure… many readers will literally
+   skip all your writing and go straight to figure 1"*; in 1-column it belongs at the top of
+   page 2. **Ours is the onset curve** (C7): sliding 12-unroll rotation power, two lines,
+   identical through u12 then diverging to 0.96 vs 0.55, with a marker at the median
+   answer-decision unroll (~4). Data `scratch/ds_transrot/transrot.json` key `slide`. Guide-1
+   adds two constraints: the figures must tell the story alone **and** the text must stand
+   without them; caption 1–3 lines, and say which direction is better.
+2. **No contributions bullet list.** Guide-3: 2–4 items, each ≤1 line, in the intro.
+3. **Intro does not say what evidence *not* to expect.** Guide-3 lists this as one of three
+   things the evidence paragraph must answer. We have strong material for it.
+4. **Abstract follows neither formula.** Guide-2: sentence 1 = something every reader agrees
+   with; sentence 2 = surprising but following from it. Guide-3: (1) what achieved, (1) why hard,
+   (1) how, (2) evidence including the most remarkable number. Ours opens *"We study the latent
+   trajectory of Huginn-3.5B"* — neither. **Candidate opener in the guide-2 shape:** *"A
+   recurrent-depth transformer's latent trajectory is usually read as a trace of its reasoning.
+   We find that most of what such readings measure is the model's willingness to answer in the
+   format being scored."*
+5. **Six citations from a twelve-paper survey.** Guide-1: *cite generously*, *cite throughout*,
+   *exhaust the references limit* — and notes the uncited authors are often the reviewers.
+
+**Validated, no change needed:** *avoid hostages to fortune* and *a sin of omission is better
+than a sin of commission* are exactly what `CLAIM_INVENTORY.md` Part 6 enforces. Intensifier
+sweep already clean (all 17 "rather" are contrastive).
+
+**Flagged for the authors, not actionable by me:** guide-3 states *"almost nobody should use LLMs
+to draft their text… LLMs currently write annoying, preachy, long-winded text that has a
+distinctive style that people can recognise and dislike."* **This draft is LLM-drafted.** The
+uses it endorses — paraphrase to locate unclear passages, adversarial-reviewer critique, LaTeX
+help — are available; drafting is the one it warns against. An author decision.
