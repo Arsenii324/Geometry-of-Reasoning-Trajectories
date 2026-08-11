@@ -27,6 +27,54 @@ the list is 4"* when the gold is `2`, and five families contain the gold in 0.00
 generations. It says our accuracy numbers measured format compliance, and that the two must be
 separated before any of them can be read as capability.
 
+### 1.0-today. What changed on 2026-08-11, and what it cost
+
+*A verification surface: 18 new rows (D164–D181) and 5 amendments, in one place. The
+through-line is a single sentence — **for most of this project we were measuring format
+compliance and calling it capability** — and it cuts both ways.*
+
+**Retracted or narrowed (5).** These are the expensive half and they come first.
+
+| row | what fell |
+|---|---|
+| **D148** | its correctness null was **vacuous** — `correct` is False in **432 of 432** orbits, so there was nothing for the regime to change. *(Then re-tested and restored by D176 on an outcome that varies: the model is right ~50% of the time there when you read what it writes.)* |
+| **D162** | *"protocol is refuted"* is **wrong**. It varied the scoring rule at fixed prompt; **prompt format was the whole story** and was never varied. |
+| **D164** | headline **withdrawn** by its own registered control — the decisive `symbol`↔`array` pair was normalisation, not curvature (D167). |
+| **D168(2)** | *"uncertain about the answer itself"* narrowed by D172 — `add1` writes *"One more than 1 is 2"*, correct, in the first clause. |
+| **D177(4)** | *"depth tracks the kind of operation"* **superseded** by D178 — it tracks where the answer starts (family-level Spearman **+0.885**). |
+
+**Established (the load-bearing four).**
+
+1. **The answer is never lost, and the metric was the problem.** On the 10 census families the
+   model can do, the gold's final rank never exceeds **35** in **2720** draws, none beyond 100
+   in a 65k vocabulary (D168). It is displaced by a prose opener — `The` takes 39.4% of 1260
+   generations (D170) — and first-token scoring reads **0.125** where the answer is produced in
+   **0.781**, against a *measured* chance rate of 0.042–0.152 (D172).
+2. **Two independent routes now reproduce a published number**, the first in 169 rows: five
+   in-context examples at **0.723** (D169) and the harness's own bare prompt at zero shots at
+   **0.658** (D175), against a published **0.699**.
+3. **ρ predicts an observable, closing §6.2.** Swapping `e` mid-trajectory: **62 of 64** switches
+   take, so the regime follows the current parameter with no hysteresis, and entering rotation
+   costs **15×** what leaving it does (median 15.5 vs 1.0 unrolls) against a pre-registered
+   prediction of 16.1 (D173).
+4. **Depth reaches behaviour, and it is not H2.** More unrolls put the answer in the output on
+   **5 of 14** families past Bonferroni (D171) — but depth also raises prose-framing **20×**
+   while leaving starts-with-gold flat (D174), difficulty moves recruited depth **+0.23 unrolls
+   against task identity's +5.56** on a format-independent measure (D177), and demonstration
+   moves the ladder from floor to **ceiling** without ever opening it (D180).
+
+**Two instruments were themselves refuted (D165, D179)**, which is why the above is quotable: a
+linear probe of the class this project used cannot recover a label that is a *guaranteed*
+deterministic function of its own features (**0.690** against a 0.600 baseline, where the correct
+1-D statistic gets **0.980**); and of ten extraction rules over 1424 banked generations, the one
+used throughout scores **0.038** where `last_number` scores 0.240 at half the false-positive rate.
+
+**Still open, and registered rather than assumed:** whether the 5-shot regression is exemplars
+or context length (A45), whether any format *instruction* works at zero shots (A43), and whether
+Huginn's prose is computation or decoration (A44).
+
+---
+
 ### 1.0 Where the three starting hypotheses stand
 
 D65 returned H1, H2 and H3 all to **open** on the correct grounds — each had been retired
