@@ -74,9 +74,20 @@ significant difficulty-on-depth effect — against matched-difficulty controls a
 48-unroll budget (D177).
 
 This replicates D115's shape on an unrelated quantity: **the map's behaviour is set by which
-task it is, not by how hard the instance is.** And what predicts depth is the *kind of
-operation* — retrieval 2.2–2.9, arithmetic 4.5–4.9, character transformation 8.3 — with
-`echo_word`, about as easy as the suite gets, taking **6.15** unrolls against `compare`'s 2.89.
+task it is, not by how hard the instance is.**
+
+**And the large between-family effect is not recruitment either.** It looked like computational
+demand — retrieval 2.2–2.9 unrolls, arithmetic 4.5–4.9, character transformation 8.3. It is
+mostly **where the answer starts**: family-level Spearman between the gold's rank at unroll 1
+and mean `best_depth` is **+0.885** (item-level +0.528, p = 1.6e-146). The matched pair makes it
+concrete — `echo_word` and `echo_digit` are the same instruction at an identical 21-token
+prompt, and the word's gold sits at median rank **862** at unroll 1 against the digit's **15**,
+which is why it takes 6.15 unrolls to arrive against 2.73 (d = 2.87, p = 3.2e-83). Multi-token
+golds are excluded as the cause (6.15 vs 6.08 within `echo_word`, p = 0.25). **The recurrence
+climbs from wherever the prior puts the answer; it does not allocate itself by need** (D178).
+
+So the one large depth effect in the census is a property of the *initial readout* — the input
+embedding and the untrained prior — rather than of the computation the task requires.
 
 So the evidence below that the *rate*- and *rank*-based tests are null is now corroborated by a
 format-independent test rather than being merely a statement about instruments.
