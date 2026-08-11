@@ -29,9 +29,31 @@ separated before any of them can be read as capability.
 
 ### 1.0-today. What changed on 2026-08-11, and what it cost
 
-*A verification surface: 18 new rows (D164–D181) and 5 amendments, in one place. The
+*A verification surface: 24 new rows (D164–D187) and 7 amendments, in one place. The
 through-line is a single sentence — **for most of this project we were measuring format
 compliance and calling it capability** — and it cuts both ways.*
+
+**Added after the papers arrived (D182–D187).** Reading Huginn's own source and config settled
+four things our own runs could not, and two of them go against us:
+
+| row | what it did |
+|---|---|
+| **D183** | **pins their ARC protocol from their code** — `--num_fewshot=0`, lm-eval harness, acc_norm, r = 32 → ARC-E **69.91**. That is our `H_bare_chr` **0.658** arm, *not* D169's 5-shot 0.723. Quoting the five-shot route as "we reproduced their number" would misdescribe the comparison. |
+| **D182** | across **25** ARC measurements the option-list partition is clean and non-overlapping — zero-shot with options **0.392–0.495**, without **0.592–0.658** |
+| **D184** | **the prose is computation.** The answer-carrying forward pass is deeper than position 0 (4.07 → **7.89**, p = 0.0031) *and* than the surrounding prose (7.89 vs 3.65, **p = 0.0004**), concentrated on arithmetic (`sub1` 4.33 → **15.67**) |
+| **D185** | their attribution of orbiting to *"prompts requiring numerical reasoning"* is **contradicted** — same task rotates 32/32 in one wording and 0/22 in another; one noun flips it at fixed token count |
+| **D186** | **it is length, not exemplars.** Irrelevant padding collapses the start rank 31 → **329** (p = 2.9e-09) where five exemplars give 58.5 — at *matched* length. Context costs **depth** (4.73 → 7.29, p = 0.0001), not accuracy |
+| **D187** | **§6.9 withdrawn in our favour** — training depth is Poisson-lognormal, so r = 48 is the **83rd percentile**, not "outside the training regime". And `block_idx` never enters the block computation, so the DEQ framing is a code-level fact |
+
+**Two things I would not have found without the papers, and one is a hole in our strongest
+line.** Their orbit figures are drawn at **interior token positions**; every measurement in this
+project reads the **last** prompt position only. If interior tokens rotate inside prompts whose
+last position settles, D141's threshold was fitted on an unrepresentative population and
+fourteen rows need a scope line. **A46 is testing it now.** They also name a third structure,
+**"sliders"**, which we have never looked for.
+
+*Two of my own registered predictions were refuted today (D180's P2, D186's fork) and one
+result I nearly published was an artefact of my own locator (D184(3)). Those are in the rows.*
 
 **Retracted or narrowed (5).** These are the expensive half and they come first.
 
