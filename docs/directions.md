@@ -1537,3 +1537,6 @@ abandoned after three failures (§Q). No jobs run, no monitors needed, nothing t
 
 **Ledger 200 rows, suite 616 passed, everything pushed.** The draft compiles at 10 pages with
 main body ending page 9, 0 errors, 0 undefined citations, 0 uncited bibitems, CP1251 preserved.
+
+
+*(Index of all documents, tools and data: `docs/INDEX.md`.)*

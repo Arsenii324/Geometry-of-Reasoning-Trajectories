@@ -1,3 +1,5 @@
+> **Lost? `docs/INDEX.md` indexes every document, tool, data location and external path, with a read order.**
+
 # SUBMISSION STATE — read this first after a context compaction
 
 *Written 2026-08-11 17:40, **updated 18:15**. The deadline is **21:00 Moscow time** and it is an
