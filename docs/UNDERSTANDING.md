@@ -9,8 +9,23 @@ itself evidence. Every figure cites the ledger row carrying its controls and lim
 ## 1. The synthesis
 
 **One sentence.** *The latent trajectory encodes the input — its shape and its endpoint
-alike — while difficulty never reaches the dynamics, the dynamics never reach the
-readout, and the readout is finished long before the dynamics are.*
+alike — while difficulty never reaches the dynamics, the dynamics never reach the readout, the
+readout is finished long before the dynamics are, and what we spent months scoring was not the
+readout but the model's willingness to answer in the format we scored.*
+
+**The second clause is new as of 2026-08-11 and it is the day's main result.** Huginn answers
+in prose sentences. `The` opens **39.4%** of 1260 banked generations; exact-match reads 0.020
+where the answer is actually present in 0.255 of them; and the literal text is unambiguous —
+`sub1` gold `3` produces *"The answer is 4 - 1 = 3"*, scored **wrong** (D170). Supplying the
+format recovers the benchmark: ARC-Easy goes **0.416 → 0.723** on five in-context examples
+against a published 0.699, while option-likelihood scoring — which never asks the model to emit
+anything — moves ~2 points over the same shots (D169). And on tasks the model can do, the gold
+never leaves the top 35 of a 65k vocabulary at any depth (D168).
+
+*This does not say Huginn is accurate.* `last_item` confidently answers *"The last number in
+the list is 4"* when the gold is `2`, and five families contain the gold in 0.000 of their
+generations. It says our accuracy numbers measured format compliance, and that the two must be
+separated before any of them can be read as capability.
 
 ### 1.0 Where the three starting hypotheses stand
 
