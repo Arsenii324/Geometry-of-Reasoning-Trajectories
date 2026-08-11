@@ -1,0 +1,473 @@
+\documentclass{zapiski}
+\originfo{1}{}{}{2026}
+\setcounter{page}{1}
+\date{}
+
+\usepackage[cp1251]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian, english]{babel}
+
+% NOTE: this file is CP1251, matching zapiski.cls and the template README.
+% With matching encodings the class masthead renders correctly and needs no
+% \renewcommand overrides (verified: see Appendix C).
+
+\usepackage{times}
+\usepackage{url}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\hypersetup{colorlinks=false,pdfborder={0 0 0}}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{cite}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{float}
+
+\renewcommand{\UrlFont}{\ttfamily\small}
+
+\english
+
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.7}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.8}
+\sloppy
+\begin{document}
+
+\title[Geometry of Reasoning Trajectories]{Geometry of Reasoning Trajectories in
+Recurrent-Depth Transformers: Latent Dynamics in Huginn-3.5B}
+
+\author[Shiianov, Sverdlov, Varaksin]{
+  \textbf{Alexandr Shiianov},
+  \textbf{David Sverdlov},
+  \textbf{Arsenii Varaksin}
+\\
+  \small{
+    \textbf{Curator:} S. Barannikov (Skoltech); \textbf{Mentor:} N. Kurdyukov
+  }
+\\
+  \small{
+    \textbf{Correspondence:} \href{mailto:varbarn22@gmail.com}{varbarn22@gmail.com}
+  }
+}
+
+\begin{abstract}
+We present an inference-only analysis of latent trajectories in the Huginn-3.5B recurrent-depth
+transformer \cite{geiping2025scaling}. Without fine-tuning, hidden states are extracted at each
+recurrence step via hooks on \texttt{core\_block[-1]} and reduced to geometric, dynamical and
+topological descriptors testing three hypotheses. Answer-token trajectories predominantly converge
+exponentially to fixed points, consistent with Huginn's design and with independent measurement
+\cite{blayney2026mechanistic}; no depth-dependent winding is found, refuting the naive
+operationalisation of H2. We identify \emph{steps-to-settle} as a proxy for effective computation
+that tracks state retention rather than prompt length, confirmed by a length-matched control whose
+correlation reverses sign with task type ($+0.558$ against $-0.576$). Two-scale analysis
+\cite{pappone2025two} shows acceleration correlating with depth ($\rho = 0.997$) and outperforming
+winding, while reproduction on real FineWeb text gives oscillatory rather than spiral dynamics and
+shows that orthogonality is not achieved without step normalisation. Measuring the same
+trajectories with a projection-free rotation statistic adds two results: the conspicuous period-6
+structure is selected by one instruction word at fixed token count and is causally controlled by a
+single embedding row; and much of what we scored as capability was answer formatting, first-token
+scoring reading 0.125 where the answer is present in 0.781 of generations. The lines meet in a
+timing fact: the answer is fixed some twelve unrolls before the regime becomes measurable.
+\end{abstract}
+
+\keywords{recurrent-depth transformers, latent reasoning, interpretability,
+evaluation protocols, dynamical systems}
+
+\maketitle
+
+\section{Introduction}
+
+Test-time scaling has revived interest in recurrent-depth transformers
+\cite{geiping2025scaling}. Unlike chain-of-thought reasoning in token space, Huginn refines a state
+in $\mathbb{R}^{5280}$, applying a shared block $r$ times,
+$\mathbf{h}_{t+1} = \mathbf{R}(\mathbf{h}_t; \mathbf{e})$, with $\mathbf{e}$ a fixed context
+encoding; empirically trajectories settle, loop or drift. The architecture initialises
+$\mathbf{h}_0$ randomly, which ``promotes convergence to a steady state independent of
+initialization, i.e., path independence'' \cite{geiping2025scaling}. We ask whether the geometry of
+these trajectories encodes computational depth and --- separately --- whether the quantities we
+score as capability measure what we take them to. Three hypotheses are tested.
+
+\textbf{H1 (regimes):} each token's latent path falls into one of several regimes --- settling,
+looping or drifting --- distinguishable by recurrence and topological signatures. \textbf{H2 (loops
+encode depth):} when the path loops, its winding number grows with the reasoning steps the task
+requires. \textbf{H3 (contraction prevents state tracking):} if the update is strictly contractive
+the model cannot maintain a running count, so stateful tasks require looping or drifting.
+
+The results divide into three lines, the third reinterpreting the first two. We contribute a
+length-matched control showing effective computation grows with state
+\emph{retention} rather than prompt length; the finding that the conspicuous geometric structure is
+selected by one instruction word at fixed token count and causally controlled by one embedding row,
+with a validated scalar instrument for it; and a decomposition of measured capability into answer
+\emph{availability} and answer \emph{format} that reproduces the published benchmark number under
+its authors' protocol, together with a timing result placing regime and answer in non-overlapping
+windows.
+
+What this report does not offer, stated once: every number comes from one model, one checkpoint
+and one seeded state per condition, so nothing here generalises to recurrent-depth models at large;
+several nulls rest on 12--24 paired units, excluding large effects and not small ones; and the
+behavioural test of H3 by state injection is absent rather than negative. Section~\ref{sec:lim} is explicit
+about the rest.
+
+\section{Model, Protocol and Metrics}
+
+All experiments use Huginn-3.5B inference-only (revision \texttt{bb6621b6\ldots},
+\texttt{transformers} 4.53.3): a two-layer prelude runs once, a four-layer core block iterates $r$
+times, then a coda, a final normalisation and the head decode, with $\mathbf{e}$ re-injected at
+every unroll. Following the DEQ reading \cite{bai2019deep} we treat $\mathbf{e}$ as the map's
+\emph{parameter} and $\mathbf{h}$ as its \emph{state}, the block index never entering the block
+computation. We hook \texttt{core\_block[-1]} at each unroll and seed every forward, the initial
+state being drawn from an unseeded generator by default.
+
+\paragraph{Metrics.} \emph{Winding number}, accumulated angle in a per-trajectory 2D-PCA
+projection over $2\pi$; \emph{steps-to-settle}, the first step with $\|\Delta h_t\| < 0.1$, our
+proxy for effective computation; shape (settle/loop/drift); \emph{acceleration}
+$a(k) = \|\Delta(k)-\Delta(k-1)\|_2$ and \emph{step orthogonality} $\cos\theta_k$, the cosine
+between successive steps $\Delta(k)$ and $\Delta(k-1)$ \cite{pappone2025two}; and
+persistent homology $H_1$ via \texttt{ripser} \cite{barannikov1994framed}. The Lyapunov exponent
+and spectral radius $\rho(J)$ are \emph{not} computed; convergence proxies stand in, a limitation
+for H3. Note $\rho$ denotes Spearman correlation throughout except in $\rho(J)$.
+
+\paragraph{Rotation power.} Winding is read off a projection, so we add a projection-free measure
+to cross-check it. Taking the discrete Fourier transform along the unroll axis in the full
+5280-dimensional state, \emph{rotation power} $P_6$ is the fraction of non-DC power in the period-6
+bin over a 24-unroll tail --- one scalar, no basis choice. It reproduces its own spectral definition
+to $4\times10^{-8}$; one threshold $P_6 > 0.6677$ reproduces the hand-assigned rotate/settle label on
+\textbf{691 of 696} trajectories and \textbf{688 of 696} held out; and rotating prompts peak at
+period~6 \emph{specifically}. Two cycles are needed, so 12 unrolls is the shortest window on which
+$P_6$ is defined --- a bound that matters in \S\ref{sec:windows}.
+
+\paragraph{Datasets.} PARARULE-Plus (depths 2--5, 10 per depth); a running $\pm1$ sum (lengths
+2--32, 5--15 each); parity (4--48, 10 each); running-max (4--48, 8 each); 1000 FineWeb texts; and
+the regime sweeps below (16 nouns, 384 orbits, token count fixed at 53).
+
+\section{Depth, Looping and Effective Computation}
+
+\subsection{E1: Winding does not track reasoning depth}
+
+All 40 PARARULE-Plus answer-token trajectories (depths 2--5, $n=10$ per depth) settle. Winding
+against depth gives $\rho = +0.20$ per level (n.s.) and $-0.037$ per row ($p = 0.82$); partialling
+by length, $-0.234$ ($p = 0.15$). Steps-to-settle grows weakly, $20.2 \rightarrow 22.0$. Multi-step
+symbolic logic does not induce looping.
+
+\subsection{E2: Counting, and a length confound}
+
+On a running $\pm1$ sum, $n_{\text{ops}} \in \{2\ldots32\}$, 5 seeds, all trajectories settle but
+steps-to-settle grows with $n_{\text{ops}}$ ($\rho = 0.718$, $p < 1e{-}5$). Winding also correlates
+($\rho = 0.554$, $p = 0.002$) --- yet partialling by length collapses it to $\rho = 0.04$,
+$p = 0.82$. The winding correlation is driven by prompt length, which is what makes the next
+experiment necessary.
+
+\subsection{E3: A length-matched control}
+
+\emph{Track} and \emph{local} conditions share identical body text and differ only in the question
+(``What is the sum?'' against ``What was the last instruction?''), matching length by construction.
+With 15 seeds:
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Length-matched control (15 seeds): sign is set by task type, not length.}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+Condition & Metric & $\rho$ & $p$ \\
+\midrule
+Track (requires accumulation) & steps $\sim n_{\text{ops}}$ & $+0.558$ & $<1e{-}8$ \\
+                              & winding $\sim n_{\text{ops}}$ & $+0.324$ & $0.002$ \\
+Local (last step only)        & steps $\sim n_{\text{ops}}$ & $-0.576$ & $<1e{-}8$ \\
+                              & winding $\sim n_{\text{ops}}$ & $+0.054$ & $0.61$ (n.s.) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At identical length the sign of the correlation is set solely by task type --- state retention
+increases effective computation, pure retrieval decreases it --- the strongest evidence here for
+H3's computational half.
+
+\subsection{E4: Loops are a budget symptom}
+
+With a reduced budget ($\textit{num\_steps} = 16$) loops appear --- 7 of 8 at
+$n_{\text{ops}} = 24$, 5 of 8 at 48 --- while at $\textit{num\_steps} \ge 24$ all settle. Looping is
+a symptom of insufficient budget, not of task depth.
+
+\subsection{E5: The signature generalises to parity}
+
+On parity, $n_{\text{ops}} \in \{4\ldots48\}$, 10 seeds: winding is null ($\rho = 0.162$,
+$p = 0.22$) while steps-to-settle again tracks length ($\rho = 0.615$, $p < 1e{-}6$). The signature
+is not specific to arithmetic.
+
+\section{Instruction Form Selects the Regime}
+
+\subsection{E6: One instruction word switches the map}
+
+Holding the sequence, required answer, marker and token count fixed at 53, only the instruction
+noun varies. ``Report the largest \textbf{symbol}'' rotates \textbf{36/36} paired cells; ``largest
+\textbf{element}'' and ``largest \textbf{item}'' rotate \textbf{0/36}. The selector is not semantic
+(neighbours of \emph{symbol} rotate \textbf{0/144}, of \emph{element} \textbf{96/120}), not
+orthographic (form-matched \emph{symptom}, \emph{cymbal}, \emph{symmetry} rotate \textbf{72/72}),
+and not tokenisation (the 53-token group splits exactly 50\%). Editing a single embedding row, with
+the prompt string and every token identifier untouched, flips the regime, both gates bit-exact at
+$0.000e{+}00$. Swapping $\mathbf{e}$ mid-trajectory, \textbf{62/64} switches take at points from
+unroll 1 to 48 --- the regime follows the parameter the map currently has, not its history ---
+entering rotation taking a median 15.5 unrolls against 1.0 to leave.
+
+\emph{Scope.} The within-regime control failed and norm-matching rescued only one noun pair of two,
+so the licensed statement is that the row determines the regime \emph{within a small,
+direction-dependent neighbourhood}.
+
+\subsection{E7: The regime belongs to the prompt, not the position measured}
+
+E1--E6 read one token position while the published figures are drawn at \emph{interior} ones, so we
+re-measured $P_6$ at every position: rotating prompts rotate at \textbf{62.0\%} of theirs
+($0.614$--$0.623$, $n=9$), settling prompts at \textbf{0.000}, no overlap. Onset is a single
+boundary --- position 20 of 53 in \emph{symbol}, where the second rule clause begins, not the noun
+at 14 --- so the shared answer-token restriction does not bias the regime labels.
+
+\section{What the Accuracy Measurements Measured}
+
+\subsection{E8: Format, not availability}
+
+Scoring the first generated token reads \textbf{0.125} where the answer is actually present in the
+generated text in \textbf{0.781} of cases, against a \emph{measured} false-positive rate of
+$0.042$--$0.152$. What displaces it is prose: \emph{The} opens \textbf{39.4\%} of 1260 generations.
+Depth worsens the metric while the output improves --- across $r = 2,4,8,16,32$ the rate of opening
+with \emph{The} runs $0.032 \to 0.099 \to 0.631 \to 0.560 \to 0.647$ ($p = 1.09e{-}12$) while
+opening with the gold does not move ($p = 0.515$). Literally, \texttt{sub1} with gold \texttt{3}
+produces \emph{``The answer is 4 - 1 = 3''}, scored wrong.
+
+Supplying the format recovers the published benchmark number: the ARC-Easy figure of $0.699$ at
+$r=32$ is produced zero-shot, normalised, with no option list, and scored that way we obtain
+\textbf{0.658}; five in-context examples under option-letter argmax independently give
+\textbf{0.723} ($p = 3.35e{-}07$). Instruction fails where demonstration works --- ``reply with only
+the answer'' gives no improvement, \verb|\boxed{}| produced \emph{fewer} such answers than not
+asking (2/36 against 4/36), the system turn buys one item in twenty-four ($p = 1.0$) --- while two
+in-context examples move oracle accuracy by $\mathbf{+0.221}$ ($p = 9.3e{-}09$).
+
+\textbf{Consequence for this paper.} A low exact-match score is not by itself evidence of a
+capability failure --- over 1424 generations exact match recovers $0.038$ of the answers where a
+last-number rule recovers $0.240$ at half the false-positive rate. We therefore state E2's counting
+result as \emph{failure under exact-match scoring at length $\ge 8$}, not as a capability bound;
+the prediction it agrees with \cite{merrill2024illusion,grazzi2024unlocking} concerns state
+tracking, which E3 addresses without a scoring rule in the way.
+
+\section{The Regime and the Answer Occupy Different Windows}
+\label{sec:windows}
+
+The rotation statistic is computed over the tail, while the answer is best-ranked at a median
+unroll of about \textbf{four}. Measuring it on both windows separates two conflated facts. Over the
+decision window (unrolls 0--11) rotating and settling prompts are indistinguishable, $0.2292$
+against $0.2296$, a separation of $\mathbf{0.0004}$; over the tail they separate completely,
+$0.862$ against $0.298$, a separation of $\mathbf{0.565}$.
+
+A sliding 12-unroll window dates the divergence between window starts 12 and 16 (Figure~1). The
+early window is not quiet --- its non-DC power exceeds the tail's by two orders of magnitude
+($1.6\times10^{5}$ against $1943$ and $59$) --- it is energetic and simply carries no period-6
+structure. The answer is therefore fixed roughly twelve unrolls before the regime is measurable.
+
+\emph{Scope.} This is a \textbf{timing claim, not a causal one}, and it bounds the instrument as
+much as the model: $P_6$ needs two cycles, so \textbf{12 unrolls is the earliest any period-6
+statistic can speak}. A behavioural null from manipulating the regime is correspondingly weak --- a
+causally induced regime change altered the answer in 1 of 18 paired units, acting on a property
+that did not yet exist when the readout settled.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.52\linewidth]{pic/onset.pdf}
+\caption{Sliding 12-unroll rotation power, median over six rotating and six settling prompts. The
+axis is the window \emph{start}: each point summarises unrolls $[s,\,s{+}12)$. The families are
+indistinguishable until the window beginning at unroll~16, by which point the answer is long
+settled (shaded; median unroll~4). Higher is more period-6 power.}
+\end{figure}
+
+\section{Two-Scale Dynamics and Step Orthogonality}
+
+On synthetic trajectories at depths 2--5, mean acceleration grows $4.89 \rightarrow 7.45$ (+52\%,
+$\rho = 0.997$ against depth) while step orthogonality stays near $-0.5$ and the two-hit exit
+fraction is fixed at 50\%. As a depth indicator acceleration ($0.997$) far outperforms
+steps-to-settle ($0.18$) and winding ($0.053$).
+
+On \emph{real} FineWeb text the same measurement gives step orthogonality $-0.6870 \pm 0.0993$
+($133.9^\circ$), acceleration $1.8360 \pm 0.0548$, step norm $13.7350 \pm 3.1820$ and a two-hit exit
+at step 5 --- \emph{oscillatory} dynamics, successive steps anti-aligning, rather than the spiral
+($\cos \approx 0.5$--$0.65$) of \cite{pappone2025two}. More useful, \textbf{the measurement is
+confounded with step norm unless the step is normalised}: before normalisation orthogonality is not
+stably achieved, after it the correlation with step norm falls to $-0.0436$. We take step
+normalisation as the robust finding and restrict the comparison with \cite{pappone2025two} to this
+FineWeb arm, the synthetic arm being generated by a construction that is not the model studied.
+
+\section{Discussion}
+
+\textbf{Convergence is by design, and the two rotation measures differ in scope.} Randomised latent
+initialisation promotes convergence and every answer-token trajectory in E1--E5 contracts,
+consistent with \cite{blayney2026mechanistic}. This is not in tension with E6: every E1--E5 prompt
+uses one instruction style, and E6 shows the regime is selected by wording at fixed task, answer and
+token count --- so ``all trajectories settle'' is what E6 predicts there, making E1--E5 a
+replication \emph{within the settling class}, not evidence that the model never rotates. The
+instruments differ accordingly: winding is a 2D-PCA quantity fitted to the trajectory it judges and
+confounds damping with rotation, a weak basis for a \emph{negative}; $P_6$ carries a
+held-out-validated threshold and can support one.
+
+\textbf{What H2 does and does not survive.} The winding operationalisation --- winding number
+growing with required reasoning steps --- is refuted on these prompt sets (E1, E2, E5).
+\emph{H2 as the adaptive-computation literature means it is a different claim and is not testable
+here at all}: per-position ponder time rises with difficulty only in models trained with a halting
+cost \cite{graves2016act,dehghani2019ut,banino2021pondernet}, whereas \texttt{num\_steps} unrolls
+the whole sequence together, so every position receives exactly $r$ and there is nothing to
+allocate. Our null is evidence against the operationalisation, not the hypothesis.
+
+\textbf{H3, jointly.} E3 shows effective computation grows with state retention, not prompt
+length. Independently the running count \emph{is} linearly decodable from the latents, an untrained
+model carrying the lagged count at cross-validated $0.7498$ against the trained model's $0.7175$ ---
+the register is architectural, not learned. Jointly: the model spends more compute on
+state-retention tasks \emph{and} the state survives contraction. What fails is H3's strong form,
+that contraction implies no running count; E3 is untouched. The contraction rate is also
+family-level, spanning $0.8239$ to $0.9181$, and should not be quoted as one constant.
+
+\textbf{H1: both, at different levels.} Drift is excluded by construction, every state being a
+normalisation output on a sphere of radius $76.386$ against which two random points lie
+$108.03 \pm 0.75$ apart. A period-4 cycle exists \emph{across} the four core blocks; \emph{within} a
+block the state settles or rotates by instruction token (last-step residual $2.9152$ against
+$0.0185$).
+
+\textbf{Reliability.} Several results here were produced by instruments rather than by the model.
+One behavioural null was vacuous --- its correctness variable was false in 432 of 432 orbits ---
+and re-tested on an outcome that varies the conclusion returned. A geometry headline was withdrawn
+by its own registered norm control, and a spectral run refused by its own consistency gate. A
+linear probe of the class used for several of our nulls cannot recover a label that is a guaranteed
+deterministic function of its own inputs ($0.690$ against a $0.600$ baseline, where the correct
+statistic reaches $0.980$), so those nulls are uninformative rather than negative.
+
+\section{Limitations}
+\label{sec:lim}
+
+\begin{itemize}\itemsep0pt\parskip0pt
+\item \textbf{Answer-token focus.} E1--E5 examine the final token, while the authors report orbits
+      on question and digit tokens; E7 checks this for the regime labels and finds no bias, but the
+      E1--E5 correlations are not re-measured per position.
+\item \textbf{Proxy metrics.} 2D-PCA winding is sign-arbitrary and basis-dependent, and
+      steps-to-settle conflates a small step with convergence; $\rho(J)$, the correct quantity for
+      H3, is \emph{not} computed.
+\item \textbf{Small samples, single seeds; configuration.} Some apparent signals collapsed under
+      multi-seed testing, power is insufficient at the 0.02--2.8\% rate of
+      \cite{blayney2026mechanistic}, and we did not use the authors' system prompt or $r=128$ ---
+      though the system turn is at least not the missing ingredient ($p = 1.0$, above).
+\item \textbf{Shared bias; cross-checkpoint comparison.} Our benchmark numbers and the published
+      figure share an uncorrected surface-form bias from likelihood scoring, and comparisons with
+      two related works are cross-checkpoint or cross-protocol.
+\item \textbf{Timing, not causation.} \S\ref{sec:windows} says \emph{when} the properties become
+      measurable, not \emph{whether} one influences the other. A behavioural test of H3 by
+      injecting a donor state at $h_0$ failed three times and is not reported.
+\end{itemize}
+
+\paragraph{Next steps.} Compute $\rho(J)$ by power iteration with Jacobian-vector products
+\cite{yang2025stabilizing} and reclassify regimes with it; extend hooks to all positions and
+reproduce the authors' configuration at $r=128$; replace per-trajectory 2D winding with a global
+projection; probe query--key alignment \cite{tulchinskii2025quantifying}; and apply the steering
+vector at all positions, the unrun discriminator for its null.
+
+\section{Conclusion}
+
+Answer-token trajectories converge, and their effective computation grows with state retention
+rather than prompt length. The conspicuous geometric structure is nevertheless selected by the
+instruction's surface form rather than the task, and controlled from one embedding row. Much of
+what we and the standard protocols scored as capability was the model's willingness to emit its
+answer where a scorer looks. Whether the regime affects behaviour remains open; the experiment
+settling it must act earlier in the trajectory than ours did.
+
+\section{Contribution}
+
+\begin{itemize}\itemsep0pt\parskip0pt
+\item \textbf{Alexander Shiianov} --- extraction infrastructure and hooks; winding,
+      steps-to-settle, shape classification, persistent homology; experiments E1--E5 including the
+      length-matched control and phase map; correlation analysis.
+\item \textbf{David Sverdlov} --- two-scale metrics; the FineWeb orthogonality reproduction and the
+      step-normalisation finding; acceleration as a depth indicator.
+\item \textbf{Arsenii Varaksin} --- rotation power and its validation; regime experiments E6--E7
+      with the embedding-row and parameter-swap interventions; the format-versus-capability
+      decomposition E8 and ARC protocol arms; the window split; the steering null; the
+      instrument-null and retraction record.
+\item \textbf{Serguei Barannikov} (mentor) --- problem formulation and hypotheses H1--H3;
+      \textbf{N. Kurdyukov} (mentor) --- supervision.
+\end{itemize}
+
+\section*{Acknowledgments}
+
+We thank the organisers of SMILES-26 and Yandex Cloud for the compute. Code and data:
+\url{https://github.com/Shtirmann/Geometry-of-Reasoning-Trajectories}.
+
+{\footnotesize\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+\begin{thebibliography}{99}
+
+\bibitem{geiping2025scaling}
+J.~Geiping et~al., \emph{Scaling up test-time compute with latent reasoning: a recurrent depth
+approach}, arXiv:2502.05171, 2025.
+
+\bibitem{blayney2026mechanistic}
+E.~Blayney et~al., \emph{A mechanistic analysis of looped reasoning language models},
+arXiv:2604.11791, 2026.
+
+\bibitem{pappone2025two}
+F.~Pappone, D.~Crisostomi, and E.~Rodol\`a, \emph{Two-scale latent dynamics for recurrent-depth
+transformers}, arXiv:2509.23314, 2025.
+
+\bibitem{merrill2024illusion}
+W.~Merrill, J.~Petty, and A.~Sabharwal, \emph{The illusion of state in state-space models},
+arXiv:2404.08819, 2024.
+
+\bibitem{grazzi2024unlocking}
+R.~Grazzi et~al., \emph{Unlocking state-tracking in linear RNNs through negative eigenvalues},
+arXiv:2411.12537, 2024.
+
+\bibitem{bai2019deep}
+S.~Bai, J.~Z.~Kolter, and V.~Koltun, \emph{Deep equilibrium models}, arXiv:1909.01377, 2019.
+
+\bibitem{graves2016act}
+A.~Graves, \emph{Adaptive computation time for recurrent neural networks}, arXiv:1603.08983, 2016.
+
+\bibitem{dehghani2019ut}
+M.~Dehghani et~al., \emph{Universal transformers}, arXiv:1807.03819, 2018.
+
+\bibitem{banino2021pondernet}
+A.~Banino, J.~Balaguer, and C.~Blundell, \emph{PonderNet: learning to ponder}, arXiv:2107.05407,
+2021.
+
+\bibitem{yang2025stabilizing}
+H.~Yang et~al., \emph{Stabilizing recurrent dynamics for test-time scalable latent reasoning in
+looped language models}, arXiv:2605.26733, 2025.
+
+\bibitem{tulchinskii2025quantifying}
+E.~Tulchinskii et~al., \emph{Quantifying logical consistency in transformers via query--key
+alignment}, EMNLP 2025, arXiv:2502.17017.
+
+\bibitem{barannikov1994framed}
+S.~Barannikov, \emph{The framed Morse complex and its invariants}, Advances in Soviet Mathematics
+\textbf{21} (1994), 93--115.
+
+\end{thebibliography}
+}
+
+\enlargethispage{4\baselineskip}
+\vspace{0.4em}
+\begin{center}
+\foreignlanguage{russian}{\textbf{ Траектории рассуждений в трансформере
+с рекуррентной глубиной}}\\[2pt]
+\foreignlanguage{russian}{Александр Шиянов, Давид Свердлов, Арсений Вараксин}\\[1pt]
+\foreignlanguage{russian}{\small Куратор: С. Баранников (Сколтех); научный руководитель:
+Н. Курдюков}
+\end{center}
+\begin{center}\begin{minipage}{0.9\textwidth}\footnotesize
+\begin{center}\foreignlanguage{russian}{\textbf{Аннотация}}\end{center}
+\foreignlanguage{russian}{Исследуются латентные траектории Huginn-3.5B. Эффективное число шагов
+вычисления растёт с необходимостью удерживать состояние, а не с длиной запроса; одно слово в
+инструкции переключает отображение между сходимостью и затухающим вращением с периодом~6; а
+значительная часть измерений качества фактически измеряла формат ответа, а не его наличие.}
+
+\noindent\foreignlanguage{russian}{\textbf{Ключевые слова:} трансформеры с рекуррентной глубиной,
+латентные рассуждения, интерпретируемость, протоколы оценки.}
+\end{minipage}\end{center}
+
+\end{document}
