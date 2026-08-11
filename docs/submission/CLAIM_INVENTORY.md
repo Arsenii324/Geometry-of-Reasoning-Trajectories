@@ -204,8 +204,10 @@ their method could not have produced in either direction.
 - **Strongest form:** on this architecture the answer is fixed roughly twelve unrolls before the
   regime becomes measurable at all, so behavioural nulls about the regime were testing a property
   that did not yet exist.
-- **Numbers:** decision window (unrolls 0–11) rotating **0.229** vs settling **0.230**,
-  separation **0.000**. Tail: **0.862** vs **0.298**, separation **0.565**. Sliding 12-unroll
+- **Numbers:** decision window (unrolls 0–11) rotating **0.2292** vs settling **0.2296**,
+  separation **0.0004**. *(Recomputed 2026-08-11 from `transrot.json`: medians 0.229177 and
+  0.229603. The earlier "0.229 vs 0.230, separation 0.000" is the same numbers rounded, but it
+  reads as an arithmetic error — 0.230−0.229=0.001 — so the paper states four decimals.)* Tail: **0.862** vs **0.298**, separation **0.565**. Sliding 12-unroll
   window: identical through u12 (0.23/0.24/0.24/0.29 vs 0.23/0.24/0.25/0.29), then u16 **0.56 vs
   0.34**, u20 **0.74 vs 0.40**, u24 **0.84 vs 0.45**, saturating **0.96 vs 0.55**.
 - **The floor cuts the right way and must be quoted:** early-window non-DC power **1.6e+05** vs
