@@ -175,8 +175,9 @@ def main():
         return out
 
     items = build_items()
-    print(f"{len(items)} prompts, TAIL={TAIL} -> periods readable: "
-          f"{[TAIL // k for k in range(1, TAIL // 2 + 1) if TAIL % k == 0]}", flush=True)
+    print(f"{len(items)} prompts, TAILS={TAILS} -> periods readable per tail: "
+          + "; ".join(f"{T}:{[T // k for k in range(1, T // 2 + 1) if T % k == 0]}"
+                      for T in TAILS), flush=True)
     t0, rows = time.time(), []
     for n, it in enumerate(items):
         try:

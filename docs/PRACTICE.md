@@ -598,3 +598,33 @@ attribute map from a grep pattern its author chose, omitted `prelude`, and confi
 working kernel as broken. That is RC1 — a proxy for the thing — committed *inside a tool built
 to catch errors*, which is RC5. It now reads the `ModuleDict` construction verbatim with line
 numbers cited, so the map can be re-verified rather than trusted.
+
+## RC9 — a platform ERROR is not necessarily a crash, and two of today's were not
+
+**Two jobs failed today for reasons that produce the identical platform status, and neither
+left a traceback. I looked for one in both cases.**
+
+**A47 — the kernel refused, correctly.** Its item loop required every donor prompt to match the
+recipient's token count. With the real tokenizer `echo_digit` encodes to **49** tokens and
+`add1`/`sub1` to **40**, so a cross-family donor could *never* match: **18 of 18 items dropped**,
+`ok` empty, and the kernel hit its own `"NO USABLE ITEMS -- refusing to score"` and returned 1.
+DataSphere reports that as **ERROR with no output file** — indistinguishable from a segfault
+from the outside. **No traceback was ever raised, so no amount of `job attach` would have found
+one.** Two runs died this way before it was diagnosed.
+
+**A49 second pass — an undefined name.** Editing `TAIL` into `TAILS` left one bare `TAIL` in a
+`print` immediately after `build_items()`. `NameError`, before any compute. `py_compile` passes
+it (syntactically valid) and `local_smoke` never sees it (not a model-surface call).
+
+**What this changes about diagnosis.** On ERROR, ask **in this order**:
+
+1. **Did the kernel refuse on its own gate?** Check its drop/void paths and their conditions
+   *against real data* — a gate that can never pass is the cheapest failure to cause and the
+   most expensive to recognise. Look for `return 1`, "refusing", "VOID", drop counters.
+2. **Is there an undefined name or import-time error?** `ruff check --select F821` over the
+   kernel — milliseconds, and it catches what `py_compile` cannot.
+3. **Only then** look for a traceback, and expect not to find one.
+
+**The tooling gap this leaves.** `preflight` runs `build_items()` but never evaluates the
+*gates* those items must pass. A47's length gate was computable offline with the tokenizer alone
+and would have shown 18/18 dropped before a GPU was touched. Nothing checks that today.
