@@ -499,6 +499,18 @@ is 2"** — gold `2`, correct, in the first clause — at 0.781 containment agai
 when it comes is visible and is not silence: *"One more than 1 is 2. When we add one to 2, we
 get 3. When we take 3 modulo 1"* — right, then continuing past the answer and derailing.
 
+**And the whole thing has one mechanism, with a timetable.** The gold's rank is settled by
+unroll ~4 (D159). **By unroll ~8 the model has committed to a prose frame**, and the transition
+is sharp: the rate at which a generation opens with `The` runs **0.032 → 0.099 → 0.631 → 0.560
+→ 0.647** across r = 2/4/8/16/32, a 20× rise, while the median output jumps from 7 to 30.5
+characters between r = 4 and r = 8. **Meanwhile the rate at which the generation starts with the
+gold does not move at all: 23/252 → 18/252, p = 0.515** (D174).
+
+That is the uncomfortable form of the claim. Containment rises with depth, starts-with-gold is
+flat, prose-opening more than doubles — so **on this model, spending more compute makes the
+standard accuracy metric worse while making the underlying output better.** Every
+depth-versus-accuracy result in this project was read through that metric.
+
 **And the external calibration, which failed all day, now works — because the block was
 elicitation.** Huginn's paper reports **69.9%** on ARC-Easy at r = 32. Zero-shot we measure
 **0.407** by option-letter argmax and **0.433 / 0.413** by option-text likelihood; the three
