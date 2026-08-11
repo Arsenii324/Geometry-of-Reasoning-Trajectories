@@ -1,0 +1,33 @@
+name: periods-does-their-word-problem-orbit-at-some-other-period
+desc: >
+  A49: settles whether A46's failure to reproduce the paper's orbit is theirs or ours. A46
+  vindicated the record -- rotating prompts rotate at 62.0% of positions, settling prompts at
+  0.000, no overlap -- but on the paper's own example, "Claire makes a 3 egg omelette", it found
+  0 of 35 rotating positions with max R 0.119 against a 0.6677 threshold. The paper says
+  orbiting happens when responding to prompts requiring numerical reasoning and draws its
+  figures on exactly that kind of prompt. Our detector is the obvious suspect:
+  rotation_power(period=6) measures the period-6 bin only, tuned to D112's finding on our own
+  prompts, so an orbit at any other period reads about zero by construction, and their figures
+  are PCA projections judged visually with no period stated. So the question is not whether they
+  orbit but at what period, and it is answerable in one run. The design change that makes it
+  reusable: A46 banked R at period 6, this banks the entire rfft power spectrum of the tail at
+  every position, 25 bins over a 48-unroll tail, so any period is readable offline without
+  another GPU hour. P1 gates on the period-6 bin recomputed from the spectrum matching
+  rotation_power to floating point on the same prompts. P2 is registered both ways: a clear peak
+  at some period other than 6 means our instrument was narrow and the failure to reproduce is
+  ours; no peak at any period means their exemplar does not orbit on this checkpoint at all, and
+  D185 strengthens from "wording rather than content selects the regime" to "their own example
+  does not do it". P3 requires our rotating prompts to peak AT period 6 rather than merely
+  somewhere, since otherwise the whole regime line rests on a statistic measuring something
+  broader than we claimed. P5 banks total non-DC power alongside the fractions, because a
+  fraction of nearly nothing is meaningless. Mounts the prebuilt weights dataset.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - periods.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
