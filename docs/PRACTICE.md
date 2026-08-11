@@ -497,18 +497,30 @@ was to find overclaims — read it as the geometry track's strongest negative.
 task", applied after the run rather than before it, because that is when the data exists.
 
 **Automated, so it does not depend on remembering.** `scripts/outcome_variance_scan.py` walks
-banked result JSONs and flags outcome fields whose base rate is exactly 0 or 1. It flags **two
-runs, five fields**: `ds_regimebehav` at 0.000 on `correct`, `best_rank` and `final_rank`
-(D148 — the failure, now amended) and `ds_statetrack` at 1.000 on `correct` and `best_rank`
-(D147 — *the finding*, correctly reported, since its point is that the oracle axis scores a
-constant responder 100%). **A flag is a question, not a verdict:** it says the outcome had no
-variance, and the row must say which of those two it is.
+banked result JSONs — including `out/` directories and manifests, which is where the older
+Kaggle runs put theirs — and flags outcome fields whose base rate is exactly 0 or 1. Over **38**
+result files it flags **four runs, seven fields**, and every one has an account:
 
-**Its coverage is partial and that is not a clean bill of health.** It reaches **14** result
-files — the runs that bank a top-level `rows` array next to their kernel. Runs that archive
-into a `.tgz`, write per-item `.npy`, or live on Kaggle are **not scanned**, and the older
-`kaggle_*` behavioural claims are exactly the ones it cannot see. Reading "5 flags" as "the
-record is otherwise clean" would be RC1 again — a proxy for the thing — one level up.
+| run | rate | what it is |
+|---|---|---|
+| `ds_regimebehav` | 0.000 | **the failure.** D148's behavioural null, now amended |
+| `ds_statetrack` | 1.000 | **the finding.** D147's point is that the oracle axis scores a constant responder 100% |
+| `ds_bank` | 0.000 | **expected.** an untrained-arm state bank; an untrained model gets nothing right |
+| `ds_seeds` | 0.000 | **expected.** same — five untrained initialisations, banked for geometry |
+
+So **a flag is a question, not a verdict.** Two of the four are working as designed, one is the
+row's own finding, and one was a floor nobody looked for. Note that the untrained flags
+independently rediscover UNDERSTANDING.md §6.1 — *the untrained controls ran on tasks the model
+cannot do* — which is a small piece of evidence that the check finds real things.
+
+**The runs it clears are cleared with real variance**, not by absence: the census reads 0.417
+over 4868 draws, `geomcap` 0.332 over 608, `h0bank` 0.222 over 544, `arcproto` 0.427 over 450.
+The two low ones are `lenmatch` 0.170 and `marker` 0.111 — and D125's low-capability limit is
+already stated in `RESULT.md`, which is where a 0.111 belongs.
+
+**Coverage is still partial.** Runs that archive into a `.tgz` or write per-item `.npy`
+(`ds_embsep`, `ds_nounsweep`, `ds_blockbank`, `kaggle_marker`'s arrays) are not reached. Reading
+"seven flags, all accounted for" as "the record is clean" would be RC1 one level up.
 
 **The generalisation.** RC1 was measuring a proxy for the thing; RC5 was committing RC1 inside
 an audit instrument. RC6 is narrower and nastier: **the measurement is right, the analysis is

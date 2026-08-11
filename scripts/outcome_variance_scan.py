@@ -57,14 +57,16 @@ def main() -> int:
     flagged, scanned = [], 0
     print(f"{'run':26s} {'rows':>6s} {'field':18s} {'base rate':>10s}")
     print("-" * 64)
-    for path in sorted(ROOT.glob("scratch/*/*.json")):
-        if path.name in ("kernel-metadata.json", "manifest.json"):
+    paths = sorted(ROOT.glob("scratch/*/*.json")) + sorted(ROOT.glob("scratch/*/out/*.json"))
+    for path in paths:
+        if path.name == "kernel-metadata.json":
             continue
         ok = rows_of(path)
         if not ok:
             continue
         scanned += 1
-        run = path.parent.name
+        run = path.parent.name if path.parent.name != "out" else path.parent.parent.name
+        run = f"{run}/{path.stem}"
         for k in BOOL_FIELDS + RANK_FIELDS:
             if k not in ok[0]:
                 continue
