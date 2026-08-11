@@ -217,9 +217,13 @@ first-token metric worse while the underlying output improves.
 
 \subsection{Supplying the format recovers the published number, by two routes}
 
-The published ARC-Easy figure for this model is 0.699 at $r = 32$. Reading the released
-evaluation code pins the protocol to zero-shot \texttt{lm-eval-harness} with normalised accuracy;
-that is our bare-prompt, no-option-list, character-normalised arm, which reads \textbf{0.658}.
+The published ARC-Easy figure for this model is 0.699 at $r = 32$. Our reading of the released
+evaluation code identifies the protocol as zero-shot \texttt{lm-eval-harness} with normalised
+accuracy; that is our bare-prompt, no-option-list, character-normalised arm, which reads
+\textbf{0.658}. \emph{We state this as a hypothesis about their protocol rather than as an
+established fact:} it rests on our reading of their repository and the paper's table caption, not
+on a statement from the authors, and the arm it selects is not the closest of ours to their
+number.
 Independently, five in-context examples under option-letter argmax give \textbf{0.723}, paired,
 with 35 items fixed against 4 broken (exact McNemar $p = 3.35\mathrm{e}{-}07$).
 
@@ -239,6 +243,25 @@ work through the problem and then write \texttt{Answer:} on the last line raises
 accuracy from $0.000$ to $0.167$, gaining four items and losing none ($p = 0.125$, $n = 24$),
 with literal outputs such as \texttt{'Answer: 1'}. Suggestive rather than established, and
 consistent with the prose being where the computation happens.
+
+\subsection{Steering the map's parameter reproduces neither effect}
+
+Because $e$ is re-injected at every unroll, a vector added to it is applied $r$ times rather than
+once. Across twelve surveyed papers on this model family we found no prior steering-vector or
+activation-addition experiment on a recurrent-depth model, so we report a first attempt and a null.
+
+We fitted a difference-of-means vector $\Delta e$ between two-shot and zero-shot prompts and added
+$\alpha\,\Delta e$ at every unroll. At $\alpha = 0$ the generation is unchanged in all 25 items.
+First-token accuracy moves from $0.000$ to $0.080$ while a norm-matched random control is
+indistinguishable throughout; over 132 conditions spanning both sides of the threshold, the largest
+$|\Delta R|$ is $0.0065$ and no condition crosses it.
+
+\emph{Scope.} These are one intervention measured twice, not two independent nulls, and the dose
+was adequate --- oracle accuracy degrades from $0.560$ to $0.480$ at large $\alpha$, so the
+perturbation acted. We read this as the wrong injection site rather than as orthogonality of
+directions, the regime's onset being 33 positions upstream of where we applied the vector; applying
+$\Delta e$ at all positions is the discriminating experiment and was not run. We banked
+$\|\Delta\|$ but not $\|e\|$ at the site, so $\alpha$ is not expressible as a fraction of scale.
 
 \subsection{Context costs depth rather than accuracy}
 
@@ -349,6 +372,15 @@ their figures are projections of a 128-iteration run against our 64.
 (first-token) bias inherent to likelihood scoring.
 \item Our comparison to the published orbit rests on a prompt built in the shape of the authors'
 example rather than on their exact string, and on a 64-iteration run against their 128.
+\item The timing result says \emph{when} the two properties become measurable, not \emph{whether}
+one can influence the other. We state the hedge deliberately: an intervention inside the decision
+window could still find an effect ours did not.
+\item Our direct behavioural test of H3 --- injecting a donor state at $h_0$ --- failed three times
+for reasons internal to our harness, and no result from it is reported. It remains the natural next
+experiment, though the authors' reported path independence over $h_0$ partly predicts a null.
+\item The authors name a third limiting structure, ``sliders''. We did not look for it: our
+statistic is tuned to periodic structure and would not recognise one, so our labels read
+rotating-versus-not rather than as a taxonomy of limiting behaviour.
 \item The published attribution of orbiting to ``prompts requiring numerical reasoning'' is
 contradicted by our data on three independent grounds, while the phenomenon itself is theirs.
 \item Comparisons to two related works are cross-checkpoint or cross-protocol and are not
@@ -378,10 +410,6 @@ evaluation protocol, recovers the published benchmark number.
 \item \textbf{Serguei Barannikov} (mentor) --- problem formulation, the hypotheses H1--H3 that
 this report tests, and supervision.
 \end{itemize}
-
-\section*{Acknowledgments}
-
-\emph{(Placeholder.)}
 
 \appendix
 
@@ -417,6 +445,44 @@ Answer position vs prose positions & 7.89 against 3.65 unrolls ($p = 0.0004$) \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+%% NOTE: the \S numbers in this table are typed by hand -- re-check them against the
+%% rendered PDF after inserting or reordering any subsection.
+\section{Index of Experiments}
+
+Each result in the body traces to one run. Every run is inference-only on the pinned revision,
+with the initial state seeded before each forward pass so that repeated forwards are comparable.
+
+\begin{table}[H]
+\centering
+\small
+\caption{The experiments behind each section, with their designs.}
+\begin{tabularx}{\linewidth}{@{}llX@{}}
+\toprule
+\textbf{\S} & \textbf{Run} & \textbf{Design} \\
+\midrule
+3.1 & word swap & 18 sequences $\times$ 3 instructions $\times$ 2 markers, token count fixed at 53 \\
+3.1 & noun sweep & 16 nouns $\times$ 12 shared sequences $\times$ 2 markers (384 orbits) \\
+3.1 & threshold & re-analysis of 696 orbits over three banks, no GPU \\
+3.2 & embedding swap & 252 orbits; interpolation of one \texttt{wte} row, both endpoints gated \\
+3.3 & position sweep & 21 prompts, every token position, 64 unrolls \\
+3.4 & hysteresis & 64 mid-trajectory parameter swaps at 8 switch points, both directions \\
+4.1 & generation scoring & 128 generations at $r = 32$ and $48$, with measured chance rates \\
+4.2 & depth bank & 1260 generations, 21 families, 5 depths (re-analysis, no GPU) \\
+4.3 & benchmark arms & 120 items, 4 scoring/prompt arms; plus a 101-item paired shot comparison \\
+4.4 & format sweep & 24 items per arm, instruction wording varied at fixed content \\
+4.4 & demonstration & paired 0- vs 2- vs 5-shot on the census families \\
+4.6 & length control & zero-shot padded with neutral prose to the 5-shot token length \\
+4.7 & answer position & 36 generations, every generated position, 48 unrolls \\
+4.5 & steering & 132 conditions spanning both sides of the regime threshold \\
+5 & window split & 48 prompts; the same statistic on the decision window and the tail \\
+7 & probe control & 204 banked arrays over 51 nouns, leave-one-noun-out \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Raw outputs for every row above are retained, so each number in the body can be recomputed without
+re-running the model.
 
 \section{Withdrawn and Amended Claims}
 
@@ -513,6 +579,3 @@ arXiv:1909.01377, 2019.
 \end{center}
 
 \end{document}
-
-\emph{(Russian-language title, authors, abstract and keywords are required after the references
-for the journal template. Placeholder --- to be supplied before submission.)}
