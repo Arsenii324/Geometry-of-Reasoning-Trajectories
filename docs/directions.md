@@ -1462,6 +1462,15 @@ gates (A49 pass 1, tail 48 vs 24) and two "ERROR"s were not crashes at all (RC9)
    first-token bias.
 5. **"Sliders"** (D187d) — a third structure the paper names; no definition extracted yet.
 
+### P3b Subagent jobs after the session limit — monitored, contexts lost
+
+The forks stopped on the session limit (resets 21:00, the deadline itself). **Their DataSphere
+jobs are unaffected and are in the consolidated monitor** — `A50 bt1qu10g915hnuatdj2m`,
+`A47 bt1vuemjmeg0onc52shp`. Their *contexts* are gone, but nothing important was only there:
+each committed its kernel and its config, and results land in `scratch/<kernel>/*.json`. The
+`sysprompt` agent reported two arms done with `S_concise` starting at 1657 s, so its job should
+bank all arms. **No further forks are possible; everything from here is the main thread.**
+
 ### P4 The state that must not be lost
 
 - `claims_ledger.md` **197 rows**; 10 carry explicit withdrawal markers, 6 from today.
@@ -1471,6 +1480,12 @@ gates (A49 pass 1, tail 48 vs 24) and two "ERROR"s were not crashes at all (RC9)
 - Tooling added today: `model_attr_check.py` (preflight check 6), `local_smoke.py` (real model
   at 27.7M params, 4.25 s, reproduces A41 and A47's bugs), `experiment_registry.py`,
   `outcome_variance_scan.py`, `arc_table.py`, `parser_sweep.py`, `answerpos_analysis.py`.
+- **`docs/WORKING_KNOWLEDGE.md`** — the tacit layer: how the instruments actually behave
+  (the `tail`/`period` coupling, why a longer tail is *worse* for a damped orbit, the sphere
+  radius as the null for every distance claim), which numbers are load-bearing vs which only
+  look it, a fragility map of what breaks what, the read-order for any result, failure
+  signatures, and the things I believe but have not established. **Read it before reasoning
+  about the project state.**
 - Practice notes **RC6** (a degenerate outcome reads like a clean null), **RC7** (a monitor
   inside another command is not a monitor), **RC8** (preflight checked everything except the
   model), **RC9** (a platform ERROR is not necessarily a crash).
