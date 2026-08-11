@@ -430,6 +430,43 @@ today; 6 is still thin for a paper that surveys 12.
 than a sin of commission* are exactly what `CLAIM_INVENTORY.md` Part 6 enforces. Intensifier
 sweep already clean (all 17 "rather" are contrastive).
 
+### M3 — second full reread, 19:35; four deltas §M2 missed
+
+*§M2 was written from a first read and caught the big structural gaps. These are the ones that
+only show up when you read for what applies to **this** paper rather than to papers in general.*
+
+1. **Guide-3 imposes a verification duty on figure prose, and it lands on our Figure 1.** *"With
+   reference to a figure, exactly what should I look at in each graph or table to see precisely
+   why it supports the claim. Literally talk about lines and points here… Double and triple check
+   that it is actually true. I very often review papers that have overtly incorrect descriptions
+   of their graphs."* **This is not a style rule for us, it is a control.** Our Figure 1 plots a
+   *sliding-window* statistic, so its x-axis is ambiguous three ways — window **start**, **centre**
+   or **end** — and the paper's hinge number ("onset between unrolls 12 and 16") is read directly
+   off that axis. A mislabelled axis moves the hinge and produces a perfectly plausible curve.
+   **That is failure class 1 from `directions.md` §O — the metric measured something else — which
+   is this project's most repeated error.** Whoever builds the figure must state the axis
+   convention in the caption and verify it against `transrot.json`'s own window indexing, not
+   infer it from the shape.
+2. **Our prior-work material is in the shape guide-3 calls the bad one.** *"Good prior work
+   sections are methodological… Bad prior work sections are paper-by-paper."* §H below is a
+   per-reference table — correct as a **writing aid**, wrong as a **section structure**. The
+   section should be organised by assumption ("one line of work measures per-position ponder time
+   under a trained halting cost; Huginn has no halting head, so…"), not by citation.
+3. **Guide-1's *"focus on what your method does, not what it doesn't do"* is in real tension with
+   this paper** and should be resolved deliberately rather than obeyed. A substantial part of our
+   contribution *is* negative — a null, a withdrawn attribution, an architecturally untestable
+   hypothesis, ten retractions. The resolution: state each negative as a **positive fact about
+   what was measured** ("the answer is fixed twelve unrolls before the regime is measurable")
+   rather than as an absence ("we did not find an effect"). B1–B6 already do this; keep it.
+4. **Two concrete LaTeX rules to apply when the figure goes in** (guide-2): `\label{}` must come
+   **after** `\caption{}` or the numbering is wrong; and citation style is *"Widgets are awesome
+   (Smith, 2001)"* or *"Smith (2001) shows that…"*, **never** *"(Smith, 2001) shows that…"*.
+   Worth one `grep -a` over the draft.
+
+**On guide-3's LLM-drafting advice — settled by the authors, not open.** *The supervisor has
+decided this point does not apply to this project, completely, and it is not to be reopened.* The
+analysis below is retained only as the record of why.
+
 **On guide-3's LLM-drafting advice — considered and does not apply here.** Its premises are
 about a *human* author using an LLM on work the LLM did not do: *"if you are a good writer you
 are better than LLMs"*, *"if you are a bad writer you need the practice"*, *"you will learn more
