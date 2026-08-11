@@ -118,7 +118,25 @@ a **157×** gap, while the cycle's vertex geometry is regime-invariant (D146). S
 across blocks always; within a block, settles or rotates depending on one instruction
 token.** The hypothesis was not wrong — the instrument that retired it read one block.
 
-**H2 (harder problems recruit more depth) — STILL NOT ESTABLISHED, BUT ITS PRECONDITION IS
+**H2 (harder problems recruit more depth) — ARCHITECTURALLY UNTESTABLE ON HUGINN IN THE SENSE
+THE LITERATURE MEANS IT.** *(Revised 2026-08-11, D191.)* The literature's H2 is **per-position
+adaptive depth**, and Universal Transformers measure it directly: mean ponder time rises
+**2.3 ± 0.8 → 3.1 ± 1.1 → 3.8 ± 2.2** with the number of supporting facts, with the histogram
+across positions sharpening as difficulty rises. PonderNet's abstract names the same target.
+**Huginn has no halting head and no per-position budget — `num_steps=r` unrolls the whole
+sequence together, so every position gets `r`.** There is nothing to allocate. So every H2 null
+in this record was measuring the only quantity Huginn can vary, the *global* r, on a model with
+no mechanism to vary it per instance. The three-way distinction that results:
+
+| claim | status |
+|---|---|
+| allocation *by difficulty* | needs a trained halting objective (ACT, PonderNet); Huginn has none |
+| depth buying capability *at fixed difficulty* | **real and published** — GSM8K CoT 0.00 → 34.80 from r = 1 → 32 (D190d); we confirm independently (D171) |
+| difficulty recruiting depth *within a task* | tested here and not found (D177) — and no mechanism by which it could be |
+
+*The verdict below is superseded by that framing but its measurements stand.*
+
+**H2 (earlier verdict) — STILL NOT ESTABLISHED, BUT ITS PRECONDITION IS
 NO LONGER ABSENT.** *(Revised 2026-08-11.)* Every H2 test below reads a *rate* or a *rank*.
 Read instead as **what the model writes**, depth does reach behaviour: over 1260 banked
 generations at r = 2…32, the answer's appearance in the output rises with depth on **5 of 14
