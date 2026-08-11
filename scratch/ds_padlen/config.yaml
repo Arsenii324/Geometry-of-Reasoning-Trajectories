@@ -1,0 +1,30 @@
+name: padlen-exemplars-or-prompt-length
+desc: >
+  A45: settles the confound D181 registered. Two in-context examples raise availability (oracle
+  0.327 to 0.548, paired McNemar p = 9.3e-09) and five lose some of it back (net -15, p =
+  7.3e-04), and D181 found the mechanism -- the gold's rank at unroll 1 goes 54.5 to 58.0 to
+  157.5 across k = 0/2/5 while the prompt grows 29 to 73 to 139 tokens, with D178 having shown
+  family-level Spearman between start rank and best_depth of +0.885. But exemplar count and
+  prompt length are perfectly collinear in that design, and two very different claims predict
+  the same data: in-context learning has negative returns past two examples, or Huginn's readout
+  simply degrades with context length. The second would be an architectural fact about a
+  recurrent-depth model applying to every long prompt. I tried to settle it from banked data and
+  could not -- dose-response across families gives Spearman +0.419 at p = 0.0586, and the two
+  census families whose prompts vary in length at k=0 give opposite signs -- so this runs the
+  discriminator: a zero-shot prompt padded with irrelevant neutral prose to the five-shot token
+  length. P1 measures the realised length match rather than assuming it, and reports the arm
+  void if k0_pad does not land within about 10% of k5. P2 is a clean fork: if padding reproduces
+  most of the k5 degradation it is length, if padding costs nothing it is demonstration. P3
+  makes start rank the primary readout, since that is what D181's mechanism is about. P4 uses
+  prose with no digits, no questions and no answer-shaped structure so it cannot act as a
+  distractor exemplar, and banks the exact text. P5 gates on k0 and k5 reproducing D180.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - padlen.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
