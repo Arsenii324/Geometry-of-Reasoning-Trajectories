@@ -483,6 +483,22 @@ and A35's literal top-5 for `add1` shows what does: `['One', 'The', 'To', '1']` 
 about the answer itself, which is capability, not formatting** (D168). So D157's 5.29× is
 decomposed rather than restated, and one factor should never have been quoted across both.
 
+**The size of the gap, with the control that makes it mean something.** Generating 24 tokens
+on four families where the model is competent: **first-token exact-match reads 0.125 while the
+answer is actually produced in 0.781** of generations (0.797 at r = 48) — a **6.3×** gap. The
+obvious objection is that containment is cheap for single-character golds, so the cross-item
+false-positive rate was measured rather than assumed: how often does *some other item's* gold
+appear in a generation? **`echo_word` 0.000, `echo_digit` 0.042, `sort_min` 0.062, `add1`
+0.152** — against observed containments of 1.000 / 0.750 / 0.625 / 0.781, lifts of **+0.562 to
++1.000** (D172). Containment on these families is informative, not chance.
+
+That also corrects something I had over-read. D168's arithmetic group sits at median final rank
+16 and I called it *uncertainty about the answer*. It is not: `add1` writes **"One more than 1
+is 2"** — gold `2`, correct, in the first clause — at 0.781 containment against 0.152 chance.
+**The model is computing in prose; the answer simply is not at position 1.** The failure mode
+when it comes is visible and is not silence: *"One more than 1 is 2. When we add one to 2, we
+get 3. When we take 3 modulo 1"* — right, then continuing past the answer and derailing.
+
 **And the external calibration, which failed all day, now works — because the block was
 elicitation.** Huginn's paper reports **69.9%** on ARC-Easy at r = 32. Zero-shot we measure
 **0.407** by option-letter argmax and **0.433 / 0.413** by option-text likelihood; the three
