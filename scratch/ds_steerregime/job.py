@@ -1,6 +1,6 @@
-"""A49: does the PROSE-SUPPRESSION direction in `e` also move the ROTATION REGIME?
+"""A51: does the PROSE-SUPPRESSION direction in `e` also move the ROTATION REGIME?
 
-WHY THIS IS ADDITIVE TO A48 AND NOT PART OF IT. A48 steers along
+WHY THIS IS ADDITIVE TO A48 AND NOT PART OF IT. (Numbered A51: A49 is the period sweep and A50 the system-prompt run; both were claimed by parallel forks while this one was building, which is what `scripts/experiment_registry.py` exists to catch.) A48 steers along
 `delta_e = mean(e | 2-shot) - mean(e | 0-shot)` on census prompts, where the readout is the
 formatting one. But `e` is the SAME object the regime line manipulates: D140 interpolates `e`
 between nouns to flip settling<->rotating, D161 does it from the `wte` row, D173 swaps `e`
