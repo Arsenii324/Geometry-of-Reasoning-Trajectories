@@ -347,9 +347,21 @@ golds 6/7/8/9, and Huginn does not do it. **This is the check §1 of CLAUDE.md e
 it was not run.** D166 supplies a likely mechanism for the floor: prose openers hold the top
 ranks, and a best rank of 3 is what two permanently-ahead format tokens would produce.
 
-So **"dynamical epiphenomenon" is not the supported reading** — it is what one arm of an
-underpowered test suggested and another arm could not have detected. *Whether a regime change
-alters what the model answers has never been tested on a task this model can do.*
+**Re-tested the right way, the conclusion comes back — and D148's zero was the metric,
+entirely.** A41 reruns the same boundary comparison measuring the **emitted text**. On that
+very task the model is right in **10 of 18** units settling and **9 of 18** rotating — it
+writes *"The largest token of the sequence is 8."* with gold **8** — where D148's rank-based
+scorer recorded 0 of 432. With a real base rate to move, crossing the boundary changes
+correctness in **1 of 18** paired units (exact McNemar p = 1.0000), and the first token is
+identical in **18 of 18**. The generated text does differ in 10 of 18, but lexically — *"digit
+**of** the sequence"* → *"digit **in** the sequence"*, and *"the largest **letter**"* → *"the
+largest **signal**"*, that last being the interpolated instruction noun leaking into the
+model's own echo of it, which varies continuously with t and is not a regime effect (D176).
+
+So **"dynamical epiphenomenon" is supported again — but now by a test that could have detected
+a change.** The bound is weak: n = 18 paired units excludes only large effects, far weaker than
+D148's `best_depth` arm, which caught a planted 0.5 sd at 99.3%. *Surface form moves with the
+parameter; the answer does not.*
 
 **The regime is causally controlled by `e`, and the boundary is a surface rather than a
 split.** Interpolating `e` along straight lines between nouns, all eight cross-regime
