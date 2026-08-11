@@ -1,0 +1,29 @@
+name: hyster-swap-e-mid-trajectory
+desc: >
+  A39: asks whether the rotation regime is a function of the current parameter or of history,
+  by swapping `e` partway through a run rather than for the whole of it. D165 showed the
+  regime cannot be dated by linear probing -- that design fails on a label it is guaranteed to
+  contain -- so the question has to be asked causally, and `e` is the map's parameter, re-fed
+  at every unroll, so it can be changed at unroll k and left changed. A24 replaced it for a
+  whole run and flipped the regime; it has never been changed partway. Both directions are
+  run, rotating to settling and settling to rotating, at eight switch points over 96 unrolls,
+  with R read on the final 24 so the window is always post-switch. P1 is two identities: no
+  swap must reproduce the unpatched orbit, and a swap at k=0 must reproduce the donor's own
+  orbit, which is A24's known-good arm. P3 registers the prediction that a contraction with a
+  unique attractor per parameter shows NO hysteresis, so the curve should be flat in k, and any
+  k where the switch fails to take is the finding. P4 registers a quantitative prediction that
+  connects two numbers this project has never connected: at rho ~ 0.83 the state should close
+  1% of the gap to a new attractor in ln(0.01)/ln(0.83) = 24.7 unrolls and 5% in 16.1, so a
+  measured relaxation of 16-25 unrolls would be the first time the contraction rate predicted
+  an observable. P5 keeps the two directions separate because entering a periodic orbit need
+  not cost what leaving one costs. Mounts the prebuilt weights dataset.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - hyster.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1

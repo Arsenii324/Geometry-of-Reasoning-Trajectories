@@ -1,0 +1,27 @@
+name: genscore-does-the-generation-contain-the-answer
+desc: >
+  A38: tests the prediction D166 makes and cannot itself test. D166 banked the top-5 tokens at
+  every unroll and found the gold is displaced at the final unroll by a prose sentence-opener
+  -- The x12 of 32, One x3, Number x2, To x2, with The taking sort_min 8 of 8 at logprob
+  -0.079 while the gold sat at rank 2 and the gold's final rank was median 2.5. The reading is
+  that Huginn has these answers and opens a sentence instead of emitting a bare token, so
+  D157/D158's final-unroll zeros measure formatting rather than capability. That is a claim
+  about text the model would produce, and every number behind it is a rank at one position.
+  This generates 24 tokens per item at r = 32 and r = 48 over the same items and seed A35 used,
+  so the first-token arm is a true replication gate. Containment is computed once in the kernel
+  at word boundaries and banked, never recomputed downstream, because D145's contains field
+  disagreed with a reimplementation of itself by up to 13 points. The generations are banked
+  verbatim and printed, because D110 printed a capability verdict over empty strings. And the
+  cross-item false-positive rate is measured rather than assumed: echo golds sit in the prompt
+  and echo_digit golds are single characters, so for those families the chance rate of a
+  containment test is the whole question. Mounts the prebuilt weights dataset.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - genscore.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
