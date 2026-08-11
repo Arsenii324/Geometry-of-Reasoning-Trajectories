@@ -431,8 +431,19 @@ of its computation and cannot hold a copied digit** (D158).
 **And the answer is displaced, not decayed.** Median argmin unroll **4**; 17 of 21 families
 reach their best rank by unroll 8; then the rank **plateaus at a stable worse value** for
 forty-plus unrolls — `add1` at 19, `echo_digit` at 4 (D159). The map converges to a state
-whose readout does not prefer the gold. *What it prefers instead was never banked, and is
-being measured now.*
+whose readout does not prefer the gold.
+
+**What it prefers instead is `The`.** Banking the top-5 tokens at every unroll: the final
+argmax is a prose sentence-opener — `The` ×12 of 32, `One` ×3, `Number` ×2, `To` ×2 — taking
+`sort_min` **8 of 8** at ~92% probability while the gold sits at rank 2. The gold's final rank
+is median **2.5** and it is still in the top 5 for **24 of 32** items (D166). So **the
+final-unroll axis measures answer formatting**: it asks whether the model opens with the bare
+gold token, and Huginn opens a sentence. The numbers above stand; the reading *"Huginn cannot
+hold a copied digit"* does not — it holds the digit at rank 2–4, behind `The`. `echo_word`
+survives for the reason that explains the whole dissociation: the natural prose answer to
+*"repeat this word"* **begins with the word**, and its argmax is the gold's own first token in
+8 of 8. Strip the chat template and the answer genuinely goes — median final rank **10**, one
+item at **509**, with `\n` winning 23 of 32.
 
 **None of this is calibrated against anything external, and the one attempt to calibrate it
 failed.** Huginn's own paper reports **69.9%** on ARC-Easy at r = 32. We measure **0.407**

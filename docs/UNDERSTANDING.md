@@ -79,8 +79,9 @@ only ones that keep their answer: `echo_word` holds rank 1 for **43 of 48** unro
 Three consequences, all uncomfortable and all measured:
 
 1. **Scored at the final unroll, 19 of 21 families read exactly 0.000** — including
-   `echo_digit`, the easiest task in the suite, at **0.997 → 0.000**. Huginn holds a copied
-   *word* to the end of its computation and cannot hold a copied *digit* (D158).
+   `echo_digit`, the easiest task in the suite, at **0.997 → 0.000** (D158). *That number
+   stands and its original reading — "Huginn cannot hold a copied digit" — does not.* It
+   holds the digit at rank 2–4; what outranks it is **`The`** (D166, below).
 2. **The observability census certifies availability, not production.** Its 41 items in the
    20–80% band become **0** on the final-unroll axis, at an inflation of **5.29×** — larger
    than D103's 2.06× and A29's 2.00×, so the factor is a property of task and budget and
@@ -95,9 +96,32 @@ Three consequences, all uncomfortable and all measured:
    position, with the argmin window itself at chance. Where the answer is **available** and
    where the geometry **predicts success** are different questions (D163).*
 
-What is *not* shown is why the displacement happens, or to what: the top-1 token at the
-fixed point was never banked. D145's glued role markers (`'4user\n\n'`) suggest the model
-moves on to the next turn, but that remains a hypothesis.
+**And the displacer is now named, which changes what the whole axis means.** Every kernel
+here banked the gold's rank and nothing else, so "what wins instead" was open. A35 banks the
+top-5 tokens and log-probabilities at every unroll. Templated (n = 32): the gold's best rank
+is median **1.0 at unroll 3.5**, its **final** rank is median **2.5**, and it is still in the
+top 5 for **24 of 32** items. The final argmax is a **prose sentence-opener** — `The` ×12,
+`One` ×3, `Number` ×2, `To` ×2 — with `The` taking `sort_min` **8 of 8** at logprob −0.079
+(~92%) while the gold sits at rank 2. **D145's role-marker hypothesis is refuted: it is not
+`user`, it is `The`** (D166).
+
+Three things follow, and they matter more than the axis itself:
+
+- **The final-unroll axis measures answer *formatting*.** It scores whether the model opens
+  with the bare gold token at the first generated position; Huginn opens a sentence. The
+  answer is one token behind, not gone.
+- **D158's dissociation has a mechanism.** `echo_word` holds because the natural prose answer
+  to *"repeat this word"* **begins with the word** — its argmax is the gold's own first token
+  in 8 of 8 (`cand`→candle, `g`→garden, `Sil`→silver). The natural prose answer to *"repeat
+  this number"* begins with `The`.
+- **The chat template is load-bearing.** Removing it does not remove the displacer; it makes
+  the answer disappear. Bare, the gold's final rank is median **10** with a maximum of **509**,
+  and `\n` wins **23 of 32** as the model continues a document instead of answering.
+
+So the sharpest version of §1.0b is this: **the recurrence reaches the answer at unroll ~3–4
+and spends the remaining ~44 unrolls committing to a prose frame.** What is still *not* shown
+is whether that is true of the census prompts too — A35 ran 8 items per family on
+purpose-built prompts and replicates D159's shape and family ordering, not its numbers.
 
 ### 1.1 What the latent carries
 
