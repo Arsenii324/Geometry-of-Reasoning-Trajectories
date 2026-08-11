@@ -8,6 +8,12 @@ you would otherwise have to reconstruct, and §C is the device that stops you ov
 
 ---
 
+## 0. Read `CLAIM_INVENTORY.md` first
+
+21 claims with presuppositions, experiment links (kernel + job id), gates, and safe-vs-strongest
+forms. This pack is the *prose* layer over it. If a sentence here and the inventory disagree, the
+inventory wins — it carries the caveats this pack compresses.
+
 ## A. The argument spine — the paper's logic, in order
 
 The paper has **one narrative** with a hinge in the middle. Do not present it as two unrelated

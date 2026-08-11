@@ -68,6 +68,18 @@ the research repo, nothing committed.**
 - Appendix B retraction list — content is **already written** in
   `files/paper_submission/APPENDIX_B_RETRACTIONS.md`; drop into `main.tex` line ~327 at regeneration.
 
+## 3a. THE CLAIM INVENTORY — the primary writing source
+
+**`files/paper_submission/CLAIM_INVENTORY.md`** (mirrored to `docs/submission/`). 21 claims,
+6.6k words. Per claim: strongest defensible form, safe form where they differ, **presuppositions**,
+the **exact experiment (kernel path + DataSphere job id, all 19 verified against the ledger)**,
+the **gates that passed**, and what would break it. Plus Part 0 (the methodological case against
+visual 2D PCA), Part 5 (presupposition index — state these once, early), Part 6 (the 14 things
+that must not be claimed).
+
+**Write from this.** `RESULTS_HANDOFF.md` is the prose-facing subset; the inventory is the
+complete one and carries the links and caveats the handoff compresses away.
+
 ## 3b. The writing pack — read it before writing any prose
 
 **`files/paper_submission/WRITING_PACK.md`** holds what `RESULTS_HANDOFF.md` deliberately does
