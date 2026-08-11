@@ -45,12 +45,22 @@ four things our own runs could not, and two of them go against us:
 | **D186** | **it is length, not exemplars.** Irrelevant padding collapses the start rank 31 → **329** (p = 2.9e-09) where five exemplars give 58.5 — at *matched* length. Context costs **depth** (4.73 → 7.29, p = 0.0001), not accuracy |
 | **D187** | **§6.9 withdrawn in our favour** — training depth is Poisson-lognormal, so r = 48 is the **83rd percentile**, not "outside the training regime". And `block_idx` never enters the block computation, so the DEQ framing is a code-level fact |
 
-**Two things I would not have found without the papers, and one is a hole in our strongest
-line.** Their orbit figures are drawn at **interior token positions**; every measurement in this
-project reads the **last** prompt position only. If interior tokens rotate inside prompts whose
-last position settles, D141's threshold was fitted on an unrepresentative population and
-fourteen rows need a scope line. **A46 is testing it now.** They also name a third structure,
-**"sliders"**, which we have never looked for.
+**The hole the papers exposed is now closed, and the record survived it.** Their orbit figures
+are drawn at **interior token positions**; every measurement here reads the **last** prompt
+position only, so D141's threshold might have been fitted on an unrepresentative sample. A46
+measured `rotation_power` at *every* position: in prompts we call rotating, **62.0%** of
+positions rotate (range 0.614–0.623 over nine prompts); in prompts we call settling, **0.000** —
+zero positions, all nine, **no overlap**. Fourteen rows stand as written (D192). It also found
+structure nobody looked for: rotation switches on at a **single boundary** (position 20 of 53 in
+`symbol`, where the second rule clause begins — *not* at the selecting noun, position 14) and
+holds to the end.
+
+**But we do not reproduce their orbit on their own example.** *"Claire makes a 3 egg omelette…"*
+gives **0 of 35** rotating positions, max R **0.119** against a 0.6677 threshold. The leading
+explanation is our instrument, not their claim: `rotation_power(period=6)` detects period-6
+power only, and their figures are PCA projections judged visually with no period stated. A period
+sweep is the decisive follow-up and needs GPU. They also name a third structure, **"sliders"**,
+which we have never looked for.
 
 *Two of my own registered predictions were refuted today (D180's P2, D186's fork) and one
 result I nearly published was an artefact of my own locator (D184(3)). Those are in the rows.*
