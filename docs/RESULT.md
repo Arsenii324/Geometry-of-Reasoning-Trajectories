@@ -451,6 +451,38 @@ survives for the reason that explains the whole dissociation: the natural prose 
 8 of 8. Strip the chat template and the answer genuinely goes — median final rank **10**, one
 item at **509**, with `\n` winning 23 of 32.
 
+**Seen in generated text rather than in ranks, on an independent bank, the same token wins.**
+`kaggle_depthacc` holds 1260 generations over 21 families at five depths, banked weeks earlier
+for another purpose. **`The` opens 496 of them — 39.4%** — then `To` (7.4%), `Text`, `There`,
+`Letter`, `Sequence`. Exact-match reads **0.020** where the answer is actually present in
+**0.255**, a **12.75×** gap, and only 8.3% of generations begin with the gold. The literal text
+is the argument (D170):
+
+| family | gold | what Huginn actually wrote | scored |
+|---|---|---|---|
+| `sub1` | `3` | *"The answer is 4 - 1 = 3"* | **wrong** |
+| `sort_min` | `18` | *"The smallest of these numbers is 18"* | **wrong** |
+| `echo_digit` | `4` | *"The number 4 is repeated exactly."* | **wrong** |
+| `local_last` | `Subtract` | *"The last instruction is \"Subtract 1."* | **wrong** |
+| `compare` | `83` | *"83 is larger than 23."* | right |
+
+**And more depth buys containment but never exactness**: across r = 2 → 32 containment rises
+0.222 → 0.333 bare and 0.159 → 0.389 constrained, while exact-match stays at ~0.000 throughout.
+Depth is spent on the completion, not on the decision — the behavioural counterpart of the rank
+being settled by unroll ~4.
+
+**The collapse has two causes, not one, and only one of them is formatting.** Restricting the
+census to the 10 families with oracle accuracy ≥ 0.35 — the only ones where a final-unroll zero
+can mean anything — gives 2720 draws in which **the gold's final rank never exceeds 35 and none
+sit beyond rank 100**, in a 65k vocabulary (`final_rank` is uncapped in that bank; it reaches
+8971 elsewhere). But the pool splits: copy/compare/select tasks sit at median final rank **2.0**
+(top-5 in 0.896), while `add1`/`sub1`/`add_2d` sit at **16.0** (top-5 in 0.000). A prose opener
+costs one or two positions — that is the copy group exactly. It cannot explain arithmetic at 16,
+and A35's literal top-5 for `add1` shows what does: `['One', 'The', 'To', '1']` — prose openers
+**and the input digit**, gold outside the top five. **For arithmetic the model is uncertain
+about the answer itself, which is capability, not formatting** (D168). So D157's 5.29× is
+decomposed rather than restated, and one factor should never have been quoted across both.
+
 **And the external calibration, which failed all day, now works — because the block was
 elicitation.** Huginn's paper reports **69.9%** on ARC-Easy at r = 32. Zero-shot we measure
 **0.407** by option-letter argmax and **0.433 / 0.413** by option-text likelihood; the three
