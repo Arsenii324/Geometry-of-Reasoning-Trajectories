@@ -179,34 +179,46 @@ def main():
                 h.remove()
         return float(rotation_power(np.array(traj, dtype=np.float32)))
 
-    def generate_and_top(ids, donor_e, gold):
-        """Generation under the patched parameter, plus the final-unroll top-5 (P5)."""
-        h = adapter.register_forward_pre_hook(patched(donor_e))
-        try:
-            cur = ids
-            n_p = ids.shape[1]
-            first, top5 = None, None
-            for step in range(MAX_NEW):
+    def generate_and_top(ids, donor_ids, t, gold):
+        """Generation under the patched parameter, plus the final-unroll top-5 (P5).
+
+        THE DONOR `e` IS RECOMPUTED AT EVERY STEP, and it has to be. `e` has shape
+        [1, n_tokens, d_model], so a donor captured on the prompt cannot be concatenated
+        onto a sequence that has grown by a generated token -- the first version of this
+        kernel did exactly that and died at the second token. The intervention is "run this
+        prompt with the OTHER noun's parameter", so as the continuation grows the donor
+        must grow with it: the donor prompt plus the same generated tokens, re-run through
+        the prelude. Both prompts are asserted equal length, so the shapes stay matched.
+        """
+        cur, dcur = ids, donor_ids
+        n_p = ids.shape[1]
+        first, top5, gold_rank = None, None, -1
+        for step in range(MAX_NEW):
+            # both prompts carry the same continuation, so the two `e`s stay shape-matched
+            e_t = (1.0 - t) * prelude_e(cur) + t * prelude_e(dcur)
+            h = adapter.register_forward_pre_hook(patched(e_t))
+            try:
                 with torch.no_grad():
                     torch.manual_seed(SEED)
                     out = model(input_ids=cur, num_steps=GEN_DEPTH)
-                logits = out.logits if hasattr(out, "logits") else out[0]
-                row = torch.log_softmax(logits.float()[0, -1], dim=-1)
-                if step == 0:
-                    lp, ix = torch.topk(row, TOPK)
-                    top5 = [[tok.decode([int(j)]), round(float(p), 3)]
-                            for p, j in zip(lp.tolist(), ix.tolist())]
-                    g = tok(gold, add_special_tokens=False).input_ids[0]
-                    gold_rank = int((row > row[g]).sum().item()) + 1
-                nxt = int(row.argmax())
-                if step == 0:
-                    first = tok.decode([nxt])
-                if nxt in stop:
-                    break
-                cur = torch.cat([cur, torch.tensor([[nxt]], device=cur.device)], dim=1)
-            gen = tok.decode(cur[0, n_p:], skip_special_tokens=True)
-        finally:
-            h.remove()
+            finally:
+                h.remove()
+            logits = out.logits if hasattr(out, "logits") else out[0]
+            row = torch.log_softmax(logits.float()[0, -1], dim=-1)
+            if step == 0:
+                lp, ix = torch.topk(row, TOPK)
+                top5 = [[tok.decode([int(j)]), round(float(p), 3)]
+                        for p, j in zip(lp.tolist(), ix.tolist())]
+                g = tok(gold, add_special_tokens=False).input_ids[0]
+                gold_rank = int((row > row[g]).sum().item()) + 1
+                first = tok.decode([int(row.argmax())])
+            nxt = int(row.argmax())
+            if nxt in stop:
+                break
+            nt = torch.tensor([[nxt]], device=cur.device)
+            cur = torch.cat([cur, nt], dim=1)
+            dcur = torch.cat([dcur, nt], dim=1)
+        gen = tok.decode(cur[0, n_p:], skip_special_tokens=True)
         return {"gen": gen, "first": first, "top5": top5, "gold_rank": gold_rank}
 
     t0, rows, dropped = [], [], []
@@ -248,7 +260,8 @@ def main():
             side = {}
             for (t, R, e_t) in pair:
                 side["rot" if R > THRESHOLD else "set"] = \
-                    {"t": t, "R": R, **generate_and_top(ids_s, e_t, gold)}
+                    {"t": t, "R": R,
+                     **generate_and_top(ids_s, ids_r, t, gold)}
             if len(side) != 2:
                 dropped.append({"chord": f"{rot_w}/{set_w}", "item": it["item"],
                                 "why": "pair did not resolve to two distinct sides"})
