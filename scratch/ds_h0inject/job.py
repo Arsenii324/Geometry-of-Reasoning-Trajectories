@@ -275,7 +275,7 @@ def main():
         torch_dtype=torch.float32, low_cpu_mem_usage=True).to("cuda").eval()
 
     core_last = model.transformer.core_block[-1]
-    orig_init = model.transformer.initialize_state
+    orig_init = model.initialize_state
     DONOR = {"v": None}
     CAPTURED = {}
 
@@ -288,7 +288,7 @@ def main():
         CAPTURED["h0"] = h.detach().clone()
         return h
 
-    model.transformer.initialize_state = patched_init
+    model.initialize_state = patched_init
 
     def coda_head(h, freqs):
         x = model.transformer.ln_f(h)
