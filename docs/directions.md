@@ -1171,3 +1171,50 @@ gets the same premise-check an experiment's first run gets.**
 conclusion stands: **compute is not the binding constraint**, re-analysis of the 63 banked
 runs outranks new jobs, and that is where D138, D141, D146, D152, D154, D157, D158, D159
 all came from at zero GPU cost.
+
+---
+
+## §K State at 2026-08-11 09:00 MSK — in flight, landed, and what each closes
+
+Written while three jobs run, per the standing instruction not to wait for compaction.
+
+### K1 In flight
+
+| id | job | question | status |
+|---|---|---|---|
+| A34 | `bt199d2ndbsrd91q0bcv` `ds_arcshots` | does few-shot close the 29-point ARC gap (D153/D162)? | EXECUTING |
+| A36 | `bt146oseqilb4tbqbdpq` `ds_normchord` | is D164's `e`-vs-`wte` contrast curvature or norm? | EXECUTING |
+| A38 | `bt13mu7dnv74kef3ogn5` `ds_genscore` | does the GENERATION contain the answer D166 puts one token behind? | EXECUTING |
+
+### K2 Built, preflighted, NOT launched
+
+- **A39 `ds_hyster`** — swap `e` at unroll k and leave it swapped, both directions, 8 switch
+  points over 96 unrolls. Asks whether the regime follows the current parameter or the
+  history. **Registers the first quantitative prediction that ties ρ to an observable:** at
+  ρ ~ 0.83 the state closes 1% of the gap to a new attractor in ln(0.01)/ln(0.83) = **24.7**
+  unrolls and 5% in **16.1**, so a relaxation of 16–25 unrolls confirms the contraction picture
+  causally and closes UNDERSTANDING.md §6.2 ("ρ has never been connected to behaviour").
+  Launch when a slot frees.
+
+### K3 Landed since the last entry, at zero GPU
+
+- **D164** — the rotating region is chord-convex in `e` (0 of 3 chords leave) and not in `wte`
+  (2 of 2 leave), on the **matched pair** `symbol`↔`array`: min R **0.768** drawn in `e`,
+  **0.400** drawn in `wte`. Resolves A32's failed P5 control as a coordinate artefact.
+- **D165** — the linear-probe design cannot recover a label that is a guaranteed deterministic
+  function of the features it is given: **0.690** from the raw states of the window the label
+  is computed on, against a **0.600** baseline, while R as a single feature gets **0.980**.
+  Retires every "not linearly decodable at n ~ 50" null, and kills the probing route to the
+  onset question — which is why A39 asks it causally instead.
+- **D166** — what displaces the gold is **`The`**, a sentence opener, not a role marker. The
+  gold's final rank is median **2.5**, top-5 for 24 of 32. Refutes D145's hypothesis; keeps
+  D157/D158's numbers and replaces their reading.
+
+### K4 Dequeued, with why
+
+- **Dating the regime's onset by probing.** Dead by D165 — no probe of that class can do it,
+  at any n available here. Replaced by A39's causal version.
+- **Re-establishing D135/D136 with a better classifier.** Dead by D165 for the same reason;
+  a positive would not be believable and a null is uninformative by construction.
+- **Any further regex-over-prose audit of the ledger.** Failed three times to identify claim
+  structure; not rebuilt (RC5).
