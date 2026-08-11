@@ -574,10 +574,24 @@ kernel against an attribute map read **verbatim from the released source** — n
 someone chose — and preflight blocks on it. Verified by re-introducing A47's bug into a copy and
 confirming the check fires, and that the fixed kernel passes.
 
-**What it does NOT catch, stated so it is not over-trusted.** A41's bug is a *shape* error, not
-a *name* error; the checker passes `ds_regimeout` cleanly. Names are one class. Shapes,
-normalisation, and cache semantics are others, and they still need a local smoke test or a
-cheap remote canary.
+**What the name checker does NOT catch — and what now does.** A41's bug is a *shape* error, not
+a *name* error; the checker passes `ds_regimeout` cleanly. So `scripts/local_smoke.py` runs the
+**real `RavenForCausalLM`** at toy dimensions — the released `raven_modeling_minimal.py` ships
+in the repo, so a **27.7M-parameter** instance builds from random weights in about a second, no
+download and no MPS. **Total runtime 4.25 s.** Every code path is the genuine one; only the
+sizes are small.
+
+It exercises the four intervention patterns our kernels use, and **reproduces both of the day's
+failures as regression checks**: `initialize_state` is confirmed to live on the model and not on
+the `ModuleDict` (A47), and a fixed-length `e` concatenated onto a grown sequence is confirmed
+to *raise* while the recomputed version passes (A41). If a kernel needs a pattern that is not
+there, **add it to the smoke first and make it pass, then copy it into the kernel** — kernels
+should copy from a verified reference rather than invent an intervention and discover it on a
+GPU.
+
+**Still not covered:** numerics. Toy weights mean shapes and attributes surface here and
+*results* do not. A wrong-but-runnable intervention still needs its instrument null on the real
+model — which is what P1 gates are for.
 
 **And the checker's own first version was wrong in this project's signature way.** It built its
 attribute map from a grep pattern its author chose, omitted `prelude`, and confidently flagged a
