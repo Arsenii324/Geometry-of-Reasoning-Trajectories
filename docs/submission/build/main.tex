@@ -369,16 +369,14 @@ evaluation protocol, recovers the published benchmark number.
 
 \section{Contribution}
 
-\emph{(Placeholder --- to be completed before submission. One entry per team member, describing
-that member's specific contribution.)}
+\emph{(To be completed by the authors before submission --- one entry per team member.)}
 
 \begin{itemize}
-\item \textbf{Author One} --- \textsc{placeholder}: e.g.\ experiment design, kernel
-implementation, analysis of the regime results (Section~3).
-\item \textbf{Author Two} --- \textsc{placeholder}: e.g.\ evaluation-protocol experiments and
-analysis (Section~4), literature comparison.
-\item \textbf{Mentor: Serguei Barannikov} --- \textsc{placeholder}: problem formulation,
-hypotheses H1--H3, supervision.
+\item \textbf{Arsenii Varaksin} --- \textsc{to be completed}.
+\item \textbf{Alexander Shiianov} --- \textsc{to be completed}.
+\item \textbf{David Sverdlov} --- \textsc{to be completed}.
+\item \textbf{Serguei Barannikov} (mentor) --- problem formulation, the hypotheses H1--H3 that
+this report tests, and supervision.
 \end{itemize}
 
 \section*{Acknowledgments}
@@ -422,20 +420,41 @@ Answer position vs prose positions & 7.89 against 3.65 unrolls ($p = 0.0004$) \\
 
 \section{Withdrawn and Amended Claims}
 
-\emph{(Placeholder for the full list. The four summarised in Section~6 are the load-bearing
-ones.)}
+Ten ledger rows carry an explicit withdrawal or amendment marker. Every entry below states what
+fell \emph{and} what survived, because in each case something did.
 
-\section{Template and Encoding Notes}
+\paragraph{Inherited from earlier work.} \textbf{D34} and \textbf{D36} are superseded by D50: the
+direction they measured is 97\% the current-token contrast, so the window statistic they rest on
+is an artefact --- the register claim itself survives, the stated mechanism does not.
+\textbf{D43} is retracted; it held that the contraction rate predicts how deep the model can
+usefully think, and direct measurement flipped the verdict. \textbf{D51} is subsumed by a
+same-day rerun on more checkpoints, though its caveat about the early jump was confirmed.
 
-The template repository ships \texttt{zapiski.cls} in CP1251 and its README requires the
-\texttt{.tex} to be CP1251 as well, but the distributed \texttt{template.tex} is UTF-8. That
-mismatch makes the Russian masthead strings inside the class decode incorrectly, and the
-distributed template works around it with explicit \verb|\renewcommand| overrides.
+\paragraph{The regime line.} \textbf{D137/D138} are replaced by the threshold result: their
+``gapped, therefore two regimes'' test used a uniform null, which any clustered distribution
+beats, so it never tested the claim being made; checked against the labels, the gap splits the
+settling population. The replacement is stronger, reproducing the binary label on 691 of 696
+orbits. \textbf{D135/D136} are superseded because the probe class they used cannot resolve the
+question (Section~7); what survives is five held-out replications. \textbf{D164} was amended by
+its own registered norm control, which the decisive matched pair did not survive --- the
+measurements replicate bit-for-bit, the interpretation is what failed.
 
-This document instead follows the README: it is written in CP1251 with
-\verb|\usepackage[cp1251]{inputenc}|, matching the class. With the encodings aligned the masthead
-renders correctly and no override is required --- verified by compiling a minimal probe without
-them.
+\paragraph{The evaluation line.} \textbf{D148}'s correctness half is withdrawn as vacuous:
+\texttt{correct} was False in 432 of 432 orbits, so there was no variance for the regime to
+change. Re-tested on an outcome that varies, the conclusion returned at 1 of 18 paired units.
+\textbf{D162}'s headline refuted ``protocol'' after varying only the scoring rule at fixed
+prompt; prompt format was the whole story and was never varied. \textbf{D193}'s parsed-exact
+column measured our parser rather than the model, reading 14$\times$ low on the harness arm; on
+the repaired metric its conclusion survives unchanged.
+
+\paragraph{Narrowed rather than withdrawn.} Three interpretations were tightened without the
+underlying row falling: arithmetic families are not ``uncertain about the answer'' but compute in
+prose; depth tracks where the answer starts rather than the kind of operation; and the steering
+nulls are bounded to the last-position injection site rather than to orthogonality of directions.
+
+\paragraph{Refused by their own gates.} Two runs never became claims at all: a spectral pass whose
+tail length disagreed with the statistic it was validating against, and a reasoning arm that hit
+its wall-clock budget and banked cleanly without executing.
 
 \begin{thebibliography}{9}
 
