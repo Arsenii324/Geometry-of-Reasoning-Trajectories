@@ -1295,3 +1295,54 @@ in ledger row notes rather than as a queue, which is how they stay unactioned. T
   checked one* — the same acceptance cost us 07/09, which turned out to hold D191.
 - **Adopting lm-eval (§L1) mid-flight** — would make today's arms cross-protocol, which is
   the error D183 caught. Correct after the current batch, not during.
+
+---
+
+## §N Registered before the results land, 2026-08-11 16:50
+
+*Two predictions and one structural observation, written now so they cannot be fitted afterwards.*
+
+### N1 — A51 (`steerregime`) will probably be null on R, and for a reason that is not "steering fails"
+
+A51 steers `e` **at the last position** and asks whether R crosses D141's threshold. D192 found
+that rotation switches on at **position 20 of 53** and holds to the end — the regime is
+established mid-prompt, **33 positions before** the one being steered. A last-position
+intervention is downstream of wherever the property is set.
+
+**So a null on R is the expected outcome and would NOT license "the prose direction and the
+regime direction are orthogonal in `e`-space".** It would license only "steering the last
+position does not move the regime", which is much weaker and partly predicted by geometry we
+already have. *If R does move, that is the surprising result and much more interesting.*
+
+**The discriminator, if a null comes back:** steer `e` at **all** positions rather than one.
+One-line change; separates "not this direction" from "not this position".
+
+### N2 — the same reasoning bounds D196
+
+D196's null is real and well-gated, but it shares the defect: `Δe` was fitted and applied at
+the last position only. Of its three candidate explanations — not linear, not concentrated at
+the last position, lives in attention over exemplar tokens — **the second is now the most
+likely and the cheapest to test**, and D192 is the reason. This is recorded as a bound on D196,
+not a retraction of it.
+
+### N3 — the structural mismatch nobody has named: the regime is a TAIL statistic, the answer is a TRANSIENT event
+
+- `rotation_power(period=6, tail=24)` reads the **last 24** unrolls. A49's first pass failed
+  precisely because a 48-unroll window let the damping transient dominate — so the statistic is
+  deliberately about the *settled* part.
+- The answer is best-ranked at median unroll **~4** (D159) and position-0 `best_depth` is
+  **4.07** (D184).
+
+**These are different windows of the same trajectory, and every "does the regime affect the
+answer" test we have compares one to the other.** D176 found the regime change moves correctness
+in 1 of 18 units — but the regime is measured over unrolls 40–64 and the answer is decided
+around unroll 4. *They may simply not overlap in time.*
+
+**The experiment this implies, not yet run:** compute rotation power over the **transient**
+window (unrolls 1–12, which spans two period-6 cycles — the minimum `rotation_power` accepts)
+and ask whether transient-rotation predicts correctness where tail-rotation does not. If the
+regime only exists in the tail, that also explains why D148/D176 kept finding nothing: **the
+dynamics being manipulated had not started yet when the answer was chosen.**
+
+*Cost: one kernel, no new banking primitives — the trajectories are already hooked. Not launched
+now because four jobs are in flight.*
