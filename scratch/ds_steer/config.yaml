@@ -1,0 +1,33 @@
+name: steer-can-a-direction-in-e-suppress-the-prose-frame
+desc: >
+  A48: the first steering-vector experiment on a recurrent-depth model. D188 surveyed all 12
+  papers in huginn-load, tex and code, and found zero occurrences of steering vectors,
+  activation addition, representation engineering, SAEs, path patching, attribution patching,
+  causal scrubbing or circuit discovery -- the standard mech-interp toolkit has never been
+  pointed at this architecture. And Huginn is unusually suited to it: e is re-injected at every
+  unroll, so a vector added to e is applied r times rather than once, a dose-response knob no
+  feedforward model has, and we already own the machinery from A24 and A39 at P1 = 0.000e+00.
+  The target is the model's dominant failure mode, which is format rather than computation:
+  "The" opens 39.4% of generations, first-token accuracy reads 0.125 against 0.781 containment,
+  and two in-context examples move final-unroll accuracy 0.071 to 0.327. So the direction is
+  delta_e = mean(e at last position given two shots) minus mean(e given zero shots), fitted on
+  items disjoint from the test set and swept in alpha. If one direction reproduces what
+  exemplars do, the prose decision is linearly encoded in the map's parameter -- an interp
+  result and simultaneously a fix for the metric problem that dominates this project's record.
+  P1 gates on alpha=0 reproducing the unpatched curve exactly, since the hook still fires and
+  adds zero. P4 is a norm-matched random direction, which has teeth here because D144 showed
+  random bearings in e-space destroy rotation on 3 of 3 carriers. P5 fits only on add_2d,
+  sort_min and count_mod3, leaving echo_digit, add1 and sub1 as fully held-out families --
+  the three where D180 measured the largest zero-to-two-shot jump. P3's assertion caught two
+  leaks before launch, the second of which would have made delta_e identically zero. Mounts the
+  prebuilt weights dataset.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - steer.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
