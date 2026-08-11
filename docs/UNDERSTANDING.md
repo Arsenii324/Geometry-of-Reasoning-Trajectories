@@ -853,6 +853,15 @@ synthetics before noticing the real states are low-rank (PR 1.0–4.8, D48).*
 
 ### 6.9 ρ is characterised entirely OUTSIDE the training regime — found on the third pass
 
+**CORRECTED 2026-08-11 (D187): this heading is wrong and the limitation it states does not
+apply.** Training depth was never fixed at 32. `raven_modeling_minimal.py:793-797` samples
+it as `p ~ Poisson(rate) + 1` with `rate ~ lognormal(log 32 − σ²/2, σ = 0.5)` — mean 33.0,
+median 29, **p90 = 56, p99 = 93** over 400k simulated draws. So **P(depth ≥ 48) = 0.169**:
+our r = 48 runs sit at the **83rd percentile** of the training distribution and r = 64 at
+the **94th**. They are in the tail, not outside it. Only r ≳ 96 would be genuinely
+out-of-distribution. *The scope condition below is withdrawn; the ρ numbers do not need it.*
+
+
 Huginn was trained with `r` sampled log-normal-Poisson, **mean 33, median 29, mode
 24**. Every ρ in this project is fitted over the pre-floor window of a 128-unroll
 run, and that window is **65–98 points long — all 12/12 prompts beyond 2× the mean
