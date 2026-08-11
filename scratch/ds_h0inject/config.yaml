@@ -1,0 +1,41 @@
+name: h0inject-does-an-injected-state-reach-the-readout
+desc: >
+  A46: tests whether a donor state injected once at h_0 reaches the readout inside the window
+  between the answer settling and the map forgetting. D173 showed the regime is memoryless in
+  the parameter -- 62 of 64 mid-trajectory e swaps take, relaxation median 15.5 unrolls entering
+  rotation and 1.0 leaving -- so with e intact an injected state should be washed out by
+  contraction, and "inject h_0, read the final answer" is a predicted null that could not be
+  told from the capability floor that made D148 vacuous. But the answer is settled at median
+  unroll 4 while relaxation takes about 15, leaving roughly ten unrolls in which history could
+  still reach the readout. D173's own statistic is period-6 power over the last 24 unrolls and
+  is blind to exactly that window. This makes it the sharpest available test of H3: contraction
+  is supposed to exclude a running register, yet the limit set has diameter about 1 in 5279
+  tangent dimensions. Injection is once, at h_0, by monkeypatching initialize_state, because
+  ds_estream documents that overwriting the state every unroll pins the trajectory and measures
+  nothing. Every forward is seeded, since initialize_state draws from the global RNG. Norms are
+  measured rather than assumed: a natural h_0 has norm about 45.3 while mid-trajectory states
+  sit at 76.386 by RMSNorm, so injecting a converged h* injects something 1.7x oversized, and a
+  norm-matched arm is included to tell content from magnitude. The three families run two-shot
+  because A42 gives them final-unroll accuracy 1.000 there, and the measured base rate is
+  printed. P1 gates on the run's own h_0 reproducing the unpatched rank curve exactly. P2
+  reports the per-unroll deviation so a washed-out injection cannot be mistaken for a null. P3
+  is registered both ways: a rank change at unrolls 1-8 that vanishes by 32 is a transient
+  memory channel, and no change anywhere with P2 confirming the injection took is direct
+  behavioural evidence for H3's strong form. P4 tracks the DONOR item's gold in the recipient's
+  curve, which is the arm that distinguishes content from perturbation. P6 asks whether h_0
+  itself is good or bad: six independent draws per item with nothing injected and only the
+  seed changed, so if correctness or best_depth vary across draws then the model's answer
+  depends on a random tensor nobody controls and every single-seed number in this project
+  inherits that variance. P7 splits h_0 by position -- own everywhere except the last, and
+  the converse -- since the readout is taken at the last position, which tells local
+  influence from statement-carried influence. Mounts the weights.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - h0inject.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
