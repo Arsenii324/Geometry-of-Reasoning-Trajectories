@@ -60,9 +60,26 @@ containment still rises, 61/252 → 91/252, p = 0.0048**, so this is not the len
 the answer* rather than *blocked on format*, and at r = 32 `sub1` writes out *"The answer is
 4 - 1 = 3"* — it shows the working. **Depth buys computation where computation is what is
 missing.** That is not H2, which claims *difficulty recruits depth*; it is the precondition H2
-needs, and the record had been treating it as absent. What follows is the evidence that the
-*rate*-based and *rank*-based tests remain null, which is now a statement about those
-instruments as much as about the hypothesis.
+needs, and the record had been treating it as absent.
+
+**But the formatting discovery does NOT rescue H2, and that is now measured rather than
+assumed.** The obvious worry after D174 — that every H2 null was an artefact of a metric
+anti-correlated with competence — is testable on a measure that has nothing to do with emission:
+**`best_depth` conditioned on the model being right**, i.e. when the answer becomes *available*.
+On 4868 census draws, difficulty moves it in H2's predicted direction and by almost nothing:
+1-digit → 2-digit addition gives **+0.23 unrolls (d = 0.297, p = 0.0048)** — the project's first
+significant difficulty-on-depth effect — against matched-difficulty controls at **+0.16** and
+**+0.05**, and against **task identity at +5.56 unrolls (d = 3.18)**. Between-family means span
+**2.20 to 8.29** with a within-family sd of 1.08 (Kruskal–Wallis p = 2e-237). That is 0.5% of a
+48-unroll budget (D177).
+
+This replicates D115's shape on an unrelated quantity: **the map's behaviour is set by which
+task it is, not by how hard the instance is.** And what predicts depth is the *kind of
+operation* — retrieval 2.2–2.9, arithmetic 4.5–4.9, character transformation 8.3 — with
+`echo_word`, about as easy as the suite gets, taking **6.15** unrolls against `compare`'s 2.89.
+
+So the evidence below that the *rate*- and *rank*-based tests are null is now corroborated by a
+format-independent test rather than being merely a statement about instruments.
 
 **The original entry, unchanged:** Where it could be tested it is null, with bounds: difficulty moves the contraction
 rate by **0.0033** when the count quadruples (D115, D116); the dynamics do not reach the
