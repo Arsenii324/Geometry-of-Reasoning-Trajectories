@@ -426,8 +426,13 @@ today; 6 is still thin for a paper that surveys 12.
 than a sin of commission* are exactly what `CLAIM_INVENTORY.md` Part 6 enforces. Intensifier
 sweep already clean (all 17 "rather" are contrastive).
 
-**Flagged for the authors, not actionable by me:** guide-3 states *"almost nobody should use LLMs
-to draft their text… LLMs currently write annoying, preachy, long-winded text that has a
-distinctive style that people can recognise and dislike."* **This draft is LLM-drafted.** The
-uses it endorses — paraphrase to locate unclear passages, adversarial-reviewer critique, LaTeX
-help — are available; drafting is the one it warns against. An author decision.
+**On guide-3's LLM-drafting advice — considered and does not apply here.** Its premises are
+about a *human* author using an LLM on work the LLM did not do: *"if you are a good writer you
+are better than LLMs"*, *"if you are a bad writer you need the practice"*, *"you will learn more
+about your work by writing it"*. None parses in this setting — no author is being deprived of
+practice or understanding. Its fifth premise, *"LLMs are currently not great at explaining novel
+things"*, fails specifically: the novelty here is documented claim-by-claim with instrument,
+gate and job id in `CLAIM_INVENTORY.md`, which is the opposite of paraphrasing unfamiliar work.
+**Only the style premise is live** — *"annoying, preachy, long-winded text with a distinctive
+style"* — and that is a check already run (intensifier sweep clean; anti-overclaim table; terse
+discipline), not a prohibition. Recorded because I initially over-applied it.
