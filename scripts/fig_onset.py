@@ -38,53 +38,58 @@ EXPECTED = {
     "settling": {0: 0.23, 4: 0.24, 8: 0.25, 12: 0.29, 16: 0.34, 20: 0.40, 24: 0.45, 52: 0.55},
 }
 
-root = pathlib.Path(__file__).resolve().parent.parent
-data = json.loads((root / "scratch/ds_transrot/transrot.json").read_text())
-reg = [r for r in data["rows"] if r["kind"] == "regime"]
-assert data["early"] == WIDTH, f"window width changed: {data['early']}"
+def main():
+    root = pathlib.Path(__file__).resolve().parent.parent
+    data = json.loads((root / "scratch/ds_transrot/transrot.json").read_text())
+    reg = [r for r in data["rows"] if r["kind"] == "regime"]
+    assert data["early"] == WIDTH, f"window width changed: {data['early']}"
 
-curves = {}
-for grp, name in ((ROT, "rotating"), (SET, "settling")):
-    v = [r for r in reg if r["label"] in grp]
-    starts = [s for s, _ in v[0]["slide"]]
-    curves[name] = (starts, [st.median([dict(x["slide"])[s] for x in v]) for s in starts], len(v))
-    # the first sliding window IS R_early by construction -- free identity check
-    for x in v:
-        assert abs(dict(x["slide"])[0] - x["R_early"]) < 1e-12, "slide[0] != R_early"
+    curves = {}
+    for grp, name in ((ROT, "rotating"), (SET, "settling")):
+        v = [r for r in reg if r["label"] in grp]
+        starts = [s for s, _ in v[0]["slide"]]
+        curves[name] = (starts, [st.median([dict(x["slide"])[s] for x in v]) for s in starts], len(v))
+        # the first sliding window IS R_early by construction -- free identity check
+        for x in v:
+            assert abs(dict(x["slide"])[0] - x["R_early"]) < 1e-12, "slide[0] != R_early"
 
-for name, exp in EXPECTED.items():
-    starts, med, _ = curves[name]
-    got = dict(zip(starts, med))
-    for s, want in exp.items():
-        assert abs(got[s] - want) < 0.005, f"{name} u{s}: {got[s]:.4f} != documented {want}"
+    for name, exp in EXPECTED.items():
+        starts, med, _ = curves[name]
+        got = dict(zip(starts, med))
+        for s, want in exp.items():
+            assert abs(got[s] - want) < 0.005, f"{name} u{s}: {got[s]:.4f} != documented {want}"
 
-fig, ax = plt.subplots(figsize=(5.4, 3.2))
-ax.axvspan(0, DECISION_UNROLL, color="0.88", zorder=0)
-ax.axhline(THRESHOLD, color="0.55", ls=":", lw=0.9, zorder=1)
-ax.text(53, THRESHOLD + 0.015, "regime threshold", ha="right", va="bottom",
-        fontsize=7.5, color="0.35")
-ax.text(DECISION_UNROLL + 1.0, 0.045, "answer decided\n(median unroll 4)",
-        fontsize=7.5, color="0.35", va="bottom")
+    fig, ax = plt.subplots(figsize=(5.4, 3.2))
+    ax.axvspan(0, DECISION_UNROLL, color="0.88", zorder=0)
+    ax.axhline(THRESHOLD, color="0.55", ls=":", lw=0.9, zorder=1)
+    ax.text(53, THRESHOLD + 0.015, "regime threshold", ha="right", va="bottom",
+            fontsize=7.5, color="0.35")
+    ax.text(DECISION_UNROLL + 1.0, 0.045, "answer decided\n(median unroll 4)",
+            fontsize=7.5, color="0.35", va="bottom")
 
-style = {"rotating": ("o", "-", "0.05"), "settling": ("s", "--", "0.45")}
-for name in ("rotating", "settling"):
-    starts, med, n = curves[name]
-    m, ls, c = style[name]
-    ax.plot(starts, med, ls, marker=m, ms=3.4, lw=1.4, color=c,
-            label=f"{name} prompts (n={n})", zorder=3)
+    style = {"rotating": ("o", "-", "0.05"), "settling": ("s", "--", "0.45")}
+    for name in ("rotating", "settling"):
+        starts, med, n = curves[name]
+        m, ls, c = style[name]
+        ax.plot(starts, med, ls, marker=m, ms=3.4, lw=1.4, color=c,
+                label=f"{name} prompts (n={n})", zorder=3)
 
-ax.set_xlabel("start unroll $s$ of the 12-unroll window $[s,\\,s{+}12)$")
-ax.set_ylabel("rotation power $R$ (period 6)")
-ax.set_xlim(-1.5, 54)
-ax.set_ylim(0, 1.0)
-ax.set_xticks(range(0, 53, 8))
-ax.legend(loc="lower right", fontsize=8, frameon=False)
-for side in ("top", "right"):
-    ax.spines[side].set_visible(False)
-fig.tight_layout(pad=0.3)
+    ax.set_xlabel("start unroll $s$ of the 12-unroll window $[s,\\,s{+}12)$")
+    ax.set_ylabel("rotation power $R$ (period 6)")
+    ax.set_xlim(-1.5, 54)
+    ax.set_ylim(0, 1.0)
+    ax.set_xticks(range(0, 53, 8))
+    ax.legend(loc="lower right", fontsize=8, frameon=False)
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    fig.tight_layout(pad=0.3)
 
-for out in (root / "docs/submission/build/pic/onset.pdf",
-            root.parent / "files/paper_submission/draft/pic/onset.pdf"):
-    fig.savefig(out)
-    print("wrote", out)
-print("gate passed: medians match C7/D198; slide[0] == R_early on all rows")
+    for out in (root / "docs/submission/build/pic/onset.pdf",
+                root.parent / "files/paper_submission/draft/pic/onset.pdf"):
+        fig.savefig(out)
+        print("wrote", out)
+    print("gate passed: medians match C7/D198; slide[0] == R_early on all rows")
+
+
+if __name__ == "__main__":
+    main()

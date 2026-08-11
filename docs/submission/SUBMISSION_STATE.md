@@ -17,17 +17,18 @@ matters if this blocks.*
 
 ## 1. The deliverable, and its current state
 
-`files/paper_submission/draft/` — `main.tex`, `main.pdf`, `zapiski.cls`, `pic/`. **Untracked, outside
-the research repo, nothing committed.**
+`files/paper_submission/draft/` — `main.tex`, `main.pdf`, `zapiski.cls`, `pic/`. **The live copy is
+outside any git repo, but it is now mirrored and committed** at `docs/submission/build/`, which is
+self-contained and builds from a fresh clone.
 
-- **8 pages**, exit 0, **0 LaTeX errors, 0 undefined citations**, 0 overfull boxes > 20pt.
+- **12 pages, main body ending p9** (appendices carry the rest), exit 0, **0 LaTeX errors, 0
+  undefined citations**, largest overfull box 5pt. 1 figure, 6 bibitems / 6 cites.
 - `main.tex` is **CP1251** (`file` reports ISO-8859). **Plain `grep` treats it as binary — use
   `grep -a`.** This caused one false alarm already ("all numbers missing from draft" — they were
   all present).
-- Content came from `RESULTS_HANDOFF.md` **only**. **That file is now current to 18:00 and
-  carries A1–A11, so the compiled PDF is behind it by four results (D198, D199, D200 and the
-  A7 amendment). Regenerating the draft from the handoff is a required step, not an optional
-  refresh.**
+- Content came from `RESULTS_HANDOFF.md`, **and the D198/D199/D200 backlog has since been folded
+  in** — the hinge section, Figure 1, the abstract, the contributions list and the limitations
+  section are all current as of 20:15. `CLAIM_INVENTORY.md` is now the primary source.
 - **IT IS NOT REVIEWED. Do not treat it as ready.** Every sentence in it derives from
   `RESULTS_HANDOFF.md`, which I wrote. **The authors have not read the content, and no claim in
   the PDF has been discussed with them.** It compiles and is compliant; that is a *floor*, not
@@ -50,7 +51,7 @@ the research repo, nothing committed.**
 
 ## 2. Compliance checklist (from `instructions.md`)
 
-- [ ] ≤ 10 pages main body (currently 8), unlimited appendices — **OK**
+- [x] ≤ 10 pages main body (**currently 9**), unlimited appendices — **OK**
 - [ ] Not anonymised — **OK**
 - [ ] Full author list, **all authors registered on OpenReview** — **BLOCKED ON USER**
 - [ ] Mentor(s) listed — name present (*Serguei Barannikov*), **affiliation is placeholder**
@@ -62,7 +63,7 @@ the research repo, nothing committed.**
 **USER (critical path, needed by ~19:30):**
 - author names + affiliations — `main.tex` line ~44
 - mentor affiliation — line ~47
-- **Contribution entries** — lines ~274–282
+- **Contribution entries** — the one remaining hard-missing compliance item
 - Acknowledgments — line ~288
 - Russian names in the metadata block — line ~376; confirm spelling *Сергей Баранников*
 
@@ -107,8 +108,7 @@ the regime is a dynamical epiphenomenon"*. `CLAIM_INVENTORY.md` Part 6 item 1 ba
 not the word. Do not "fix" this sentence. The other Part 6 phrasings ("orthogonal", "H2 is
 refuted", "not linearly decodable") return **0** matches.
 
-**Figure 1 added 19:50** (`\ref{fig:onset}`, the onset curve). Draft is now **11 pages total, main
-body ending p9** — the added page fell in the appendices, so the ≤10-page body limit still holds
+**Figure 1 added 19:50; abstract, contributions and limits rewritten 20:15.** (`\ref{fig:onset}`, the onset curve). Draft is now **12 pages total, main body ending p9** — the added page fell in the appendices, so the ≤10-page body limit still holds
 with room. Regenerate the figure with `.venv/bin/python scripts/fig_onset.py`; it gates itself on
 C7's published medians.
 

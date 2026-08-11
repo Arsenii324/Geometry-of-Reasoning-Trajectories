@@ -52,20 +52,23 @@ Measuring}
 }
 
 \begin{abstract}
-We study the latent trajectory of Huginn-3.5B, a recurrent-depth transformer that applies one
-weight-tied block a variable number of times before decoding. Two lines of results are reported.
-First, the recurrent map has a sharp qualitative structure: a single instruction word switches
+A recurrent-depth transformer's latent trajectory is usually read as a trace of its reasoning.
+Measuring that reading directly on Huginn-3.5B, which applies one weight-tied block a variable
+number of times before decoding, we find that the trajectory's most conspicuous geometric
+structure is selected by the surface form of the instruction rather than by the task, and that
+much of what we had scored as capability was answer formatting. First, the recurrent map has a sharp qualitative structure: a single instruction word switches
 it between a settling regime and a damped period-6 rotation (36/36 paired cells at an identical
 token count), the switch is causally controlled by one row of the embedding matrix, the regime
 is a property of the prompt rather than of the token position sampled, and swapping the map's
 injected parameter mid-trajectory re-aims the dynamics with no hysteresis in 62 of 64 switches.
-Second, and less comfortably, a large part of what this project measured as capability was
-answer formatting: first-token scoring reads 0.125 where the answer is actually present in 0.781
+Second, and less comfortably: first-token scoring reads 0.125 where the answer is actually present in 0.781
 of generations, depth raises prose-opening twentyfold while leaving the rate of leading with the
 answer flat, and supplying the output format recovers the model's published benchmark number by
-two independent routes. We report the retractions this produced alongside the results, since
-several of them were caused by our own instruments rather than by the model. This is a draft
-report; several stated limits are open.
+two independent routes, reproducing it to within 4.1 points under the protocol its authors used.
+The two findings meet in a timing fact: the regime and the answer occupy non-overlapping windows
+of the same trajectory, the answer being fixed some twelve unrolls before the regime becomes
+measurable at all. We report the claims this project withdrew alongside those it kept, since
+several were produced by our own instruments rather than by the model.
 \end{abstract}
 
 \keywords{recurrent-depth transformers \and latent reasoning \and interpretability \and
@@ -89,6 +92,29 @@ position a scorer reads, not whether it has the answer.
 We report both, together with the claims we withdrew in the process. The withdrawals are
 included deliberately: in several cases the instrument, not the model, produced the result, and
 a report that omitted them would misrepresent how reliable the remainder is.
+
+It is worth saying at the outset what evidence this report does \emph{not} offer. Every number
+comes from one model, one checkpoint and one seeded initial state per condition; nothing here
+supports a claim about recurrent-depth models in general. The behavioural test of H3 is absent
+rather than negative --- the state-injection experiment failed three times and is omitted, not
+reported weakly. Our accuracy figures inherit an uncorrected surface-form bias from likelihood
+scoring, which the published figure we compare against also carries, so the comparison survives
+it while the absolute values of both remain questionable in the same direction. And several of
+our null results rest on small paired samples of twelve to twenty-four units, which exclude
+large effects and not small ones; we give the bound wherever we state one.
+
+Concretely, this report contributes:
+\begin{itemize}\itemsep2pt \parskip0pt
+\item a validated scalar instrument for latent rotation, with a threshold that reproduces the
+      hand-assigned regime label on 691 of 696 orbits and 688 held out, replacing inspection of
+      two-dimensional projections;
+\item the finding that this regime is selected by one instruction word at fixed token count and
+      is causally controlled by a single row of the embedding matrix;
+\item a decomposition of measured capability into answer availability and answer formatting,
+      which reproduces the model's published benchmark number under its authors' own protocol;
+\item a timing result placing the regime and the answer in non-overlapping windows of the same
+      trajectory, which reinterprets our own behavioural nulls (Figure~\ref{fig:onset}).
+\end{itemize}
 
 \begin{figure}[t]
 \centering
@@ -279,8 +305,11 @@ these models, with many state-tracking problems harder than $S_5$
 \cite{grazzi2025statetracking}.
 
 \paragraph{H3 (contraction implies no running register).} Its strong form overstates its evidence.
-Contraction is real, but the limit set has ample room to separate states, and the running count is
-linearly decodable from the latents.
+Contraction is real, but $\rho$ is a family-level quantity rather than a model constant, spanning
+$0.8239$ to $0.9181$ across task families with a between-family spread some four times the
+within-family spread; the single value used for the timescale prediction above should be read as a
+representative rate, not a property of the model. The limit set retains ample room to separate
+states, and the running count is linearly decodable from the latents.
 
 \section{Reliability: Controls, Retractions, and Instrument Nulls}
 
@@ -318,9 +347,8 @@ their figures are projections of a 128-iteration run against our 64.
 \begin{itemize}
 \item Our benchmark numbers and the published figure share an uncorrected surface-form
 (first-token) bias inherent to likelihood scoring.
-\item We do not reproduce the published orbit on the paper's own word-problem example (0 of 35
-positions). The leading explanation is that our detector is tuned to a single period; a period
-sweep was running at the time of writing.
+\item Our comparison to the published orbit rests on a prompt built in the shape of the authors'
+example rather than on their exact string, and on a 64-iteration run against their 128.
 \item The published attribution of orbiting to ``prompts requiring numerical reasoning'' is
 contradicted by our data on three independent grounds, while the phenomenon itself is theirs.
 \item Comparisons to two related works are cross-checkpoint or cross-protocol and are not
@@ -330,8 +358,11 @@ directly numerically comparable.
 \section{Conclusion}
 
 The recurrent map of Huginn-3.5B carries a sharp, causally controllable qualitative structure that
-is selected by the surface form of the instruction rather than by the task it states, and that has
-no measurable consequence for the answer under the tests we could run. Separately, a substantial
+is selected by the surface form of the instruction rather than by the task it states. Our
+behavioural tests of that structure came back null, but the timing result above shows why those
+nulls are weak evidence: they intervened on a property that had not yet become measurable when
+the answer was already fixed. Whether the regime can affect behaviour is open, and the
+experiment that would settle it must act earlier in the trajectory than ours did. Separately, a substantial
 part of what we and the standard protocols measured as capability was the model's willingness to
 emit its answer where a scorer looks. Supplying the format, by demonstration or by matching the
 evaluation protocol, recovers the published benchmark number.
