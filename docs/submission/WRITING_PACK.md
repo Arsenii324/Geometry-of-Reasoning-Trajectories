@@ -244,11 +244,15 @@ reaches the readout before the map forgets it. At 18:06 it was at 4/18, ~25 min 
 
 ## H. Related work — a real defect, and the material to fix it
 
-**The defect, found 2026-08-12 by counting:** the draft declares **6 `\bibitem`s and contains
-exactly one `\cite`** (`geiping2025huginn`). Five references print in the bibliography and are
-never referred to in the text. LaTeX reports "0 undefined citations" because that check runs the
-other way, so a green compile hides it. **A reviewer will notice.** Either cite them where they
-belong — the material is below — or delete them.
+**RESOLVED 2026-08-11 19:25 — do not re-do this.** The defect was real: the draft declared 6
+`\bibitem`s and contained exactly one `\cite`, and LaTeX's "0 undefined citations" check runs the
+other way so a green compile hid it. **It is now fixed and verified by counting: 6 `\bibitem`s, 6
+`\cite` commands, keys matching one-to-one.** The table below is kept because it records *what
+each reference is for*, which is still useful when writing — not because anything is outstanding.
+
+*One correction to the table: the state-tracking row's key is `grazzi2025statetracking`, not
+`merrill2024ssm`. The parity/S₂/S₅ claims come from arXiv 2411.12537; an earlier draft cited
+2404.08819 for them, which was a misattribution and has been fixed.*
 
 **What each is for, and the sentence it supports.** *All claims here are verified in-file from
 `/Users/a2mogus/build-projs/huginn-load`; quotes are exact.*

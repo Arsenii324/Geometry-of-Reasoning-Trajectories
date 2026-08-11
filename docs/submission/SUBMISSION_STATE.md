@@ -94,13 +94,20 @@ contingency for the one unresolved job.
 **If you are writing and short on context, read §C (anti-overclaim) and §D (traps) first.** They
 are the parts that prevent a wrong sentence rather than a missing one.
 
-## 3c. A defect in the draft found at 18:20 — fix at regeneration
+## 3c. The citation defect found at 18:20 — RESOLVED 19:25, do not re-do
 
-**The draft declares 6 `\bibitem`s and contains exactly one `\cite`.** Five references print in
-the bibliography and are never referred to in the text. LaTeX's "0 undefined citations" check
-runs the other way, so a green compile hides it — a reviewer will not. **`WRITING_PACK.md` §H
-gives, for each reference, where to cite it and the exact claim it carries**, drawn from a
-12-paper survey that is otherwise unused in the draft. Either cite them or delete them.
+The draft had declared 6 `\bibitem`s and contained exactly one `\cite`; LaTeX's "0 undefined
+citations" check runs the other way, so a green compile hid it. **Fixed and verified by counting:
+6 `\bibitem`s, 6 `\cite` commands, keys one-to-one.** `WRITING_PACK.md` §H still records what each
+reference is for, which remains useful when writing.
+
+**Also verified at 19:25, so a later pass need not:** `epiphenomenon` appears once in the draft
+and its use is the *negated* one required by `WRITING_PACK.md` §B1 — *"That is not evidence that
+the regime is a dynamical epiphenomenon"*. `CLAIM_INVENTORY.md` Part 6 item 1 bans the assertion,
+not the word. Do not "fix" this sentence. The other Part 6 phrasings ("orthogonal", "H2 is
+refuted", "not linearly decodable") return **0** matches.
+
+**Still true and still open: the draft contains 0 `figure` environments.**
 
 ## 4. Schedule, backwards from 21:00
 
