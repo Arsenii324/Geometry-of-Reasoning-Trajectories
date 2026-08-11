@@ -37,18 +37,17 @@
 Trajectory of a Recurrent-Depth Transformer Encodes, and What Our Measurements Were Actually
 Measuring}
 
-\author[Author One et al.]{
-  \textbf{Author One\textsuperscript{1}},
-  \textbf{Author Two\textsuperscript{1}}
-\\
-  \textsuperscript{1}Institution (\textsc{placeholder})
+\author[Varaksin, Shiianov, Sverdlov]{
+  \textbf{Arsenii Varaksin},
+  \textbf{Alexander Shiianov},
+  \textbf{David Sverdlov}
 \\
   \small{
-    \textbf{Mentor:} Serguei Barannikov (\textsc{placeholder affiliation})
+    \textbf{Mentor:} Serguei Barannikov (Skoltech)
   }
 \\
   \small{
-    \textbf{Correspondence:} \href{mailto:author@institution.org}{author@institution.org}
+    \textbf{Correspondence:} \href{mailto:varbarn22@gmail.com}{varbarn22@gmail.com}
   }
 }
 
@@ -103,8 +102,7 @@ structure
 \end{aligned}
 \]
 where the prelude output $e$ is re-injected at every unroll through the adapter, which
-receives the concatenation of the current state and $e$. Following the DEQ reading, we treat
-$e$ as the map's
+receives the concatenation of the current state and $e$. Following the DEQ reading \cite{bai2019deq}, we treat $e$ as the map's
 \emph{parameter} and the latent state $h$ as its \emph{state}; the released source supports this,
 since the block index is threaded through the unroll but never enters the block computation.
 
@@ -195,6 +193,15 @@ asking (2 of 36 against 4 of 36). Two in-context examples, by contrast, move ora
 $+0.221$ (exact McNemar $p = 9.3\mathrm{e}{-}09$) and take three families from 0.000 to 1.000 at
 the final unroll.
 
+Placing the identical instruction in the \emph{system} turn rather than the user turn---the
+form another group used to suppress prose in this model---buys one item in twenty-four
+(paired, $p = 1.0$), so the failure is not a property of the turn. The one qualified exception
+is an instruction that does not fight the prose frame but appends to it: asking the model to
+work through the problem and then write \texttt{Answer:} on the last line raises parsed-exact
+accuracy from $0.000$ to $0.167$, gaining four items and losing none ($p = 0.125$, $n = 24$),
+with literal outputs such as \texttt{'Answer: 1'}. Suggestive rather than established, and
+consistent with the prose being where the computation happens.
+
 \subsection{Context costs depth rather than accuracy}
 
 Padding a bare prompt with \emph{irrelevant} prose to the five-shot token length (length match
@@ -209,6 +216,31 @@ that carries the answer is deeper than position~0 ($4.07 \rightarrow 7.89$, $p =
 deeper than the surrounding prose positions ($7.89$ against $3.65$, $p = 0.0004$). The effect
 concentrates on arithmetic and is near-absent on copying.
 
+\section{The Regime and the Answer Occupy Different Windows}
+
+The two preceding sections are connected by a timing fact that reframes both. The rotation
+statistic is computed over the tail of the trajectory; the answer, by contrast, is best-ranked
+at a median unroll of about four. Measuring the same statistic over the decision window
+(unrolls 0--11, the earliest a period-6 orbit is definable at all, since two cycles are
+required) and over the tail separates two facts that had been conflated. Over the decision
+window, rotating and settling prompts are indistinguishable: $0.229$ against $0.230$, a
+separation of $0.000$. Over the tail the same prompts separate completely, $0.862$ against
+$0.298$. A sliding twelve-unroll window dates the divergence to between unrolls~12 and~16, the
+two populations being identical before that and reaching $0.96$ against $0.55$ by the end.
+
+The early window is not quiet. Its non-DC power exceeds the tail's by about two orders of
+magnitude ($1.6\times10^{5}$ against $1943$ and $59$); it is energetic and simply carries no
+period-6 structure.
+
+This changes what our own behavioural null means. We had found that a causally induced regime
+change alters almost nothing in what the model answers---one of eighteen paired units. That is
+not evidence that the regime is a dynamical epiphenomenon: the manipulation acted on a property
+that had not yet come into existence when the readout was settled. \textbf{This is a timing
+claim rather than a causal one.} It does not show that the regime could not affect behaviour,
+only that on this architecture the answer is fixed roughly twelve unrolls before the regime
+becomes measurable. It also bounds the instrument: no period-6 statistic can describe the state
+at the moment of decision, and we state this wherever the regime is connected to behaviour.
+
 \section{The Three Starting Hypotheses}
 
 \paragraph{H1 (settle / loop / drift).} Answered, in the form ``both, at different levels''.
@@ -217,11 +249,19 @@ on a sphere. A large cycle exists \emph{across} the four core blocks; \emph{with
 state settles or rotates according to the instruction token.
 
 \paragraph{H2 (harder problems recruit more depth).} Architecturally untestable on this model.
-The hypothesis as the literature states it concerns \emph{per-position} adaptive depth, which
-adaptive-computation models measure directly and confirm. Huginn has no halting mechanism: the
+The hypothesis as the literature states it concerns \emph{per-position} adaptive depth, which adaptive-computation models measure directly and confirm: ponder time grows with
+difficulty when a halting cost is trained in \cite{graves2016act}, a universal transformer
+with dynamic halting reports mean per-symbol depth rising $2.3\pm0.8 \rightarrow 3.1\pm1.1
+\rightarrow 3.8\pm2.2$ as the number of required supporting facts goes from one to three
+\cite{dehghani2019ut}, and the objective is stated directly as computation that grows with
+problem complexity rather than with input size \cite{banino2021pondernet}. Huginn has no halting mechanism: the
 whole sequence is unrolled together, so every position receives the same $r$ and there is nothing
 to allocate. Depth does buy capability at fixed difficulty, but difficulty within a task moves
-recruited depth by $+0.23$ unrolls against task identity's $+5.56$.
+recruited depth by $+0.23$ unrolls against task identity's $+5.56$. A difficulty axis often proposed for recurrence,
+sequential state tracking, is moreover out of reach for this architecture class on
+theoretical grounds: parity is the $S_2$ word problem and is argued to be unsolvable by
+these models, with many state-tracking problems harder than $S_5$
+\cite{grazzi2025statetracking}.
 
 \paragraph{H3 (contraction implies no running register).} Its strong form overstates its evidence.
 Contraction is real, but the limit set has ample room to separate states, and the running count is
@@ -247,6 +287,18 @@ recovers 0.038 of the answers and a last-number rule 0.240 at half the false-pos
 \end{itemize}
 
 \section{Known Limitations}
+
+We do not reproduce the orbit reported for this model on a prompt of the kind its authors use to
+illustrate it. Sweeping every period the tail can resolve, rather than the period-6 bin alone,
+finds no peak anywhere: the median non-DC power of that trajectory is $2.096$, against
+$665$--$3139$ for prompts we call rotating, and two further free-form prompts read $0.023$ and
+$0.363$. Our detector agrees with its own spectral definition to $4\times10^{-8}$, and our
+rotating prompts peak at period~6 specifically rather than merely somewhere. We therefore state
+the negative narrowly: numerical-reasoning content is \emph{not sufficient} to produce the orbit
+we measure. We ran a prompt in the shape of their example rather than their exact string, and
+their figures are projections of a 128-iteration run against our 64.
+
+
 
 \begin{itemize}
 \item Our benchmark numbers and the published figure share an uncorrected surface-form
@@ -356,9 +408,9 @@ arXiv:2107.05407, 2021.
 \bibitem{dehghani2019ut}
 Mostafa Dehghani et~al., \emph{Universal transformers}, arXiv:1807.03819, 2018.
 
-\bibitem{merrill2024ssm}
-William Merrill et~al., \emph{The illusion of state in state-space models}, arXiv:2404.08819,
-2024.
+\bibitem{grazzi2025statetracking}
+Riccardo Grazzi et~al., \emph{Unlocking state-tracking in linear RNNs through negative
+eigenvalues}, arXiv:2411.12537, 2024.
 
 \bibitem{bai2019deq}
 Shaojie Bai, J.~Zico Kolter, and Vladlen Koltun, \emph{Deep equilibrium models},
@@ -373,9 +425,9 @@ arXiv:1909.01377, 2019.
 \end{center}
 
 \begin{center}
-\foreignlanguage{russian}{Автор Первый, Автор Второй \quad (\textsc{placeholder})}
+\foreignlanguage{russian}{Арсений Вараксин, Александр Шиянов, Давид Свердлов}
 \\
-\foreignlanguage{russian}{Научный руководитель: Сергей Баранников}
+\foreignlanguage{russian}{Научный руководитель: Сергей Баранников (Сколтех)}
 \end{center}
 
 \begin{center}

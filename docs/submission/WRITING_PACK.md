@@ -329,3 +329,28 @@ file main.tex                                # must report ISO-8859 (CP1251), no
   template — with a CP1251 `.tex` they are unnecessary and were deliberately removed.
 - Content source is `RESULTS_HANDOFF.md` only. **It is currently ahead of the compiled PDF by
   D198, D199, D200 and the A7 amendment — regeneration is required, not optional.**
+
+---
+
+## L. Self-audit against a published list of deceptive practices (18:45)
+
+*Checked the draft against `~/Downloads/guides-write/NotGoodIdeas.md`. Most of that list targets
+method-proposal papers — inflating compute, tweaking baselines, cherry-picking architectures —
+and does not apply: we propose no method and have no baseline to sabotage. **Four items do
+apply, and three are already handled.***
+
+- **5.8, "surreptitiously add hints to test prompts, comparing few-shot and zero-shot."** This is
+  the sharpest one for us. We *do* compare 0.416 zero-shot against 0.723 five-shot and call it a
+  reproduction. **Handled: §B3 identifies the zero-shot harness arm (0.658) as their protocol and
+  explicitly labels the five-shot route as coincidentally matching, not the reproduction.** Keep
+  that sentence; it is the difference between an honest and a misleading claim.
+- **5.1/5.2, "report only the metrics/datasets that improved."** We report all 21 census families
+  including the ones reading 0.000, and every null with its bound. **Clean, and worth saying so
+  in the text** — it is unusual enough to be evidence about the method.
+- **2.4, "cherry-pick random seeds."** Single seed throughout, stated. Not cherry-picked, but
+  also not a seed sweep. **Disclose as a limitation** rather than leaving it inferred.
+- **5.9, "indirectly overfit by leaking data or seeds."** A real near-miss: the few-shot census
+  run would have shown the model the exact test item with its answer, because `echo_digit` has
+  only ten distinct prompts. **Caught pre-launch by an assertion, and exemplars are now filtered
+  against the test set.** Worth one clause in the text — it is a concrete instance of a control
+  working.
