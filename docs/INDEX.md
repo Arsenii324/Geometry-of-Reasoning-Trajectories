@@ -6,6 +6,28 @@
 
 ---
 
+## 0. If you arrived from GitHub — read this line first
+
+**None of this work is on `main`.** `origin`'s default HEAD branch is `main`, and
+`docs/submission/` does not exist there. Everything below lives on
+**`claude/geometry-reasoning-recap-rhe0bp`**:
+
+```sh
+git clone https://github.com/Arsenii324/Geometry-of-Reasoning-Trajectories.git
+cd Geometry-of-Reasoning-Trajectories && git checkout claude/geometry-reasoning-recap-rhe0bp
+```
+
+`upstream` is `Shtirmann/Geometry-of-Reasoning-Trajectories` and does **not** carry this branch at
+all. A clone that skips the checkout sees an old tree and no submission material.
+
+**What a fresh clone can and cannot do.** It *can*: read every document below, write from
+`docs/submission/CLAIM_INVENTORY.md`, cross-check against the 200-row ledger, rebuild the paper
+(`docs/submission/build/`), regenerate every figure and table from the banked result JSONs under
+`scratch/*/`, run the 616-test suite, and run `scripts/local_smoke.py` — which builds the *real*
+`RavenForCausalLM` at 27.7M params in ~1 s, **no GPU and no weights download**. It *cannot*: run
+anything needing the 3.5B checkpoint, and it does not have `scratch/ds_embsep/out` (1.0 GB of raw
+arrays, deliberately excluded — the derived numbers are in the ledger).
+
 ## 1. Read order after a compaction
 
 1. `docs/submission/REVIEW_QUEUE.md` — **the actual remaining work.** Seven framing choices no
@@ -40,7 +62,7 @@
 | `SUBMISSION_STATE.md` | compliance checklist, placeholders by owner, template traps, dependency-ordered remaining work |
 | `REVIEW_QUEUE.md` | the seven unvetted framing choices; what to do next |
 | `APPENDIX_B_RETRACTIONS.md` | full withdrawal/amendment list, written out |
-| `main.tex.cp1251` | snapshot of draft source. **CP1251 — use `grep -a`; never save from a UTF-8 tool** |
+| `build/` | **the paper, buildable from a fresh clone** — `main.tex` (CP1251), `zapiski.cls` (CP1251+CRLF), `pic/`, `main.pdf`, `instructions.md`. Two `pdflatex` passes; verified 2026-08-11 from a clean copy of that directory alone: 10 pages, 266993 bytes, 0 errors, 0 undefined citations. The six `Font shape 'T2A/...' undefined` log lines are Cyrillic font substitutions, **not** missing references — do not re-diagnose. Supersedes the deleted `main.tex.cp1251` snapshot. |
 
 **Live draft:** `../files/paper_submission/draft/{main.tex,main.pdf,zapiski.cls,pic/}`.
 10 pages, main body ends p9, 0 errors, 0 undefined citations, 0 uncited bibitems.
