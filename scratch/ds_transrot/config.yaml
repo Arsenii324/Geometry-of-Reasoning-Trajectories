@@ -1,0 +1,33 @@
+name: transrot-does-the-regime-exist-yet-when-the-answer-is-decided
+desc: >
+  A52: tests the structural mismatch registered as directions N3 before this run. The regime is
+  rotation_power(period=6, tail=24), the last 24 unrolls -- A49's first pass failed its own gate
+  precisely because a 48-unroll window let the damping transient dominate, so the statistic is
+  deliberately about the settled part. The answer, meanwhile, is best-ranked at median unroll 4
+  and position-0 best_depth is 4.07. Every test of whether the regime affects the answer
+  compares one window to the other: D148 found 0 of 48 on a variable with no variance, and D176
+  re-ran it properly and found 1 of 18 at p = 1.0. If the regime is a property of unrolls 40-64
+  while the answer is chosen around unroll 4, those nulls may say nothing about its causal role,
+  because the dynamics being manipulated had not started when the answer was decided. This
+  measures rotation_power at the same period on two windows of the same orbit: unrolls 0-11, the
+  earliest a period-6 orbit is even definable since two cycles are the statistic's minimum, and
+  the standard tail. That bound is itself part of the answer -- if the answer is settled at
+  unroll 4, no period-6 statistic can describe the state at the moment of decision. P1 gates on
+  the tail statistic reproducing this project's regime labels. P2 is registered both ways: an
+  early window near zero for rotating and settling alike explains D148 and D176 without the
+  regime being epiphenomenal, while early separation means those nulls stand as genuine
+  behavioural nulls. P3 slides a 12-unroll window across the orbit so onset is measured rather
+  than inferred from two endpoints. P4 tests both statistics against correctness on census
+  families where correctness varies, same items and same test, so a difference between them is
+  not a difference of design. P5 banks total non-DC power for both windows because a fraction of
+  nothing is meaningless. Mounts the prebuilt weights dataset.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - transrot.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
