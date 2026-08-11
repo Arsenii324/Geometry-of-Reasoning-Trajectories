@@ -73,8 +73,7 @@ OUTDIR = os.path.abspath("out")
 WALL_BUDGET_S = 8000
 
 
-CENSUS = ("echo_digit", "add1", "sub1", "sort_min", "compare", "count_mod3")
-N_CENSUS = 6
+N_CENSUS = 6   # items per census family; the families themselves are built in census_items()
 
 
 def prompt_for(word, seq, mk=MARKER):
