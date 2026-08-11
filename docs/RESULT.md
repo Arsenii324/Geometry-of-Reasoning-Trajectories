@@ -451,14 +451,26 @@ survives for the reason that explains the whole dissociation: the natural prose 
 8 of 8. Strip the chat template and the answer genuinely goes — median final rank **10**, one
 item at **509**, with `\n` winning 23 of 32.
 
-**None of this is calibrated against anything external, and the one attempt to calibrate it
-failed.** Huginn's own paper reports **69.9%** on ARC-Easy at r = 32. We measure **0.407**
-by option-letter argmax and **0.433 / 0.413** by the standard option-text likelihood — the
-three protocols agree with each other within ~5 points at every depth, so the measurement
-is robust and **the 29-point gap to the paper is not explained by scoring** (D153, D162).
-After 163 rows this project cannot reproduce a single published number about the model it
-studies. What survives is the *internal* comparisons — inflation factors, relative
-orderings, the geometry — because those never leave our own runs.
+**And the external calibration, which failed all day, now works — because the block was
+elicitation.** Huginn's paper reports **69.9%** on ARC-Easy at r = 32. Zero-shot we measure
+**0.407** by option-letter argmax and **0.433 / 0.413** by option-text likelihood; the three
+protocols agree within ~5 points at every depth, so changing the *scoring rule* does not
+explain the 29-point gap (D153, D162). **Adding in-context examples does.** Letter-argmax
+accuracy runs **0.416 → 0.713 (2-shot) → 0.723 (5-shot)** against the published 0.699 — two
+shots already clear it — and the effect is paired: over 101 items, 5-shot fixes **35** that
+0-shot got wrong and breaks **4**, exact McNemar **p = 3.35e-07** (D169).
+
+**The gain is protocol-specific, and that is the mechanism rather than a caveat.** Over the
+same shots the option-text arms move ~2 points (raw 0.495 → 0.545, normalised 0.465 → 0.465)
+while the letter arm moves **30.7**. A likelihood score never requires the model to *emit*
+anything. The letter arm requires a bare option letter at the first generated position — and
+zero-shot Huginn opens with prose there instead (`The` ×12 of 32, D166). **The answer was
+available at zero-shot and could not get out**, which is the same thing D168 measures when it
+finds the gold never leaves the top 35 on tasks the model can do. Few-shot exemplars
+demonstrate the output format and the block clears.
+
+So this project now reproduces a published number about the model it studies, and it took
+until row 169 because the obstruction was in how we asked, not in what we measured.
 
 **One thing this does not license.** The tempting corollary — that because the answer lives
 in the transient, transient geometry predicts correctness where the fixed point does not —

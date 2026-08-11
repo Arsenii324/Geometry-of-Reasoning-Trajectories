@@ -61,6 +61,20 @@ against the trained model's **0.7175** (D53).
 
 ---
 
+### 1.0a The one external calibration now works, and it explains the rest
+
+Huginn's paper reports **0.699** on ARC-Easy at r = 32. Zero-shot this project measured 0.407
+by letter-argmax and 0.433/0.413 by option-text likelihood, and D162 concluded the gap was not
+the scoring rule. It was not. **It was elicitation:** letter-argmax runs **0.416 → 0.713
+(2-shot) → 0.723 (5-shot)**, clearing the published figure at two shots, paired over 101 items
+with 35 fixed against 4 broken, exact McNemar **p = 3.35e-07** (D169).
+
+The gain is **protocol-specific and that is the point**: over the same shots the option-text
+arms move ~2 points while the letter arm moves **30.7**. A likelihood score never asks the
+model to emit anything; the letter arm asks for a bare option letter at the first generated
+position, and zero-shot Huginn opens with prose there (D166). **The answer was available and
+could not get out.** §1.0b below is the same phenomenon measured from the inside.
+
 ### 1.0b The answer lives in the transient, and most of our instruments read the fixed point
 
 This is the structural fact that reframes the rest, and it was found in banked data at no
