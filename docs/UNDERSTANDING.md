@@ -48,8 +48,23 @@ a **157×** gap, while the cycle's vertex geometry is regime-invariant (D146). S
 across blocks always; within a block, settles or rotates depending on one instruction
 token.** The hypothesis was not wrong — the instrument that retired it read one block.
 
-**H2 (harder problems recruit more depth) — NOT REFUTED SO MUCH AS UNTESTABLE ON THIS
-MODEL.** Where it could be tested it is null, with bounds: difficulty moves the contraction
+**H2 (harder problems recruit more depth) — STILL NOT ESTABLISHED, BUT ITS PRECONDITION IS
+NO LONGER ABSENT.** *(Revised 2026-08-11.)* Every H2 test below reads a *rate* or a *rank*.
+Read instead as **what the model writes**, depth does reach behaviour: over 1260 banked
+generations at r = 2…32, the answer's appearance in the output rises with depth on **5 of 14
+families after Bonferroni** — `sub1` **1/12 → 12/12**, `add_2d` **0/12 → 11/12**, `local_last`
+**3/12 → 12/12**, `add1` **1/12 → 9/12** — with `parity8` moving strongly the other way
+(**9/12 → 0/12**). Output length grows only up to r = 8; **above it length is flat and
+containment still rises, 61/252 → 91/252, p = 0.0048**, so this is not the length confound
+(D171). The gains land exactly on the arithmetic families D168 identified as *uncertain about
+the answer* rather than *blocked on format*, and at r = 32 `sub1` writes out *"The answer is
+4 - 1 = 3"* — it shows the working. **Depth buys computation where computation is what is
+missing.** That is not H2, which claims *difficulty recruits depth*; it is the precondition H2
+needs, and the record had been treating it as absent. What follows is the evidence that the
+*rate*-based and *rank*-based tests remain null, which is now a statement about those
+instruments as much as about the hypothesis.
+
+**The original entry, unchanged:** Where it could be tested it is null, with bounds: difficulty moves the contraction
 rate by **0.0033** when the count quadruples (D115, D116); the dynamics do not reach the
 readout (ρ = +0.118, p = 0.65, D114); the readout is finished at median unroll **4** with
 87% of the journey ahead (D112); the first structurally clean ladder gives ρ = **−0.0286,
