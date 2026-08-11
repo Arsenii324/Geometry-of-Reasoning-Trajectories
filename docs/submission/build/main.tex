@@ -411,6 +411,12 @@ evaluation protocol, recovers the published benchmark number.
 this report tests, and supervision.
 \end{itemize}
 
+\section*{Acknowledgments}
+
+We thank the organisers of SMILES-26 for the school and for hosting this work, and Yandex Cloud
+for the compute and for assistance with it. The experiments reported here were run on Yandex
+DataSphere.
+
 \appendix
 
 \section{Numerical Summary}
@@ -522,6 +528,43 @@ nulls are bounded to the last-position injection site rather than to orthogonali
 tail length disagreed with the statistic it was validating against, and a reasoning arm that hit
 its wall-clock budget and banked cleanly without executing.
 
+\section{A Companion Study: Step Normalisation in Two-Scale Latent Dynamics}
+
+This appendix reports a study carried out by David Sverdlov alongside the main investigation. It
+concerns a different object from the rest of the paper, and we present it separately for that
+reason rather than folding its numbers into the results above.
+
+\paragraph{What it did.} Pappone et al.\ \cite{pappone2025twoscale} describe latent trajectories in
+recurrent-depth transformers as having two scales, with successive update steps tending towards
+orthogonality. This study asked whether that structure appears in a controlled setting where the
+dynamics can be manipulated directly. A small recurrent model was built for the purpose --- 128
+dimensions, an orthogonally initialised rotation layer, trained as an autoencoder for 50 epochs on
+one thousand FineWeb texts --- and the angle between successive update steps was measured across
+depths 2 to 5, thirty-two steps per trajectory.
+
+\paragraph{What it found.} Successive steps anti-align rather than turning through a consistent
+small angle: the mean cosine between consecutive steps sits at $-0.494$ to $-0.502$ across the
+banked runs, an angle near $134^\circ$, with the step norm decaying monotonically over the
+trajectory. The finding we consider useful is methodological. \textbf{Before normalising the step,
+the measured orthogonality is confounded with the step norm}, so the statistic partly tracks how
+far the state moved rather than in which direction; after normalisation the correlation between the
+two falls to $-0.0436$ and the angle becomes stable across the trajectory. Any measurement of
+step-to-step geometry that does not normalise first is reporting a mixture of the two quantities.
+
+\paragraph{What it does not establish.} It is not a measurement of Huginn-3.5B, and no number in it
+should be read as one. The model is separately trained and two orders of magnitude smaller in
+width; the banked trajectories it analyses are labelled synthetic; and because the rotation layer is
+orthogonally initialised, the presence of orthogonal structure is in part imposed by construction
+rather than discovered. The study therefore bears on \emph{how to measure} consecutive-step
+geometry, not on what the checkpoint studied in the main body does.
+
+\paragraph{Why it is here.} The methodological point transfers directly, and it applies to a gap in
+our own work. Our rotation statistic is a frequency-domain quantity computed over a whole window;
+it says nothing about the direction of individual steps, and we never measured consecutive-step
+geometry on Huginn at all. Running this measurement on the trajectories analysed in
+Sections~3 and~5 --- with the normalisation this study shows to be necessary --- is a well-defined
+next experiment, and one for which the instrument now exists.
+
 \begin{thebibliography}{9}
 
 \bibitem{geiping2025huginn}
@@ -546,6 +589,10 @@ eigenvalues}, arXiv:2411.12537, 2024.
 \bibitem{bai2019deq}
 Shaojie Bai, J.~Zico Kolter, and Vladlen Koltun, \emph{Deep equilibrium models},
 arXiv:1909.01377, 2019.
+
+\bibitem{pappone2025twoscale}
+Francesco Pappone, Donato Crisostomi, and Emanuele Rodol\`a, \emph{Two-scale latent dynamics for
+recurrent-depth transformers}, arXiv:2509.23314, 2025.
 
 \end{thebibliography}
 
