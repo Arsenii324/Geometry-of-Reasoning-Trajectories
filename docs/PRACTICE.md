@@ -478,3 +478,32 @@ Rationale for the redundancy specifically: a single 10-minute timer was used ear
 session and the supervisor's objection was correct — the window is both too coarse to keep
 work flowing and a single point of failure. Three short staggered ones cost the same and
 degrade gracefully.
+
+## RC6 — a degenerate outcome reads exactly like a clean null
+
+**The instance.** D148 concluded that a causally-controlled regime change "produces no change
+in what the model answers", from *0 of 48 units changed correctness*. Its banked run has
+`correct = False` in **432 of 432** orbits. There was no correctness for the regime to change.
+The task was "report the largest/smallest {noun} of the sequence" and Huginn cannot do it.
+
+**Why review did not catch it.** Nothing in the row is false. "0 of 48" is the honest output of
+the scorer, the instrument nulls (P1, P5) genuinely pass, and the detection floor is computed
+and quoted. A floor at zero produces the *same headline* as a strong bounded null, and the
+prose gives you no way to tell them apart. Three passes over that row — including one whose job
+was to find overclaims — read it as the geometry track's strongest negative.
+
+**The rule.** *Before reading a behavioural null, print the base rate of the outcome.* If it is
+0.0 or 1.0, there was no experiment. This is CLAUDE.md §1's "ask whether the model can do the
+task", applied after the run rather than before it, because that is when the data exists.
+
+**Automated, so it does not depend on remembering.** `scripts/outcome_variance_scan.py` walks
+every banked result JSON and flags outcome fields whose base rate is exactly 0 or 1. Over the
+whole record it flags **two**: `ds_regimebehav` at 0.000 (D148 — the failure, now amended) and
+`ds_statetrack` at 1.000 (D147 — *the finding*, correctly reported, since its point is that the
+oracle axis scores a constant responder 100%). **A flag is a question, not a verdict:** it says
+the outcome had no variance, and the row must say which of those two it is.
+
+**The generalisation.** RC1 was measuring a proxy for the thing; RC5 was committing RC1 inside
+an audit instrument. RC6 is narrower and nastier: **the measurement is right, the analysis is
+right, and the experiment did not happen.** Prose cannot catch this class; only the base rate
+can, so it is now a script.
