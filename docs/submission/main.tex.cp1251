@@ -1,0 +1,401 @@
+\documentclass{zapiski}
+\originfo{1}{}{}{2026}
+\setcounter{page}{1}
+\date{}
+
+\usepackage[cp1251]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian, english]{babel}
+
+% NOTE: this file is CP1251, matching zapiski.cls and the template README.
+% With matching encodings the class masthead renders correctly and needs no
+% \renewcommand overrides (verified: see Appendix C).
+
+\usepackage{times}
+\usepackage{url}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{cite}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{float}
+\restylefloat{table}
+
+\renewcommand{\UrlFont}{\ttfamily\small}
+
+\english
+
+\begin{document}
+
+\title[Latent Trajectories in Recurrent Depth]{What the Latent
+Trajectory of a Recurrent-Depth Transformer Encodes, and What Our Measurements Were Actually
+Measuring}
+
+\author[Author One et al.]{
+  \textbf{Author One\textsuperscript{1}},
+  \textbf{Author Two\textsuperscript{1}}
+\\
+  \textsuperscript{1}Institution (\textsc{placeholder})
+\\
+  \small{
+    \textbf{Mentor:} Serguei Barannikov (\textsc{placeholder affiliation})
+  }
+\\
+  \small{
+    \textbf{Correspondence:} \href{mailto:author@institution.org}{author@institution.org}
+  }
+}
+
+\begin{abstract}
+We study the latent trajectory of Huginn-3.5B, a recurrent-depth transformer that applies one
+weight-tied block a variable number of times before decoding. Two lines of results are reported.
+First, the recurrent map has a sharp qualitative structure: a single instruction word switches
+it between a settling regime and a damped period-6 rotation (36/36 paired cells at an identical
+token count), the switch is causally controlled by one row of the embedding matrix, the regime
+is a property of the prompt rather than of the token position sampled, and swapping the map's
+injected parameter mid-trajectory re-aims the dynamics with no hysteresis in 62 of 64 switches.
+Second, and less comfortably, a large part of what this project measured as capability was
+answer formatting: first-token scoring reads 0.125 where the answer is actually present in 0.781
+of generations, depth raises prose-opening twentyfold while leaving the rate of leading with the
+answer flat, and supplying the output format recovers the model's published benchmark number by
+two independent routes. We report the retractions this produced alongside the results, since
+several of them were caused by our own instruments rather than by the model. This is a draft
+report; several stated limits are open.
+\end{abstract}
+
+\keywords{recurrent-depth transformers \and latent reasoning \and interpretability \and
+evaluation protocols \and dynamical systems}
+
+\maketitle
+
+\section{Introduction}
+
+A recurrent-depth transformer reuses one weight-tied block many times at inference, so the
+sequence of latent states it passes through is often read as a trace of reasoning --- something
+whose shape should reflect the computation being performed. We tested that reading on
+Huginn-3.5B \cite{geiping2025huginn} and report two things.
+
+The first is that the map has real, sharp, causally controllable structure, but that this
+structure is selected by the surface form of the instruction rather than by the task. The second
+is that a substantial part of our own measured capability record --- and, we argue, of the
+standard way such models are scored --- was measuring whether the model emits its answer in the
+position a scorer reads, not whether it has the answer.
+
+We report both, together with the claims we withdrew in the process. The withdrawals are
+included deliberately: in several cases the instrument, not the model, produced the result, and
+a report that omitted them would misrepresent how reliable the remainder is.
+
+\section{Model and Protocol}
+
+Huginn-3.5B (\texttt{tomg-group-umd/huginn-0125}, revision \texttt{bb6621b6\ldots}) has the
+structure
+\[
+\begin{aligned}
+\text{embed} \rightarrow{} & \text{prelude}(2) \rightarrow
+  \bigl[\,\text{core\_block}(4)\,\bigr]^{\times r} \\
+  &\rightarrow \text{coda}(2) \rightarrow \text{ln\_f} \rightarrow \text{lm\_head},
+\end{aligned}
+\]
+where the prelude output $e$ is re-injected at every unroll through the adapter, which
+receives the concatenation of the current state and $e$. Following the DEQ reading, we treat
+$e$ as the map's
+\emph{parameter} and the latent state $h$ as its \emph{state}; the released source supports this,
+since the block index is threaded through the unroll but never enters the block computation.
+
+All measurements are inference-only in float32 and hook the output of
+\texttt{core\_block[-1]}. Unless stated, depth is $r = 32$ or $r = 48$. Every forward is seeded,
+because the initial state is drawn from an unseeded generator by default.
+
+\section{The Recurrent Map Has a Sharp, Causally Controlled Regime}
+
+\subsection{One instruction word switches the regime}
+
+Holding the sequence, the required answer and the token count fixed at 53, the instruction
+\emph{``report the largest \textbf{symbol}''} produces a damped period-6 rotation in 36 of 36
+paired cells, while \emph{``largest \textbf{element}''} and \emph{``largest \textbf{item}''}
+produce settling in 0 of 36. The selecting property is not semantic, not orthographic, and not
+tokenisation: the semantic neighbours of \emph{symbol} rotate in 0 of 144 orbits, those of
+\emph{element} in 96 of 120, and form-matched controls chosen to denote nothing similar
+(\emph{symptom}, \emph{cymbal}, \emph{symmetry}) rotate in 72 of 72.
+
+A single threshold on a continuous rotation statistic reproduces the binary label on 691 of 696
+orbits, and on 688 of 696 held out leave-one-bank-out.
+
+\subsection{The switch is causally controlled by one embedding row}
+
+Editing a single row of the embedding matrix, with the prompt string and every token identifier
+untouched, flips the regime. Both instrument gates are bit-exact: substituting the row for itself
+reproduces the unpatched orbit at $0.000\mathrm{e}{+}00$, and substituting the target's row
+reproduces the target's own orbit.
+
+\emph{Scope.} The within-regime control failed in that experiment and was only partly resolved
+afterwards: rescaling the interpolated row to constant norm rescues one noun pair and not
+another. The licensed statement is therefore that the embedding row causally determines the
+regime within a small, direction-dependent neighbourhood --- not that the regime is a simple
+function of the embedding.
+
+\subsection{The regime belongs to the prompt, not to the position measured}
+
+Every measurement above reads one token position. Because the published figures for this model
+are drawn at interior positions, we re-measured the rotation statistic at \emph{every} position.
+Prompts we label rotating rotate at 62.0\% of their positions (range 0.614--0.623 over nine
+prompts); prompts we label settling rotate at 0.000 --- no overlap and no intermediate case.
+Within a rotating prompt, rotation switches on at a single boundary and holds to the end.
+
+\subsection{No hysteresis, and the contraction rate predicts a timescale}
+
+Swapping $e$ mid-trajectory and leaving it swapped, 62 of 64 switches take, at switch points from
+unroll 1 to unroll 48: the regime follows the parameter the map currently has rather than the
+trajectory's history. Entering rotation takes a median of 15.5 unrolls and leaving it 1.0 --- a
+fifteenfold asymmetry measured by the identical detector. The entering time brackets a prediction
+registered before the run from the measured contraction rate $\rho \approx 0.83$, namely
+$\ln(0.05)/\ln(0.83) = 16.1$ unrolls.
+
+\emph{Scope.} The detector uses a sliding window that carries its own lag, so the measured
+relaxation is an upper bound. The asymmetry, measured identically in both directions, is the
+robust part.
+
+\section{What the Capability Measurements Were Measuring}
+
+\subsection{The answer is present but not in the scored position}
+
+Generating and reading the text, rather than reading the rank of the gold token at the first
+generated position, changes the picture. First-token exact match reads 0.125 where the answer is
+actually produced in 0.781 of generations, against a \emph{measured} cross-item false-positive
+rate of 0.042--0.152. The token that displaces the gold is \emph{The}: it opens 39.4\% of 1260
+banked generations. On tasks the model can do, the gold's rank at the final unroll never exceeds
+35 across 2720 draws.
+
+\subsection{Depth increases prose, not answers}
+
+Across $r = 2,4,8,16,32$ the rate at which a generation opens with \emph{The} runs
+$0.032 \rightarrow 0.099 \rightarrow 0.631 \rightarrow 0.560 \rightarrow 0.647$, while the rate at
+which it opens with the gold does not move ($p = 0.515$). More depth therefore makes the standard
+first-token metric worse while the underlying output improves.
+
+\subsection{Supplying the format recovers the published number, by two routes}
+
+The published ARC-Easy figure for this model is 0.699 at $r = 32$. Reading the released
+evaluation code pins the protocol to zero-shot \texttt{lm-eval-harness} with normalised accuracy;
+that is our bare-prompt, no-option-list, character-normalised arm, which reads \textbf{0.658}.
+Independently, five in-context examples under option-letter argmax give \textbf{0.723}, paired,
+with 35 items fixed against 4 broken (exact McNemar $p = 3.35\mathrm{e}{-}07$).
+
+\subsection{Instruction fails where demonstration succeeds}
+
+Instructing the model to ``reply with only the answer'' yields no improvement over a bare prompt;
+asking it to place its answer in \verb|\boxed{}| produced \emph{fewer} such answers than not
+asking (2 of 36 against 4 of 36). Two in-context examples, by contrast, move oracle accuracy by
+$+0.221$ (exact McNemar $p = 9.3\mathrm{e}{-}09$) and take three families from 0.000 to 1.000 at
+the final unroll.
+
+\subsection{Context costs depth rather than accuracy}
+
+Padding a bare prompt with \emph{irrelevant} prose to the five-shot token length (length match
+verified, median ratio 1.000) collapses the gold's starting rank from 31 to 329, where five real
+exemplars leave it at 58.5. Oracle accuracy barely moves (0.500 to 0.479) while the depth at
+which the answer becomes available rises from 4.73 to 7.29 unrolls ($p = 0.0001$).
+
+\subsection{The generated prose is computation}
+
+Measuring the trajectory at every generated position rather than only the first, the forward pass
+that carries the answer is deeper than position~0 ($4.07 \rightarrow 7.89$, $p = 0.0031$) and
+deeper than the surrounding prose positions ($7.89$ against $3.65$, $p = 0.0004$). The effect
+concentrates on arithmetic and is near-absent on copying.
+
+\section{The Three Starting Hypotheses}
+
+\paragraph{H1 (settle / loop / drift).} Answered, in the form ``both, at different levels''.
+Unbounded drift is excluded by construction, since every recorded state is a normalisation output
+on a sphere. A large cycle exists \emph{across} the four core blocks; \emph{within} a block the
+state settles or rotates according to the instruction token.
+
+\paragraph{H2 (harder problems recruit more depth).} Architecturally untestable on this model.
+The hypothesis as the literature states it concerns \emph{per-position} adaptive depth, which
+adaptive-computation models measure directly and confirm. Huginn has no halting mechanism: the
+whole sequence is unrolled together, so every position receives the same $r$ and there is nothing
+to allocate. Depth does buy capability at fixed difficulty, but difficulty within a task moves
+recruited depth by $+0.23$ unrolls against task identity's $+5.56$.
+
+\paragraph{H3 (contraction implies no running register).} Its strong form overstates its evidence.
+Contraction is real, but the limit set has ample room to separate states, and the running count is
+linearly decodable from the latents.
+
+\section{Reliability: Controls, Retractions, and Instrument Nulls}
+
+Several results in this project were produced by instruments rather than by the model. We record
+them because the reliability of the remainder depends on it.
+
+\begin{itemize}
+\item A headline behavioural null was \textbf{vacuous}: the correctness variable it compared was
+false in 432 of 432 orbits, so there was no variance for the intervention to change. Re-tested on
+an outcome that does vary, the original conclusion returned.
+\item A coordinate-geometry headline was \textbf{withdrawn by its own registered control} within
+hours of being written.
+\item A linear probe of the class used for several of our null results \textbf{cannot recover a
+label that is a guaranteed deterministic function of its own input features} (0.690 against a
+0.600 baseline, where the correct one-dimensional statistic reaches 0.980). Those nulls are
+uninformative rather than negative.
+\item The \textbf{extraction rule dominates the number}: over 1424 banked generations, exact match
+recovers 0.038 of the answers and a last-number rule 0.240 at half the false-positive rate.
+\end{itemize}
+
+\section{Known Limitations}
+
+\begin{itemize}
+\item Our benchmark numbers and the published figure share an uncorrected surface-form
+(first-token) bias inherent to likelihood scoring.
+\item We do not reproduce the published orbit on the paper's own word-problem example (0 of 35
+positions). The leading explanation is that our detector is tuned to a single period; a period
+sweep was running at the time of writing.
+\item The published attribution of orbiting to ``prompts requiring numerical reasoning'' is
+contradicted by our data on three independent grounds, while the phenomenon itself is theirs.
+\item Comparisons to two related works are cross-checkpoint or cross-protocol and are not
+directly numerically comparable.
+\end{itemize}
+
+\section{Conclusion}
+
+The recurrent map of Huginn-3.5B carries a sharp, causally controllable qualitative structure that
+is selected by the surface form of the instruction rather than by the task it states, and that has
+no measurable consequence for the answer under the tests we could run. Separately, a substantial
+part of what we and the standard protocols measured as capability was the model's willingness to
+emit its answer where a scorer looks. Supplying the format, by demonstration or by matching the
+evaluation protocol, recovers the published benchmark number.
+
+\section{Contribution}
+
+\emph{(Placeholder --- to be completed before submission. One entry per team member, describing
+that member's specific contribution.)}
+
+\begin{itemize}
+\item \textbf{Author One} --- \textsc{placeholder}: e.g.\ experiment design, kernel
+implementation, analysis of the regime results (Section~3).
+\item \textbf{Author Two} --- \textsc{placeholder}: e.g.\ evaluation-protocol experiments and
+analysis (Section~4), literature comparison.
+\item \textbf{Mentor: Serguei Barannikov} --- \textsc{placeholder}: problem formulation,
+hypotheses H1--H3, supervision.
+\end{itemize}
+
+\section*{Acknowledgments}
+
+\emph{(Placeholder.)}
+
+\appendix
+
+\section{Numerical Summary}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Principal quantitative results. Inference-only on the pinned revision.}
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+\textbf{Quantity} & \textbf{Value} \\
+\midrule
+Regime switch by one instruction word & 36/36 rotating vs 0/36, token count fixed at 53 \\
+Semantic control & neighbours of \emph{symbol} 0/144; of \emph{element} 96/120 \\
+Form-matched control & 72/72 rotating \\
+Threshold reproduces binary label & 691/696; 688/696 held out \\
+Embedding-row edit flips regime & gates bit-exact at $0.000\mathrm{e}{+}00$ \\
+Regime by position & rotating prompts 62.0\% of positions; settling 0.000 \\
+Mid-trajectory parameter swap & 62/64 switches take \\
+Relaxation asymmetry & entering 15.5 unrolls, leaving 1.0 \\
+Predicted from $\rho \approx 0.83$ & 16.1 unrolls \\
+First-token vs produced answer & 0.125 against 0.781 \\
+Chance rate for containment & 0.042--0.152 \\
+\emph{The} as opening token & 39.4\% of 1260 generations \\
+Gold's worst final rank (feasible tasks) & 35, over 2720 draws \\
+ARC-Easy, published & 0.699 at $r = 32$ \\
+ARC-Easy, matched protocol & 0.658 \\
+ARC-Easy, five-shot letter argmax & 0.723 ($p = 3.35\mathrm{e}{-}07$) \\
+Two-shot effect on oracle accuracy & $+0.221$ ($p = 9.3\mathrm{e}{-}09$) \\
+Irrelevant padding, start rank & 31 $\rightarrow$ 329 ($p = 2.9\mathrm{e}{-}09$) \\
+Answer position vs prose positions & 7.89 against 3.65 unrolls ($p = 0.0004$) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Withdrawn and Amended Claims}
+
+\emph{(Placeholder for the full list. The four summarised in Section~6 are the load-bearing
+ones.)}
+
+\section{Template and Encoding Notes}
+
+The template repository ships \texttt{zapiski.cls} in CP1251 and its README requires the
+\texttt{.tex} to be CP1251 as well, but the distributed \texttt{template.tex} is UTF-8. That
+mismatch makes the Russian masthead strings inside the class decode incorrectly, and the
+distributed template works around it with explicit \verb|\renewcommand| overrides.
+
+This document instead follows the README: it is written in CP1251 with
+\verb|\usepackage[cp1251]{inputenc}|, matching the class. With the encodings aligned the masthead
+renders correctly and no override is required --- verified by compiling a minimal probe without
+them.
+
+\begin{thebibliography}{9}
+
+\bibitem{geiping2025huginn}
+Jonas Geiping et~al., \emph{Scaling up test-time compute with latent reasoning: a recurrent depth
+approach}, arXiv:2502.05171, 2025.
+
+\bibitem{graves2016act}
+Alex Graves, \emph{Adaptive computation time for recurrent neural networks}, arXiv:1603.08983,
+2016.
+
+\bibitem{banino2021pondernet}
+Andrea Banino, Jan Balaguer, and Charles Blundell, \emph{PonderNet: learning to ponder},
+arXiv:2107.05407, 2021.
+
+\bibitem{dehghani2019ut}
+Mostafa Dehghani et~al., \emph{Universal transformers}, arXiv:1807.03819, 2018.
+
+\bibitem{merrill2024ssm}
+William Merrill et~al., \emph{The illusion of state in state-space models}, arXiv:2404.08819,
+2024.
+
+\bibitem{bai2019deq}
+Shaojie Bai, J.~Zico Kolter, and Vladlen Koltun, \emph{Deep equilibrium models},
+arXiv:1909.01377, 2019.
+
+\end{thebibliography}
+
+\vspace{1em}
+\begin{center}
+\foreignlanguage{russian}{\textbf{\large Что кодирует латентная траектория трансформера
+с рекуррентной глубиной}}
+\end{center}
+
+\begin{center}
+\foreignlanguage{russian}{Автор Первый, Автор Второй \quad (\textsc{placeholder})}
+\\
+\foreignlanguage{russian}{Научный руководитель: Сергей Баранников}
+\end{center}
+
+\begin{center}
+\begin{minipage}{0.88\textwidth}
+\small
+\begin{center}\foreignlanguage{russian}{\textbf{Аннотация}}\end{center}
+\foreignlanguage{russian}{Исследуется латентная траектория модели Huginn-3.5B --- трансформера
+с рекуррентной глубиной. Показано, что одно слово в инструкции переключает рекуррентное
+отображение между режимом сходимости и затухающим вращением с периодом~6, причём переключение
+причинно управляется одной строкой матрицы вложений. Показано также, что значительная часть
+измерений качества модели фактически измеряла формат ответа, а не его наличие. Приводятся
+опровергнутые и уточнённые утверждения.}
+
+\vspace{0.5em}
+\noindent\foreignlanguage{russian}{\textbf{Ключевые слова:} трансформеры с рекуррентной
+глубиной, латентные рассуждения, интерпретируемость, протоколы оценки.}
+\end{minipage}
+\end{center}
+
+\end{document}
+
+\emph{(Russian-language title, authors, abstract and keywords are required after the references
+for the journal template. Placeholder --- to be supplied before submission.)}
