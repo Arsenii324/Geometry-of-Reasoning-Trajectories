@@ -1094,3 +1094,76 @@ data plus a small number of targeted interventions. **Compute is therefore not t
 constraint**, and "queue a GPU job" should stop being the default action. The corollary:
 prefer re-analysis of the 63 banked runs over new ones, which is how D138, D141, D146, D152
 and D154 were obtained at zero GPU cost.
+
+
+## J. RESUMPTION STATE, 2026-08-11 06:10 — written before a context compaction
+
+Everything a fresh context needs to pick this up. Ledger is at **D162**.
+
+### J1. No GPU jobs are running
+
+All of the overnight battery landed and is written up. Nothing is in flight; the
+DataSphere job list's top entries are the weights-dataset agent's `c1.4` jobs, already
+complete.
+
+| run | kernel | row | outcome |
+|---|---|---|---|
+| A26 | `ds_regimebehav` | D148 | behavioural null now **bounded**: 0 of 48 units change correctness; floor catches 4.7 unrolls at 99.3% |
+| A27 | `ds_statetrack` | D147 | Huginn is a **constant responder** on state tracking; `min(rank)` reads 1.000 on it |
+| A28 | `ds_boundary` | D149 | hyperplane **refuted**; region bounded, 49× anisotropic |
+| A29 | `ds_arcrepro` | D153 | ARC-Easy 0.407 vs published 0.699 |
+| A30 | `ds_arcproto` | D162 | **protocol refuted** — text arms 0.433/0.413, gap is real |
+| A31 | `ds_aniso` | D156 | null, design powerless by construction |
+| A32 | `ds_wteswap` | D161 | **embedding row causally controls the regime**; 10% edit destroys rotation |
+| A33 | `ds_aniso2` | D160 | settling subspace survives further, p = 0.010, opposite to prediction |
+
+### J2. The single most important thing learned, and what it implies
+
+**D159: the answer lives in the transient, not at the fixed point.** Median argmin unroll
+**4**; 17 of 21 families reach best rank by unroll 8; then the rank **plateaus at a stable
+worse value** for forty-plus unrolls. Scored at the final unroll, **19 of 21 families read
+0.000** (D158) and the census's 41 live items become **0** (D157, 5.29× inflation).
+
+**Most of this project's geometry reads the converged state.** If that is where the answer
+is not, then contraction rates, fixed-point similarity, the rotation regime and h\*
+decoding are all measuring a state that does not carry the answer. **This is the strongest
+unexploited lead in the project** and it is testable on banked data: decode correctness
+from the state at the per-orbit argmin depth versus from h\*, on `kaggle_b6bank` (128
+orbits, has `correct` + `rank_curve` + states) or `ds_blockbank` (130 orbits, 4 blocks).
+Nobody has run it. D109/D125 tested h\* only.
+
+### J3. The queue, in priority order
+
+1. **Few-shot ARC** — D162's own cheapest next test and the only candidate sized right to
+   close a 29-point gap (D60 measured **85 points** from prompt format alone on `copy`).
+   A prompt change to `scratch/ds_arcproto/job.py`, no new machinery. If few-shot closes
+   it, our capability axis is calibrated for the first time; if not, the checkpoint or the
+   150-item prefix are next.
+2. **Transient-vs-fixed-point decode** (J2). Zero GPU.
+3. **Bank the top-1 token at the fixed point.** D158/D159 both end at the same unanswered
+   question — *what displaces the gold?* — and neither can answer it because only the gold's
+   rank was banked. Costs nothing to add to any future kernel.
+4. **Bounded chords between named tokens, many pairs.** D160's honest next step; A33's
+   random-directions-in-a-span design cannot be interpreted.
+
+### J4. Infrastructure now available and unused
+
+**Weights dataset `bt102r0j5cb8r6r6nb36`** removes the 262–282 s download; mounting costs
+**7.7 s**. Stanza and loader snippet are at the end of `REMOTE_RUNS.md`. **No kernel uses
+it yet** — adopting it is a 4-line change per kernel and saves ~4.5 min per run.
+
+Also there: the page-cache trap (`output-datasets` snapshots the block device, so a job can
+report SUCCESS with data that never entered the dataset — `os.sync()` and let it return).
+
+### J5. Practice state
+
+`PRACTICE.md` now carries RC1–RC5 and the wake invariant. **RC5 is the live one**: RC1's
+proxy-for-the-thing error committed *inside audit instruments*, which is worse because an
+audit's output is trusted without re-checking. Four instances in one session, including two
+in `build_index.py` and one in D150's own exposure count. The rule: **a tool's first output
+gets the same premise-check an experiment's first run gets.**
+
+`scripts/strategic_audit.py` exists and its first run is answered in section I above. Its
+conclusion stands: **compute is not the binding constraint**, re-analysis of the 63 banked
+runs outranks new jobs, and that is where D138, D141, D146, D152, D154, D157, D158, D159
+all came from at zero GPU cost.
