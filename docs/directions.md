@@ -1250,3 +1250,48 @@ only paper 01's qualitative figures touch it. A46 is novel against both.
 *Not adopted today: L1 and L2 are changes to how we run, and every result now in flight was
 launched under the current scheme. Adopting mid-flight would make the comparisons
 cross-protocol, which is the error D183 just caught us making in the other direction.*
+
+---
+
+## §M ACTIONABLE QUEUE, 2026-08-11 15:35 — replaces §K, which was stale by six hours
+
+*§K listed A34/A36/A38 as in flight; all landed long ago. Today's follow-ups have been living
+in ledger row notes rather than as a queue, which is how they stay unactioned. This is the list.*
+
+### M1 In flight
+- **interp / steering vector on `e`** — subagent running. The one genuinely novel-by-literature
+  direction (D188: zero steering work on any looped LM).
+
+### M2 Broken, needs a decision
+- **A47 `ds_h0inject` — ERRORED.** Output `h0inject.json` never written, so it died before
+  banking. The replayed attach tail does not carry the job-side traceback and the local CLI
+  logs are from my own attach calls. **Diagnosis inconclusive.** Options: re-run with the
+  wall budget lowered so it banks a partial, or drop it — note that D190(a) makes a null there
+  *partly predicted* by the paper's own path-independence claim, so its value fell today.
+
+### M3 Cheap, decisive, not yet run
+- **Period sweep on their word problem** (D192(4)). A46 found 0/35 rotating positions on
+  *"Claire makes a 3 egg omelette…"*, max R 0.119 — but `rotation_power(period=6)` detects
+  period 6 **only**. If their orbit has another period we would read zero by construction.
+  One kernel; banks trajectories rather than R so the period can be swept offline afterwards.
+  **If it also comes back empty, D185 strengthens considerably.**
+- **`E_reason` arm of A43** — never ran (wall budget). Reason-then-mark is untested.
+- **A system-prompt arm** (D189(c)) — paper 02 solved our exact problem with
+  *"Always return only the final answer straightway."* D193 licenses only *"no **user-turn**
+  format instruction works"*; this is the missing form.
+
+### M4 Recorded but unbelieved — needs its own run before anyone quotes it
+- **Padding improves final-unroll accuracy** (D186(4)): `echo_digit` 0.00 → **1.00**, pooled
+  0.000 → 0.188, apparently suppressing D174's prose frame. Unpredicted and uncontrolled.
+
+### M5 Blocked, and on what
+- **Reconciling D98/D146 against papers 03 and 05** is blocked on D190(c): their `s*` is taken
+  at **128** iterations and post-`ln_f`; ours at **64** and pre-`ln_f`. Equalise one side first.
+- **"Sliders"** (D187d) — a third structure they name and we have never looked for. No
+  definition extracted yet, so not yet runnable.
+
+### M6 Dequeued, with why
+- **Papers 04, 06, 10** — triage says "no bearing". *Recorded as an accepted verdict, not a
+  checked one* — the same acceptance cost us 07/09, which turned out to hold D191.
+- **Adopting lm-eval (§L1) mid-flight** — would make today's arms cross-protocol, which is
+  the error D183 caught. Correct after the current batch, not during.
