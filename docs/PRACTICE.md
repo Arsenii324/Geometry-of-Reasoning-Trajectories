@@ -545,6 +545,13 @@ unnoticed for ~35 minutes.**
 **The rule.** One job (or set of jobs) → one dedicated `run_in_background` Bash call whose
 entire body is the poll loop. Never nest it inside a command that does something else first.
 
+**AMENDED 2026-08-11 18:05 — a subtler variant, committed after RC7 was written.** A
+`( … ) & > /dev/null` inside a foreground command **can survive** as a detached process — so
+`ps` shows a live monitor and the check appears to pass. But it is **not harness-tracked**, so
+when it fires **nothing wakes me**. The observable "a monitor process exists" is therefore not
+the property that matters. **The property that matters is: will its completion notify me?** Only
+a top-level `run_in_background` call has that. Check for the *task id*, not for the process.
+
 **And verify it, do not assert it.** `ps -eo pid,etime,command | grep "[s]eq 1 "` must show the
 loop with a growing elapsed time. Reporting "monitor armed" without that check is the same
 class of error as reporting a job status without querying it.
