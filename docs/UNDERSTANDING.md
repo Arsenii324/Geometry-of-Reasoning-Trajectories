@@ -671,6 +671,8 @@ needs the rank readout wired into its capability axis before it is launched.*
 
 ### 6.2 ρ has never been connected to behaviour
 
+**CLOSED 2026-08-11 (D173).** Swapping `e` mid-trajectory and leaving it swapped re-aims the dynamics at the new regime in **62 of 64** switches, at switch points from unroll 1 to unroll 48 — no hysteresis, so the regime follows the parameter the map currently has rather than the trajectory's history. And the *time* it takes connects to ρ: the prediction registered before the run was ln(0.05)/ln(0.83) = **16.1** unrolls to close 5% of the gap to a new attractor, and the measured time to ENTER rotation is median **15.5** (range 5–25). Leaving rotation takes median **1.0**. The 15× asymmetry is the robust part — both directions use the identical detector — while the agreement with ρ is suggestive rather than tight, because the width-30 sliding window carries its own lag and the measurement is therefore an upper bound.
+
 D43 tried and was retracted. So ρ — the project's central quantity, the one thing
 training changes, now steerable — has **no demonstrated behavioural consequence**.
 D59 moves it; nothing measures what moving it does to anything the model outputs.
