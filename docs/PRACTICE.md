@@ -526,3 +526,29 @@ already stated in `RESULT.md`, which is where a 0.111 belongs.
 an audit instrument. RC6 is narrower and nastier: **the measurement is right, the analysis is
 right, and the experiment did not happen.** Prose cannot catch this class; only the base rate
 can, so it is now a script.
+
+## RC7 — a monitor inside another command is not a monitor
+
+**Three times now**, and the supervisor caught it each time. A background poll loop only
+survives if it is the **top-level** command of its own `run_in_background` call. These do *not*
+survive, because they are children of a foreground/one-shot command that exits:
+
+```bash
+nohup bash -c 'for i in ...; do ...; done' &      # dies with the tool call
+( for i in ...; do ...; done ) &                   # dies when the parent command exits
+```
+
+The second form is the one that bit hardest: it was tucked inside a *download* command that
+completed in seconds, so the monitor died seconds after being armed, and **A41 sat finished and
+unnoticed for ~35 minutes.**
+
+**The rule.** One job (or set of jobs) → one dedicated `run_in_background` Bash call whose
+entire body is the poll loop. Never nest it inside a command that does something else first.
+
+**And verify it, do not assert it.** `ps -eo pid,etime,command | grep "[s]eq 1 "` must show the
+loop with a growing elapsed time. Reporting "monitor armed" without that check is the same
+class of error as reporting a job status without querying it.
+
+**Why this keeps happening.** Arming the monitor is never the interesting part of the turn, so
+it gets bundled into whatever command was already being written. The bundling is exactly what
+kills it. Give it its own call.
