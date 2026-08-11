@@ -1,4 +1,4 @@
-"""A49: does their word problem orbit at SOME period, or not at all?
+"""A49 (2nd pass): does their word problem orbit at SOME period, or not at all?
 
 WHAT A46 FOUND AND WHY IT IS NOT YET AN ANSWER. A46 measured `rotation_power` at every token
 position of 21 prompts. It vindicated the record -- rotating prompts rotate at **62.0%** of
@@ -58,7 +58,10 @@ import sys
 import time
 
 NUM_STEPS = 64
-TAIL = 48                  # longer than A46's 24 so low periods are resolvable
+TAILS = (24, 48)           # 24 is rotation_power's default and D141's calibration;
+                           # 48 was A49's first pass and FAILED P1 because the damping
+                           # transient dominates its low-frequency bins. Bank both so
+                           # the tail-dependence is measured rather than assumed.
 SEED = 20260811
 THRESHOLD = 0.6677
 MARKER = "A"
@@ -155,20 +158,21 @@ def main():
         finally:
             h.remove()
         T = np.stack(traj, axis=0)                       # [unrolls, pos, dim]
-        x = T[-TAIL:]
-        x = x - x.mean(0, keepdims=True)
-        f = np.abs(np.fft.rfft(x, axis=0)) ** 2          # [bins, pos, dim]
-        pw = f.sum(-1)                                   # [bins, pos]
-        total = pw[1:].sum(0)                            # non-DC power per position
-        frac = np.where(total > 0, pw / np.maximum(total, 1e-30), 0.0)
-        # P1: the period-6 bin from THIS spectrum, to check against rotation_power
-        r6_spec = frac[TAIL // 6] if TAIL % 6 == 0 else None
-        r6_fn = float(rotation_power(T[:, -1, :]))
-        toks = [tok.decode([int(i)]) for i in ids[0]]
-        return {"frac": frac.tolist(), "total": total.tolist(), "tokens": toks,
-                "r6_from_spectrum_last": float(r6_spec[-1]) if r6_spec is not None else None,
-                "r6_from_function_last": r6_fn, "n_pos": int(frac.shape[1]),
-                "n_bins": int(frac.shape[0])}
+        out = {"tokens": [tok.decode([int(i)]) for i in ids[0]]}
+        for TAIL in TAILS:
+            x = T[-TAIL:]
+            x = x - x.mean(0, keepdims=True)
+            f = np.abs(np.fft.rfft(x, axis=0)) ** 2      # [bins, pos, dim]
+            pw = f.sum(-1)                               # [bins, pos]
+            total = pw[1:].sum(0)                        # non-DC power per position
+            frac = np.where(total > 0, pw / np.maximum(total, 1e-30), 0.0)
+            out[f"frac{TAIL}"] = frac.tolist()
+            out[f"total{TAIL}"] = total.tolist()
+            # P1 must compare LIKE WITH LIKE: rotation_power at the SAME tail as the spectrum.
+            out[f"r6_spec{TAIL}"] = float(frac[TAIL // 6][-1])
+            out[f"r6_fn{TAIL}"] = float(rotation_power(T[:, -1, :], period=6, tail=TAIL))
+        out["n_pos"] = int(np.array(out[f"frac{TAILS[0]}"]).shape[1])
+        return out
 
     items = build_items()
     print(f"{len(items)} prompts, TAIL={TAIL} -> periods readable: "
@@ -190,33 +194,27 @@ def main():
 
     import numpy as np
     ok = [r for r in rows if r["ok"]]
-    print("\n=== P1 GATE: period-6 bin from the spectrum vs rotation_power() ===", flush=True)
-    for r in ok[:6]:
-        a, b = r["r6_from_spectrum_last"], r["r6_from_function_last"]
-        if a is not None:
-            print(f"  {r['label']:10s} spectrum {a:.4f}  function {b:.4f}  |d| {abs(a-b):.2e}",
-                  flush=True)
-
-    print("\n=== P2/P3/P4: dominant period per prompt (max over positions) ===", flush=True)
-    print(f"{'kind':10s} {'label':10s} {'best_frac':>10s} {'at_period':>10s} {'at_pos':>7s} "
-          f"{'n_pos>thr':>10s}")
-    for r in ok:
-        F = np.array(r["frac"])                # [bins, pos]
-        bins = np.arange(F.shape[0])
-        periods = np.where(bins > 0, TAIL / np.maximum(bins, 1), np.inf)
-        sub = F[1:]                            # drop DC
-        bi, pi = np.unravel_index(int(np.argmax(sub)), sub.shape)
-        best = float(sub[bi, pi]); per = TAIL / (bi + 1)
-        n_over = int((sub.max(0) > THRESHOLD).sum())
-        print(f"{r['kind']:10s} {r['label']:10s} {best:10.3f} {per:10.2f} {pi:7d} "
-              f"{n_over:10d}", flush=True)
-
-    print("\n=== P5 FLOOR: total non-DC power (a fraction of nothing means nothing) ===",
+    print("\n=== P1 GATE, at EACH tail: spectrum's period-6 bin vs rotation_power(tail=) ===",
           flush=True)
-    for r in ok:
-        tot = np.array(r["total"])
-        print(f"  {r['label']:10s} total non-DC power: median {np.median(tot):.4g} "
-              f"max {tot.max():.4g}", flush=True)
+    for TAIL in TAILS:
+        worst = max((abs(r[f"r6_spec{TAIL}"] - r[f"r6_fn{TAIL}"]) for r in ok), default=0.0)
+        print(f"  tail={TAIL}: max |spectrum - function| = {worst:.3e}  "
+              f"{'OK' if worst < 1e-6 else 'FAIL -- nothing at this tail may be read'}",
+              flush=True)
+        for r in ok[:3]:
+            print(f"     {r['label']:10s} spec {r[f'r6_spec{TAIL}']:.4f}  "
+                  f"fn {r[f'r6_fn{TAIL}']:.4f}", flush=True)
+
+    for TAIL in TAILS:
+        print(f"\n=== dominant period at tail={TAIL} (threshold-free) ===", flush=True)
+        print(f"{'kind':10s} {'label':10s} {'best_frac':>10s} {'at_period':>10s} "
+              f"{'medNonDC':>11s}")
+        for r in ok:
+            F = np.array(r[f"frac{TAIL}"]); sub = F[1:]
+            bi, pi = np.unravel_index(int(np.argmax(sub)), sub.shape)
+            print(f"{r['kind']:10s} {r['label']:10s} {float(sub[bi, pi]):10.3f} "
+                  f"{TAIL / (bi + 1):10.2f} "
+                  f"{np.median(np.array(r[f'total{TAIL}'])):11.4g}", flush=True)
 
     with open(out_path, "w") as f:
         json.dump({"rows": rows, "tail": TAIL, "num_steps": NUM_STEPS, "seed": SEED,
