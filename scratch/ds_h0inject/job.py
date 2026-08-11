@@ -1,4 +1,4 @@
-"""A46: does a donor state injected at h_0 reach the READOUT before the map forgets it?
+"""A47: does a donor state injected at h_0 reach the READOUT before the map forgets it?
 
 THE WINDOW THIS EXPLOITS, AND WHY THE NAIVE VERSION IS WORTHLESS. D173 showed the regime is
 memoryless in the PARAMETER: 62 of 64 mid-trajectory `e` swaps take, at switch points from

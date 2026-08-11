@@ -1,6 +1,6 @@
 name: h0inject-does-an-injected-state-reach-the-readout
 desc: >
-  A46: tests whether a donor state injected once at h_0 reaches the readout inside the window
+  A47: tests whether a donor state injected once at h_0 reaches the readout inside the window
   between the answer settling and the map forgetting. D173 showed the regime is memoryless in
   the parameter -- 62 of 64 mid-trajectory e swaps take, relaxation median 15.5 unrolls entering
   rotation and 1.0 leaving -- so with e intact an injected state should be washed out by
