@@ -108,7 +108,7 @@ the regime is a dynamical epiphenomenon"*. `CLAIM_INVENTORY.md` Part 6 item 1 ba
 not the word. Do not "fix" this sentence. The other Part 6 phrasings ("orthogonal", "H2 is
 refuted", "not linearly decodable") return **0** matches.
 
-**Figure 1 added 19:50; abstract, contributions and limits rewritten 20:15.** (`\ref{fig:onset}`, the onset curve). Draft is now **12 pages total, main body ending p9** — the added page fell in the appendices, so the ≤10-page body limit still holds
+**Figure 1 added 19:50; abstract, contributions and limits rewritten 20:15.** (`\ref{fig:onset}`, the onset curve). Draft is now **16 pages total, main body ending p10** (the 10-page limit is on the body; appendices are unlimited) — the added page fell in the appendices, so the ≤10-page body limit still holds
 with room. Regenerate the figure with `.venv/bin/python scripts/fig_onset.py`; it gates itself on
 C7's published medians.
 

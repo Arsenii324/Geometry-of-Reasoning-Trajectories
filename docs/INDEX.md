@@ -62,11 +62,11 @@ arrays, deliberately excluded — the derived numbers are in the ledger).
 | `SUBMISSION_STATE.md` | compliance checklist, placeholders by owner, template traps, dependency-ordered remaining work |
 | `REVIEW_QUEUE.md` | the seven unvetted framing choices; what to do next |
 | `APPENDIX_B_RETRACTIONS.md` | full withdrawal/amendment list, written out |
-| `build/` | **the paper, buildable from a fresh clone** — `main.tex` (CP1251), `zapiski.cls` (CP1251+CRLF), `pic/`, `main.pdf`, `instructions.md`. Two `pdflatex` passes; verified 2026-08-11 from a clean copy of that directory alone: 12 pages (main body ends p9), 285552 bytes, 0 errors, 0 undefined citations. The six `Font shape 'T2A/...' undefined` log lines are Cyrillic font substitutions, **not** missing references — do not re-diagnose. Supersedes the deleted `main.tex.cp1251` snapshot. |
+| `build/` | **the paper, buildable from a fresh clone** — `main.tex` (CP1251), `zapiski.cls` (CP1251+CRLF), `pic/`, `main.pdf`, `instructions.md`. Two `pdflatex` passes; verified 2026-08-11 from a clean copy of that directory alone: 16 pages (main body ends p10), 286219 bytes, 0 errors, 0 undefined citations. The six `Font shape 'T2A/...' undefined` log lines are Cyrillic font substitutions, **not** missing references — do not re-diagnose. Supersedes the deleted `main.tex.cp1251` snapshot. |
 
 **Live draft:** `../files/paper_submission/draft/{main.tex,main.pdf,zapiski.cls,pic/}`.
-12 pages, **main body ends p9** (the appendices carry the rest), 0 errors, 0 undefined
-citations, 6 bibitems / 6 cites, 1 figure.
+16 pages, **main body ends p10** (five appendices carry the rest), 0 errors, 0 undefined
+citations, 7 bibitems / 7 cites, 1 figure, 0 placeholders.
 **Template + instructions:** `../files/paper_submission/{instructions.md,template-zapiski-main/}`.
 
 ## 4. Tools written this session — none of these are obvious from the code
