@@ -59,6 +59,40 @@ against the trained model's **0.7175** (D53).
 
 ---
 
+### 1.0b The answer lives in the transient, and most of our instruments read the fixed point
+
+This is the structural fact that reframes the rest, and it was found in banked data at no
+GPU cost.
+
+Across all 21 census families — 4868 draws, 48 unrolls — **the median unroll at which the
+gold token reaches its best rank is 4**, and **17 of 21 families reach it by unroll 8**.
+After that the rank does not decay toward noise; it **settles at a stable worse value and
+holds it for forty-plus unrolls**. `add1` is rank 1 at unroll 4 and rank **19** from ~16 to
+47. `echo_digit` is rank 1 at unrolls 1–5 and rank **4** thereafter. Median final/best rank
+ratio **1.6×**, worst **19×** (D159).
+
+**So the map converges to a state whose readout does not prefer the gold.** The gold's
+rank-1 moment is a *transient* feature. Two families are the exception and they are the
+only ones that keep their answer: `echo_word` holds rank 1 for **43 of 48** unrolls, and
+`compare` holds rank 2.
+
+Three consequences, all uncomfortable and all measured:
+
+1. **Scored at the final unroll, 19 of 21 families read exactly 0.000** — including
+   `echo_digit`, the easiest task in the suite, at **0.997 → 0.000**. Huginn holds a copied
+   *word* to the end of its computation and cannot hold a copied *digit* (D158).
+2. **The observability census certifies availability, not production.** Its 41 items in the
+   20–80% band become **0** on the final-unroll axis, at an inflation of **5.29×** — larger
+   than D103's 2.06× and A29's 2.00×, so the factor is a property of task and budget and
+   **no single "inflation factor" should be quoted** (D157).
+3. **Most of this project's geometry measures the converged state** — contraction rates,
+   fixed-point similarity, the rotation regime, h\* decoding. **The state that carries the
+   answer is the one at unroll ~4, and it is not the state those instruments read.**
+
+What is *not* shown is why the displacement happens, or to what: the top-1 token at the
+fixed point was never banked. D145's glued role markers (`'4user\n\n'`) suggest the model
+moves on to the next turn, but that remains a hypothesis.
+
 ### 1.1 What the latent carries
 
 The trajectory's **shape** identifies the input at ceiling, separating two prompts one
