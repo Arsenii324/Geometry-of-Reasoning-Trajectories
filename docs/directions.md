@@ -1492,3 +1492,26 @@ bank all arms. **No further forks are possible; everything from here is the main
 - Practice notes **RC6** (a degenerate outcome reads like a clean null), **RC7** (a monitor
   inside another command is not a monitor), **RC8** (preflight checked everything except the
   model), **RC9** (a platform ERROR is not necessarily a crash).
+
+
+---
+
+## §Q A47 abandoned after three failures, 2026-08-11 18:26
+
+`ds_h0inject` errored a third time (`bt1vuemjmeg0onc52shp`), after the donor-length gate was
+diagnosed and removed and after 18/18 items were verified to survive locally. It reached 4/18
+recipients at 542 s, so it ran real compute this time and died later than before.
+
+**Not diagnosed, deliberately.** The commitment recorded at 17:35 was: on an error, record and
+move on. Three diagnosis sessions today cost 20–40 minutes each, and this run's value had
+already fallen — D190(a) found the model's own paper claims path independence over h₀
+(*"re-initializing from multiple starting states… the model moves in similar trajectories"*), so
+a null here was partly predicted.
+
+**H3's behavioural test therefore remains unrun.** The record's H3 verdict is unchanged and
+rests where it did: contraction is real, the limit set has diameter ≈1 in 5279 tangent
+dimensions, and the count is linearly decodable (D32) — so the strong form overstates its
+evidence. That is a bounded position, not a gap the paper needs to fill.
+
+**If resumed later:** the informative arm is P4 (does the recipient briefly rank the *donor's*
+answer), not P3. Kernel and fix are committed at `scratch/ds_h0inject/`.

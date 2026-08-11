@@ -225,6 +225,8 @@ reaches the readout before the map forgets it. At 18:06 it was at 4/18, ~25 min 
   is partly predicted** — the model's own paper claims path independence over h₀ — so the
   informative arm is P4, whether the recipient briefly ranks the *donor's* answer. Say "content
   transfer" only if P4 is positive.
+**RESOLVED 18:26 — it errored a third time. OMIT ENTIRELY.** Do not mention it, not even as attempted. The paper is complete without it and H3's verdict is unchanged.
+
 - **If it errors or does not land by 19:00:** **omit it entirely.** Do not mention it as
   in-progress; the paper is complete without it. Two prior attempts failed on a data-path gate,
   which is recorded in the ledger and needs no space in the paper.
