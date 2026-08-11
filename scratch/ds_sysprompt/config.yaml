@@ -1,0 +1,31 @@
+name: sysprompt-does-the-instruction-work-from-the-system-turn
+desc: >
+  A50: tests the one form of format instruction D193 explicitly did not cover. A43 swept four
+  arms at zero shots and every one sat at the floor -- parsed-exact 0.000 bare, 0.000 for "reply
+  with only the answer", 0.056 for a boxed request, 0.028 for the harness prompt, against a
+  registered bar of 0.30 -- but all four are USER-turn instructions, so D193 licenses only "no
+  user-turn format instruction works". Paper 02 solved exactly this problem from the system
+  turn, prefixing every prompt with "You are a concise and helpful assistant. Always return only
+  the final answer straightway." because they needed terse output for a rank-trajectory
+  analysis. The design turns on one contrast: U_concise and S_concise carry that sentence
+  verbatim and differ only in which turn it sits in, with items, depth, parser and seed held, so
+  a difference between them is turn placement and nothing else. A_bare is the replication gate
+  against A43's floor and E_reason is A43's fifth arm, which never ran because that job hit its
+  wall budget. P2 is registered both ways: system beating bare by more than 0.15 means D193's
+  negative is about placement rather than instruction-following and every future eval here
+  should use the system turn; no gain means D193 generalises from user-turn to any turn. P3 is
+  the gate that stops the run being vacuous -- if apply_chat_template silently drops an
+  unsupported system role we would measure a bare prompt and call it a system prompt, so the
+  rendered string is asserted to contain the sentence and to differ from the user-turn
+  rendering, before any generation, and a failure prints VOID and scores nothing. P4 measures
+  the cross-item chance rate because digit golds make containment cheap. Mounts the weights.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - sysprompt.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
