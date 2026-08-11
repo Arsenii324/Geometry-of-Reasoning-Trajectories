@@ -1,0 +1,23 @@
+name: arcshots-does-few-shot-close-the-gap
+desc: >
+  A34: D162 refuted protocol as the explanation for D153's 29-point ARC-Easy gap -- the
+  option-text scorings moved accuracy 2.6 and 0.6 points against the 29.2 needed, and the
+  three protocols agree within ~5 points at every depth. The remaining candidates are shot
+  count, item subset, and checkpoint. Shots first, because it is the only one with a
+  measured precedent of the right size: D60 found a trivial copy task going 15% -> 100% on
+  prompt format alone. Same 150 items, same three scorings, same seeded h_0 as A30, so the
+  0-shot arm is an identity check against 0.407. All three scorings are reported at every
+  shot count so a partial move is visible rather than rounded to a verdict, and exemplars
+  come from the TRAIN split so no test item is ever shown. This is also the first kernel to
+  MOUNT the prebuilt weights dataset instead of downloading from HuggingFace, replacing a
+  262-282 s download with a 7.7 s mount.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - arcshots.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
