@@ -256,16 +256,28 @@ the hypothesis, and the gap it found sits inside the settling population in two 
 three banks. It is retracted and replaced by the threshold result, which is what the
 claim needed in the first place.*
 
-**And it has no behavioural consequence — now bounded, not merely unrefuted.** A26's
-regression discontinuity compares the two parameter values **0.05 apart in `e`** on
-opposite sides of the boundary: same tokens, same required answer, regime flipped, in 48
-of 48 units with exactly one crossing. **Correctness never changes — 0 of 48.**
-`best_depth` is null, with a floor that catches a planted 0.5 sd (4.7 unrolls) 99.3% of
-the time and 0.25 sd never, so effects below ~4.7 unrolls remain untested. The only
-signal is a **one-rank shift** in 16 of 48 pairs, 13 in the same direction, exact
-p = 0.0213 — which does *not* survive correction over the three measures tested, and is
-one position out of a median rank of 8 (D148). **"Dynamical epiphenomenon" is now the
-supported reading rather than a hedge.**
+**And its behavioural consequence is now *partly* bounded and partly untested — this
+paragraph previously overstated it.** A26's regression discontinuity compares the two
+parameter values **0.05 apart in `e`** on opposite sides of the boundary: same tokens, same
+required answer, regime flipped, in 48 of 48 units with exactly one crossing. `best_depth`
+is null, with a floor that catches a planted 0.5 sd (4.7 unrolls) 99.3% of the time and
+0.25 sd never, so effects below ~4.7 unrolls remain untested. The only signal is a
+**one-rank shift** in 16 of 48 pairs, 13 in the same direction, exact p = 0.0213 — which
+does *not* survive correction over the three measures tested, and is one position out of a
+median rank of 8 (D148).
+
+**But the correctness half is vacuous and is withdrawn.** `correct` is `False` in **432 of
+432** orbits: the gold never reaches rank 1 anywhere in that run, in either regime, at any
+grid point, and the best rank any orbit achieves is **3**. So "correctness never changes,
+0 of 48" describes a variable that is identically zero on both sides — *there was no
+correctness for the regime to change*. The task is "report the largest/smallest {noun}" with
+golds 6/7/8/9, and Huginn does not do it. **This is the check §1 of CLAUDE.md exists for and
+it was not run.** D166 supplies a likely mechanism for the floor: prose openers hold the top
+ranks, and a best rank of 3 is what two permanently-ahead format tokens would produce.
+
+So **"dynamical epiphenomenon" is not the supported reading** — it is what one arm of an
+underpowered test suggested and another arm could not have detected. *Whether a regime change
+alters what the model answers has never been tested on a task this model can do.*
 
 **The regime is causally controlled by `e`, and the boundary is a surface rather than a
 split.** Interpolating `e` along straight lines between nouns, all eight cross-regime

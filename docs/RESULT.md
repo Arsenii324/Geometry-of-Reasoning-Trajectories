@@ -396,15 +396,21 @@ observational comparison found nothing (16.0 vs 14.5, p = 0.156; 6.5 vs 7.0, p =
 but computed no detection floor, so it excluded nothing. A regression discontinuity across
 the boundary — the *same* prompt at two parameter values 0.05 apart in `e`, 48 of 48 units
 with exactly one crossing, the no-op patch verified to reproduce the rank curve identically
-48/48, and the readout verified to respond to `e` — settles it: **correctness changes in 0
-of 48 units**; `best_depth` is null against a floor that catches a planted 0.5 sd
-(4.7 unrolls) 99.3% of the time and 0.25 sd never; and the only signal is a **one-rank
-shift** in 16 of 48 pairs, every difference exactly ±1, 13 in the same direction, exact
-sign test p = 0.0213 — which does *not* survive correction over the three measures tested
-(D148). Depth effects below ~4.7 unrolls remain untested. A single word restructures the
-entire latent
-dynamics without changing what the model computes, answers, or gets right — which is the
-sharpest form of this document's thesis, and the strongest open question in it.
+48/48, and the readout verified to respond to `e` — bounds it in part: `best_depth` is null against a floor
+that catches a planted 0.5 sd (4.7 unrolls) 99.3% of the time and 0.25 sd never; and the only
+signal is a **one-rank shift** in 16 of 48 pairs, every difference exactly ±1, 13 in the same
+direction, exact sign test p = 0.0213 — which does *not* survive correction over the three
+measures tested (D148). Depth effects below ~4.7 unrolls remain untested.
+
+**The correctness arm of that test is withdrawn, and it was the load-bearing one.** `correct`
+is `False` in **432 of 432** orbits — the gold never reaches rank 1 anywhere in the run, in
+either regime, at any grid point, best rank 3. "Correctness changes in 0 of 48 units" is a
+statement about a variable that is identically zero on both sides of the boundary. Huginn
+cannot do the task the geometry was scored on, and that was never checked. So the sharpest
+form of this document's thesis — *a single word restructures the entire latent dynamics
+without changing what the model answers* — **is not established.** Half of it is measured: the
+restructuring is real, sharp, replicated and causally controlled. The other half has never
+been tested on a task this model can do, and that is now the strongest open question here.
 
 ---
 
