@@ -529,8 +529,26 @@ available at zero-shot and could not get out**, which is the same thing D168 mea
 finds the gold never leaves the top 35 on tasks the model can do. Few-shot exemplars
 demonstrate the output format and the block clears.
 
-So this project now reproduces a published number about the model it studies, and it took
-until row 169 because the obstruction was in how we asked, not in what we measured.
+**And there is a second, independent route to the same number that needs no examples at all.**
+Scored exactly as `lm-evaluation-harness` scores ARC-Easy — bare `"Question: …\nAnswer:"`, no
+option list in the prompt, continuation likelihood normalised by characters — Huginn reads
+**0.658** at **zero** shots, within 0.041 of the published 0.699. Decomposing which part of our
+prompt was costing us: the chat template is worth **+0.033** and character-vs-token
+normalisation **+0.025**, while **removing the option list from the prompt is worth ~+0.21**
+(D175). That last one was not what I expected — I expected the template, since stripping it
+moves the gold's median rank from 2.5 to 10 (D166). Listing the options in the prompt disturbs
+a likelihood comparison between those same option texts, which is a scoring-design point rather
+than a fact about the model.
+
+So this project now reproduces a published number about the model it studies by **two
+independent routes** — five in-context examples (0.723) or the harness's own prompt format at
+zero shots (0.658), with 0.699 between them. It took until row 169 because the obstruction was
+in how we asked, not in what we measured.
+
+*(One arm of that run failed its own replication gate and the numbers from it are void: my
+`T_chat` reimplementation of D162 put the leading space in the prompt rather than the
+continuation, and in BPE that misaligns the scored span. D162's own numbers stand; the
+option-list figure above is quoted against D162's banked 0.413, not against the broken arm.)*
 
 **One thing this does not license.** The tempting corollary — that because the answer lives
 in the transient, transient geometry predicts correctness where the fixed point does not —
