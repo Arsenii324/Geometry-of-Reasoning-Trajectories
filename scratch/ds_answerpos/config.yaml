@@ -1,0 +1,31 @@
+name: answerpos-the-geometry-of-the-token-that-carries-the-answer
+desc: >
+  A44: closes a blind spot in every geometry measurement this project has made. All of them are
+  a single forward pass at the last prompt position -- hook core_block[-1], unroll r times, read
+  the gold's rank at n_prompt-1. That is the trajectory for producing the FIRST generated token,
+  and D166 and D174 established what that token is: "The", opening 39.4% of 1260 banked
+  generations, with the rate of opening with the gold flat in depth. So D157, D158, D159, D168,
+  D177, D178 and D181 all measure the readout while the model is deciding to write "The", and
+  the token that actually carries the answer has never been looked at. Recurrent depth is latent
+  test-time scaling and generated reasoning is explicit test-time scaling; they compose, and
+  D181 already shows them trading against each other. This measures the gold's full rank curve,
+  the rotation power and the last-step residual at EVERY generated position, and locates the
+  answer position by the rules D179 ranked. Two hypotheses predict opposite things. Decoration:
+  the computation finished in the prompt's forward pass, so the answer position should be
+  shallower, having nothing left to do. Computation: the model works while it writes, which the
+  literal text suggests, since sub1 at r=32 produces "The answer is 4 - 1 = 3" and the 3 appears
+  only after the subtraction is written out -- so the answer position should be deeper or
+  geometrically distinct. P3 makes the other generated positions the control, because if every
+  position looks alike then the answer position is not special and "the model reasons" is not
+  supported by geometry. P1 gates on position 0 reproducing the census shape. Mounts the
+  prebuilt weights dataset.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - answerpos.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
