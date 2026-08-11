@@ -26,7 +26,12 @@ the research repo, nothing committed.**
   carries A1–A11, so the compiled PDF is behind it by four results (D198, D199, D200 and the
   A7 amendment). Regenerating the draft from the handoff is a required step, not an optional
   refresh.**
-- **It is already a valid submission.** The four pending jobs are upside, not requirements.
+- **IT IS NOT REVIEWED. Do not treat it as ready.** Every sentence in it derives from
+  `RESULTS_HANDOFF.md`, which I wrote. **The authors have not read the content, and no claim in
+  the PDF has been discussed with them.** It compiles and is compliant; that is a *floor*, not
+  readiness. **A post-compaction pass must not optimise toward upload.** The remaining work is
+  surfacing claims for the authors to check and challenge — errors found now are cheap, errors
+  found by a reviewer are not.
 
 ### Template traps, already solved — do not re-break
 
@@ -85,14 +90,20 @@ gives, for each reference, where to cite it and the exact claim it carries**, dr
 
 ## 4. Schedule, backwards from 21:00
 
-| time | what | who |
+**The earlier hour-by-hour schedule is withdrawn.** It optimised for shipping, and the authors
+have said that is the wrong target — the work is incremental and the content is unvetted.
+
+What remains, in dependency order rather than by clock:
+
+| what | who | note |
 |---|---|---|
-| now | verify OpenReview registration for every author | **user** |
-| → **19:00** | fold in whichever jobs land; **content freeze at 19:00** | me |
-| 19:00–19:30 | user supplies author/Contribution/mentor/Russian placeholders | **user** |
-| 19:30–20:00 | final regeneration + verify (compile, pages, encoding) | me |
-| 20:00–20:30 | user reads the final PDF | **user** |
-| 20:30–21:00 | OpenReview form + upload + verify | **user** |
+| **surface the paper's claims for author review** | me → user | the real bottleneck; nothing in the PDF has been checked by an author |
+| Contribution entries | user | the one compliance item still missing |
+| corrections arising from that review | me | expect these; they are the point |
+| final compile + encoding + page check | me | mechanical, ~5 min, do last |
+| OpenReview form + upload | user | fields are paste-ready in `WRITING_PACK.md` §E, **also unreviewed** |
+
+*Registration is confirmed. Authors: Varaksin, Shiianov, Sverdlov; mentor Barannikov (Skoltech).*
 
 ## 5. Behavioural commitments made at 17:35 — keep them
 

@@ -1515,3 +1515,25 @@ evidence. That is a bounded position, not a gap the paper needs to fill.
 
 **If resumed later:** the informative arm is P4 (does the recipient briefly rank the *donor's*
 answer), not P3. Kernel and fix are committed at `scratch/ds_h0inject/`.
+
+
+---
+
+## §R Compaction handoff, 2026-08-11 18:55 — the framing correction that matters most
+
+**The supervisor corrected the target: the paper is not to be made "ship-ready" for blind
+acceptance. It is unvetted work in progress and the remaining job is surfacing claims for the
+authors to challenge.** Files were reframed accordingly:
+
+- `files/paper_submission/REVIEW_QUEUE.md` (mirrored to `docs/submission/`) — **the seven
+  framing choices no author has seen**, the soft spots a reviewer will probe, what is still
+  non-compliant, and an explicit instruction not to polish before that review happens.
+- `SUBMISSION_STATE.md` §1 no longer says "already a valid submission"; the hour-by-hour
+  shipping schedule is withdrawn and replaced by a dependency-ordered list.
+- `WRITING_PACK.md` §E marked **unreviewed — do not paste blindly**.
+
+**All GPU work is finished.** A52→D198, A50→D199, A49→D200 landed and are recorded; A47 was
+abandoned after three failures (§Q). No jobs run, no monitors needed, nothing to poll.
+
+**Ledger 200 rows, suite 616 passed, everything pushed.** The draft compiles at 10 pages with
+main body ending page 9, 0 errors, 0 undefined citations, 0 uncited bibitems, CP1251 preserved.

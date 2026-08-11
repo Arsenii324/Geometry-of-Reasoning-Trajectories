@@ -166,7 +166,10 @@ false or unsupported.** Every right-hand entry is a sentence I actually had to c
 
 ---
 
-## E. Ready-to-paste OpenReview fields
+## E. Draft OpenReview fields — **unreviewed, do not paste blindly**
+
+*I wrote these; no author has read them. The abstract in particular commits to a framing
+("two lines that meet") that was never discussed. Treat as a proposal to be challenged.*
 
 **Title**
 > What the Latent Trajectory of a Recurrent-Depth Transformer Encodes, and What Our Measurements
