@@ -1,0 +1,33 @@
+name: censusshots-is-the-capability-record-a-zero-shot-artefact
+desc: >
+  A42: asks whether this project's entire capability record is an artefact of zero-shot
+  prompting. D169 measured ARC-Easy letter-argmax at 0.416 zero-shot, 0.713 at two shots and
+  0.723 at five against a published 0.699, paired, 35 items fixed against 4 broken, exact
+  McNemar p = 3.35e-07 -- while the option-text likelihood arms moved about 2 points over the
+  same shots. A likelihood score never asks the model to emit anything; the letter arm asks for
+  a bare option letter at the first generated position, and zero-shot Huginn opens with prose
+  there. The answer was available and could not get out. Every capability number in this
+  project is zero-shot -- the census, its final-unroll rescoring, the displacement curve, the
+  ladder, the regime-behaviour task -- so if zero-shot understates this model by thirty points
+  the census's picture of what Huginn can and cannot do is in question, and with it the screen
+  D168 applies and the H2 verdict that every difficulty axis is shortcuttable or beyond reach.
+  items() and TASKS are copied verbatim from the census kernel including its crc32 seeding, so
+  item i of family f is the same item the census scored and this is a paired comparison against
+  banked numbers. P2 and P3 are registered as different outcomes: D169's mechanism predicts
+  final-unroll accuracy rises substantially while oracle accuracy barely moves, because
+  availability was never what was blocked; if oracle accuracy also rises then few-shot improves
+  the computation and "the task is beyond the model" was never established. P5 caught a real
+  leak before launch -- echo_digit has only ten distinct prompts, so a naive exemplar pool would
+  have shown the model the exact test item with its answer -- and exemplars are now filtered
+  against the test prompts and deduplicated, with families that cannot supply five distinct
+  non-test prompts running at the k they can and banking k_actual. Mounts the weights dataset.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - censusshots.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
