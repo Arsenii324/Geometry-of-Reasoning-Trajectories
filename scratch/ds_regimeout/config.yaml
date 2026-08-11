@@ -1,0 +1,30 @@
+name: regimeout-does-the-regime-change-the-output
+desc: >
+  A41: repairs D148, the geometry track's headline behavioural negative. D148 concluded that a
+  causally-controlled regime change produces no change in what the model answers, from "0 of 48
+  units changed correctness". Re-reading its banked run, `correct` is False in 432 of 432
+  orbits -- the gold never reaches rank 1 anywhere, in either regime, at any grid point, best
+  rank 3. The comparison ran on a variable that is identically zero on both sides, so there was
+  nothing for the regime to change, and the task ("report the largest/smallest {noun}", golds
+  6-9) is one Huginn cannot do. The repair is not an easier task but the right dependent
+  variable: D148 asked whether the ANSWER changes and measured whether CORRECTNESS changes, and
+  those come apart exactly when the model is wrong on both sides. This measures the emitted
+  token and the generated text, which answers D148's actual question without requiring the
+  model to be right. Same four chords, same e-interpolation, same D141 threshold; R is measured
+  on a five-point grid around D140's t* and the adjacent straddling pair is identified from
+  measured R rather than assumed, with non-straddling units dropped and counted. P4 runs the
+  capability check D148 skipped and reports it whether or not it is flattering: if the gold
+  appears in neither side's generation, P3's null is as vacuous as D148's and that is the
+  finding. P5 banks the literal top-5 on both sides, because D166 predicts prose openers hold
+  the top ranks and a best rank of 3 is what two permanently-ahead format tokens produce.
+  Mounts the prebuilt weights dataset.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - regimeout.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1
