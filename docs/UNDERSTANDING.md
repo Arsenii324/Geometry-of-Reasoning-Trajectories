@@ -1,4 +1,4 @@
-# State of understanding — 2026-08-10
+# State of understanding — 2026-08-11
 
 Rewritten, not appended (CLAUDE.md §6). §1 below is the current synthesis; the
 2026-08-09 text it replaces is kept from §1-old onward because the difference is
@@ -261,13 +261,31 @@ rotates** (R = 0.054 … 0.579, all below threshold), and on a rotating carrier 
 bearing of that magnitude **destroys the rotation in 3 of 3 cases** — 0.845 → 0.579,
 0.977 → 0.271, 0.974 → 0.131 — while the chord toward another *rotating* noun keeps all
 21 of 21 points inside the regime. So the rotating set is a structured region of
-parameter space, not a neighbourhood that any large perturbation escapes. **Non-convexity
-is real but not generic**: 2 of 5 settling→settling chords pass through rotation, against
-a pre-registered bar of 3 of 6, so it is demonstrated and must not be read as typical
-(D144). But the rotating set is **not convex**: a
-rotating→rotating path never leaves the regime (0 crossings in 21 points), while a
-**settling→settling** path crosses **twice**, rising to R = 0.74 before falling to 0.05.
-t\* varies 0.28–0.74 by pair (D140).
+parameter space, not a neighbourhood that any large perturbation escapes.
+
+**Which set is the non-convex one — corrected here.** This paragraph previously asserted
+that *the rotating set* is not convex and then cited evidence that it is; the label was on
+the wrong set, and the banked counts settle it. In `e`-space, **within-rotating chords leave
+the regime 0 of 3** (all 21 grid points rotating, min R 0.768 / 0.846 / 0.885), while
+**within-settling chords pass through rotation 2 of 5**, rising to R = 0.74 before falling
+to 0.05, with t\* varying 0.28–0.74 by pair. So in `e` it is the **settling** set whose
+chords escape, and 2 of 5 is below A25's pre-registered bar of 3 of 6 — demonstrated, and
+not to be read as typical (D140, D144).
+
+**But convexity is coordinate-dependent, and that is the sharper finding.** Redrawn in
+`wte`-space, **within-rotating chords leave the regime 2 of 2** — `symbol`→`array` dipping
+to R = 0.400 with two threshold crossings, `symbol`→`block` to 0.546 with four, on both
+sequences. **The decisive comparison is a matched pair: `symbol`↔`array` appears in both
+runs with the same endpoints, the same metric and the same threshold — min R 0.768 drawn in
+`e`, min R 0.400 drawn in `wte`.** The only difference is which space the straight line is
+drawn in, so the rotating region is chord-convex in the prelude's output and not in the
+embedding (D164). That also resolves A32's failed P5 control as a coordinate artefact rather
+than a confound: the endpoints are fine, the straight line is not. **Two readings remain
+live** — the prelude's nonlinearity curving the segment out of the region, or linear
+interpolation shrinking the interpolant's norm where `e`'s downstream RMSNorm would absorb
+it. Banked data bounds the second without excluding it (the `symbol`→`token` midpoint reads
+R = 0.773, *above* the source's own 0.768). A36 separates them by rescaling the `wte`
+interpolant to the source's norm at every t.
 
 **The region is bounded and anisotropic, and it is NOT a half-space.** Bisecting from two
 rotating carriers along 64 rays: **81.2%** of random directions escape the regime, and of
