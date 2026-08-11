@@ -4,7 +4,7 @@ Regenerate with `uv run python scripts/build_index.py`. Source of truth is
 `claims_ledger.md`; this file only cross-references it against the code, the runs
 and the banked data, so that no experiment is unfindable.
 
-**162 claims · 36 distinct jobs referenced · 64 kernels · 3266 banked artifacts across 95 directories**
+**163 claims · 36 distinct jobs referenced · 65 kernels · 3266 banked artifacts across 95 directories**
 
 | row | claim (first sentence) | kernel | job | analysis | banked |
 |---|---|---|---|---|---|
@@ -170,6 +170,7 @@ and the banked data, so that no experiment is unfindable.
 | **D160** | THE ROTATING REGION IS EXTENDED ALONG THE SETTLING-NOUN SUBSPACE, NOT THE ROTATING ONE -- THE OPPOSITE OF WHAT D144 PREDICTED, AT p = 0.010. | `ds_aniso2` | `bt161qbvm53hdc6d5mea` ⚠unregistered | — | ds_aniso2: 1 |
 | **D161** | THE EMBEDDING ROW CAUSALLY CONTROLS THE REGIME -- D134's INFERENCE IS CONFIRMED BY MANIPULATION AFTER FITTING FAILED TO TEST IT. | `ds_wteswap` | `bt1nerk2q8p5a8q39j4o` ⚠unregistered | — | ds_wteswap: 1 |
 | **D162** | PROTOCOL IS REFUTED AS THE EXPLANATION: WE CANNOT REPRODUCE HUGINN'S PUBLISHED ARC-EASY NUMBER UNDER EITHER SCORING RULE, AND THE DISCREPANCY IS REAL. | `ds_arcproto` | `bt172pp33s5tfkdvn1qg` ⚠unregistered | — | ds_arcproto: 1 |
+| **D163** | D159's TRANSIENT FINDING DOES NOT TRANSFER TO CORRECTNESS DECODING, AND THE OBVIOUS TEST OF IT IS UNDER-POWERED BY A FACTOR OF TEN. | `kaggle_b6bank` | — | — | kaggle_b6bank: 130 |
 
 ## Claims with no code, job or script reference
 

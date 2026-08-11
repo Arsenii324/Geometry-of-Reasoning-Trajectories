@@ -88,6 +88,12 @@ Three consequences, all uncomfortable and all measured:
 3. **Most of this project's geometry measures the converged state** — contraction rates,
    fixed-point similarity, the rotation regime, h\* decoding. **The state that carries the
    answer is the one at unroll ~4, and it is not the state those instruments read.**
+   *But the tempting corollary — that transient geometry therefore predicts correctness
+   where the fixed point does not — is **checked and not supported**. D93's powered window
+   sweep already covers the argmin (start 0, width 12) and finds no trend across eight
+   windows: Spearman(start, accuracy) = +0.14 (p = 0.75) for shape, −0.31 (p = 0.46) for
+   position, with the argmin window itself at chance. Where the answer is **available** and
+   where the geometry **predicts success** are different questions (D163).*
 
 What is *not* shown is why the displacement happens, or to what: the top-1 token at the
 fixed point was never banked. D145's glued role markers (`'4user\n\n'`) suggest the model
