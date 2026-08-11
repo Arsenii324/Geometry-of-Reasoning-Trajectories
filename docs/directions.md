@@ -1218,3 +1218,35 @@ Written while three jobs run, per the standing instruction not to wait for compa
   a positive would not be believable and a null is uninformative by construction.
 - **Any further regex-over-prose audit of the ledger.** Failed three times to identify claim
   structure; not rebuilt (RC5).
+
+---
+
+## §L Implementation available in `huginn-load`, and what it would have saved (2026-08-11)
+
+The papers directory ships **code**, not only text: 60 `.py` files under `01/code/`, 18 under
+`02/code/`. Read against this project's actual defect record, three items are worth adopting.
+
+**L1 — run lm-eval directly instead of hand-rolling benchmark scoring.** `01/code/
+recurrent-pretraining/evaluate_raven/local_lm_eval.py` is a thin wrapper over lm-eval's own
+`TaskManager`/`simple_evaluate`; `saturation_eval_dist.py` gives the whole recipe — set
+`model._model.config.mean_recurrence = num_steps`, pass `num_fewshot`, and let the harness
+score. **This is the single highest-leverage item, because scoring is where we keep breaking.**
+D175's `T_chat` arm was voided by a leading space moved into the prompt (BPE span
+misalignment); the 13-arm 0.392–0.495 group in D182 is a prompt format *we invented*; D179 had
+to sweep ten extraction rules because we score by hand. None of that arises inside the harness.
+
+**L2 — `test_time_noise` is a built-in perturbation API we have been working around.** Five
+schedules (`geom`/`sqrt`/`line`/`chi`/`fixed`), applied every unroll before the adapter, with
+optional renorm through `core_block[-1].norm_4`. Our `e`-patching and state-injection kernels
+hand-roll hooks to do less than this offers. Also `iterate_forward(init_scale=…)` — the h₀
+scale is a free parameter we have never varied (A47 now touches it indirectly).
+
+**L3 — what their code does *not* do, checked rather than assumed.** Paper 02's `*_inter_*`
+files mean **intermediate recurrence steps, not intermediate token positions**:
+`coda_lens_exp_inter.py` iterates `16*4` = 16 recurrences × 4 blocks, all at one position. So
+the interior-position question **A46** is testing is unaddressed by paper 02 as well as by us —
+only paper 01's qualitative figures touch it. A46 is novel against both.
+
+*Not adopted today: L1 and L2 are changes to how we run, and every result now in flight was
+launched under the current scheme. Adopting mid-flight would make the comparisons
+cross-protocol, which is the error D183 just caught us making in the other direction.*
