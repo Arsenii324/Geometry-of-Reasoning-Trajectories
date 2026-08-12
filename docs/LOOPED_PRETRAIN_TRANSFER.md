@@ -21,11 +21,16 @@ different fixes and are routinely conflated: the map is **time-invariant and con
 iteration provably stops doing work; the **readout commits at unroll ~4 of 48**, and in 17 of 21
 task families the answer is *better in the transient than at the fixed point*, so converging
 destroys information; and with weight tying plus contraction the **weight gradient is dominated by
-the last loops**, which are the ones doing the least. The third gives a quantitative prediction:
-the number of loops that can contribute to learning is about `1/(1-rho)`, which for our measured
-`rho` is 5.7--12.2 and brackets the observed knee in Huginn's own published depth curve. If that
-is right, the lever is `rho`, not the loop count -- and two obvious candidate fixes are already
-refuted by evidence sitting in the released Huginn checkpoint.
+the last loops**, which are the ones doing the least.
+
+Two mechanisms therefore both push the optimiser to shape the weights around the *converged*
+regime -- contraction, and Huginn's truncation of backprop to the last 8 unrolls -- while the
+answer is measurably in the *transient*. That compounding is the best account of saturation we can
+offer, and it comes with an awkward corollary the brief should hear: **Huginn's `k=8` truncation
+and the `1/(1-rho) = 7.7` horizon predicted from our measured contraction are numerically
+indistinguishable, so its reported ~10-loop saturation may be substantially an artefact of its
+training recipe.** That is separable at 10M parameters and is the first thing I would test. Two
+further candidate fixes are already refuted by evidence sitting in the released checkpoint.
 
 ---
 
@@ -106,6 +111,36 @@ one-parameter heuristic that used none of this curve.
   `rho`, i.e. the **minimum** possible learning horizon. The two objectives are directly opposed
   and the trade is numeric.
 
+### 2.1 The confound Huginn cannot resolve -- and the test task can
+
+**Huginn was trained with truncated backprop through only the last `k = 8` unrolls**
+(UNDERSTANDING.md §2: short window plus gradient checkpointing). That is nearly identical to the
+`1/(1-rho) = 7.7` this section predicts, so **the knee at r~8 has two candidate causes and Huginn
+cannot separate them**:
+
+- **(a) contraction** -- late loops dominate the gradient, effective horizon `1/(1-rho)`;
+- **(b) truncation** -- the optimiser was simply never shown more than 8 loops of credit.
+
+I originally presented the r~8 agreement as support for (a). It is not, on its own: a simpler
+explanation was available in the training recipe and I had not checked it. The honest position is
+that the two are numerically indistinguishable in this model.
+
+They are not, however, independent, and both push the same way. Truncation credits only the last 8
+applications -- the near-converged part of the trajectory. Contraction, even inside an untruncated
+window, weights late loops by `rho^(T-t)`. So **two separate mechanisms both make the optimiser
+shape the weights around the converged regime**, while D159 says the answer actually lives in the
+transient. That compounding is a better account of saturation than either mechanism alone, and it
+is the part I would now lead with.
+
+**This is exactly the experiment the test task can run and Huginn cannot.** At 10M parameters full
+BPTT through all loops is affordable. Train two arms, identical but for truncation depth `k`:
+
+- if the knee tracks `1/(1-rho)` and ignores `k`, mechanism (a);
+- if the knee tracks `k`, mechanism (b), and **Huginn's reported saturation is substantially an
+  artefact of its training recipe rather than a property of looped models** -- which would weaken
+  the premise the task itself starts from, and is worth knowing before designing around it;
+- if it tracks neither, both are wrong, which is still a clean result.
+
 **Precedent that `rho` predicts timescales here.** This is not the first time. D173 registered
 `ln(0.05)/ln(0.83) = 16.1` unrolls *before* the run as the relaxation time after a mid-trajectory
 parameter swap; measured 15.5 (an upper bound, detector lag). Same style of argument, applied to
@@ -149,6 +184,23 @@ loops; that is present at initialisation. The bottleneck is that the model does 
 it. That points at credit assignment and readout (§1.2, §1.3), not at representational width or
 at exotic memory mechanisms.
 
+### 3.3 The quantity that sets usable depth is learned almost entirely in the first few thousand steps
+
+D52: training moves `rho` from **0.7048 to 0.8577** -- i.e. the model does learn to slow its own
+contraction, extending the effective horizon `1/(1-rho)` from **3.4 to 7.0 loops**. But **91% of
+that shift is already present at the earliest public checkpoint, step 6144.**
+
+Two consequences, and this is the most actionable thing in §3:
+
+- If `rho` is the lever (§2), the window in which it is set is **early**. By the time a run looks
+  healthy, the usable depth is largely fixed. An intervention on `rho` is a *pretraining* choice,
+  not a fine-tuning one.
+- **Log `rho(step)` from step 0.** We could never do this -- no checkpoint earlier than 6144 was
+  released, and directions.md §B4.5 parked the question as "needs training from scratch". The test
+  task is training from scratch, so the curve that was unavailable to us is free to it. It also
+  makes `rho` a *live training signal* rather than a post-hoc measurement: if `rho` is collapsing
+  toward the fixed point in the first thousand steps, the run's depth ceiling is being set then.
+
 ---
 
 ## 4. The sharpest design constraint we can offer
@@ -169,6 +221,14 @@ So: **producing non-convergence is not sufficient. It has to happen before reado
 Most "stop it converging" interventions will add activity in exactly the window Huginn already
 fills with activity that does not reach the output. That is a non-obvious constraint and it
 disqualifies a whole family of otherwise reasonable ideas cheaply.
+
+**There is already an unused exploration API in the released model.** Huginn ships a
+`test_time_noise` interface -- five schedules (`geom`, `sqrt`, `line`, `chi`, `fixed`) injecting
+noise at **every unroll before the adapter** -- plus a free `init_scale` on `h_0`
+(directions.md §L2). Neither appears in the paper's results and neither was ever exercised by us.
+For a task that names "exploration during loops" and latent-state initialisation as levers, this is
+a designed-in, never-reported prior art surface worth reading before inventing a scheme: the
+schedule shapes are someone's considered guess at what per-unroll noise should look like.
 
 **Where exploration is injected matters more than how much.** The task lists "exploration during
 loops" as a lever. We ran the closest thing we could: a difference-of-means vector added to the
@@ -236,6 +296,14 @@ project carry an explicit withdrawal or amendment marker, and four of those were
 we had registered *in advance* rather than by later work. These are the transferable ones; each is
 cheap to guard at 10M params.
 
+0. **Precision fakes convergence, and this task is *about* convergence.** D30: bf16 rounding makes
+   the model **appear to converge about 4.6x sooner than it numerically does**. The step size falls
+   below the representable difference long before the dynamics have actually stopped. Every
+   headline quantity in this task -- when do loops saturate, when does the state settle, where to
+   place an early exit -- is exactly the quantity this corrupts, and it corrupts it in the
+   direction that makes loops look useless. **Measure convergence and `rho` in fp32 even if you
+   train in bf16**, and report the precision alongside any saturation claim. Of everything in this
+   document this is the cheapest to get wrong and the most likely to invalidate a headline.
 1. **Unseeded latent init.** Huginn draws `h_0` from an unseeded RNG and *no kernel seeded it
    before we did* (D78). Two forwards of one prompt were not comparable. For a looped pretrain:
    seed it, and **measure run-to-run PPL variance before believing any ablation delta**. We have a
@@ -289,16 +357,38 @@ Stated so the rest stays usable.
 
 ---
 
-## 8. If I had to pick three things to carry over
+## 8. If I had to pick four things to carry over
 
-1. **Measure `rho` and the per-loop `KL(p_t || p_T)` curve from the first training run**, before
-   any architectural choice. They give the effective depth for free and turn the central question
-   into a measurement (§2, §5).
-2. **Treat readout commitment as a separate axis from depth** (§1.2, §4). The single most
-   surprising thing we found is that the answer is *better in the transient than at the fixed
-   point* in 17 of 21 families. If that reproduces at small scale, "more loops" is the wrong frame
-   and "later commitment" is the right one.
-3. **Take the two refutations in §3 for free.** Depth-randomised training is already done in Huginn
-   and does not break saturation; and the recurrence's state-carrying capacity is present at
-   initialisation and is not what training improves. Both save budget that would otherwise be spent
-   confirming them.
+1. **Question the premise first, because it is cheap to test and load-bearing.** The task opens
+   from "Huginn saturates after ~10". Huginn also trained with BPTT truncated to the last 8
+   unrolls. Those numbers are close enough that the reported saturation may be substantially a
+   property of the *training recipe*, not of looped models (§2.1). At 10M parameters, full BPTT is
+   affordable and the truncation sweep separates them. If it turns out to be the recipe, the whole
+   problem has more headroom than the brief assumes -- and that is the most valuable single thing
+   this analysis can contribute.
+2. **Instrument `rho(step)` from step 0 and the per-loop `KL(p_t || p_T)` curve from the first
+   run.** Together they give effective depth for free and turn the central question into a
+   measurement (§2, §5). D52 says the usable depth is largely fixed within the first few thousand
+   steps, so this has to be logged from the start, not measured at the end (§3.3). Measure it in
+   **fp32** -- bf16 fakes convergence 4.6x early (§6.0).
+3. **Treat readout commitment as a separate axis from depth** (§1.2, §4). The most surprising thing
+   we found is that the answer is *better in the transient than at the fixed point* in 17 of 21
+   families. If that reproduces at small scale, "more loops" is the wrong frame and "later
+   commitment" is the right one.
+4. **Take the refutations in §3 for free.** Depth-randomised training is already done in Huginn and
+   does not break saturation; and the recurrence's state-carrying capacity is present at
+   initialisation and is not what training improves. Both save budget otherwise spent confirming
+   them.
+
+**One diagnostic worth adding that we never built** (OPEN_THREADS §B6): permutation and
+group-composition tasks over `S_3`--`S_5`, which are provably outside `TC0` and so *require*
+recurrence. FineWeb perplexity is the target, but a held-out group-composition probe is a task
+where depth must help if the loop is working at all -- a positive control for "are my loops doing
+anything", separate from the metric being optimised. We never built it and it stayed on the queue
+for the whole project.
+
+**A caveat on all loop-level analysis** (UNDERSTANDING §6.7): every content-decoding instrument in
+this project was **linear**. Nonlinear encoding across loop iterations was never tested. Do not
+conclude "loop N adds nothing" from a linear readout of the hidden state. The `KL(p_t || p_T)`
+diagnostic in §5 is exempt -- it reads the model's own output head, not a probe we fitted -- which
+is part of why I would prefer it.
