@@ -172,6 +172,14 @@ oscillatory. The eigenvalue's implied period is a remarkably precise function of
 same instruction noun over three different digit sequences reproduces it to **±0.06 loops** — and
 spans **3.4 to 46.7 loops** across prompts.
 
+**And on the full operator, which is the one to quote, the rotation does separate — by task.**
+Measured over the complete one-unroll map rather than a single position, the leading eigenvalue's
+magnitude is **0.8098** (range 0.8011–0.8680), a fourth independent estimate agreeing with the
+other three. Its *argument* splits two task families cleanly and without overlap: one gives
+**63.1°, 61.6°, 61.2°, 45.2°** as the problem grows, the other **19.5°, 21.0°, 24.3°**. So the
+map's rotation rate is a sharp, task-level property — which is the positive result my own
+regime-comparison went looking for and missed by measuring the wrong thing (§7.5).
+
 **Two cautions that took me a second pass to find, and both are the project's own.** These are
 periods of the *eigenvalue*, not of the observed orbit: the trajectory was measured turning at
 about **a quarter** of the leading eigenvalue's rate, so the two differ by roughly 4×. And this
@@ -304,51 +312,24 @@ The hypotheses, resolved against this:
 ## 6. What we got wrong, and how we caught it
 
 Ten ledger rows carry an explicit withdrawal. Four were killed by controls registered in advance.
-This section is the part I would most want carried into any new project, because every item is a
-way a looped-model experiment can produce a confident wrong number.
+Below, each is written as a **gate** rather than as advice — a check with a condition that fires,
+which you can put in a run script — because the advice version of each of these existed in some
+form and did not prevent the error. This is the same distinction Anthropic reported after cutting
+most of Claude Code's system prompt: the instructions to be careful were removable, the
+deterministic checks were not.
 
-**A metric that reported its own window length.** The project's main rotation statistic flipped sign
-depending on how many loops had been *recorded* — not on the input — with p = 1e-11 under a
-calibrated null. *(D28)* Any statistic read off a fixed window can be reporting the window.
-
-**Low precision faked convergence.** In bfloat16, trajectories appear to settle by loop 14–21. The
-same prompts in float32 keep converging to about loop 96. Roughly 4.6× of the computation was hidden
-by rounding. *(D30)* This is the single most dangerous item on the list for a saturation study,
-because it corrupts exactly the quantity being measured, in the direction that makes loops look
-useless.
-
-**The initial state was random and unseeded.** Huginn draws its initial latent from an unseeded
-generator, and nobody had seeded it. Ten forward passes differing only in that draw flipped
-correctness entirely on 3 of 8 prompts and moved the answer's rank by up to 6×. Seeding it took the
-variation to 0 of 8 (p = 0.0023). *(D90)* Any "loops help" curve must average over, or control, that
-draw.
-
-**An outcome variable with no variance read as a clean null.** One behavioural null compared a
-correctness variable that was false in 432 of 432 cases. There was no variance for the intervention
-to change. *(Re-run on an outcome that varied, the original conclusion came back — but the evidence
-had been vacuous.)*
-
-**A scoring rule that measured the scorer.** Exact-string matching recovered 3.8% of answers that
-were actually present in the generated text; containment and last-number rules recovered 24–31% at
-lower false-positive cost. *(D179)* Separately, first-token scoring read 12.5% where full-text
-reading found the answer in 78.1%.
-
-**An oracle metric that read 100% on a model that was not answering.** Scoring "correct if the gold
-reaches rank 1 at *any* of 48 depths" inflates accuracy 2.06× over the best fixed depth and 32× over
-the final-depth output — 22.7% against 11.0% against 0.7%. *(D103/D107)* On a genuine state-tracking
-task, that oracle metric read 100% at every difficulty level while the model was a constant
-responder scoring below the majority-class baseline. *(D147)*
-
-**A null from an instrument with no power.** "Not linearly decodable" conclusions drawn from about
-50 points in thousands of dimensions cannot detect anything below Cohen's d ≈ 8–10, where d = 0.8 is
-already called large. Confirmed both by planting a signal and by failing to recover a label that was
-guaranteed present. *(D155)* An entire instrument class was retired.
-
-**A one-token window misalignment.** A claimed "register direction" shared across inputs turned out
-to be 97% the current-token embedding contrast — a window bug, not a counter. The real register is
-nearly orthogonal to it.
-
----
+| # | The failure, as it happened here | The gate |
+|---|---|---|
+| 1 | In bfloat16 trajectories appear settled by loop 14–21; the same prompts in float32 keep converging to about loop 96. Roughly **4.6×** of the computation was hidden by rounding. *(D30)* | Compute the settling loop in both precisions. **If they differ, the low-precision number is void** — and this corrupts exactly the quantity a saturation study reports, in the direction that makes loops look useless. |
+| 2 | The initial latent is drawn from an unseeded generator and nobody had seeded it. Ten forwards differing only in that draw flipped correctness on **3 of 8** prompts and moved answer rank up to **6×**; seeding took it to 0 of 8 (p = 0.0023). *(D90)* Six draws move depth-to-answer on **16 of 18** items, median spread **4.0 loops**. *(§7.6)* | Run ≥3 seeds of the identical config first. **Refuse to report any delta smaller than twice that spread.** |
+| 3 | A behavioural null compared a correctness variable that was False in **432 of 432** cases. There was nothing for the intervention to change. | Log the base rate of every outcome field and gate. **A base rate of exactly 0 or 1 voids the null** — an early-exit gate that never fires and one that fires uselessly are identical in the loss. |
+| 4 | Interventions that silently did not apply. | "Modification off" must reproduce the baseline at exactly **0.000e+00**, not approximately. **Any deviation voids the run.** Caught real bugs three times here. |
+| 5 | A run computed for **77 minutes** and returned nothing: a scoring block raised `IndexError` after the compute, and results were only written at the end. *(§7.6, A47)* | **Write results to disk before any scoring or summary code executes**, and wrap the summary. Nothing already computed may be lost to a formatting bug. |
+| 6 | A linear probe could not recover a label that was a *guaranteed deterministic function of its own inputs* — 0.690 against a 0.600 baseline, where the correct one-dimensional statistic reaches 0.980. *(D155)* | Before trusting any "not decodable" null, **plant a signal the probe must recover.** If it cannot, its nulls are uninformative, not negative. An entire instrument class was retired this way. |
+| 7 | 25 ARC measurements partition cleanly and non-overlappingly by whether the option list was in the prompt — 0.392–0.495 with, 0.592–0.658 without — a gap wider than the spread within either group. | Version tokeniser, packing, document boundaries and BOS. **Re-run the baseline after any change to them**, because protocol moves the number by more than the architecture does. |
+| 8 | A rotation statistic's sign flipped depending on how many loops had been *recorded*, not on the input (p = 1e-11). *(D28)* And a spectral pass failed its own consistency check because a 48-loop window let the decay transient dominate the low-frequency bins. | **Report every result at two or more analysis windows.** If it moves with the window, the window is the finding. |
+| 9 | A per-step geometry statistic partly tracked how far the state moved rather than in which direction. | Report step-geometry statistics **with and without step normalisation**, and the correlation between the statistic and the step norm. |
+| 10 | *The one that bit this report, twice.* A claim was quoted from a ledger row whose own commentary withdrew it further down the same cell. | **Before quoting any recorded claim, read to the end of its entry.** In this record 14 of the 36 rows cited here contain amendment language inside the cell (§7.7). A headline is not a verdict. |
 
 ## 7. What I tested for this report, and what happened
 
@@ -684,6 +665,14 @@ meant to be read through.
 spectral radius had never been measured on real Huginn. It had — D31, above. The error was mine, not
 the record's; the correction is in §3.4 and §11, and it turns the report's weakest open question
 into its strongest measured fact.
+
+**Which of these you can re-derive without a GPU.** Where a number is script-regenerable it
+cannot drift from the data, and you can check it rather than trust it:
+`scripts/arc_table.py` (the 25 ARC protocol measurements), `scripts/jacspec_table.py` (every A53
+number, including the controls), `scripts/loop_horizon.py` and `scripts/loop_horizon_raven.py`
+(the two gradient experiments, with their gates), `scripts/fig_onset.py` (the onset curve, which
+asserts its own medians against the published values before drawing). The rest are ledger entries
+resting on banked JSON under `scratch/`, re-derivable but without a script already written.
 
 **Superseded — do not quote:** the winding-number statistic and everything resting on it; the
 "gapped distribution implies two regimes" test (invalid null); "harder problems recruit more depth"
