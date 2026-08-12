@@ -15,7 +15,8 @@ traced later; skip them on a first read.
 
 **On contradictions in the record.** The ledger contains chains — a claim, a refutation, sometimes a
 refutation of the refutation. Reading four entries to learn one fact is a waste of your time, so
-**every chain below is collapsed into a single statement of what is currently true.** Where the
+**every chain below is collapsed into a single statement of what is currently true** — and where a
+chain does *not* resolve, that is said rather than smoothed over (§3.3 is the one case). Where the
 history itself is the lesson — a control that killed a headline, an instrument that failed — it is
 told once, in section 6, and not repeated.
 
@@ -100,8 +101,9 @@ So there are two distinct uses of depth here, and neither is construction: **sta
 ### 3.2 The readout commits early, and then gets worse
 
 Across 21 task families, 4,868 sampled problems and 48 loops, the correct answer reaches its best
-rank at a median of **loop 4**. At that point the hidden state still has 87% of its remaining
-convergence distance to travel. *(D112)*
+rank at a median of **loop 4** *(D159)*. Measured separately on 32 length-matched solved orbits, at
+that point the hidden state still has **87%** of its remaining convergence distance to travel
+*(D112)*.
 
 It does not stay at that best rank. In 17 of 21 families the answer is displaced to a stable, worse
 rank shortly after loop 4 and stays there for 40 or more further loops without recovering. *(D159)*
@@ -112,23 +114,31 @@ with the token "The" rises from 3.2% to 64.7%, with the sharp move between loops
 fraction opening with the correct answer stays flat. *(D174)* More depth makes the model more
 committed to an explanatory frame, not more likely to lead with the answer.
 
-### 3.3 Depth is recruited by the starting guess, not by difficulty
+### 3.3 Depth is recruited by the starting guess, and "harder needs more depth" is still contested
 
-This is where the record contains a chain, and only the end of it is true.
+This is where the record contains a chain — and, unusually, one that does not fully resolve.
 
 An early result suggested harder problems recruit more depth. It used a task whose length was a
 deterministic function of its difficulty, so it was measuring length. A fixed-length rerun shrank
 the effect to a weak positive. Then a cleaner measure showed that difficulty within a task moves
 recruited depth by **+0.23 loops out of 48**, while switching task family moves it by **+5.56** —
-about 24 times larger.
+about 24 times larger. *(Scoped to the zero-shot condition; with two in-context examples the
+family-inclusion screen shifts, and the comparison was not recomputed there.)*
 
 And then the resolution: the loop at which an answer becomes available is **88% predicted by that
 token's rank after a single loop** (Spearman 0.885). Not by difficulty, and not by which task it is.
-Depth is spent climbing from wherever the initial guess put the answer. *(D178, superseding D177,
-which superseded D35, which superseded D33.)*
+Depth is spent climbing from wherever the initial guess put the answer. *(D178, superseding D177.)*
 
 On the cleanest difficulty ladder available, harder problems were answered *worse and earlier*
-(correlation −0.44 to −0.53) — the opposite of the hypothesis. *(D110)*
+(correlation −0.44 to −0.53) — the opposite of the hypothesis *(D110)*.
+
+**One thing here is genuinely unresolved, and an earlier version of this report papered over it.**
+I wrote that this was a chain in which only the last link is true. It is not quite: the
+fixed-length rerun that found a weak positive (+0.225) was never superseded, and it stands in
+direct conflict with the −0.44 to −0.53 above. The negative row says so itself — *"neither number
+is the project's behavioural verdict"* — and no later row resolves it. What survives the conflict
+is the starting-guess result, which is measured on a different axis and does not depend on either.
+Treat difficulty-recruits-depth as **open and contested**, not as settled in the negative.
 
 Two further findings sharpen what "recruited depth" measures. Depth tracks raw context **length**
 rather than information content: padding a prompt with irrelevant text, length-matched to five real
@@ -206,11 +216,13 @@ randomly initialised weights of the same architecture. It is the most surprising
 
 ### 4.1 Almost the only thing training changes about the recurrence is how fast it converges
 
-Measured directly on the operator, the contraction rate goes from **0.7150 untrained to 0.8866
-trained** — an exponential time constant of about 3 loops before training and about 8 after.
-*(D44)* Across 14 independent weight sets — five random initialisations and nine checkpoints —
+Measured directly on the operator, the contraction rate goes from **0.7150 untrained to 0.8740
+trained** — an exponential time constant of about 3 loops before training and about 7.4 after.
+*(D44.* The often-quoted 0.8866 for the trained arm is the unfiltered mean; two of twelve fits fall
+below the project's own R² > 0.9 bar, and the filtered value is the one carried forward.*)* Across 14 independent weight sets — five random initialisations and nine checkpoints —
 every untrained draw contracts faster than every trained one, with no overlap (0.7048 against
-0.8577, p = 5e-4). *(D52)*
+0.8577, p = 5e-4). *(D52.* A later row flags both absolute values as biased high by about 0.03
+while stating the ordering and separation are unaffected — so read the **gap**, not the levels.*)*
 
 **Training's main measurable effect on the recurrence is to slow it down**, which is to say: to
 extend the number of loops that do anything at all. That is worth sitting with. The thing training
@@ -496,8 +508,23 @@ quantities, and the record had said so four days before I ran it.
 
 **Checked systematically afterwards: of the 36 recorded claims this report cites, 14 contain
 amendment, withdrawal, retraction or premise-challenge language inside the cell.** Not at the end
-of the document, not in a separate errata — inside the entry, after the bold summary. A reader who
-quotes headlines gets a withdrawn claim roughly a third of the time.
+of the document, not in a separate errata — inside the entry, after the bold summary.
+
+All 14 were then read claim-by-claim against what this report actually says about them. The result
+is more reassuring than the raw count, and more useful than either extreme would have been:
+**10 were safe** — the amendment touched a different sub-claim than the one used here — **3 needed
+amending**, and **1 was a genuine withdrawal**. The four that moved:
+
+- the aliasing story, withdrawn outright (above);
+- the trained contraction rate: **0.8740, not 0.8866** — the higher figure is an unfiltered mean
+  including two fits below the project's own goodness-of-fit bar;
+- the two contraction levels are flagged elsewhere as biased high by about 0.03 while the
+  *separation* is unaffected, so the gap is quotable and the levels are not;
+- and a supersession link I had asserted between two rows **does not exist in the record at all** —
+  I had tidied a genuine unresolved conflict into a chain (§3.3).
+
+That last one is the one I would least have caught by reading more carefully, because the invented
+link made the section *more* coherent, not less.
 
 That is the gate in row 10 of §6, and it is why it is phrased as a mechanical check rather than as
 advice to read carefully. I had the advice. It did not work.
