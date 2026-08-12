@@ -1,0 +1,48 @@
+name: jacspec-multi-prompt-jacobian-spectrum
+desc: >
+  A53: the multi-prompt Jacobian-spectrum sweep D55 named as its own follow-up and which was
+  never run. D31 measured the recurrence's spectrum exactly by implicitly-restarted Arnoldi on
+  autodiff Jacobian-vector products and reported only the magnitudes, rho = 0.7935 / 0.8042 /
+  0.8083 on three prompts. D55 then recovered the eigenvalue arguments from that same banked log
+  at zero further compute and found the leading eigenvalue complex in 3 of 3 prompts, 27 of 30
+  top modes complex, rotation period 2.6 to 6.0 unrolls, and the rotating mode surviving only
+  about four turns while the project's trajectory statistics sampled it at roughly three points
+  per turn over a window five to nine times longer than the rotation lives. That is why winding,
+  chord-to-arc, persistent homology, participation ratio and subspace dimension all failed
+  together on the rotation question: aliasing, not absence. Three prompts is currently the whole
+  evidence base for the strongest structural claim in the record. This sweep widens it and adds
+  the test that connects the project's two independent rotation lines, which have never been put
+  in the same room. The Jacobian line says the map's spectrum is complex with period 2.6 to 6.0
+  unrolls. The regime line says one instruction noun flips the trajectory between settling and a
+  damped period-6 rotation, 36 of 36 paired cells at fixed token count, causally controlled by a
+  single embedding row, with a threshold reproducing the hand-assigned label on 691 of 696
+  orbits. Those periods overlap. If they are one phenomenon, a prompt labelled rotating should
+  carry an oscillatory eigenvalue implying a period near 6 and a labelled settling prompt should
+  not, and the regime statistic is then a trajectory-space read of the Jacobian's spectrum. If
+  the spectrum is the same in both arms, the regime difference is not in the leading local
+  dynamics and the two lines are separate, which bounds what the regime statistic can be
+  measuring. The prediction is registered both ways. The measurement is taken at the settled end
+  after 32 unrolls, perturbing and reading at the last position only, which gives the diagonal
+  block whose eigenvalues are the recurrent dynamics at the answer token. Forward-mode AD needs
+  the MATH SDPA backend because the efficient attention kernel has no forward-AD rule; the
+  reverse-mode fallback is exact for the spectrum since the eigenvalues of J transpose equal
+  those of J and the eigenvectors are not used. P1 gates on median rho landing in 0.75 to 0.90,
+  where four independent methods have put it. P3 reports how broadly the leading eigenvalue is
+  complex. P4 reports how many turns the rotating mode survives, which bounds any scheme hoping
+  to carry information around the loop by rotation. P5 asks whether the contraction rate itself
+  tracks the regime label. The instrument was validated locally against an exact dense
+  eigendecomposition at mini width, where matrix-free ARPACK reproduced the exact top-six
+  magnitudes to 4.3e-07 and agreed on the complex-versus-real verdict; at 5280 dimensions no
+  such reference exists. Every row is written to disk as it is computed and the scoring section
+  is wrapped, because A47 lost 77 minutes of compute to a scoring bug that ran before anything
+  was banked. Mounts the weights.
+cmd: python job.py ${RESULT} ${HUGINN}
+datasets:
+  - bt102r0j5cb8r6r6nb36: HUGINN
+outputs:
+  - jacspec.json: RESULT
+env:
+  python:
+    type: manual
+    version: "3.11"
+cloud-instance-type: gt4.1

@@ -30,10 +30,36 @@ TRANSFORMER_KEYS = {"wte", "prelude", "adapter", "core_block", "coda", "ln_f"}  
 #   read from the ModuleDict construction verbatim. My first version of this map came from a
 #   grep whose pattern I chose, and it omitted `prelude` -- flagging ds_eigen as broken when
 #   the checker was the broken one. RC1: I measured a proxy for the thing.
-MODEL_METHODS = {                                                            # on RavenForCausalLM
-    "initialize_state",        # :804  -- NOT on .transformer; this is what killed A47
-    "iterate_forward",         # :736
-    "randomized_iteration_sampler",
+# THIS MAP WAS INCOMPLETE TWICE, AND BOTH TIMES IT FAILED A GOOD KERNEL.
+# First it omitted `prelude` and flagged ds_eigen. Then on 2026-08-12 it omitted
+# `core_block_forward` and flagged ds_jacspec -- a kernel whose full path had already been run
+# locally against the real class. Same failure, second instance: the checker was the broken one.
+# It is no longer hand-listed. Regenerate with, and paste the result below:
+#
+#   .venv/bin/python -c "import sys; sys.path.insert(0,'scripts'); \
+#     from jacobian_spectrum import build_mini; m,_=build_mini(); \
+#     print(sorted(n for n,v in vars(type(m)).items() if callable(v) and not n.startswith('__')))"
+#
+MODEL_METHODS = {                                    # on RavenForCausalLM, verified 2026-08-12
+    "initialize_state",              # :804  -- NOT on .transformer; this is what killed A47
+    "iterate_forward",               # :727  (this map said :736; corrected)
+    "core_block_forward",            # :764  -- omitted until 2026-08-12
+    "iterate_one_step",              # :842
+    "predict_from_latents",          # :870
+    "embed_inputs",                  # :902
+    "forward_with_adaptive_compute", # :999  -- an inference mode nobody here has used
+    "generate_with_adaptive_compute",# :1552
+    "generate_minimal",              # :1166
+    "generate_speculative",          # :1751
+    "generate_diffusion_style",      # :1235
+    "randomized_iteration_sampler",  # :784
+    "get_stats",                     # :1037
+    "compile_mask",                  # :593
+    "get_input_embeddings",          # :582
+    "get_output_embeddings",         # :585
+    "_maybe_inject_noise",           # :815  -- the unused test_time_noise API
+    "_maybe_checkpoint_core_block",  # :1051
+    "_precompute_freqs_cis",         # :588
     "forward", "generate", "config", "device", "lm_head", "freqs_cis", "transformer",
     "emb_scale", "to", "eval", "train", "parameters", "named_parameters", "state_dict",
 }
