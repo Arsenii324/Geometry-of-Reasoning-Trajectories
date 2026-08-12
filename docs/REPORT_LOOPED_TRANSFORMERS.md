@@ -153,20 +153,21 @@ eigenvalue is complex in 3 of 3 prompts**, the top eigenvalues arrive in complex
 A contracting map rotates if and only if its spectrum is complex, at a rate given by the
 eigenvalue's argument — a quantity needing no trajectory, no recording window and no null.
 
-So **the recurrent map is dominated by rotation**, and the rotation period is **2.6 to 6.0 loops**.
-But the rotating mode survives only about **four turns** before contraction kills it, and the
-project's trajectory statistics sampled it at roughly **three points per turn** over a window five
-to nine times longer than the rotation lives. *(D55)* That is why five separate trajectory
-statistics — winding, chord-to-arc, persistent homology, participation ratio, subspace dimension —
-all failed together on the rotation question. **The phenomenon was real and the metrics were
-aliased.**
+So **the recurrent map is dominated by rotation**, and it survives only a few turns before
+contraction kills it, while the project's trajectory statistics sampled it at roughly **three
+points per turn** over a window several times longer than the rotation lives. *(D55)* That is why
+five separate trajectory statistics — winding, chord-to-arc, persistent homology, participation
+ratio, subspace dimension — all failed together on the rotation question. **The phenomenon was real
+and the metrics were aliased.** The eigenvalue arguments had been computed as a side effect of the
+magnitude run and reported only as magnitudes; the answer five statistics could not settle was
+already on disk, and cost zero compute to extract.
 
-Two things follow that matter later. First, the eigenvalue arguments were computed as a side effect
-of the magnitude run and reported only as magnitudes; the answer to the question five statistics
-could not settle was already on disk, and cost zero further compute to extract. Second, a rotation
-period of 2.6–6.0 loops sits directly on top of the period-6 regime the project's later statistic
-was built to detect — those are plausibly the same phenomenon seen from two directions, which
-nobody has checked.
+**Widened from three prompts to twenty, 2026-08-12 (§7.5), which changed two of these numbers.**
+Rotation is near-universal: the leading eigenvalue is complex in **19 of 20** prompts and **all 16
+measured top modes** are oscillatory in every regime prompt. The period is **not** 2.6–6.0 — that
+was the range of three prompts. Across twenty it spans **3.4 to 46.7 loops**, and it is a
+remarkably precise function of the prompt: the same instruction noun over three different digit
+sequences reproduces its period to **±0.06 loops**. And the mode survives **2.2 turns**, not four.
 
 ### 3.5 A geometric constraint on what the loop could ever count with
 
@@ -398,6 +399,62 @@ estimators agree with each other and both differ from the Jacobian; the gap is r
 estimator choice. *(Run for this report from data already on disk; the orbit estimator appears in no
 project document.)*
 
+### 7.5 Twenty prompts, and the two rotation lines turn out to be separate
+
+The report above said the Jacobian's rotation period and the regime statistic's period-6 were
+"plausibly the same phenomenon, which nobody has checked". I ran it (A53, `scratch/ds_jacspec/`,
+20 prompts, 63 minutes), with the prediction registered both ways beforehand.
+
+**They are separate.** Rotating-labelled against settling-labelled prompts, the implied period is
+null at the arm level — Mann-Whitney **U = 18, p = 1.0000**. The split is by *noun*, not by regime:
+
+| noun | label | period (loops) |
+|---|---|---|
+| `symbol` | rotating | **12.53 ± 0.057** |
+| `symptom` | rotating | **6.08 ± 0.017** |
+| `element` | settling | **12.28 ± 0.039** |
+| `token` | settling | **12.06 ± 0.055** |
+
+`symbol` is a *rotating* noun sitting with both *settling* nouns; only `symptom` is near 6. So the
+period-6 rotation the regime statistic reads **in the trajectory** is not the leading local
+Jacobian mode. The contraction rate does not track the label either (U = 18, p = 1.0000).
+
+What replaces the failed hypothesis is a better fact: **the rotation period is a precise function
+of the prompt over an order of magnitude** — `echo_digit` 3.4, `add1` 9.3–9.5, `sort_min`
+9.8–10.3, `count_mod3` 46.5–46.7 — reproducible to a few percent within a family.
+
+**The limitation I registered before running it is live, and I will not pretend otherwise.** The
+Jacobian is taken after 32 loops, at the settled end, while the mode decays to 1% within about 2.2
+turns and the answer is settled by loop ~4. **So this null may be about the wrong window rather
+than about the model.** A warmup sweep — measuring at loops 2, 4, 8, 16 against 32 — separates
+them, and until it exists the question is bounded, not closed. What does not depend on the window
+is P3 and the per-noun tightness.
+
+### 7.6 The initial state changes *when* the answer arrives, by the whole scale of the quantity
+
+A second experiment landed the same day (A47, `scratch/ds_h0inject/`), after failing three times —
+twice on a data gate, once on a one-line `IndexError` in a scoring block that ran after 77 minutes
+of compute and before anything was written to disk. Its identity gate is exact: injecting a run's
+own initial state reproduces the unpatched rank curve with **0 rank deviation on all 18 items**.
+
+Two results bear on this report.
+
+**The state is a channel from history to the readout, open about eight loops and shut by sixteen.**
+Injecting a donor's state moves the recipient's answer rank inside loops 1–8 on **18 of 18 items**
+— mean +11.5 ranks at loop 1 — and the change is **exactly zero from loop 16 onward**. But what it
+carries is perturbation, not content: the donor's *own* answer is ranked better in 6 of 15 items,
+against 4 of 15 for a random redraw carrying no donor content at all. Two items apart at n=15.
+
+**And the one that matters for §9.** Across six draws of the initial state with nothing injected,
+the answer never changes — 0 of 18 on both oracle and final-loop correctness — but the *loop at
+which the answer becomes available* changes on **16 of 18 items, median spread 4.0 loops, maximum
+11.** The overall median best-answer loop is about four. So a random tensor nobody seeded moves the
+depth-to-answer measurement by roughly its own magnitude. Any effective-depth or early-exit
+diagnostic must average over that draw, or it is reporting the seed.
+
+*Scope: all three task families sit at 1.000 accuracy by construction, so correctness had no room to
+rise and this says nothing about items the model gets wrong.*
+
 ### 7.4 Two things the same run established
 
 **Truncation is a hard cutoff, not a soft one.** Running with a `k`-loop gradient window gives
@@ -507,18 +564,21 @@ constraint on that rate is a direct attack on the thing training is already tryi
 *What would kill it:* if forcing a slower rate degrades loss for reasons unrelated to depth, which
 is the obvious failure mode and should be checked early.
 
-**Ask what a rotation-carried counter would need — and note this is no longer speculative.** On a
-normalised architecture, per-loop accumulation cannot be a translation, and must be a rotation. The
-map *is* dominated by rotation: complex leading eigenvalue in 3 of 3 prompts, 8–10 oscillatory
-modes, period 2.6–6.0 loops (§3.4). Training moves it from near-random 110–115° turns to coherent
-42–59°. Three facts that were never put together: the geometry forbids the alternative, the map
-supplies rotation, and training sharpens it.
+**Ask what a rotation-carried counter would need — no longer speculative, and now bounded.** On a
+normalised architecture, per-loop accumulation cannot be a translation and must be a rotation. The
+map *is* dominated by rotation: complex leading eigenvalue in **19 of 20** prompts, all 16 measured
+top modes oscillatory, and a period set by the prompt to within a few percent (§3.4, §7.5).
+Training moves it from near-random 110–115° turns to coherent 42–59°. The geometry forbids the
+alternative, the map supplies rotation, and training sharpens it.
 
-What is missing is whether that rotation *carries* anything. The rotating mode dies after about four
-turns, which bounds how much could be counted by it. *What would make it concrete:* a task with a
-known required count, and a test of whether the eigenvalue argument or the turn angle tracks it.
-This is the direction I would look at first if the question is "what could many loops compute that
-few cannot", because it is the only mechanism the architecture actually offers.
+Two measurements now bound what could be built on that. The mode survives a median **2.2 turns** to
+1% amplitude — so whatever a rotation carries is gone in a couple of cycles, and any scheme relying
+on it has to either re-excite the mode or read it early. And the period is **not** tied to the
+behavioural regime (§7.5), so it cannot be steered by the instruction-wording lever that controls
+the regime. *What would make it concrete:* a task with a known required count, and a test of
+whether the eigenvalue argument tracks it. This remains the direction I would look at first,
+because it is the only mechanism the architecture actually offers — but it is now a narrower
+target than it looked this morning.
 
 **Two things nobody has looked at.** The architecture's adaptive-compute generation and its
 "continuous compute" mode — arguably its most distinctive features — were never touched by this
