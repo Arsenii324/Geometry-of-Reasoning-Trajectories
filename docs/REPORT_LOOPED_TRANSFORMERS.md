@@ -391,6 +391,19 @@ estimators agree with each other and both differ from the Jacobian; the gap is r
 estimator choice. *(Run for this report from data already on disk; the orbit estimator appears in no
 project document.)*
 
+### 7.4 Two things the same run established
+
+**Truncation is a hard cutoff, not a soft one.** Running with a `k`-loop gradient window gives
+exactly `k` loops carrying gradient, with everything outside receiving precisely zero. Contraction
+degrades credit gently; truncation removes it.
+
+**The per-loop readout diagnostic works on the genuine decode path.** Decoding each intermediate
+state through the model's own coda and head, the KL divergence to the final distribution falls 3.32
+→ 0.37 over the first eight loops and continues down. This is the measurement I would put at the
+centre of any looped-model training run (§9).
+
+---
+
 ### 7.5 Twenty prompts, and the two rotation lines turn out to be separate
 
 The report above said the Jacobian's rotation period and the regime statistic's period-6 were
@@ -461,18 +474,50 @@ diagnostic must average over that draw, or it is reporting the seed.
 *Scope: all three task families sit at 1.000 accuracy by construction, so correctness had no room to
 rise and this says nothing about items the model gets wrong.*
 
-### 7.4 Two things the same run established
+### 7.7 How this report was wrong, twice, and what that says about reading a record like this
 
-**Truncation is a hard cutoff, not a soft one.** Running with a `k`-loop gradient window gives
-exactly `k` loops carrying gradient, with everything outside receiving precisely zero. Contraction
-degrades credit gently; truncation removes it.
+This is the most transferable thing in section 7, because the failure is structural rather than
+careless and any reader of this project's record is exposed to it.
 
-**The per-loop readout diagnostic works on the genuine decode path.** Decoding each intermediate
-state through the model's own coda and head, the KL divergence to the final distribution falls 3.32
-→ 0.37 over the first eight loops and continues down. This is the measurement I would put at the
-centre of any looped-model training run (§9).
+**The first version** stated that the recurrence's spectral radius had never been measured on the
+real trained model. It had been — exactly, by Arnoldi on autodiff Jacobian-vector products, three
+weeks earlier, giving 0.7935 / 0.8042 / 0.8083. I had also cited a superseded claim about what
+recruits depth. Both surfaced only because I was asked whether anything had been missed.
 
----
+**The second version** repeated the pattern in three more places, and the cause was the same each
+time: **a ledger row's own commentary sometimes withdraws the claim in that row's headline.** The
+row I leaned on for the aliasing story — that five trajectory statistics failed because they sampled
+the rotation near its Nyquist limit — retracts that diagnosis further down its own cell, and names
+the two mundane explanations that survive. The row I used to justify measuring one position states
+in its own text that this gives "the wrong operator". A third row's gate showed the trajectory turns
+at about a quarter of the leading eigenvalue's rate, which makes eigenvalue periods and orbit
+periods incommensurable — so the comparison I built an experiment around was between two different
+quantities, and the record had said so four days before I ran it.
+
+**Checked systematically afterwards: of the 36 recorded claims this report cites, 14 contain
+amendment, withdrawal, retraction or premise-challenge language inside the cell.** Not at the end
+of the document, not in a separate errata — inside the entry, after the bold summary. A reader who
+quotes headlines gets a withdrawn claim roughly a third of the time.
+
+That is the gate in row 10 of §6, and it is why it is phrased as a mechanical check rather than as
+advice to read carefully. I had the advice. It did not work.
+
+**Two things this does not mean.** It is not an argument that the record is unreliable — the
+amendments are *there*, written by the people who found the errors, which is why the corrections
+were recoverable at all. A record that silently kept its first answers would have left this report
+confidently wrong. And it is not an argument for reading everything: the ledger is 700KB and the
+useful move is not more reading but a cheap positional check — for each claim you intend to use,
+read to the end of its entry before quoting the top of it.
+
+**One check that came back clean, reported because negatives count.** I suspected the "four
+independent estimates of the contraction rate" might be one method counted four times — the same
+copy-propagation error that inflates apparent corroboration. It is not: the four are a
+diagonal-block Arnoldi, a full-operator Arnoldi, a bias-corrected trajectory fit and a causal
+intervention, agreeing at 0.79–0.87 across genuinely different instruments. Separately, I searched
+the banked outputs for quantities that were computed but never analysed — the pattern that produced
+the eigenvalue-argument finding. It turned up one real case, two contraction estimators banked per
+run where only one was ever used (they agree to 0.0004), and otherwise nothing: the search does not
+discriminate well and I am reporting it as a null rather than mining it further.
 
 ## 8. What this implies for building one
 
