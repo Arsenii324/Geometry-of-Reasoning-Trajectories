@@ -1549,8 +1549,18 @@ the harness did not cover, which is where it was.
 **Regression test:** `tests/test_a47_scoring.py`, four assertions, verified to FAIL on the
 pre-fix kernel and pass after. Suite is 625.
 
-**Status: ready to relaunch.** Logic verified locally end-to-end; the remaining risk is
-platform-side only.
+**Status: RELAUNCHED AND LANDED 2026-08-12 -> D201.** Job `bt1hvbnlekl2lqdghhr0`, fourth
+attempt, 18/18 items, 2121 s, `banked_before_scoring=true`. **P1 exact: 0 rank deviation on every
+item.** Headline: an injected state moves the recipient's gold rank on **18/18 items inside
+unrolls 1-8** and the delta is **exactly 0 from u16 onward** -- a real but short channel from
+history to the readout. **P4, the arm that discriminates, is null**: the donor's own answer is
+ranked better in 6/15 items against 4/15 for a content-free random redraw, so the channel carries
+perturbation rather than content. **P6 is the sharper result and was not the point of the run**:
+across six h_0 draws the answer never changes (0/18 on both oracle and final) but `best_depth`
+changes on **16/18**, median spread **4.0 unrolls**, max 11 -- so every single-seed
+depth-to-answer number in this project carries that variance. Scope: all three families sit at
+1.000 accuracy by design, so correctness had no room to move and this cannot speak to items the
+model gets wrong.
 
 
 ---
