@@ -84,6 +84,7 @@ citations, 7 bibitems / 7 cites, 1 figure, 0 placeholders.
 | `scripts/regime_onset.py` | the probe experiment that retired an instrument class (A37/D165). |
 | `scripts/strategic_audit.py` | repeated costs, repeated attempts, what the recent record is *about*. |
 | `scripts/build_index.py` | generates `docs/EXPERIMENT_INDEX.md`. **Stale: header says 163 claims, ledger has 200.** |
+| `scripts/loop_horizon.py` | **Tests whether contraction starves early loops of gradient in a weight-tied loop. It does not** -- normalisation keeps the Jacobian near-isometric while the state settles, so gradient mass is near-uniform. CPU, seconds, fp64, predictions pre-registered in the docstring, P0 attribution exact to 1.3e-23. Also contains `rho_from_jacobian`, the method A53 needs. |
 | `scripts/fig_onset.py` | regenerates Figure 1 from `ds_transrot`. **Asserts its medians against C7's published values and that `slide[0] == R_early`**, so the figure cannot drift from the ledger. Docstring pins the axis convention: `s` is the window START, span `[s, s+12)`. |
 
 **The one implementation that must never be duplicated:**
@@ -145,6 +146,16 @@ RC1 proxy-for-the-thing · RC4 recomputed-vs-banked · RC5 RC1 inside an audit t
 is not a monitor (+ amendment: a detached one survives but cannot wake you) · **RC8** preflight
 checked everything except the model · **RC9** a platform ERROR is often the kernel refusing on
 its own gate, with no traceback ever raised.
+
+## 8a. After submission — the looped-pretraining line
+
+- `docs/LOOPED_PRETRAIN_TRANSFER.md` — what our Huginn measurements license us to say about
+  training a looped transformer, for the T-Lab test task. Carries a **refutation of its own
+  central mechanism** (§1.3), the truncation premise-check (§2.1), two candidate fixes already
+  refuted by the released checkpoint (§3), and a gated run order (§9).
+- `docs/directions.md` **§S** — post-submission state of H1/H2/H3, and **A53**: measure `rho(J)`
+  on Huginn by power iteration. Closes a limitation printed in the paper; cheap; prediction
+  registered.
 
 ## 9. Older documents — present, mostly superseded
 

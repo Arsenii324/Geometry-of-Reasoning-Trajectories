@@ -172,14 +172,12 @@ through all loops is affordable. Train arms identical but for truncation depth `
 parameter swap; measured 15.5 (an upper bound, detector lag). Same style of argument, applied to
 state relaxation rather than gradient flow, and it held.
 
-**Falsifier.** Deliberately vary `rho` (e.g. residual scale `alpha`), measure the saturation knee.
-If the knee does not move as `1/(1-rho)`, the model is wrong. This is cheap at 10M params and a
-clean negative result either way -- which the task explicitly counts as a good outcome.
-
-**What weakens it.** The bound `||prod J|| ~ rho^k` is loose; non-normal Jacobians admit transient
-growth even when the spectral radius is below 1. Our `rho` is a **step-decay fit, not a spectral
-radius** -- we never computed `rho(J)`, and that is a stated limitation of our own paper. So the
-constant is uncertain even if the scaling is right.
+**What the refutation cost, and why it was worth building.** The failed argument assumed
+`||prod J|| ~ rho^k` with `rho < 1`. Measurement says the product Jacobian in a normalised residual
+loop is near-isometric, so that bound never bites. The gap between a step-decay `rho` and a
+spectral radius was already a printed limitation of our paper; it is now demonstrated, and it has
+produced a concrete experiment on Huginn itself (`directions.md` §S.2, A53: measure `rho(J)` by
+power iteration; predicted at or just below 1, against the 0.8239--0.9181 we published).
 
 ---
 
@@ -212,9 +210,10 @@ at exotic memory mechanisms.
 
 ### 3.3 The quantity that sets usable depth is learned almost entirely in the first few thousand steps
 
-D52: training moves `rho` from **0.7048 to 0.8577** -- i.e. the model does learn to slow its own
-contraction, extending the effective horizon `1/(1-rho)` from **3.4 to 7.0 loops**. But **91% of
-that shift is already present at the earliest public checkpoint, step 6144.**
+D52: training moves `rho_step` from **0.7048 to 0.8577** -- the model learns to slow its own
+settling, roughly doubling how long the state keeps moving. But **91% of that shift is already
+present at the earliest public checkpoint, step 6144.** (Read as a settling time, not as a gradient
+horizon -- §1.3 is exactly the error of confusing the two.)
 
 Two consequences, and this is the most actionable thing in §3:
 
