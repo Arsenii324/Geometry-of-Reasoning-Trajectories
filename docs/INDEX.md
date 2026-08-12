@@ -84,6 +84,7 @@ citations, 7 bibitems / 7 cites, 1 figure, 0 placeholders.
 | `scripts/regime_onset.py` | the probe experiment that retired an instrument class (A37/D165). |
 | `scripts/strategic_audit.py` | repeated costs, repeated attempts, what the recent record is *about*. |
 | `scripts/build_index.py` | generates `docs/EXPERIMENT_INDEX.md`. **Stale: header says 163 claims, ledger has 200.** |
+| `scripts/loop_horizon_raven.py` | The same measurements on the **real released Raven classes** at 27.7M, built locally, random weights. Confirms Huginn's BPTT truncation is a live code path (loops outside the window get exactly zero gradient), and **refutes the near-isometry explanation**: Jacobian radius 0.9375 sits *below* the step rate 0.9963, the opposite of the toy. Backward sensitivity still spans only 4.15x over 32 loops, so the conclusion holds and the mechanism does not. |
 | `scripts/loop_horizon.py` | **Tests whether contraction starves early loops of gradient in a weight-tied loop. It does not** -- normalisation keeps the Jacobian near-isometric while the state settles, so gradient mass is near-uniform. CPU, seconds, fp64, predictions pre-registered in the docstring, P0 attribution exact to 1.3e-23. Also contains `rho_from_jacobian`, the method A53 needs. |
 | `scripts/fig_onset.py` | regenerates Figure 1 from `ds_transrot`. **Asserts its medians against C7's published values and that `slide[0] == R_early`**, so the figure cannot drift from the ledger. Docstring pins the axis convention: `s` is the window START, span `[s, s+12)`. |
 
@@ -149,7 +150,12 @@ its own gate, with no traceback ever raised.
 
 ## 8a. After submission — the looped-pretraining line
 
-- `docs/LOOPED_PRETRAIN_TRANSFER.md` — what our Huginn measurements license us to say about
+- **`docs/REPORT_LOOPED_TRANSFORMERS.md` — READ THIS ONE.** ~5,600 words, ~25 min, front to back.
+  What the loops actually do (relay and stabilise, not compute), what training changes (almost only
+  the contraction rate), the four separate causes tangled inside "saturation", the ten retractions
+  as transferable traps, two mechanisms I proposed and my own instruments refuted, a gated run
+  order, and an evidence table. Written so no ledger ID is needed.
+- `docs/LOOPED_PRETRAIN_TRANSFER.md` (superseded as reading, kept as reference) — what our Huginn measurements license us to say about
   training a looped transformer, for the T-Lab test task. Carries a **refutation of its own
   central mechanism** (§1.3), the truncation premise-check (§2.1), two candidate fixes already
   refuted by the released checkpoint (§3), and a gated run order (§9).

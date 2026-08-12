@@ -1607,4 +1607,23 @@ task forced us to ask what our `rho` actually is.
   measurements.** Do not use one to argue about the other, which is the error §1.3 of the transfer
   document records against itself.
 
+### S.5 The architecture-level half of A53, run 2026-08-12 — prediction partly wrong
+
+`scripts/loop_horizon_raven.py` ran the Jacobian measurement on the **real released classes** at
+27.7M with random weights (not the trained 3.5B checkpoint, so A53 itself stays open).
+
+- **Registered in S.2:** `rho(J)` "at or just below 1, materially above our step-decay `rho`".
+- **Measured:** `rho(J) = 0.9375` — just below 1, as predicted, but **below** that model's step
+  rate of 0.9963, not above it. The "materially above" half is wrong at the architecture level.
+- **What survives:** the two rates are different quantities, confirmed twice. The toy in
+  `loop_horizon.py` put the Jacobian rate *above* the step rate; the real architecture puts it
+  *below*. They do not even disagree in a consistent direction, so neither can be inferred from the
+  other — and this project only ever measured the step rate on Huginn.
+- **A53 remains open and is still worth running**, now with a sharpened question: on the *trained*
+  3.5B checkpoint, is `rho(J)` above or below the published step-decay range of 0.8239--0.9181?
+- **Also established, and citable from source:** Huginn's truncated backprop is a live code path.
+  `iterate_forward` runs the first `num_steps_no_grad` iterations inside `torch.no_grad()`; loops
+  outside the window receive exactly zero gradient. Verified by passing `num_steps=(32,0)` (0 loops
+  carry gradient) and `(0,32)` (32 do).
+
 *(Index of all documents, tools and data: `docs/INDEX.md`.)*

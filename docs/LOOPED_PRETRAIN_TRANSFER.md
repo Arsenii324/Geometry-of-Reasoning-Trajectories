@@ -1,5 +1,8 @@
 # What this project actually knows that bears on the looped-pretraining task
 
+> **Superseded as the thing to read by `docs/REPORT_LOOPED_TRANSFORMERS.md`**, which covers the
+> same ground start-to-finish and in plain English. This file is kept as dense reference.
+
 *Written 2026-08-12. Scope: the T-Lab test task asks for a looped transformer (<=10M params,
 <=100M tokens, FineWeb, Qwen3 base) in which **many** loops stay useful. This document is not a
 proposal for that task. It is an inventory of what our own Huginn-3.5B measurements license us to
@@ -290,18 +293,21 @@ which validation perplexity alone does not.
 
 Two further measurement notes that follow from our data rather than from taste:
 
-- **Average PPL is the wrong instrument for the question, even though it is the target.** D177:
-  recruited depth moves **+0.23 unrolls** with difficulty *within* a task but **+5.56** with task
-  identity. Depth benefit is heterogeneous across *kinds* of token, not across *difficulty* of
-  instance. An average over FineWeb tokens is dominated by tokens that need one loop. Report PPL
-  stratified by per-token depth benefit as well as the headline number, or a real effect will be
-  invisible.
+- **Average PPL is the wrong instrument for the question, even though it is the target.**
+  Recruited depth moves **+0.23 unrolls** with difficulty within a task against **+5.56** with task
+  identity (D177) --- but D178 supersedes even that: the unroll at which an answer becomes available
+  is **88% predicted by that token's rank after a single unroll** (Spearman 0.885), not by
+  difficulty and not by task. Depth is spent climbing from wherever the initial guess landed. Either
+  way an average over FineWeb tokens is dominated by tokens that need one loop; report PPL
+  stratified by per-token depth benefit as well as the headline, or a real effect is invisible.
 - **The same diagnostic is also a loss lever, and a data lever.** If per-loop `KL(p_t || p_T)`
   identifies which tokens depth actually helps, that set is directly usable: upweight those tokens
   in the loss, or oversample the documents containing them, inside the fixed 100M-token budget.
-  This is motivated rather than speculative -- D177 measured the benefit as heterogeneous by *kind*
-  of token (+5.56 unrolls for task identity) and near-flat within a kind (+0.23 for difficulty), so
-  the useful axis for weighting is token type, not an instance-level difficulty estimate. The
+  This is motivated rather than speculative: the benefit is heterogeneous by *kind* of token
+  (+5.56 unrolls for task identity against +0.23 for difficulty within a task, D177), and D178
+  sharpens the axis further --- depth-to-answer is 88% predicted by the token's rank after one
+  unroll, so the weighting signal is *how badly the first pass ranks the token*, which is cheaper to
+  compute than any task label. The
   honest caveat: on FineWeb the "kinds" are not labelled the way our census families were, so the
   diagnostic has to define them, and that is the part that could fail.
 - **On a normalised architecture, "has it converged" is an angular question.** Every recorded
