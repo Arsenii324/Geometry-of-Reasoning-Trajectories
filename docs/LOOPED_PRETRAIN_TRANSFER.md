@@ -426,3 +426,76 @@ this project was **linear**. Nonlinear encoding across loop iterations was never
 conclude "loop N adds nothing" from a linear readout of the hidden state. The `KL(p_t || p_T)`
 diagnostic in §5 is exempt -- it reads the model's own output head, not a probe we fitted -- which
 is part of why I would prefer it.
+
+---
+
+## 9. The order I would run things in, and what each step is allowed to conclude
+
+Not a design for the task -- a gate sequence. Each step is cheap, each has a pre-registered
+prediction, and each can stop the next one. The point is that **three of the four steps happen
+before any architectural choice is made**, because §1.3 is a worked example of what it costs to
+reason about a mechanism instead of measuring it.
+
+### Step 0 -- make deltas meaningful before measuring any (half a day)
+
+- Fix and version tokeniser, packing, document-boundary and BOS handling. Our ARC result (§6.6) is
+  that protocol choices partitioned 25 measurements into non-overlapping bands wider than the
+  effect being studied; PPL has the same exposure.
+- **Establish run-to-run variance first**: identical config, >=3 seeds, report the PPL sd.
+  **Gate: no ablation delta below 2x that sd may be reported as an effect.** We have the
+  counter-example -- a correlation of +0.842 that looked significant had a per-seed range of
+  0.17--0.87.
+- fp32 evaluation path even if training in bf16 (§6.0).
+- Seed the latent initial state explicitly, and log the seed (§6.1).
+
+### Step 1 -- test the brief's premise (one training run + a sweep)
+
+Sweep BPTT truncation `k` at fixed `T`. **Registered predictions:** knee tracks `k` => Huginn's
+saturation is substantially a recipe artefact and there is headroom; knee sits below `k` at full
+BPTT => credit is not binding and §1.1/§1.2 are. **This is the step with the highest information
+per GPU-hour, and it is the one nobody else will have run** because it requires training from
+scratch, which Huginn's released artefacts do not permit (directions.md §B4.5).
+
+### Step 2 -- measure the two decay rates, from step 0, not at the end
+
+`rho_step` from `||delta h||` and `rho_bwd` from `||dL/dh_t||`, logged per training step.
+**Registered prediction, from `loop_horizon.py`:** they diverge, with the Jacobian near-isometric
+while the state settles. If they do *not* diverge on the real architecture, the toy result does not
+transfer and §1.3's conclusion must be re-opened rather than assumed. D52 says usable depth is
+largely set in the first few thousand steps, so this is a *training-time* signal, not a post-hoc
+measurement.
+
+### Step 3 -- measure useful compute directly
+
+Per-loop `KL(p_t || p_T)`; effective depth is the first `t` where it falls under a stated epsilon.
+**Gate: if effective depth is much smaller than `T`, no architectural change can show up in the
+loss until that is fixed**, because the readout has stopped moving. This is the small-scale analogue
+of D159, the finding that reframed our project.
+
+### Step 4 -- only now, architecture
+
+In rough order of evidence-per-parameter: depth-conditioning of the block (attacks §1.1's
+time-invariance at `O(d)` parameters, and the plumbing already exists in Huginn unused);
+normalisation placement (§1.3a says this is the isometry lever, which is a different reason from
+the usual one); then per-unroll exploration, where the released `test_time_noise` schedules are
+prior art worth reading first (§4).
+
+### Running throughout
+
+- A **positive control** that is not the optimised metric: group composition over `S_3`--`S_5`,
+  provably outside `TC0`, so depth must help if the loop works at all (§8).
+- **Base rate of every gate and outcome, logged** -- an early-exit gate that never fires and one
+  that fires uselessly are identical in the loss (§6.2).
+- **Identity conditions bit-exact**: "modification off" must reproduce baseline at `0.000e+00`,
+  not approximately (§6.3).
+- **Bank per-loop logits and states, not just final loss** (§6.4). `loop_horizon.py` is a worked
+  example of why: the summary statistic I chose first (`N_eff`) hid the distribution that actually
+  answered the question, and only the banked per-loop profile revealed it.
+
+### The honest summary of what this project contributes
+
+Two measured facts that are hard to get elsewhere (§1.2 readout commitment; §3 the two refutations
+sitting in the released checkpoint), one mechanism eliminated by our own test (§1.3), one premise
+worth challenging (§2.1), and a measurement discipline that has already caught ten of our own
+claims. The last is the part I would actually bet on: the task's second criterion is implementing
+and *verifying* ideas, and §1.3 is what verification looks like when it goes against you.
