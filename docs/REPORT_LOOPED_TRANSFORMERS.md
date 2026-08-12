@@ -37,12 +37,23 @@ helping after about ten loops?"
 decodable from the latent state after a *single* loop and does not improve with more. What the
 additional loops do is different in kind: they rotate that representation into a stable form, and
 they carry it to the token position where the readout will look for it. Depth stabilises and
-transports; it does not construct.
+transports; it does not construct. *(D37, D38 — measured on a counting task; §3.1 says what is and
+is not known about how far this generalises, and the answer is "less far than I would like".)*
 
 Once you see that, the saturation curve stops being mysterious and starts being over-determined.
 Iterating a map that has already produced its answer converges — that is what maps do. The
 interesting question is not "why do the loops stop helping" but "why were they only ever doing
 transport in the first place, and what would it take to make them compute."
+
+**One thing to carry into every measurement below, because it invalidated a draft of this very
+section.** The obvious way to ask "does the model have the answer yet at loop *t*" is to read its
+next-token logits and find the gold's rank. On this model that measures something else. Left to
+itself Huginn writes prose, so at nearly every loop the top-ranked token is `The` — literally token
+475, top-1 on a median **88%** of all loops across 336 items and 21 task families. The gold's rank
+rising and falling over depth is largely the model leaving and re-entering that prose frame. One
+format instruction moves accuracy at loop 64 from **0% to 83%** on the same model at the same depth.
+*(D69, D203.)* Read the state with a probe, or constrain the format; do not read the raw logits and
+call it capability.
 
 That reframe is the most valuable thing here, and the rest of this report is the evidence for it,
 the four separate mechanisms that turn out to be tangled inside the word "saturation", and an honest
@@ -98,6 +109,20 @@ to 32. *(D38)*
 So there are two distinct uses of depth here, and neither is construction: **stabilisation** and
 **transport**.
 
+**How far does this generalise? Honestly: it is not known, and one attempt to find out failed
+instructively.** Both results are one counting task. The obvious cheap extension is to ask the same
+question of the 21-family, 4,868-problem census already on disk — but the census records the *gold
+token's rank in the model's own logits*, and §1's warning applies in full: that quantity tracks
+which output frame the model is in. Across 21 families the gold's median rank after one loop is 18
+when the gold is a single digit and **448 when it is a word** — not because the model knows word
+answers less well, but because a word is not a plausible thing to say first. *(D203.)* The
+measurement cannot distinguish "the loop computed the answer" from "the loop stopped wanting to say
+`The`."
+
+What would settle it is a probe sweep across families — D37's actual method, applied more widely.
+It has not been run: the banked per-loop states hold one trajectory per family, which is not enough
+to fit a probe. **This is the largest genuine gap in this report**, and §10 costs it out.
+
 ### 3.2 The readout commits early, and then gets worse
 
 Across 21 task families, 4,868 sampled problems and 48 loops, the correct answer reaches its best
@@ -107,7 +132,27 @@ that point the hidden state still has **87%** of its remaining convergence dista
 
 It does not stay at that best rank. In 17 of 21 families the answer is displaced to a stable, worse
 rank shortly after loop 4 and stays there for 40 or more further loops without recovering. *(D159)*
-Convergence does not merely stop adding information — it removes some.
+Counted per problem rather than per family it is starker: of the 2,032 problems the model solves at
+*some* depth, **1,648 — 81.1% — are no longer at rank 1 by loop 48**. *(D203)*
+
+**What the model moves to is now known, and it changes the reading.** D159 recorded that the
+displacing token had not been banked and that "the model moves on to the next turn" was a hypothesis
+rather than a measurement. A different experiment did bank it. At loop 64 the top-ranked token is
+`The` on 24 of 24 `add1` problems, `The`/`Number` on `echo_digit`, `To` on 23 of 24 `count16`, `The`
+on 24 of 24 `rot13_word`. *(D69, D203.)* The model is not losing the answer. **It is settling into
+writing a sentence.**
+
+The controlled version makes it unambiguous. On `echo_digit`, bare prompting gives **0%** accuracy at
+loop 64 with a prose opener on top; the identical model at the identical depth, given "Reply with
+only the answer", gives **83%**, with the correct digit on top. *(D69.)* Depth did not destroy the
+computation — the bare prompt's convergence to discourse hid it.
+
+Two caveats keep this honest. That rescue is demonstrated on the family where the model is
+competent; on `add1`, `count4`, `count16` and `rot13_word` the constrained arm also sits at 0%, so
+there it cannot discriminate. And an *untrained* Huginn shows the same qualitative shape — 84
+distinct top-1 tokens at its best loop, collapsing to a **single** token on 336 of 336 problems by
+loop 16. *(D203.)* Convergence-to-a-fixed-output is partly just what iterating a contraction does to
+a readout, before training is invoked to explain it.
 
 What replaces it is prose. As depth rises from 2 to 32 loops, the fraction of generations opening
 with the token "The" rises from 3.2% to 64.7%, with the sharp move between loops 4 and 8, while the
@@ -342,6 +387,7 @@ deterministic checks were not.
 | 8 | A rotation statistic's sign flipped depending on how many loops had been *recorded*, not on the input (p = 1e-11). *(D28)* And a spectral pass failed its own consistency check because a 48-loop window let the decay transient dominate the low-frequency bins. | **Report every result at two or more analysis windows.** If it moves with the window, the window is the finding. |
 | 9 | A per-step geometry statistic partly tracked how far the state moved rather than in which direction. | Report step-geometry statistics **with and without step normalisation**, and the correlation between the statistic and the step norm. |
 | 10 | *The one that bit this report, twice.* A claim was quoted from a ledger row whose own commentary withdrew it further down the same cell. | **Before quoting any recorded claim, read to the end of its entry.** In this record 14 of the 36 rows cited here contain amendment language inside the cell (§7.7). A headline is not a verdict. |
+| 11 | *The one that bit this report's §1, and then bit the correction to §1.* Depth-versus-accuracy was read off the gold token's rank in the model's next-token logits. That quantity is dominated by whether the model is about to write `The`: **23 distinct top-1 tokens across 336 problems**, one of them holding top-1 on a median **88% of all loops**. One format instruction moves loop-64 accuracy **0% → 83%**. *(D69, D203, §7.7)* | **Before reading a per-loop diagnostic as capability, name what else could produce the same curve** — then test the cheapest one. Concretely for looped models: log the **argmax token**, not only the gold's rank; run one format-constrained arm; and check the diagnostic against an **untrained** checkpoint, which here reproduces the same early-diversity-then-collapse shape with nothing learned. |
 
 ## 7. What I tested for this report, and what happened
 
@@ -486,7 +532,7 @@ diagnostic must average over that draw, or it is reporting the seed.
 *Scope: all three task families sit at 1.000 accuracy by construction, so correctness had no room to
 rise and this says nothing about items the model gets wrong.*
 
-### 7.7 How this report was wrong, twice, and what that says about reading a record like this
+### 7.7 How this report was wrong four times, and what that says about reading a record like this
 
 This is the most transferable thing in section 7, because the failure is structural rather than
 careless and any reader of this project's record is exposed to it.
@@ -525,6 +571,50 @@ amending**, and **1 was a genuine withdrawal**. The four that moved:
 
 That last one is the one I would least have caught by reading more carefully, because the invented
 link made the section *more* coherent, not less.
+
+**The third failure was mine and the fourth was the correction to the third, which is the part worth
+reading.**
+
+Noticing that §1's headline rested on two entries both measured on a single counting task, I ran the
+same question across the 21-family, 4,868-problem census that had been on disk the whole time. It
+showed the model's own ranking of the answer improving 25× between loop 1 and its best loop — 870× on
+`echo_word` — while the counting families were the *narrowest* in the census. I rewrote §1: the loops
+do build, the claim had been generalised from the one place it was most nearly true.
+
+**That correction was wrong, and it was wrong for exactly the reason the original claim was
+suspect.** The supervisor asked whether a rank curve could be measuring the task's formatting rather
+than the model — whether Huginn writing a prose prequel would put the answer somewhere other than
+the first generated token. It does. The census ranks the gold's first token at the immediate
+next-token position. Checking the banked top-1 tokens: across 336 problems there are only **23
+distinct top-1 tokens at loop 1**, one of them holding 53% of them, and that token — id 475 — holds
+top-1 on a median **88% of all loops**. The project had decoded these ids in a different experiment
+and never connected them: they are `The`, `To`, `Number`, `There`. The "climb" is the model briefly
+leaving a prose frame around loop 4; the "drop" is it returning. **Neither event is about the
+answer.** And an entry from four days earlier had already closed it: one format instruction takes
+`echo_digit` from 0% to 83% at loop 64, same model, same depth.
+
+So §1 is now back to approximately what it said before, D37 and D38 stand unamended, and my
+correction is withdrawn in the ledger *(D203)*.
+
+**Three things are worth more than any of the individual corrections.**
+
+*The failure mode was identical all four times, and it is not carelessness.* Every time, the
+information that would have stopped me was already in the record — in a row's own later text, in a
+different experiment's log, in an entry four days old. The record was never wrong. It was
+un-consulted, in a specific way: I searched it for support and not for the thing that would break
+what I was about to write.
+
+*A near-miss is more instructive than an error caught early.* Version three was a **correct
+observation** — the census numbers are real, the token-type table is real — attached to a **wrong
+conclusion**, and it read as unusually rigorous precisely because it retracted a previous claim. Self-
+correction is not evidence of correctness. It has the same surface as it.
+
+*The thing that caught it was a question about the measurement, not about the numbers.* "Could this
+be the task's formatting rather than the model?" costs one sentence to ask and would have killed the
+draft before it was written. That question is now row 11 of §6, and generalised: **before reading a
+per-loop diagnostic as capability, name what else could produce the same curve.** Here the answer was
+"the model deciding whether to start with `The`", and it produced a better curve than the real effect
+would have.
 
 That is the gate in row 10 of §6, and it is why it is phrased as a mechanical check rather than as
 advice to read carefully. I had the advice. It did not work.
@@ -610,7 +700,7 @@ unused in Huginn; normalisation placement, which is where two-thirds of the cont
 then per-loop exploration, where the released model ships five unused noise schedules worth reading
 before inventing one.
 
-**Throughout:** the ten gates in §6. They are written as conditions that fire rather than as
+**Throughout:** the eleven gates in §6. They are written as conditions that fire rather than as
 advice, because the advice version of each already existed here and did not prevent the error.
 
 ### What "done" should mean, stated before starting rather than discovered afterwards
@@ -719,7 +809,7 @@ meant to be read through.
 | D30 | bfloat16 makes trajectories look settled by loop 14–21; float32 keeps converging to ~96 (4.6×) | current |
 | D31 | Exact contraction by Arnoldi on Jacobian-vector products: ρ(J) = 0.7935/0.8042/0.8083, mean **0.8020**, varying <2% over an 8× size range; leading eigenvalue **complex in 3/3 prompts**, 8–10 oscillatory modes | current; the exact measurement |
 | D55 | Those eigenvalue **arguments** (banked by D31, unread for a week) give rotation period **2.6–6.0 loops**, surviving ~4 turns, sampled at ~3 points/turn — so five trajectory statistics failed on aliasing, not absence | current |
-| D37 | Answer fully decodable after 1 loop, no further improvement; alignment to final form rises 0.45→0.99 over ~16 loops | current |
+| D37 | Answer fully decodable after 1 loop, no further improvement; alignment to final form rises 0.45→0.99 over ~16 loops | current; measured on one counting task, generalisation untested (D203) |
 | D38 | Relay to the answer position: readout R² 0.68 at loop 1 → 0.99 by loops 24–32 | current |
 | D44 | Contraction rate untrained 0.7150 → trained 0.8866 (time constant ~3 → ~8 loops), measured on the operator | current; supersedes an extrapolated 0.66 |
 | D52 | 14 weight sets, zero overlap: 0.7048 untrained vs 0.8577 trained, p=5e-4; 91% present at the earliest checkpoint | current |
@@ -735,8 +825,9 @@ meant to be read through.
 | D116 | Training turns near-random turns (110–115°) into coherent rotation (42–59°) | current |
 | D147 | On genuine state tracking, model is a constant responder below majority baseline while the any-depth oracle reads 100% | current |
 | D155 | Linear-decodability nulls at ~50 points cannot detect below Cohen's d≈8–10 | retired an instrument class |
-| D159 | Answer displaced to a stable worse rank after ~loop 4, holding 40+ loops, in 17 of 21 families | current |
-| D174 | Openings with "The" rise 3.2%→64.7% from loop 2→32; starts-with-answer flat | current |
+| D159 | Answer displaced to a stable worse rank after ~loop 4, holding 40+ loops, in 17 of 21 families | current, but read D203 for what it is displaced *to* |
+| D69 | `echo_digit` at loop 64: **0%** correct bare with a prose opener on top, **83%** under "Reply with only the answer" with the digit on top | current; the single most load-bearing row in §3.2 |
+| D174 | Openings with "The" rise 3.2%→64.7% from loop 2→32; starts-with-answer flat | current; the same effect as D69/D203, from the generated text rather than the logits |
 | D178 | Depth at which the answer appears is 88% predicted by its rank after **one** loop (ρ=0.885) | current; supersedes D177 → D35 → D33 |
 | D179 | Exact-string scoring recovers 3.8% of present answers; contains/last-number 24–31% | current |
 | D183 | ARC-Easy 49.1/65.1/69.5/69.9% at 4/8/16/32 loops; GSM8K-CoT 0%→34.8% | Huginn's published numbers |
@@ -745,13 +836,19 @@ meant to be read through.
 | D188 | Published theorem: past the fixed point all further Jacobians and attributions are identical | external |
 | D189 | Depth-scales-with-difficulty needs an explicit ponder cost; Huginn had none | external |
 | D191 | Identical loop count for every token, no per-position halting | current |
+| D203 | The census rank curve tracks output frame, not answer availability: 23 distinct top-1 tokens across 336 problems at loop 1, one of them (`The`) top-1 on a median 88% of all loops; an untrained model collapses to a single token on 336/336 | current; withdrew this report's first correction to §1 |
 | — | `loop_horizon.py`: gradient mass near-uniform across loops (last 32 of 64 = 53.5%); `1/(1−ρ)` off by 89% | mine, this report |
 | — | `loop_horizon_raven.py`: on the real architecture, Jacobian radius 0.9375 < step rate 0.9963; backward sensitivity spans 4.15× over 32 loops; truncation is a hard cutoff | mine, this report |
 
-**Corrected after first publication (2026-08-12):** this report originally asserted that the
-spectral radius had never been measured on real Huginn. It had — D31, above. The error was mine, not
-the record's; the correction is in §3.4 and §11, and it turns the report's weakest open question
-into its strongest measured fact.
+**Corrected after first publication (2026-08-12), twice.** First: this report asserted that the
+spectral radius had never been measured on real Huginn. It had — D31, above; the correction is in
+§3.4 and §11, and it turns the report's weakest open question into its strongest measured fact.
+
+Second, and larger: §1 was rewritten to claim the census showed the loops *do* build the answer,
+then rewritten back. The census statistic measures which output frame the model is in, and the
+evidence against the intermediate version — D69, D174 and the banked top-1 tokens — was in this
+record and in this appendix the whole time. §7.7 tells that properly, because how it was caught is
+worth more than the correction. Both errors were mine; neither was the record's.
 
 **Which of these you can re-derive without a GPU.** Where a number is script-regenerable it
 cannot drift from the data, and you can check it rather than trust it:
