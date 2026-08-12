@@ -538,13 +538,28 @@ unused in Huginn; normalisation placement, which is where two-thirds of the cont
 then per-loop exploration, where the released model ships five unused noise schedules worth reading
 before inventing one.
 
-**Throughout:** log the base rate of every gate and outcome; make every "modification off" condition
-reproduce the baseline exactly rather than approximately; bank per-loop logits and states rather
-than final loss only; and keep a positive control that is not the optimised metric — group
-composition over `S₃`–`S₅` is provably outside `TC⁰`, so depth must help there if the loop works at
-all.
+**Throughout:** the ten gates in §6. They are written as conditions that fire rather than as
+advice, because the advice version of each already existed here and did not prevent the error.
 
----
+### What "done" should mean, stated before starting rather than discovered afterwards
+
+The default bar an agent works to is *an artifact of the requested type now exists*: the training
+script runs, the report has sections, the checkpoint uploads. The bar that matters is *the artifact
+would survive review*. Those come apart quietly, and the gap gets closed by hand, one "now do a
+verification pass" at a time.
+
+This report is the worked example. Its first version existed, read well, and was wrong in two
+places — it cited a superseded claim about what recruits depth, and it asserted that a quantity had
+never been measured when it had been, three weeks earlier, by the project itself. Both were found
+by being asked whether anything had been missed. The second version was wrong again, in three more
+places, all found by reading further into entries I had already quoted from (§7.5, §7.7).
+
+So the useful move is to write the completion bar down first, as something checkable. For each gate
+in §1–§4 above that means naming, before the run: the number it must produce, the condition under
+which it fails, and what you will do in that case. For the deliverable as a whole it means deciding
+in advance what a reviewer would have to find for it to be unfinished — and then looking for exactly
+that, rather than for confirmation. A weak "done" costs several round trips; a stated one lets the
+work run to completion unattended, which is the only version that survives you not watching.
 
 ## 10. Where this points
 
