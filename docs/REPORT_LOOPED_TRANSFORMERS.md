@@ -104,6 +104,13 @@ half-right in a way that matters.
 
 ## 3. What the loops actually do
 
+*Three kinds of instrument produced the numbers below, and §3.2 versus §3.2a is a case where two of
+them disagree in sign. **States** — contraction, dimensionality, angles, spectra — read the latent
+directly and never touch the output head. **Rank** reads the gold token's position in the logits at
+the first generated slot; it is the project's workhorse and it has one significant blind spot (§1).
+**Generation** reads a decoded string. Where it matters, the text below says which. Full setups are
+in Appendix B.*
+
 ### 3.1 The answer is present after one loop
 
 On a counting task, the target is fully decodable from the state after a single iteration and gets
@@ -155,12 +162,47 @@ loop 64 with a prose opener on top; the identical model at the identical depth, 
 only the answer", gives **83%**, with the correct digit on top. *(D69.)* Depth did not destroy the
 computation — the bare prompt's convergence to discourse hid it.
 
-Two caveats keep this honest. That rescue is demonstrated on the family where the model is
-competent; on `add1`, `count4`, `count16` and `rot13_word` the constrained arm also sits at 0%, so
-there it cannot discriminate. And an *untrained* Huginn shows the same qualitative shape — 84
-distinct top-1 tokens at its best loop, collapsing to a **single** token on 336 of 336 problems by
-loop 16. *(D203.)* Convergence-to-a-fixed-output is partly just what iterating a contraction does to
-a readout, before training is invoked to explain it.
+One caveat keeps this honest: an *untrained* Huginn shows the same qualitative shape — 84 distinct
+top-1 tokens at its best loop, collapsing to a **single** token on 336 of 336 problems by loop 16.
+*(D203.)* Convergence-to-a-fixed-output is partly just what iterating a contraction does to a
+readout, before training is invoked to explain it.
+
+### 3.2a The other instrument says the opposite, and it is the one that reads the answer
+
+Everything above reads the gold's rank at the first generated position. A second bank ran **greedy
+generation at five fixed depths** and kept the text — 1,260 generations, 21 families, 126 per cell,
+both prompt formats. Scored on what the model actually wrote, against a decoy gold from another item
+of the same family to give the chance rate, depth looks completely different *(D204)*:
+
+| specificity-corrected accuracy | loop 2 | loop 4 | loop 8 | loop 16 | loop 32 |
+|---|---|---|---|---|---|
+| bare, answer contained | 12.4% | 8.0% | 25.4% | **32.0%** | 27.4% |
+| bare, last number correct | 9.9% | 7.1% | 19.2% | **27.5%** | 24.2% |
+| constrained, answer contained | 6.0% | 8.1% | 16.1% | **29.0%** | 26.5% |
+| constrained, last number correct | 6.9% | 5.9% | 14.2% | **31.0%** | 30.0% |
+
+**Accuracy roughly quadruples from loop 4 to loop 16 and holds at 32.** There is no displacement.
+The knee is near 16, not near 4.
+
+Three checks, because this reverses a claim: the **chance rate falls** as depth rises (15.4% → 1.9%),
+so the model is becoming more specific rather than more verbose; output length is **flat at 6–7
+tokens from loop 8 onward**, so the loop 8 → 32 comparison is length-matched; and two scorers that
+fail differently agree throughout.
+
+The two instruments are not in conflict once stated precisely. **The first token gets worse with
+depth, because it becomes `The`. The sentence after it gets better.** The rank curve measures the
+first token. Everything anyone wants from a looped model is in the sentence.
+
+This also repairs the one soft spot in the format result above. D69 recorded the constrained arm at
+0% on `add1`; scored on the last number it reads 0%, 0%, 33%, **100%, 100%** across the five depths.
+The depth-32 outputs are `1 + 1 = 2`, `6 + 1 = 7`, `2 + 1 = 3` — every one correct, every one scored
+zero by exact match.
+
+**One limit is severe and bounds all of the above.** The generation budget is **8 tokens**, and 86%
+of outputs end mid-sentence. On families where the model reasons before answering — `count16` emits
+`The sequence is $0,1,` and stops — it never reaches an answer at all, so those items score zero for
+lack of room rather than lack of ability. A longer budget is the cheapest unrun experiment in this
+report.
 
 What replaces it is prose. As depth rises from 2 to 32 loops, the fraction of generations opening
 with the token "The" rises from 3.2% to 64.7%, with the sharp move between loops 4 and 8, while the
@@ -352,9 +394,14 @@ makes the consequence exact: past the fixed point, every further loop's Jacobian
 or attribution built from it — is mathematically identical. Post-convergence loops are provably
 uninformative. *(D188)* This is architectural. No training schedule fixes it.
 
-**(b) The readout commits before the state settles.** The answer peaks at loop 4 of 48 and then
-degrades (§3.2). Even a loop that kept computing would have to overcome a decoder that has already
-moved on.
+**(b) The readout commits before the state settles.** ~~The answer peaks at loop 4 of 48 and then
+degrades, so even a loop that kept computing would face a decoder that has already moved on.~~
+**Withdrawn as stated (§3.2a).** That rested entirely on the gold's rank at the first generated
+position, which tracks whether the model is about to write `The`. Scored on the emitted text there is
+no early commitment to overcome — accuracy at loop 16 is three to five times loop 4. What survives is
+narrower and still worth designing around: **the first output position is a bad place to read a
+looped model**, and any early-exit or confidence signal taken from it will fire on discourse rather
+than on the answer.
 
 **(c) Credit assignment.** The intuitive story is that contraction starves early loops of gradient.
 **I tested this twice and it is false — see section 7.** It stays on this list only because it is
@@ -666,13 +713,18 @@ Depth-randomised training alone is not sufficient.
 count as well as a trained one. The bottleneck is not capacity to carry state; it is that the model
 does not learn to use it.
 
-**The premise of the brief is worth challenging.** "Huginn saturates after ~10" is the starting
-point for the task. Huginn also truncated gradient to the last 8 loops — and section 7 shows
-contraction does not independently starve early loops, so truncation is the only thing in that
-recipe that removes credit, and its `k` sits at the knee. **Its reported saturation may be
-substantially a property of the training recipe rather than of looped models.** At 10M parameters
-full backpropagation is affordable, so a truncation sweep separates them. Huginn cannot run that
-experiment; a from-scratch run can.
+**The premise of the brief is worth challenging, and there is now direct evidence against it.**
+"Huginn saturates after ~10" is the starting point for the task. On this project's own 21-family
+bank, scored on what the model writes rather than on logit rank, accuracy roughly **quadruples from
+loop 4 to loop 16** and is flat to slightly down at 32 (§3.2a). That puts the knee near 16, not near
+10 and certainly not near 4 — and the 8-token generation budget censors the families that reason
+before answering, so the true curve is if anything better than measured. Huginn also truncated
+gradient to the last 8 loops — and section 7 shows contraction does not independently starve early
+loops, so truncation is the only thing in that recipe that removes credit, and its `k` sits right at
+the reported knee. **Its reported saturation may be substantially a property of the training recipe
+and of how it was scored, rather than of looped models.** At 10M parameters full backpropagation is
+affordable, so a truncation sweep separates them. Huginn cannot run that experiment; a from-scratch
+run can.
 
 **The lever that training itself pulls is the contraction rate.** The one thing training
 demonstrably does to this recurrence is slow it from a 3-loop time constant to an 8-loop one, and it
@@ -750,12 +802,15 @@ loops are provably uninformative. A depth-conditioned modulation costs `O(width)
 does not grow with model size the way the brief's own bad example does. *What would kill it:* if
 depth-conditioning moves the knee no further than a matched parameter increase elsewhere.
 
-**Treat readout commitment as a target in its own right.** The answer peaks at loop 4 of 48 and then
-gets worse, and depth buys prose rather than answers. If that reproduces at small scale, the useful
-intervention is delaying commitment — per-loop supervision, or a decoder that cannot settle early —
-rather than adding loops behind a decoder that has stopped listening. *What would kill it:* if the
-per-loop KL curve at small scale flattens only at the very end, meaning there is no early commitment
-to delay.
+**Treat the readout position as a target in its own right — but not the way I first framed it.**
+The gold's rank at the *first* generated position peaks at loop 4 and then degrades, which looks like
+early commitment. It is not: the same model's *emitted answer* keeps improving to loop 16 (§3.2a).
+What actually degrades is the first token, which converges to `The`. So the intervention is not
+"delay commitment"; it is **do not put your diagnostic, your early-exit rule, or your per-loop
+supervision on the first output position**, because that position is measuring discourse. Supervise
+at the position where the answer is due, or on the state. *What would kill it:* if at small scale a
+model trained without a chat template shows the same first-token convergence anyway, making this a
+property of looped decoding rather than of instruction formatting.
 
 **Aim at the contraction rate directly.** Training's own main effect is to slow contraction, and it
 is steerable, with two-thirds of it in the residual/normalisation path. An explicit objective or
@@ -914,10 +969,18 @@ Four consequences follow, and each has bitten this project at least once.
 - **The initial latent is unseeded unless a run says otherwise**, and it moves results (§6, gate 2).
 
 Kernels using this recipe: the 21-family census, the depth grid, the add-k ladder, the state-tracking
-battery, the geometry-plus-capability bank and the length-matched bank. Where a claim below reads
-**states** rather than logits — contraction rates, dimensionality, turn angles, fixed points — it
-does not inherit the prose-frame limit, because it never consults the output head. That distinction
-is the single most useful thing in this appendix.
+battery, the geometry-plus-capability bank and the length-matched bank.
+
+**There are two other families of instrument in this report, and they do not inherit that blind
+spot.** Knowing which one produced a number is the single most useful thing in this appendix.
+
+- **State-based measurements** — contraction rates, dimensionality, turn angles, fixed points, the
+  Jacobian spectrum — never consult the output head at all. They are unaffected by anything above.
+- **Generation-based measurements** read an actual decoded string: 8-token greedy generation with the
+  loop count held fixed for every generated token, then scored by exact match, by whether the answer
+  is *contained* in the output, or by whether the *last number* equals the gold. §B.5 covers these,
+  and §3.2a is the reason they matter — on the same model they answer "does depth help" with the
+  opposite sign to the rank curve.
 
 ### B.1 What the loops do (§3)
 
@@ -1083,3 +1146,40 @@ instrument class is 49 nouns with 400 permutations per planted signal. The state
 an unbalanced draft would have let a constant responder score 40% against a 33.3% floor and pass.
 **Assumption:** each of these is a *calibration*, so it constrains what the corresponding null can
 say. Where a null has no floor attached, this report does not treat it as evidence of absence.
+
+### B.5 The generation-based instruments, and why they disagree with the rank curve
+
+Three cited claims read decoded text rather than logits. They share a recipe of their own, with its
+own limits.
+
+**The recipe.** A greedy generation of **8 tokens**, produced with the loop count held **fixed for
+every generated token** — depth 2, 4, 8, 16 or 32, one run per depth. This is a different experiment
+from the rank curve, which reads every loop inside a single forward: here, depth 16 means the model
+ran 16 loops to produce token 1, 16 more for token 2, and so on. Both designs are legitimate; they
+are not interchangeable, and where they disagree (§3.2a) the difference in design is part of why.
+
+**Three scorers, because no one of them is safe.** Exact match rejects `1 + 1 = 2` for gold `2`.
+Containment accepts a gold that appears only because the input was restated. Last-number is immune to
+restatement in the arithmetic families but undefined for word answers. This report quotes containment
+and last-number together and treats agreement between them as the evidence.
+
+**Depth helps, to loop 16 (D204).** 1,260 generations, 21 families, 126 per cell, both formats, each
+scored against its gold and against a decoy gold from a different item of the same family, averaged
+over 20 reassignments. Specificity-corrected accuracy roughly quadruples from loop 4 to loop 16.
+**Assumption, and it is the severe one:** the 8-token budget. 86% of outputs end mid-sentence, and on
+families where the model reasons first it never reaches an answer inside the budget — those items
+score zero for lack of room, and this design cannot distinguish that from inability. Separately, only
+the loop 8→32 comparison is length-matched; the loop-4 cell's median output is a single token.
+
+**Format rescues the answer (D69).** Covered in §B.1. Its one weak point — the constrained arm
+reading 0% on `add1` — is a scorer artifact, repaired by D204: on the last-number scorer the same arm
+reads 100% at loops 16 and 32.
+
+**Scorer defects found and fixed (D174 and its neighbours).** The chat template glues the next-turn
+role marker onto the output with no separator, in 224 of 1,260 generations. A word-boundary scorer
+loses 80 genuine correct answers to it; a raw-substring scorer over-counts a different set by
+matching a single-letter gold inside an ordinary word. The numbers quoted in this report are from the
+repaired scorer, which separates the marker before matching.
+**Assumption:** `user` is an ordinary English word, and the normaliser drops stopwords, so on longer
+generations than these 8-token ones the repair could itself create a false positive. It is safe on
+this bank — all 60 exact recoveries were opened by hand — and is not safe in general.
