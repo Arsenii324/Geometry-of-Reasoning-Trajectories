@@ -369,15 +369,24 @@ def main():
             # `tile()` to the RECIPIENT's length, so the donor prompt's own length never
             # enters the injection. The donor's orbit is a separate forward on its own ids.
             g_don = tok(d_same["gold"], add_special_tokens=False).input_ids[0]
+            g_don_x = tok(d_xfam["gold"], add_special_tokens=False).input_ids[0]
             # De-duplicate: `ranks` is keyed by token id, so a recipient and donor sharing a
             # gold (3 of 18 items here -- both are single digits) made the hook append twice
             # per unroll and doubled the rank curve. Verified against the toy model.
-            gold_ids = [g_self] if g_don == g_self else [g_self, g_don]
+            #
+            # THE THIRD RUN DIED HERE, INDIRECTLY. De-duplication means `base_ranks` has ONE
+            # key whenever the donor and recipient share a gold, and the P4 scoring block then
+            # did `list(r["base_ranks"].keys())[1]` -> IndexError, unhandled, after 77 minutes
+            # of compute and before the results file was written. Both golds are now recorded
+            # by id so no scoring step indexes this dict by position. Also: the cross-family
+            # donor has its OWN gold, which the old code never tracked -- P4 was scoring the
+            # star_xfam arm against the same-family donor's answer.
+            gold_ids = sorted({g_self, g_don, g_don_x})
 
             base = orbit(ids, gold_ids)                       # unpatched reference
             h0_own = base["h0"]
             don_same = orbit(ids_same, [g_don])
-            don_xfam = orbit(ids_xfam, [g_don])
+            don_xfam = orbit(ids_xfam, [g_don_x])
 
             def as_state(arr):
                 return torch.tensor(arr, device=model.device, dtype=torch.float32)
@@ -427,7 +436,9 @@ def main():
 
             rec = {"family": it["family"], "item": it["item"], "gold": it["gold"],
                    "seed_sweep": seed_sweep,
-                   "donor_gold": d_same["gold"], "n_tokens": int(ids.shape[1]),
+                   "donor_gold": d_same["gold"], "donor_gold_xfam": d_xfam["gold"],
+                   "gid_self": int(g_self), "gid_don": int(g_don), "gid_don_xfam": int(g_don_x),
+                   "n_tokens": int(ids.shape[1]),
                    "norm_h0": n_h0, "norm_star": n_star, "ok": True,
                    "base_ranks": base["ranks"], "base_tops": base["tops"], "arms": {}}
             for name, donor in arms.items():
@@ -466,6 +477,30 @@ def main():
             json.dump({"rows": rows, "dropped": dropped}, f)
         return 1
 
+    # BANK FIRST. The third run spent 77 minutes computing, then died in the scoring block
+    # below with an IndexError, and DataSphere reported ERROR with no output file because
+    # out_path was only written at the very end. Results are now on disk before anything is
+    # printed, and the whole scoring section is wrapped so a summary bug can never again cost
+    # a run. RC9's lesson, applied one level up: a kernel should not be able to lose data it
+    # has already computed.
+    with open(out_path, "w") as f:
+        json.dump({"rows": rows, "dropped": dropped, "banked_before_scoring": True,
+                   "families": list(FAMILIES), "depth": DEPTH, "shots": SHOTS,
+                   "seed": SEED, "alt_seed": ALT_SEED,
+                   "elapsed_s": time.time() - t0}, f)
+    print(f"\nBANKED {len(ok)} usable rows to {out_path} before scoring", flush=True)
+
+    try:
+        _score(ok, rows, dropped, st)
+    except Exception as exc:  # noqa: BLE001
+        print(f"\nSCORING FAILED ({type(exc).__name__}: {exc}) -- data is already banked, "
+              f"re-score offline from the JSON.", flush=True)
+    return 0
+
+
+def _score(ok, rows, dropped, st):
+    """Printing only. Must not write files and must not raise into main():
+    the data is already on disk by the time this runs."""
     print("\n=== BASE RATE (RC6: an arm with no variance proves nothing) ===", flush=True)
     for fam in FAMILIES:
         v = [r for r in ok if r["family"] == fam]
@@ -521,7 +556,10 @@ def main():
         for i in (0, 1, 3, 7, 15, 47):
             base_v, pat_v = [], []
             for r in rows_d:
-                gd = list(r["base_ranks"].keys())[1]
+                # by recorded id, never by dict position: the two can coincide (see above).
+                gd = str(r.get("gid_don_xfam" if name == "star_xfam" else "gid_don", ""))
+                if gd == str(r.get("gid_self")) or gd not in r["base_ranks"]:
+                    continue          # donor and recipient share a gold: no content signal
                 if i < len(r["base_ranks"][gd]):
                     base_v.append(r["base_ranks"][gd][i])
                     pat_v.append(r["arms"][name]["ranks"][gd][i])
@@ -575,13 +613,7 @@ def main():
         for (u, t_) in r["base_tops"][:3]:
             print(f"     baseline u{u}: {t_}", flush=True)
 
-    with open(out_path, "w") as f:
-        json.dump({"rows": [{k: v for k, v in r.items()} for r in rows], "dropped": dropped,
-                   "families": list(FAMILIES), "depth": DEPTH, "shots": SHOTS,
-                   "seed": SEED, "alt_seed": ALT_SEED,
-                   "elapsed_s": time.time() - t0}, f)
-    print(f"DONE {len(ok)} items, {time.time() - t0:.0f}s", flush=True)
-    return 0
+    print(f"SCORED {len(ok)} items", flush=True)
 
 
 if __name__ == "__main__":

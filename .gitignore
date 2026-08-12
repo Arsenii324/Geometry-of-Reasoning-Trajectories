@@ -138,3 +138,4 @@ htmlcov/
 
 # Regenerable plot output (figures/ proper is tracked; this stray dir is not).
 /results/figures/
+!/scratch/ds_h0inject/

@@ -1516,6 +1516,42 @@ evidence. That is a bounded position, not a gap the paper needs to fill.
 **If resumed later:** the informative arm is P4 (does the recipient briefly rank the *donor's*
 answer), not P3. Kernel and fix are committed at `scratch/ds_h0inject/`.
 
+### §Q.1 DIAGNOSED 2026-08-12 — a one-line IndexError, and it cost 77 minutes of GPU
+
+The third failure is no longer undiagnosed. Job `bt1vuemjmeg0onc52shp` ran **14:08:14 -> 15:25:14,
+77 minutes**, ended ERROR code 5, "no files to download" — so it computed and then lost everything.
+
+**Cause.** The kernel de-duplicates the gold token ids it tracks, because a recipient and its
+donor can share a gold (3 of 18 items — both single digits) and the hook would otherwise append
+twice per unroll. `base_ranks` therefore has ONE key for those items. The P4 scoring block did
+`gd = list(r["base_ranks"].keys())[1]` — **IndexError on exactly those items**. It sits in the
+post-loop scoring section, outside the per-item `try/except`, and *before* `out_path` was written.
+
+**Why it looked like the earlier failures.** Same outward signature as the donor-length gate:
+ERROR, no output. Different cause. The first two died at 0 items; this one died after all of them.
+
+**How it was found.** `scripts/a47_local.py` reruns the kernel's control flow — the
+`initialize_state` monkeypatch, the `core_block[-1]` hook, `coda_head`, the per-item loop with its
+~17 orbits — against the real Raven classes at 27.7M locally. **18/18 items complete, P1 passes on
+every item, zero hook leaks, +122 MB RSS.** That eliminated the logic and pointed at the sections
+the harness did not cover, which is where it was.
+
+**Four fixes, in `scratch/ds_h0inject/job.py`:**
+1. Both donor golds are recorded by id (`gid_self`, `gid_don`, `gid_don_xfam`); no scoring step
+   indexes `base_ranks` by position.
+2. The cross-family donor is scored against **its own** gold. The old code passed the same-family
+   donor's gold, so P4's `star_xfam` arm was measuring the wrong answer — a second, quieter bug.
+3. **Results are banked to disk before scoring**, and scoring is wrapped. A summary bug can no
+   longer destroy computed data. This is the general lesson, not the specific one.
+4. `_score` is printing-only and holds no out-of-scope references (a leftover `out_path` write
+   inside it would have raised `NameError` on the next run; `py_compile` does not catch that).
+
+**Regression test:** `tests/test_a47_scoring.py`, four assertions, verified to FAIL on the
+pre-fix kernel and pass after. Suite is 625.
+
+**Status: ready to relaunch.** Logic verified locally end-to-end; the remaining risk is
+platform-side only.
+
 
 ---
 
