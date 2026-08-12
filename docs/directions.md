@@ -1684,4 +1684,46 @@ sweep of the eigenvalue arguments was named as the follow-up in D55 and never do
   outside the window receive exactly zero gradient. Verified by passing `num_steps=(32,0)` (0 loops
   carry gradient) and `(0,32)` (32 do).
 
+### §T Two jobs launched 2026-08-12 09:24 — both validated locally end to end first
+
+| exp | job id | what it is |
+|---|---|---|
+| **A53** `ds_jacspec` | `bt1si8tujqok55fl2dk7` | The multi-prompt Jacobian-spectrum sweep D55 named as its own follow-up and nobody ran. 20 prompts, of which 12 carry a known regime label. |
+| **A47** `ds_h0inject` | `bt1hvbnlekl2lqdghhr0` | Relaunch after Q.1's diagnosis. Fourth attempt; the first three were the length gate (twice) and the scoring IndexError. |
+
+**A53 is not just "more prompts".** It tests whether the project's two rotation lines are the
+same phenomenon. The Jacobian line says the map's spectrum is complex with period 2.6--6.0
+unrolls; the regime line says one instruction noun flips the trajectory into a damped **period-6**
+rotation. Those overlap and nobody has checked. Registered both ways: if rotating-labelled prompts
+carry an oscillatory eigenvalue near period 6 and settling ones do not, the regime statistic is a
+trajectory-space read of the spectrum; if both arms look alike, the regime difference is not in the
+leading local dynamics and the lines are separate. Decided by eigenvalue arguments, which need no
+trajectory, no window and no null — the three things that broke the five earlier statistics.
+
+**What was verified before spending the slots**, since A47's history is the argument for doing so:
+
+- `scripts/jacobian_spectrum.py` — the instrument, checked against an **exact dense
+  eigendecomposition** at mini width, where the 64x64 Jacobian can be built column by column.
+  Matrix-free ARPACK reproduced the exact top-six magnitudes to **4.3e-07** and agreed on the
+  complex-versus-real verdict. At 5280 dimensions no such reference exists, so the check had to be
+  made where it was possible.
+- `scripts/a53_local.py` — the **whole kernel path** on the real Raven classes at 27.7M: prompt
+  construction, settled-state capture, spectrum, summary fields, and the kernel's own `_score`
+  over real record shapes plus three degenerate cases. It caught two bugs that would each have
+  been a `NameError` on the GPU after the first spectrum: a missing `import math`, and module-level
+  inlined functions resolving `np`/`torch` that `main()` binds only as locals. **Both are exactly
+  A47's failure mode**, and both cost nothing to find.
+- `scripts/a47_local.py` — the same for A47: 18/18 items, P1 exact on every item, zero hook leaks.
+- Preflight passes on `ds_jacspec` with 0 blocking, after `model_attr_check.py` was itself fixed
+  (below).
+
+**A tool that failed the same way twice.** `scripts/model_attr_check.py` flagged `ds_jacspec` as
+using a non-existent attribute, `model.core_block_forward` — which exists at
+`raven_modeling_minimal.py:764` and had already been called successfully in three local runs. Its
+attribute map was hand-maintained and incomplete. Its own docstring records the first instance:
+it once omitted `prelude` and failed `ds_eigen`, logged as RC1, *measuring a proxy for the thing*.
+Second instance, same cause. The map is now derived from the class rather than typed, with the
+regeneration command in the file, and 17 previously-missing methods added — including
+`forward_with_adaptive_compute`, an inference mode this project has never used.
+
 *(Index of all documents, tools and data: `docs/INDEX.md`.)*
