@@ -1607,7 +1607,29 @@ task forced us to ask what our `rho` actually is.
   measurements.** Do not use one to argue about the other, which is the error §1.3 of the transfer
   document records against itself.
 
-### S.5 The architecture-level half of A53, run 2026-08-12 — prediction partly wrong
+### S.4a A53 IS RETRACTED — the experiment had already been run, in July
+
+**I registered A53 in S.2 as "measure ρ(J), never computed". That was wrong.** D31 measured it
+exactly on the real trained model on 2026-07-26 — implicitly-restarted Arnoldi on autodiff
+Jacobian-vector products, 3 prompts: **ρ(J) = 0.7935 / 0.8042 / 0.8083, mean 0.8020**. D55 then
+extracted the eigenvalue *arguments* from the same banked log at zero further compute: leading
+eigenvalue complex in 3/3 prompts, rotation period 2.6–6.0 unrolls, surviving ~4 turns.
+
+Two consequences.
+
+1. **The comparison S.2 wanted is already answerable.** ρ(J) = 0.8020 against a step-decay rate of
+   0.8544–0.8617 on the same trained model: **the Jacobian rate is BELOW the step rate**, matching
+   the real-architecture run below and contradicting the 32-dim toy. Confirmed on real trained
+   weights, no new compute.
+2. **The submitted paper's limitations line "the spectral radius ρ(J) is not computed" is wrong.**
+   It came from the E1–E5 half of the merged draft, whose authors had not computed it; our own
+   ledger had it three weeks earlier. Nothing to do about the submission, but it should not be
+   repeated.
+
+What remains genuinely open is narrower and worth one run: D31 used **three prompts**. A multi-prompt
+sweep of the eigenvalue arguments was named as the follow-up in D55 and never done.
+
+### S.5 The architecture-level half, run 2026-08-12 — prediction partly wrong
 
 `scripts/loop_horizon_raven.py` ran the Jacobian measurement on the **real released classes** at
 27.7M with random weights (not the trained 3.5B checkpoint, so A53 itself stays open).
@@ -1619,8 +1641,8 @@ task forced us to ask what our `rho` actually is.
   `loop_horizon.py` put the Jacobian rate *above* the step rate; the real architecture puts it
   *below*. They do not even disagree in a consistent direction, so neither can be inferred from the
   other — and this project only ever measured the step rate on Huginn.
-- **A53 remains open and is still worth running**, now with a sharpened question: on the *trained*
-  3.5B checkpoint, is `rho(J)` above or below the published step-decay range of 0.8239--0.9181?
+- **A53 is retracted (S.4a): already answered by D31/D55.** The sharpened question that survives is
+  the multi-prompt sweep of eigenvalue *arguments*, which D55 named as its own follow-up.
 - **Also established, and citable from source:** Huginn's truncated backprop is a live code path.
   `iterate_forward` runs the first `num_steps_no_grad` iterations inside `torch.no_grad()`; loops
   outside the window receive exactly zero gradient. Verified by passing `num_steps=(32,0)` (0 loops

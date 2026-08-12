@@ -136,7 +136,39 @@ examples, raises the depth at which the answer appears from 4.73 to 7.29 loops w
 moves (0.500 to 0.479). *(D186)* And the contraction rate is set by the task *template*, not by
 difficulty — the spread between task families is 4.2 times the spread within one. *(D115)*
 
-### 3.4 A geometric constraint on what the loop could ever count with
+### 3.4 The map itself rotates, and this was measured directly
+
+The strongest single measurement in the record is one I originally left out of this report.
+
+The contraction rate can be obtained exactly rather than fitted, by running Arnoldi on autodiff
+Jacobian-vector products. Done on the real trained model over three prompts spanning an eight-fold
+range of problem size, it gives **ρ(J) = 0.7935, 0.8042, 0.8083 — mean 0.8020**, varying by under
+2% across that range. *(D31)* This is an exact measurement of the recurrence's contraction, not a
+curve fit, and it independently corroborates a 0.84–0.90 estimate obtained earlier from different
+data by a different method.
+
+The more interesting half is the part that was banked and then sat unread for a week. **The leading
+eigenvalue is complex in 3 of 3 prompts**, the top eigenvalues arrive in complex-conjugate pairs
+(0.808, 0.808, 0.802, 0.802, 0.775, 0.775 …), and each prompt carries **8–10 oscillatory modes**.
+A contracting map rotates if and only if its spectrum is complex, at a rate given by the
+eigenvalue's argument — a quantity needing no trajectory, no recording window and no null.
+
+So **the recurrent map is dominated by rotation**, and the rotation period is **2.6 to 6.0 loops**.
+But the rotating mode survives only about **four turns** before contraction kills it, and the
+project's trajectory statistics sampled it at roughly **three points per turn** over a window five
+to nine times longer than the rotation lives. *(D55)* That is why five separate trajectory
+statistics — winding, chord-to-arc, persistent homology, participation ratio, subspace dimension —
+all failed together on the rotation question. **The phenomenon was real and the metrics were
+aliased.**
+
+Two things follow that matter later. First, the eigenvalue arguments were computed as a side effect
+of the magnitude run and reported only as magnitudes; the answer to the question five statistics
+could not settle was already on disk, and cost zero further compute to extract. Second, a rotation
+period of 2.6–6.0 loops sits directly on top of the period-6 regime the project's later statistic
+was built to detect — those are plausibly the same phenomenon seen from two directions, which
+nobody has checked.
+
+### 3.5 A geometric constraint on what the loop could ever count with
 
 Because the state is confined to a sphere, a counter implemented as translation is not available:
 total displacement over 64 loops is capped at 0.92, which is 62 times below the arithmetic noise
@@ -351,9 +383,20 @@ different quantities, and they do not even disagree in a consistent direction.**
 Jacobian rate above the step rate; the real architecture has it below. Neither can be inferred from
 the other.
 
-This matters because **the only one this project ever measured on Huginn is the step rate.** Every
-contraction-based argument in the record rests on a number that describes trajectory settling, not
-perturbation damping. That was already a printed limitation of our paper; it is now demonstrated.
+This matters, and the record can now settle it — which I did not realise when I first wrote this
+section. The exact Jacobian measurement (§3.4) gives **ρ(J) = 0.8020** on the real trained model,
+against a step-decay rate of **0.8544–0.8617** measured on the same model. **The Jacobian rate is
+below the step rate on real trained Huginn** — the same direction as the real architecture at random
+init (0.9375 against 0.9963), and the opposite of my toy. So §7.2's correction is confirmed twice
+over, once on real trained weights.
+
+I also checked that the gap is not an artefact of how the step rate is estimated. Every banked run
+carries **two** forward estimators, one fitted to the orbit and one to the step sizes, and only one
+was ever used. Across 166 banked rows they agree to **0.0004** untrained and **0.007** trained, and
+the headline train-versus-untrained gap is +0.157 by one and +0.149 by the other. The forward
+estimators agree with each other and both differ from the Jacobian; the gap is real, not an
+estimator choice. *(Run for this report from data already on disk; the orbit estimator appears in no
+project document.)*
 
 ### 7.4 Two things the same run established
 
@@ -464,12 +507,18 @@ constraint on that rate is a direct attack on the thing training is already tryi
 *What would kill it:* if forcing a slower rate degrades loss for reasons unrelated to depth, which
 is the obvious failure mode and should be checked early.
 
-**Ask what a rotation-carried counter would need.** On a normalised architecture, per-loop
-accumulation cannot be a translation — the geometry forbids it — and must be a rotation. Training
-does move the model toward coherent rotation, from near-random 110–115° turns to 42–59°. This is the
-most speculative item here, and the least developed: nobody measured whether that rotation carries
-task state or is incidental. *What would make it concrete:* a task with a known required count, and
-a test of whether the turn angle tracks it.
+**Ask what a rotation-carried counter would need — and note this is no longer speculative.** On a
+normalised architecture, per-loop accumulation cannot be a translation, and must be a rotation. The
+map *is* dominated by rotation: complex leading eigenvalue in 3 of 3 prompts, 8–10 oscillatory
+modes, period 2.6–6.0 loops (§3.4). Training moves it from near-random 110–115° turns to coherent
+42–59°. Three facts that were never put together: the geometry forbids the alternative, the map
+supplies rotation, and training sharpens it.
+
+What is missing is whether that rotation *carries* anything. The rotating mode dies after about four
+turns, which bounds how much could be counted by it. *What would make it concrete:* a task with a
+known required count, and a test of whether the eigenvalue argument or the turn angle tracks it.
+This is the direction I would look at first if the question is "what could many loops compute that
+few cannot", because it is the only mechanism the architecture actually offers.
 
 **Two things nobody has looked at.** The architecture's adaptive-compute generation and its
 "continuous compute" mode — arguably its most distinctive features — were never touched by this
@@ -483,9 +532,13 @@ form "the loop does X" lacks its control.
 - **We never trained a looped model.** Every measurement is inference-only on one released
   checkpoint, or on randomly-initialised weights of the same architecture. The transfer to a
   from-scratch 10M-parameter run is an argument, not an observation.
-- **The spectral radius was never measured on the real trained Huginn.** Section 7 measures it at
-  27.7M with random weights. The number this project published for Huginn is a step-decay rate,
-  which section 7.3 shows is a different quantity.
+- ~~The spectral radius was never measured on the real trained Huginn.~~ **Wrong — corrected
+  2026-08-12.** It was measured, on the real trained model, by Arnoldi on autodiff
+  Jacobian-vector products: **ρ(J) = 0.7935 / 0.8042 / 0.8083 across three prompts, mean 0.8020**
+  *(D31)*. I missed it when writing this report and asserted the opposite. See §3.5, which is now
+  the strongest single fact here. What remains true is narrower: it was measured on **three
+  prompts**, and the paper we submitted carries a limitations line saying it was not computed —
+  that line is wrong and came from the other half of the merged draft.
 - **Capability testing was thin, and this is the strongest objection to the whole record.** The
   usable tests are 31 items across 5 families, none of them natural language; multi-term addition
   scored 0%. Nearly every null could reflect off-target synthetic tasks rather than a real limit.
@@ -511,6 +564,8 @@ meant to be read through.
 | D26 | Sphere confinement forbids a translation counter (0.92 total displacement over 64 loops, 62× below noise) but permits a rotation one | current |
 | D28 | The winding statistic's sign flips with the number of loops *recorded*, p=1e-11 — it reported window length | retired the statistic |
 | D30 | bfloat16 makes trajectories look settled by loop 14–21; float32 keeps converging to ~96 (4.6×) | current |
+| D31 | Exact contraction by Arnoldi on Jacobian-vector products: ρ(J) = 0.7935/0.8042/0.8083, mean **0.8020**, varying <2% over an 8× size range; leading eigenvalue **complex in 3/3 prompts**, 8–10 oscillatory modes | current; the exact measurement |
+| D55 | Those eigenvalue **arguments** (banked by D31, unread for a week) give rotation period **2.6–6.0 loops**, surviving ~4 turns, sampled at ~3 points/turn — so five trajectory statistics failed on aliasing, not absence | current |
 | D37 | Answer fully decodable after 1 loop, no further improvement; alignment to final form rises 0.45→0.99 over ~16 loops | current |
 | D38 | Relay to the answer position: readout R² 0.68 at loop 1 → 0.99 by loops 24–32 | current |
 | D44 | Contraction rate untrained 0.7150 → trained 0.8866 (time constant ~3 → ~8 loops), measured on the operator | current; supersedes an extrapolated 0.66 |
@@ -539,6 +594,11 @@ meant to be read through.
 | D191 | Identical loop count for every token, no per-position halting | current |
 | — | `loop_horizon.py`: gradient mass near-uniform across loops (last 32 of 64 = 53.5%); `1/(1−ρ)` off by 89% | mine, this report |
 | — | `loop_horizon_raven.py`: on the real architecture, Jacobian radius 0.9375 < step rate 0.9963; backward sensitivity spans 4.15× over 32 loops; truncation is a hard cutoff | mine, this report |
+
+**Corrected after first publication (2026-08-12):** this report originally asserted that the
+spectral radius had never been measured on real Huginn. It had — D31, above. The error was mine, not
+the record's; the correction is in §3.4 and §11, and it turns the report's weakest open question
+into its strongest measured fact.
 
 **Superseded — do not quote:** the winding-number statistic and everything resting on it; the
 "gapped distribution implies two regimes" test (invalid null); "harder problems recruit more depth"
