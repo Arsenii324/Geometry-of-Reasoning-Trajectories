@@ -7,34 +7,38 @@ say about looped models, ranked by how hard it would be to reach the same conclu
 papers or from first principles.*
 
 **Provenance discipline, because the task warns about it.** The task says to use your own
-background and to avoid LLM-generated ideas. Everything in §1--§5 below is arithmetic on numbers
-*we measured*, with the ledger row named. §2 is the one place where I extend a measurement into a
-prediction; it is flagged as such and carries its own falsifier. Treat §2 as something to verify
-before relying on, not as a result.
+background and to avoid LLM-generated ideas. Almost everything here is arithmetic on numbers *we*
+measured, with the ledger row named. Where I extended a measurement into a mechanism (§1.3), I
+built an instrument, pre-registered the predictions, ran it, and **the mechanism was refuted** --
+that section now reports the refutation and what it rules out. Nothing in this document is an idea
+I invented and left untested.
 
 ---
 
 ## 0. The one-paragraph version
 
-Loop saturation is not one phenomenon. Our measurements separate it into three, which have
-different fixes and are routinely conflated: the map is **time-invariant and contractive** so
-iteration provably stops doing work; the **readout commits at unroll ~4 of 48**, and in 17 of 21
-task families the answer is *better in the transient than at the fixed point*, so converging
-destroys information; and with weight tying plus contraction the **weight gradient is dominated by
-the last loops**, which are the ones doing the least.
+Loop saturation is not one phenomenon, and the candidate explanations are not equally good. Three
+were on the table: the map is **time-invariant**, so past its fixed point iteration computes
+nothing new; the **readout commits at unroll ~4 of 48**, and in 17 of 21 task families the answer
+is *better in the transient than at the fixed point*, so converging destroys information; and
+weight tying plus contraction **starves early loops of gradient**. The third is the one everybody
+reaches for. **We tested it and it is false**: in a normalised residual loop, gradient mass is
+distributed almost uniformly across loops (last 32 of 64 hold 53.5%, against 50% for exactly
+uniform), because normalisation keeps the Jacobian near-isometric even while the state settles.
+Forward convergence and backward damping are different things and this architecture has the first
+without the second (§1.3).
 
-Two mechanisms therefore both push the optimiser to shape the weights around the *converged*
-regime -- contraction, and Huginn's truncation of backprop to the last 8 unrolls -- while the
-answer is measurably in the *transient*. That compounding is the best account of saturation we can
-offer, and it comes with an awkward corollary the brief should hear: **Huginn's `k=8` truncation
-and the `1/(1-rho) = 7.7` horizon predicted from our measured contraction are numerically
-indistinguishable, so its reported ~10-loop saturation may be substantially an artefact of its
-training recipe.** That is separable at 10M parameters and is the first thing I would test. Two
-further candidate fixes are already refuted by evidence sitting in the released checkpoint.
+That leaves the first two, and it promotes a fourth that is not a mechanism at all but a choice:
+**Huginn truncated backprop to the last 8 unrolls.** Since contraction does *not* remove credit
+from early loops, truncation is the only thing in the recipe that does -- and its `k=8` sits right
+at the observed knee. So Huginn's reported ~10-loop saturation may be substantially an artefact of
+its **training recipe** rather than a property of looped models (§2.1). That is separable at 10M
+parameters and is the first thing I would test. Two further candidate fixes are already refuted by
+evidence sitting in the released checkpoint (§3).
 
 ---
 
-## 1. Saturation is three problems
+## 1. Saturation is three candidate problems -- and one of them is now dead
 
 ### 1.1 Dynamical: the map cannot help converging
 
@@ -65,81 +69,103 @@ before designing a loop schedule. It says the ceiling on "useful loops" may be s
 decoder commits**, not by how long the state keeps moving. Those need different interventions:
 deep supervision, per-loop readout, or anything that delays commitment -- not more depth.
 
-### 1.3 Credit assignment: the gradient is dominated by the idle loops
+### 1.3 Credit assignment: the obvious third explanation, tested and false
 
-Weight-tied loop, loss at the end:
+The natural third story is that weight tying plus contraction damps loop *t*'s contribution to the
+weight gradient by `rho^(T-t)`, so the late converged loops carry the update while the early loops
+-- where D159 says the computation actually is -- are starved. It is clean, it predicts an
+effective horizon of `1/(1-rho)`, and with our measured `rho` it lands at 5.7--12.2, which brackets
+Huginn's observed knee.
 
-```
-h_{t+1} = R(h_t; e; W),   L = L(h_T)
-dL/dW = sum_t  (dL/dh_T) . (prod_{s>t} J_s) . (dR/dW)|_t ,    ||prod_{s>t} J_s|| ~ rho^(T-1-t)
-```
+**I wrote that argument down, built the instrument, and it refuted the argument.**
+`scripts/loop_horizon.py` -- CPU, seconds, fp64, predictions pre-registered in the docstring before
+the first run, per CLAUDE.md §1. Attribution works by giving each loop its own identically
+initialised copy of the block, so the forward is bit-identical to the tied loop while `dL/dW_t`
+isolates one loop's contribution.
 
-The contribution of loop *t* is damped by `rho^(T-1-t)`. The **late** loops -- the converged ones
-doing the least work -- carry almost all of the weight gradient; the early loops, where D159 says
-the actual computation happens, are suppressed geometrically. Summing the weights gives an
-effective count of `sum_k rho^k -> 1/(1-rho)`.
-
----
-
-## 2. The prediction: effective loop horizon ~ `1/(1-rho)`
-
-**Claim to test, not a result.** The number of loops that can contribute to the update is about
-`1/(1-rho)`. Beyond it you buy forward FLOPs and approximately no gradient.
-
-Our measured `rho` (D115: per-family contraction fitted from step-size decay, 608 orbits, 21
-families) runs **0.8239 (`rot13_word`) to 0.9181 (`count16`)**, between-family sd 0.0301:
-
-| rho | `1/(1-rho)` |
+| gate | result |
 |---|---|
-| 0.824 | 5.7 |
-| 0.87 (mid) | 7.7 |
-| 0.918 | 12.2 |
+| **P0** attribution is exact | **PASS** -- forward `0.000e+00`, gradient `1.3e-23` against the tied loop |
+| **P1** null: undamped map must *not* concentrate | **PASS** -- `N_eff` 52.6 of `T`=64 |
+| **P2** `N_eff = (1-rho^T)/(1-rho)` | **FAIL** -- median error **89%** using step-decay `rho`, **65%** using backward-sensitivity `rho` |
+| **P3** horizon saturates in `T` | partial -- `N_eff` 4.99 at `T`=64 -> 5.01 at `T`=128, so a horizon exists, but not the predicted one |
+| **P4** is our `rho` the right object? | **the worry is confirmed** -- `rho_step` 0.97--0.99 while `rho_jac` **1.00--1.05** |
 
-Against Huginn's own published ARC-Easy depth curve: **34.89 (r=1) -> 49.07 (4) -> 65.11 (8) ->
-69.49 (16) -> 69.91 (32)**. As a fraction of the total r=1->32 gain: **40.5% by r=4, 86.3% by r=8,
-98.8% by r=16**. The knee sits at r~8. Predicted horizon 5.7--12.2 with midpoint 7.7, for a
-one-parameter heuristic that used none of this curve.
+The decisive measurement is the distribution of gradient *mass*, which the `N_eff` summary hides
+because it is dominated by a single final-loop spike:
 
-**Why this is worth a day rather than a footnote:**
+| residual scale | last 1 | last 8 | last 16 | **last 32 of 64** |
+|---|---|---|---|---|
+| 0.10 | 27.4% | 38.3% | 47.7% | 63.9% |
+| **0.40** (Huginn-like) | 10.7% | 23.8% | 34.4% | **53.5%** |
+| 1.60 | 6.5% | 23.8% | 33.0% | 46.6% |
 
-- It converts "how many loops help" from an expensive sweep into a measurement available in the
-  first minutes of training.
-- It names the lever as **`rho`, not `T`**. To make 32 loops carry gradient you need `rho ~ 0.97`.
-  Interventions that raise `rho` (residual scaling `h + alpha*f(h)`, normalisation placement,
-  spectral control) are then the design space -- not loop count.
-- It quantifies the tension the task itself names: DEQ *rewards* fast convergence, i.e. small
-  `rho`, i.e. the **minimum** possible learning horizon. The two objectives are directly opposed
-  and the trade is numeric.
+Exactly uniform would put **50%** in the last 32. Measured 46.6--63.9%. **Gradient reaches every
+loop.** Contraction does not starve the early ones, and "loops saturate because early loops get no
+credit" is a lever this removes rather than supports.
 
-### 2.1 The confound Huginn cannot resolve -- and the test task can
+### 1.3a Why it is false, which is the useful part
 
-**Huginn was trained with truncated backprop through only the last `k = 8` unrolls**
-(UNDERSTANDING.md §2: short window plus gradient checkpointing). That is nearly identical to the
-`1/(1-rho) = 7.7` this section predicts, so **the knee at r~8 has two candidate causes and Huginn
-cannot separate them**:
+`rho_step` sits below 1 while `rho_jac` sits **at or above** 1. Those are different objects and the
+gap is caused by the normalisation:
 
-- **(a) contraction** -- late loops dominate the gradient, effective horizon `1/(1-rho)`;
-- **(b) truncation** -- the optimiser was simply never shown more than 8 loops of credit.
+> In a normalised residual loop the **state stops moving** while **perturbations are not damped**.
+> RMSNorm renormalises away the norm decay that would otherwise attenuate the backward signal, so
+> the map stays near-isometric (`rho_jac ~ 1`) even as the trajectory settles (`rho_step ~ 0.98`).
+> Forward convergence and backward damping are separate phenomena, and this architecture has the
+> first without the second.
 
-I originally presented the r~8 agreement as support for (a). It is not, on its own: a simpler
-explanation was available in the training recipe and I had not checked it. The honest position is
-that the two are numerically indistinguishable in this model.
+Three consequences worth carrying:
 
-They are not, however, independent, and both push the same way. Truncation credits only the last 8
-applications -- the near-converged part of the trajectory. Contraction, even inside an untruncated
-window, weights late loops by `rho^(T-t)`. So **two separate mechanisms both make the optimiser
-shape the weights around the converged regime**, while D159 says the answer actually lives in the
-transient. That compounding is a better account of saturation than either mechanism alone, and it
-is the part I would now lead with.
+- **Do not spend the budget on gradient-flow fixes for the loop.** Deep supervision, auxiliary
+  per-loop losses and gradient rescaling all target a vanishing-credit problem that, in a
+  normalised residual loop, is not there.
+- **Normalisation inside the loop is load-bearing for a reason not usually stated.** The task lists
+  "other normalisations" as a lever; this says the lever acts on the *Jacobian's isometry*, which
+  controls whether deep loops are trainable at all, not on the forward convergence rate that a
+  step-size measurement reports.
+- **Two diagnostics, not one.** `||delta h||` decay tells you about the forward trajectory and
+  nothing about gradient flow. If you want to know whether loop *t* is being trained, measure
+  `||dL/dh_t||` directly. Conflating them is what produced the wrong argument above.
 
-**This is exactly the experiment the test task can run and Huginn cannot.** At 10M parameters full
-BPTT through all loops is affordable. Train two arms, identical but for truncation depth `k`:
+## 2. What survives, and what our `rho` is actually good for
 
-- if the knee tracks `1/(1-rho)` and ignores `k`, mechanism (a);
-- if the knee tracks `k`, mechanism (b), and **Huginn's reported saturation is substantially an
-  artefact of its training recipe rather than a property of looped models** -- which would weaken
-  the premise the task itself starts from, and is worth knowing before designing around it;
-- if it tracks neither, both are wrong, which is still a clean result.
+The `1/(1-rho)` horizon is **withdrawn**. Our measured `rho` (D115) is a step-size decay fit and
+P4 shows that is not the quantity in any gradient argument -- which was already a stated limitation
+of our paper (we never computed `rho(J)`) and is now demonstrated rather than suspected.
+
+What `rho` still legitimately buys:
+
+- It predicted a **forward** timescale once, pre-registered and correct: D173 predicted
+  `ln(0.05)/ln(0.83) = 16.1` unrolls for post-swap relaxation and measured 15.5. Step-decay `rho`
+  is the right instrument for *how long the state takes to settle*, which is exactly the question
+  early-exit design asks.
+- It is **task-type dependent**, not a model constant (D115: between-family sd 0.0301 over a 0.094
+  span, tracking task type rather than prompt length or difficulty). A single global exit threshold
+  is mis-specified by construction.
+
+### 2.1 Truncation, now the leading account rather than a confound
+
+**Huginn was trained with backprop truncated to the last `k = 8` unrolls** (UNDERSTANDING.md §2:
+short window plus gradient checkpointing). I first wrote this up as a confound -- `k=8` and the
+`1/(1-rho)=7.7` horizon were numerically indistinguishable, so Huginn could not separate them.
+
+§1.3 removes the ambiguity from one side. Contraction does **not** starve early loops of gradient,
+so the contraction-based account is out. Truncation, by contrast, removes credit from early loops
+*by construction*: outside the window the gradient is exactly zero, not merely small. It is now the
+only mechanism in Huginn's recipe that limits how many loops receive credit, and its `k` sits at
+the knee.
+
+**This is the experiment the test task can run and Huginn cannot.** At 10M parameters full BPTT
+through all loops is affordable. Train arms identical but for truncation depth `k`:
+
+- if the quality knee tracks `k`, then **Huginn's saturation is substantially a training-recipe
+  artefact**, the premise the brief opens from is weaker than stated, and there is more headroom
+  than assumed -- the most valuable single thing this analysis can contribute;
+- if the knee sits below `k` even at full BPTT, credit is not the binding constraint and §1.1/§1.2
+  (time-invariance, readout commitment) are, which points the design at depth-conditioning and
+  readout rather than at optimisation;
+- either way it is a clean result, and the task counts a well-analysed negative as a good outcome.
 
 **Precedent that `rho` predicts timescales here.** This is not the first time. D173 registered
 `ln(0.05)/ln(0.83) = 16.1` unrolls *before* the run as the relaxation time after a mid-trajectory
@@ -353,32 +379,40 @@ Stated so the rest stays usable.
   the specific nouns.
 - Huginn is **3.5B**; the task is **<=10M**. Contraction, credit assignment and readout commitment
   are all plausibly scale-dependent. `rho` in particular should be re-measured, not assumed.
-- The `1/(1-rho)` horizon is a heuristic with a named falsifier (§2), not a theorem.
+- The `1/(1-rho)` horizon is **withdrawn**, not hedged. I proposed it, tested it in
+  `scripts/loop_horizon.py`, and it failed its own primary gate by 89% (step-decay `rho`) and 65%
+  (backward-sensitivity `rho`). Do not quote it. What replaced it -- gradient mass is near-uniform
+  across loops because normalisation keeps the Jacobian near-isometric -- is a measurement, but a
+  measurement **on a 32-dimensional toy loop**, not on Huginn and not on a trained model.
+- The toy in `loop_horizon.py` has no attention, no tokens, no training, and a quadratic loss. It
+  establishes that the vanishing-credit mechanism *need not* hold in a normalised residual loop; it
+  does not establish that it never holds. Re-run it against the actual architecture before relying
+  on it.
 
 ---
 
 ## 8. If I had to pick four things to carry over
 
-1. **Question the premise first, because it is cheap to test and load-bearing.** The task opens
-   from "Huginn saturates after ~10". Huginn also trained with BPTT truncated to the last 8
-   unrolls. Those numbers are close enough that the reported saturation may be substantially a
-   property of the *training recipe*, not of looped models (§2.1). At 10M parameters, full BPTT is
-   affordable and the truncation sweep separates them. If it turns out to be the recipe, the whole
-   problem has more headroom than the brief assumes -- and that is the most valuable single thing
-   this analysis can contribute.
-2. **Instrument `rho(step)` from step 0 and the per-loop `KL(p_t || p_T)` curve from the first
-   run.** Together they give effective depth for free and turn the central question into a
-   measurement (§2, §5). D52 says the usable depth is largely fixed within the first few thousand
-   steps, so this has to be logged from the start, not measured at the end (§3.3). Measure it in
-   **fp32** -- bf16 fakes convergence 4.6x early (§6.0).
+1. **Question the premise first, because it is cheap and load-bearing.** The brief opens from
+   "Huginn saturates after ~10". Huginn also truncated backprop to the last 8 unrolls, and §1.3
+   shows contraction does not independently starve early loops -- so truncation is the only thing
+   in that recipe removing credit, and its `k` sits at the knee. A truncation sweep at 10M
+   parameters separates recipe from architecture (§2.1). If it is the recipe, the problem has more
+   headroom than the brief assumes.
+2. **Measure the two decay rates separately, from step 0, in fp32.** `||delta h||` decay answers
+   *when does the state settle* (early-exit design); `||dL/dh_t||` decay answers *which loops are
+   being trained*. They are different objects -- our `rho_step` 0.97--0.99 sat against `rho_jac`
+   1.00--1.05 in the same runs -- and conflating them is exactly what produced the wrong argument
+   in §1.3. D52 says usable depth is largely fixed within the first few thousand steps, so log both
+   from the start; bf16 fakes convergence 4.6x early (§6.0).
 3. **Treat readout commitment as a separate axis from depth** (§1.2, §4). The most surprising thing
    we found is that the answer is *better in the transient than at the fixed point* in 17 of 21
    families. If that reproduces at small scale, "more loops" is the wrong frame and "later
    commitment" is the right one.
-4. **Take the refutations in §3 for free.** Depth-randomised training is already done in Huginn and
-   does not break saturation; and the recurrence's state-carrying capacity is present at
-   initialisation and is not what training improves. Both save budget otherwise spent confirming
-   them.
+4. **Take the refutations for free** (§3, §1.3). Depth-randomised training is already done in
+   Huginn and does not break saturation; the recurrence's state-carrying capacity is present at
+   initialisation and is not what training improves; and vanishing credit across loops is not the
+   mechanism. Three directions eliminated before spending any of the 100M-token budget.
 
 **One diagnostic worth adding that we never built** (OPEN_THREADS §B6): permutation and
 group-composition tasks over `S_3`--`S_5`, which are provably outside `TC0` and so *require*
