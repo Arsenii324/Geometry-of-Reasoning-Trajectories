@@ -1538,5 +1538,73 @@ abandoned after three failures (§Q). No jobs run, no monitors needed, nothing t
 **Ledger 200 rows, suite 616 passed, everything pushed.** The draft compiles at 10 pages with
 main body ending page 9, 0 errors, 0 undefined citations, 0 uncited bibitems, CP1251 preserved.
 
+---
+
+## §S State of the work after submission, and what the looped-pretraining detour handed back (2026-08-12)
+
+*The paper is submitted and closed. This section is about what is still live in the research, and
+it exists because analysing a separate looped-transformer task (`docs/LOOPED_PRETRAIN_TRANSFER.md`)
+produced a concrete, cheap, high-value experiment **for this project** that nobody had queued.*
+
+### S.1 Where the three hypotheses actually stand
+
+| | verdict | what would still move it |
+|---|---|---|
+| **H1** settle / loop / drift | Answered: "both, at different levels". Drift excluded by construction (sphere, r=76.386). Period-4 cycle *across* blocks, settle-or-rotate *within* one. | Sliders. The authors name a third limiting structure and our statistic is tuned to periodic behaviour and would not recognise one. Never looked for. |
+| **H2** loops encode depth | The **winding operationalisation** is refuted. H2 in the ACT/PonderNet sense is not expressible on Huginn -- no halting head, nothing to allocate (D191). | Nothing on this checkpoint. It needs an architecture with a trained halting objective. |
+| **H3** contraction prevents state tracking | Strong form overstated. Effective compute grows with state retention (E3, length-matched, +0.558 vs -0.576); but the running count is linearly decodable, and an **untrained** model carries it at cv R² 0.7498 against the trained 0.7175 (D53). | `rho(J)`, never computed -- see S.2. And the behavioural h0-injection test, failed three times and abandoned (§Q). |
+
+### S.2 The experiment the detour generated -- and it is cheap
+
+`scripts/loop_horizon.py` (built 2026-08-12, CPU, seconds) tested whether contraction starves early
+loops of gradient in a weight-tied loop. **It does not.** In a *normalised residual* loop the state
+settles (`rho_step` 0.97--0.99) while the Jacobian stays near-isometric (`rho_jac` 1.00--1.05), so
+gradient mass is near-uniform across loops. Normalisation decouples forward convergence from
+backward damping.
+
+That is a toy result, 32 dimensions, no attention, no training. **But it makes a specific,
+falsifiable prediction about Huginn that we can test inference-only, with no GPU budget beyond a
+forward pass, and it closes a limitation we printed in the paper:**
+
+> **A53 -- measure `rho(J)` on Huginn by power iteration on Jacobian-vector products.**
+> *Prediction, registered here:* `rho(J)` will come out **at or just below 1**, materially above
+> our step-decay `rho` of 0.8239--0.9181 (D115), because RMSNorm inside the recurrence should keep
+> the map near-isometric exactly as it did in the toy.
+> *Cost:* one forward per prompt plus ~200 JVPs; no training, no new bank. Method already written
+> in `loop_horizon.py::rho_from_jacobian`.
+> *What it closes:* the paper's own limitation ("the spectral radius, the correct quantity for H3,
+> is not computed"). *What it would change:* if `rho(J) ~ 1`, then Huginn is **not** contractive in
+> the sense H3 assumes, and H3's premise -- not merely its strong form -- is wrong. Every
+> contraction-based argument in this project rests on a step-decay fit that we would then know
+> measures trajectory settling rather than dynamical contraction.
+> *Falsifier:* `rho(J)` comes out at 0.82--0.92, matching `rho_step`. Then the two are the same
+> object on the real model, the toy does not transfer, and D115 stands as-is.
+
+This is the highest value-per-cost item left in the project, and it exists only because a separate
+task forced us to ask what our `rho` actually is.
+
+### S.3 Everything else still open, unchanged in priority
+
+- **Per-position re-measurement of E1--E5.** E7 checked that the answer-token restriction does not
+  bias the *regime labels*; the correlational results were never re-measured per position.
+- **Nonlinear decoding.** Every content-decoding instrument here was linear (UNDERSTANDING §6.7).
+  "Loop N adds nothing" has only ever been established against linear readouts.
+- **Group composition over `S_3`--`S_5`** (OPEN_THREADS §B6): provably outside `TC0`, so recurrence
+  is required. Queued the whole project, never built. It is the natural positive control for any
+  depth claim.
+- **Sliders**, per S.1.
+- **A47 / h0 injection** stays abandoned (§Q). Three failures; the authors' reported path
+  independence over h0 partly predicts a null anyway.
+
+### S.4 Instruments: what may and may not be used
+
+- Retired: linear probes of the D165 class at n ~ 50, on any question of the form "is X decodable".
+  They fail on labels they provably contain.
+- Validated and reusable: `rotation_power` (self-consistent to 4e-08, threshold 691/696, 688/696
+  held out); the split-copy per-loop gradient attribution in `loop_horizon.py` (exact to 1.3e-23);
+  `scripts/fig_onset.py`'s gating pattern (assert published values before drawing).
+- New standing rule from the detour: **step-size decay and gradient decay are different
+  measurements.** Do not use one to argue about the other, which is the error §1.3 of the transfer
+  document records against itself.
 
 *(Index of all documents, tools and data: `docs/INDEX.md`.)*
