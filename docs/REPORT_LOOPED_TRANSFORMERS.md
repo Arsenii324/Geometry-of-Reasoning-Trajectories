@@ -25,6 +25,14 @@ recurrent-depth model, inference-only. Sections 3–5 are its measurements. Sect
 experiments I ran for this report, both of which contradicted me. Sections 8–10 are judgement,
 marked as such.
 
+**On how things were measured.** Every claim in §3–§5 has an entry in **Appendix B** giving the
+actual setup in plain prose — what ran, on how many items, read from where, under which prompt
+format — and ending with the decision or assumption most likely to be load-bearing. You do not need
+it on a first read. You need it before quoting a number, and §B.0 in particular before quoting any
+accuracy or rank: nearly all of them share one measurement recipe with one significant blind spot.
+That blind spot invalidated a draft of §1 and then the correction to it (§7.7), which is why the
+appendix exists.
+
 ---
 
 ## 1. The one thing to take away
@@ -173,6 +181,11 @@ family-inclusion screen shifts, and the comparison was not recomputed there.)*
 And then the resolution: the loop at which an answer becomes available is **88% predicted by that
 token's rank after a single loop** (Spearman 0.885). Not by difficulty, and not by which task it is.
 Depth is spent climbing from wherever the initial guess put the answer. *(D178, superseding D177.)*
+The matched pair is clean — `echo_word` and `echo_digit` are the same instruction at an identical
+21-token prompt — and an internal control excludes multi-token answers as the cause. But both
+variables are readings of the same instrument, and §1's warning applies: "where the initial guess put
+the answer" is substantially "how plausible that token is as the opening word of a sentence"
+(§B.1).
 
 On the cleanest difficulty ladder available, harder problems were answered *worse and earlier*
 (correlation −0.44 to −0.53) — the opposite of the hypothesis *(D110)*.
@@ -261,8 +274,10 @@ randomly initialised weights of the same architecture. It is the most surprising
 
 ### 4.1 Almost the only thing training changes about the recurrence is how fast it converges
 
-Measured directly on the operator, the contraction rate goes from **0.7150 untrained to 0.8740
-trained** — an exponential time constant of about 3 loops before training and about 7.4 after.
+Measured as the rate at which two trajectories on the same prompt converge to each other — which
+is a property of the map rather than of where its fixed point sits — the contraction rate goes from
+**0.7150 untrained to 0.8740 trained**, an exponential time constant of about 3 loops before
+training and about 7.4 after.
 *(D44.* The often-quoted 0.8866 for the trained arm is the unfiltered mean; two of twelve fits fall
 below the project's own R² > 0.9 bar, and the filtered value is the one carried forward.*)* Across 14 independent weight sets — five random initialisations and nine checkpoints —
 every untrained draw contracts faster than every trained one, with no overlap (0.7048 against
@@ -293,9 +308,10 @@ of 76. *(D104)* The model converges either way. What training decides is *where*
 Two other trained-versus-untrained differences, both about the shape of the path rather than its
 content: training collapses the trajectory's effective dimensionality from 8.55 to 4.89 — eight
 times faster than the untrained path, which barely moves — while step-to-step alignment rises from
-+0.28 to +0.72. *(D80)* And the turn angle between successive steps goes from near-random
-(110–115°) to coherent rotation (42–59°); after training, an eight-fold jump in difficulty does not
-move it. *(D116)*
++0.28 to +0.72. *(D80)* And the turn angle between successive steps, measured over
+loops 8–40, goes from near-random (110–115°) to coherent rotation (42–59°); after training, an
+eight-fold jump in difficulty does not move it. *(D116* — the window matters: over all loops the
+per-family ordering changes, so quote family-level angles only with the window attached.*)*
 
 ### 4.4 Contraction is a knob, and we know roughly where it is
 
@@ -796,7 +812,7 @@ form "the loop does X" lacks its control.
 
 ---
 
-## Appendix — the evidence, in one table
+## Appendix A — the evidence, in one table
 
 Every claim used above, in plain English, with its ledger ID and current status. Scannable; not
 meant to be read through.
@@ -862,3 +878,208 @@ resting on banked JSON under `scratch/`, re-derivable but without a script alrea
 "gapped distribution implies two regimes" test (invalid null); "harder problems recruit more depth"
 in all its forms; the claimed register direction (window bug); the extrapolated untrained
 contraction rate of 0.66; my own `1/(1−ρ)` horizon and its near-isometry explanation.
+
+---
+
+## Appendix B — how each measurement was made
+
+Every claim above is a number from a specific run with specific choices baked into it. This appendix
+states those choices in plain prose. It exists because one of them — where the answer is read from —
+silently invalidated a draft of §1 and then invalidated the correction to it (§7.7), and the only
+reason that was recoverable is that the choice was written down in the kernel. Each entry ends with
+the decision or assumption most likely to be load-bearing, marked **Assumption**. These are not
+disclaimers; several of them are the reason a number means what it does.
+
+### B.0 The one convention nearly everything shares — read this first
+
+Almost every accuracy, rank and depth number in this report comes from a single measurement recipe,
+reused deliberately so that banks are comparable. It is worth knowing in full:
+
+The prompt is wrapped with the model's chat template as a lone user turn with a generation prompt
+appended, and **no format instruction** — a "bare" prompt. A forward hook on the last core block
+fires once per loop, so one forward at 48 loops yields a reading at all 48 depths rather than 48
+forwards. At each loop the recorded state is pushed through the coda and output head, and the metric
+is the **rank of the gold answer's first token, at the last prompt position** — the immediate
+next-token slot. An item counts as correct if that rank reaches 1 at *any* loop.
+
+Four consequences follow, and each has bitten this project at least once.
+
+- **It measures what the model would say next, not what it knows.** On a model that writes prose,
+  the top-ranked token is usually `The`. This is §1's warning and §7.7's story. *(D69, D203.)*
+- **Multi-token answers are represented by their first token only** — 21% of census rows.
+- **"Correct" is an oracle over depth**, counting an item right if some loop would have worked,
+  which no deployable decoder can know in advance. Measured inflation over the best *selectable*
+  fixed depth: **2.06×**, and 32× over the final loop. *(D103.)* Where this report quotes accuracy,
+  the oracle reading is the one being quoted unless it says otherwise.
+- **The initial latent is unseeded unless a run says otherwise**, and it moves results (§6, gate 2).
+
+Kernels using this recipe: the 21-family census, the depth grid, the add-k ladder, the state-tracking
+battery, the geometry-plus-capability bank and the length-matched bank. Where a claim below reads
+**states** rather than logits — contraction rates, dimensionality, turn angles, fixed points — it
+does not inherit the prose-frame limit, because it never consults the output head. That distinction
+is the single most useful thing in this appendix.
+
+### B.1 What the loops do (§3)
+
+**The answer is present after one loop (D37).** The counting register's decodability was measured at
+loop counts 1, 2, 4, 8, 16, 32 and 64, across 12 seeds and two tasks, float32. States were captured
+**at every loop within a single forward pass**, so the loop-1 reading is the first iteration of one
+64-loop run rather than a separate short run — the same convention as B.0. Register correlation is flat across depth (ρ = +0.006, p = 0.958);
+alignment of the register's direction to its final form rises 0.454 → 1.000.
+**Assumption:** the register direction is *refit at each depth* rather than held at its 64-loop
+value. Holding it fixed would have understated early depths and manufactured exactly the rising
+trend originally predicted — the refit is why the prediction was cleanly falsifiable. Separately,
+the alignment reaching 1.0 is partly definitional, since the target is measured at loop 64; the
+informative part is the shape of the approach, not the endpoint.
+
+**Relay to the answer position (D38).** 220 prompts, float32, loop counts 1 through 64, a
+cross-validated linear probe on the answer-token state alone. The quantity is a count distributed
+over 64 sequence positions, and the probe's job is to recover it from the single answer position —
+which is why this measures *transport* rather than computation. **All 220 prompts tokenise to exactly 74 tokens**, so nothing here
+can be prompt length. R² rises 0.675 → 0.993, every point beating its permutation null at p < 0.001.
+**Assumption:** this establishes that readout improves with depth *in aggregate*. It does **not**
+show harder items are read out worse — that was tested at all nine depths and is null, with signs
+alternating. Two runs of the same cell give R² 0.6754 and 0.6545 at loop 1, from float32
+non-determinism, so single-decimal agreement should not be expected on a re-run.
+
+**Best rank at loop 4, then displacement (D159, D203).** 21 families, 4,868 draws, 48 loops, the
+shared recipe of B.0. **Assumption:** everything in B.0 applies, and this is the row where it
+matters most — see §3.2, where the displacing token turns out to be `The`.
+
+**87% of the journey still ahead (D112).** Zero-GPU re-analysis of 188 banked orbits at 64 loops and
+5,280 dimensions, restricted to the **32 orbits the model actually solves**, comparing each orbit's
+own rank curve against its own state trajectory.
+**Assumption:** "distance to the endpoint" uses the state at loop 64 as the endpoint. That is not
+the fixed point — in float32 these trajectories keep converging to roughly loop 96 (D30) — so the
+true remaining fraction is larger, not smaller, than 87%. The direction of the error is safe for the
+claim being made.
+
+**Format rescues the answer (D69).** Three prompt formats × 5 tasks × 24 items, rank per loop.
+The three arms are bare, "Reply with only the answer", and a pre-filled "The answer is ".
+**Assumption:** the pre-fill arm is **degenerate and excluded** — its top-1 becomes an unprintable
+UTF-8 byte fragment on 24 of 24 items on every task, because the trailing space puts the model out
+of distribution at depth. The kernel's own printed verdict keyed on that arm and is rejected. The
+0% → 83% contrast comes from the bare-versus-constrained comparison, same model, same depth.
+
+**Depth makes the model more prose-committed (D174).** 1,260 generations, ten (format, depth) cells
+at exactly n = 126, depths 2/4/8/16/32, both formats. This one reads **generated text**, not logits.
+**Assumption:** the chat template leaks the next-turn role marker glued to the output with no
+separator — `'4user'` where the gold is `4` — in 224 of 1,260 generations. Scoring that does not
+separate the marker loses 80 genuine correct answers. The numbers quoted here are post-fix.
+
+**Recruited depth is set by the starting rank (D178).** Zero-GPU over the census, 2,032 correct
+items. The matched pair is `echo_word` versus `echo_digit` — the same instruction at an identical
+21.0-token prompt, differing only in answer type. Family-level Spearman +0.885 over 17 families.
+**Assumption:** both variables — start rank and recruited depth — come from the B.0 recipe, so this
+is a relationship between two readings of the same instrument. The multi-token explanation *is*
+excluded by an internal control (within `echo_word`, single-token golds 6.15 versus multi-token
+6.08, p = 0.253), but the discourse-frame explanation is not: a word is a poor next token whatever
+its length. This is also a **between-family** result — within-family correlations are +0.150 and
++0.261 — so it says little about item-to-item variation inside a task.
+
+**Difficulty runs backwards (D110).** 336 forwards on a Tesla T4, float32, at the pinned revision:
+7 difficulty levels × 6 slots × 8 unseeded initial-latent draws, 48 loops, aggregated to the true
+unit of one value per distinct problem (n = 36, median over the 8 draws).
+**Assumption:** the task obeys `gold = value + k` exactly, so difficulty, first operand and answer
+carry only **two degrees of freedom between them** — no stratification can separate all three. The
+reversal is real; attributing it specifically to difficulty rather than to the answer token is what
+this design cannot fully do, and the row says so.
+
+**Length, not exemplars (D186).** 48 items × 4 arms at 48 loops. The length control is exact: the
+padded arm matches the five-shot arm at a **median token ratio of 1.000** (131 versus 130 tokens).
+**Assumption:** the outcome is start rank and depth-to-answer, both B.0 quantities.
+
+**Contraction is a task-level property (D115).** 608 banked orbits over 21 families, zero GPU, with
+the rate fitted per orbit as step size ~ ρ^t over the window **t = 8–40**, then aggregated per
+family; families with fewer than 8 usable orbits were dropped.
+**Assumption:** the window. It excludes the early transient deliberately, and the row is explicit
+that this is a choice.
+
+**The map rotates (D31, D55).** Implicitly-restarted Arnoldi on autodiff Jacobian-vector products,
+float32, three prompts spanning an eight-fold range of problem size, reverse-mode AD.
+**Assumption, and it is a large one:** this perturbs and reads a **single position**, which gives the
+diagonal block of the Jacobian — not the operator the orbit actually obeys, since the answer-token
+state also evolves under attention from every other position. The project's own row calls this "the
+wrong operator". The full one-unroll map was measured separately and gives 0.8098; that is the
+number to quote. Also, eigenvalue arguments give **eigenvalue** periods, and the observed orbit was
+measured turning at about a quarter of that rate — the two differ by roughly 4× and must not be
+compared directly.
+
+**A counter must be a rotation (D26).** A derivation from the norm constraint plus a permutation
+kernel, not a model measurement. **Assumption:** it constrains what is *geometrically available* on
+any normalised recurrent architecture; it says nothing about what Huginn's training built.
+
+### B.2 What training does (§4)
+
+**Training slows contraction, 0.7150 → 0.8740 (D44).** Float32, 12 prompts × 2 orbits × 128 loops
+per model, both models in one process. The estimator is **two-orbit convergence** — the decay of
+‖h_t⁽¹⁾ − h_t⁽²⁾‖ between two trajectories on the same prompt from different initial latents — which
+is independent of where the fixed point sits. Two independent estimators agree.
+**Assumption, and this one was corrected under adversarial review:** the widely-quoted trained value
+0.8866 is an **unfiltered** mean including two fits at R² = 0.52 and 0.79, below this project's own
+applicability bar; the filtered value 0.8740 is what this report uses. And the original p-value is
+**withdrawn as pseudoreplication** — there is one weight set per arm, so a test over 12 *prompts*
+says nothing about *training*. That is precisely why the next row exists.
+
+**Fourteen weight sets, no overlap (D52).** Eight released checkpoints plus four random
+initialisations plus the two anchors above, identical code, prompts and estimators throughout.
+Every untrained draw contracts faster than every trained one.
+**Assumption:** a later row flags both absolute levels as biased high by about 0.03 while stating the
+ordering and separation are unaffected — so the **gap** is quotable and the levels are not.
+
+**The register is architectural (D53).** Both arms on identical prompts in one process,
+cross-validated R² 0.7498 untrained against 0.7175 trained. The probe target is the **lagged**
+running count, not the current one.
+**Assumption:** same-process, same-prompt is what makes the comparison meaningful; the claim is that
+training does not *build* the register, not that training is irrelevant to using it.
+
+**The block cycle is learned (D104).** Three independently seeded untrained models against the
+trained one, all in **bfloat16, deliberately** — the arms are compared at the same precision, and
+the three statistics quoted were selected for precision-robustness.
+**Assumption:** bfloat16 makes trajectories look converged about 4.6× sooner than float32 (D30). That
+does not damage a *between-arm* comparison at matched precision, but no absolute settling number from
+this run should be quoted.
+
+**Dimensionality and step alignment (D80).** 152 banked trained orbits from two banks at different
+loop budgets, 7 families, a sliding window of width 12 and stride 4, paired **within** each orbit.
+**Assumption:** pairing within orbit is what removes the between-prompt variance; the two source
+banks differ in loop budget (128 versus 64), so only the paired within-orbit statistics are safe.
+
+**Turn angle, 110–115° → 42–59° (D116).** 608 orbits for the trained-family spread; 156 orbits
+(48 trained, 108 untrained over 5 seeds) for the trained-versus-untrained contrast. Angle measured
+between consecutive step vectors over **t = 8–40**.
+**Assumption, flagged by the row itself after an audit:** the window is not neutral. Over all t the
+family *ordering* changes and the between/within ratio moves from 4.2× to 2.62×. The
+trained-versus-untrained conclusion is unchanged, but any per-family number from this row is
+window-dependent and should be quoted with the window attached.
+
+**Contraction is steerable (D59).** The attention and MLP output projections of all four core blocks
+scaled by (1+ε) for ε from −0.10 to +0.13, 12 prompts × 4 families, float32, no gradients.
+**Assumption:** the pre-registered prediction Δρ ≈ ρ·ε was **refuted** — the measured slope is 0.32×
+predicted, more than 13 standard errors away. That refutation is the source of the claim that most
+of the contraction is *not* in the sublayer branch, so the failed prediction is doing the work here.
+
+### B.3 The claims that are reads, not experiments (§4.5, §5)
+
+Four cited claims involve no measurement on our part: the published benchmark curve, the randomised
+loop-count sampler and depth-aware initialisation, the fixed-point theorem for this architecture, and
+the absence of any per-position halting mechanism. All are quotes and code paths read in-file from a
+local corpus of the released papers and source at a pinned revision, verified in the file rather than
+taken from a summary. The gradient-truncation fact was confirmed as a **live code path** rather than a
+training note: the first `num_steps_no_grad` iterations run inside `torch.no_grad()`, so loops outside
+that window receive exactly zero gradient.
+**Assumption:** these describe the released artifact. Where this report reasons about what *training*
+did, it is reasoning from code and published numbers, not from a training run — nothing here was
+retrained, and that is the report's largest structural limit (§11).
+
+### B.4 The instruments in §6, and what calibrated them
+
+The gates in §6 are not advice; each came from a specific failure with a specific measurement behind
+it. The precision gate is 3 prompts × 3 dtypes. The seeding gate compares 8 prompts × 10 unseeded
+forwards against the same 8 prompts × 3 seeded ones. The surrogate null that closed the winding
+question is 140 trajectories × 100 surrogates × 2 arms. The probe-floor gate that retired an
+instrument class is 49 nouns with 400 permutations per planted signal. The state-tracking battery is
+87 items × 2 formats × 48 loops, with **golds balanced within each difficulty level before launch** —
+an unbalanced draft would have let a constant responder score 40% against a 33.3% floor and pass.
+**Assumption:** each of these is a *calibration*, so it constrains what the corresponding null can
+say. Where a null has no floor attached, this report does not treat it as evidence of absence.
