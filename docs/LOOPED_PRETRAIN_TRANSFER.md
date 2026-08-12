@@ -231,8 +231,10 @@ Two further measurement notes that follow from our data rather than from taste:
 ## 6. Measurement traps that each cost us a result
 
 The task's second criterion is implementation and verification, and it warns that coding agents
-"will happily take the wrong tokeniser or forget to save a checkpoint". This project retracted
-twelve claims. These are the transferable ones; each is cheap to guard at 10M params.
+"will happily take the wrong tokeniser or forget to save a checkpoint". Ten ledger rows in this
+project carry an explicit withdrawal or amendment marker, and four of those were killed by controls
+we had registered *in advance* rather than by later work. These are the transferable ones; each is
+cheap to guard at 10M params.
 
 1. **Unseeded latent init.** Huginn draws `h_0` from an unseeded RNG and *no kernel seeded it
    before we did* (D78). Two forwards of one prompt were not comparable. For a looped pretrain:
