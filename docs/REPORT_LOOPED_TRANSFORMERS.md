@@ -153,21 +153,32 @@ eigenvalue is complex in 3 of 3 prompts**, the top eigenvalues arrive in complex
 A contracting map rotates if and only if its spectrum is complex, at a rate given by the
 eigenvalue's argument — a quantity needing no trajectory, no recording window and no null.
 
-So **the recurrent map is dominated by rotation**, and it survives only a few turns before
-contraction kills it, while the project's trajectory statistics sampled it at roughly **three
-points per turn** over a window several times longer than the rotation lives. *(D55)* That is why
-five separate trajectory statistics — winding, chord-to-arc, persistent homology, participation
-ratio, subspace dimension — all failed together on the rotation question. **The phenomenon was real
-and the metrics were aliased.** The eigenvalue arguments had been computed as a side effect of the
-magnitude run and reported only as magnitudes; the answer five statistics could not settle was
-already on disk, and cost zero compute to extract.
+So **the recurrent map is dominated by rotation.** The eigenvalue arguments had been computed as a
+side effect of the magnitude run and reported only as magnitudes; the answer five trajectory
+statistics could not settle was already on disk and cost zero compute to extract.
 
-**Widened from three prompts to twenty, 2026-08-12 (§7.5), which changed two of these numbers.**
-Rotation is near-universal: the leading eigenvalue is complex in **19 of 20** prompts and **all 16
-measured top modes** are oscillatory in every regime prompt. The period is **not** 2.6–6.0 — that
-was the range of three prompts. Across twenty it spans **3.4 to 46.7 loops**, and it is a
-remarkably precise function of the prompt: the same instruction noun over three different digit
-sequences reproduces its period to **±0.06 loops**. And the mode survives **2.2 turns**, not four.
+*An earlier version of this report added that those statistics failed because they sampled the
+rotation near its Nyquist limit — that the phenomenon was real and the metrics were aliased. **That
+is withdrawn, and it was withdrawn inside the project's own record before I wrote it.** Measured
+against the full operator the trajectory is sampled 5.7–18.5 times per turn, and the orbit itself
+was measured turning 60° per unroll — six samples per turn against a Nyquist floor of two. Sampled
+three to nine times above the floor, not near it. What does explain the failures is more mundane:
+one statistic's value depended on how many loops were recorded, and another was reading the wrong
+clock.*
+
+**Widened from three prompts to twenty, 2026-08-12 (§7.5).** Rotation is near-universal: the
+leading eigenvalue is complex in **19 of 20** prompts and **all 16 measured top modes** are
+oscillatory. The eigenvalue's implied period is a remarkably precise function of the prompt — the
+same instruction noun over three different digit sequences reproduces it to **±0.06 loops** — and
+spans **3.4 to 46.7 loops** across prompts.
+
+**Two cautions that took me a second pass to find, and both are the project's own.** These are
+periods of the *eigenvalue*, not of the observed orbit: the trajectory was measured turning at
+about **a quarter** of the leading eigenvalue's rate, so the two differ by roughly 4×. And this
+measurement is of the **diagonal block** — perturbing and reading one position — which the record
+elsewhere calls *"the wrong operator, because the answer-token state also evolves under attention
+from every other position."* The full one-unroll map was measured separately, and it is the one to
+quote.
 
 ### 3.5 A geometric constraint on what the loop could ever count with
 
@@ -405,8 +416,9 @@ The report above said the Jacobian's rotation period and the regime statistic's 
 "plausibly the same phenomenon, which nobody has checked". I ran it (A53, `scratch/ds_jacspec/`,
 20 prompts, 63 minutes), with the prediction registered both ways beforehand.
 
-**They are separate.** Rotating-labelled against settling-labelled prompts, the implied period is
-null at the arm level — Mann-Whitney **U = 18, p = 1.0000**. The split is by *noun*, not by regime:
+**On the operator I measured, they are separate** — but read the caution below before using that.
+Rotating-labelled against settling-labelled prompts, the implied period is null at the arm level —
+Mann-Whitney **U = 18, p = 1.0000**. The split is by *noun*, not by regime:
 
 | noun | label | period (loops) |
 |---|---|---|
@@ -423,12 +435,25 @@ What replaces the failed hypothesis is a better fact: **the rotation period is a
 of the prompt over an order of magnitude** — `echo_digit` 3.4, `add1` 9.3–9.5, `sort_min`
 9.8–10.3, `count_mod3` 46.5–46.7 — reproducible to a few percent within a family.
 
-**The limitation I registered before running it is live, and I will not pretend otherwise.** The
-Jacobian is taken after 32 loops, at the settled end, while the mode decays to 1% within about 2.2
-turns and the answer is settled by loop ~4. **So this null may be about the wrong window rather
-than about the model.** A warmup sweep — measuring at loops 2, 4, 8, 16 against 32 — separates
-them, and until it exists the question is bounded, not closed. What does not depend on the window
-is P3 and the per-noun tightness.
+**Then I read further into the record and found the null is weaker than that.** Three problems,
+all of them already documented before I ran anything:
+
+1. **Wrong operator.** I perturbed and read one position, giving the diagonal block. The project's
+   own record calls that "the wrong operator" for exactly this question, and the **full** one-unroll
+   map had already been measured and banked four days earlier. I re-measured, at greater width, the
+   operator that had been labelled wrong, while the right one sat on disk.
+2. **Wrong units for the comparison.** Eigenvalue period is not orbit period — the trajectory turns
+   at about a quarter of the eigenvalue's rate. So comparing an eigenvalue period against the regime
+   statistic's period-6 *trajectory* rotation compares incommensurable things.
+3. **Wrong window**, the one caution I did register in advance: the Jacobian is taken at loop 32,
+   after the mode has decayed, while the answer settles by loop ~4.
+
+**What survives:** near-universal complex spectrum, the per-prompt tightness, and the contraction
+gate — all true statements about the diagonal block. **What does not:** P2's null as a claim about
+the model. On the full operator the argument does separate cleanly by *task* — one task family at
+61–63°, another at 19–24°, non-overlapping — so a real separation exists on the right operator; it
+just isn't the one I tested for. The correctly-specified run is a full-operator sweep at several
+warmups, which is a better experiment than the one I launched.
 
 ### 7.6 The initial state changes *when* the answer arrives, by the whole scale of the quantity
 
