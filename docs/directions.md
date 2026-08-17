@@ -86,6 +86,19 @@ and would have cost hours to discover downstream.
   rescued by a single-trajectory estimator either; §6.10's "this needs a rerun"
   stands, and was verified rather than assumed.
 
+
+**Cancelled unrun, 2026-08-12 — `geometry-cap-content`.** Queued 2026-08-05 to test
+whether "content is architectural" (D40/D41/D48/D53) is an artefact of only ever
+measuring content on tasks the model scores ~0% on, by spanning capability
+(`echo_num` ~100% → `count16` 0%) and checking whether the trained-minus-untrained
+content gap tracks it. **Status CANCEL — it never ran.** Not re-queued as specified,
+because the question it was built for has since been approached better: the census
+(D130) measured capability across 21 families and found 31 usable items in 5, and
+`UNDERSTANDING.md` §1.5 now carries the capability objection as the project's
+strongest, stated in those terms. The moderator design is still the sharpest single
+test of it and is retained here; what is superseded is running it on the four
+hand-picked tasks rather than on the census's measured capability axis.
+
 ## A. Standing requests from the curator/user
 
 | # | request | status | where it lives |
